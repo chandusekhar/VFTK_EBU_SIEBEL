@@ -1,0 +1,2642 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VF Calculate Adjustment"
+	   UI_FREEZE="N"
+	   UPDATED="04/26/2017 19:03:28"
+	   UPDATED_BY="LROSADO"
+	   CREATED="03/04/2013 22:57:06"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="N"
+		   CLASS="CSSBCVExtern"
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MULTI_RECIPIENT_SELECT="N"
+		   NAME="VF Virtual Prepaid Adjustment"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="04/26/2017 17:24:42"
+		   OWNER_DELETE="N"
+		   POPUP_VISIBILITY_AUTO_ALL="N"
+		   SCRIPTED="Y"
+		   TYPE="Non-Transient"
+		   OBJECT_LOCKED_BY_NAME="LROSADO"
+		   UPDATED="04/26/2017 19:03:28"
+		   UPDATED_BY="LROSADO"
+		   CREATED="04/19/2013 15:10:45"
+		   CREATED_BY="SADMIN">
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="AdjustmentInquiry"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function AdjustmentInquiry()
+{
+//FCARRIL: VFTRCBU-30913 - This function calls AdjustmentInquiryInternal because AdjustmentInquiry
+//uses GetCustomMethodName method
+	try
+	{
+		 var BS     : Service = TheApplication().GetService(&quot;VF Virtual Prepaid Adjustment BS&quot;);
+         var inProp :PropertySet        = TheApplication().NewPropertySet();
+         var outProp :PropertySet= TheApplication().NewPropertySet();
+         var outMessage :PropertySet= TheApplication().NewPropertySet();
+         var BACode;
+         
+         BACode = this.ParentBusComp().GetFieldValue(&quot;Account Code&quot;);     
+//TheApplication().Trace(&quot;ADJUSTMENT INQUIRY - BC - BA Code:&quot;+BACode);
+
+         var ErrorCode = 0;
+         var ErrorMessage = &quot;&quot;;
+         inProp.SetProperty(&quot;Account Code&quot;,   BACode);
+
+         BS.InvokeMethod(&quot;AdjustmentInquiryInternal&quot;,inProp, outProp); //FCARRIL: VFTRCBU-30913
+         
+         ErrorCode =  outProp.GetProperty(&quot;Error Code&quot;);
+         ErrorMessage =  outProp.GetProperty(&quot;Error Message&quot;);
+ 
+//TheApplication().Trace(&quot;ADJUSTMENT INQUIRY - Called BS:&quot;+ErrorCode+&quot; Error Message:&quot;+ErrorMessage);
+         
+         if (ErrorMessage != &quot;&quot;)
+		{
+   			return(ErrorMessage);
+		}
+		
+    
+	return(ContinueOperation);
+	}
+	finally
+	{
+			
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="09/14/2016 15:49:23"
+			   UPDATED_BY="ALINO"
+			   CREATED="05/27/2015 18:15:00"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_NewRecord"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_NewRecord ()
+{	
+	this.SetFieldValue(&quot;Created By Login&quot;, TheApplication().LoginName());
+	this.SetFieldValue(&quot;Request Date&quot;, this.GetFieldValue(&quot;VF Timestamp&quot;));
+	this.SetFieldValue(&quot;Status&quot;, TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;PRE_ADJ_STATUS&quot;, &quot;Open&quot;));
+
+	this.SetFieldValue(&quot;VF Division&quot;, this.GetFieldValue(&quot;VF DivisionName&quot;));
+	
+	if(!isPositionEnabled(&quot;VFTRCBU_ADJ_VALIDATION_ROLES&quot;,&quot;Special Role List&quot;)) //Role7, Role28, Role29
+	{
+		this.SetFieldValue(&quot;Type&quot;, TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;INVC_ADJ_REQ_TYPE_CD&quot;, &quot;Credit&quot;));
+	}
+}"
+			   SEQUENCE="8"
+			   UPDATED="01/27/2017 17:26:23"
+			   UPDATED_BY="LROSADO"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreInvokeMethod (MethodName)
+{
+	
+	
+	if (MethodName == &quot;AdjustmentInquiry&quot;)
+	{	
+		this.SetSearchSpec(&quot;CustomMethodName&quot;, &quot;Adjustment Inquiry&quot;);
+		this.ExecuteQuery(ForwardBackward);
+		return (CancelOperation);
+	}
+	
+
+	if(MethodName == &quot;Submit1&quot;)
+	{
+		Submit();
+		return(CancelOperation);
+	}
+	if(MethodName == &quot;Cancel&quot;)
+	{
+		Cancel();
+		return(CancelOperation);
+	}
+	
+	/*if (MethodName == &quot;AdjustmentInquiry&quot;)
+    {
+        AdjustmentInquiry();
+        return(CancelOperation);
+  	 }*/
+
+	
+	return (ContinueOperation);
+}"
+			   SEQUENCE="9"
+			   UPDATED="01/27/2017 17:26:23"
+			   UPDATED_BY="LROSADO"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreNewRecord"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreNewRecord ()
+{
+	return (ContinueOperation);
+}"
+			   SEQUENCE="10"
+			   UPDATED="01/27/2017 17:26:23"
+			   UPDATED_BY="LROSADO"
+			   CREATED="07/15/2014 12:05:42"
+			   CREATED_BY="PCASTRO">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_SetFieldValue"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_SetFieldValue (FieldName)
+{	
+	if(FieldName==&quot;Reason For Request&quot;)
+	{
+		var Reason = this.GetFieldValue(&quot;Reason For Request&quot;);
+		if(Reason == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;PRE_ADJ_REASON&quot;,&quot;Interim payment&quot;))
+		{
+	   		var retDateTemp = new Date();
+	   		var strTime = retDateTemp.getTime()+(48*3600*1000);
+	   		var retDateT = new Date(strTime); 
+	   		//code retrofits 20150427 - February Minor
+			var stringDate =  (retDateT.getMonth()+1)+&quot;/&quot;+(retDateT.getDate())+&quot;/&quot;+retDateT.getFullYear()+&quot; 23:58:59&quot;;	
+	   	   	//this.SetFieldValue(&quot;VF Due Date&quot;,stringDate);//Oracle Review October 2011 - SetFieldValue in this BC
+	   	    
+	        //Find the calendar
+		    var SchedBO:BusObject = TheApplication().GetBusObject(&quot;Shift&quot;);
+			var SchedBC:BusComp	= SchedBO.GetBusComp(&quot;Shift&quot;);
+			var CalendName		= &quot;VF Complaint Schedule&quot;;
+			var CalendId= &quot;&quot;;
+			var isHoliday =&quot;&quot;;
+			var month : float;
+			var day : float;
+			var year : float;
+		    var stringDate2=&quot;&quot;;
+				
+			SchedBC.ClearToQuery();
+			SchedBC.ActivateField(&quot;Name&quot;);
+			SchedBC.ActivateField(&quot;Id&quot;);
+			SchedBC.SetSearchSpec(&quot;Name&quot;, CalendName);
+			SchedBC.ExecuteQuery(ForwardOnly);
+	
+			if(SchedBC.FirstRecord())
+				CalendId   = SchedBC.GetFieldValue(&quot;Id&quot;);
+			
+				var BS =  TheApplication().GetService(&quot;FS Holiday API Service&quot;);
+				var PSOut = TheApplication().NewPropertySet();
+				var PSIn = TheApplication().NewPropertySet();
+				var count = 1;
+				PSIn.SetProperty(&quot;Date Time&quot;, stringDate);
+				PSIn.SetProperty(&quot;Calender Id&quot;,CalendId);
+				PSIn.SetProperty(&quot;Time Zone&quot;,&quot;GTB Standard Time&quot;);
+			    BS.InvokeMethod(&quot;IsHoliday&quot;,PSIn, PSOut);
+				isHoliday = PSOut.GetProperty(&quot;Is Holiday&quot;);
+			    stringDate2 = (retDateT.getMonth()+1)+ &quot;/&quot;+ (retDateT.getDate() ) + &quot;/&quot;+retDateT.getFullYear() + &quot; 23:58:59&quot;;
+			
+			    day= retDateT.getDate();
+			    month=retDateT.getMonth()+1;
+			    year= retDateT.getFullYear(); 
+			    
+				while (isHoliday==&quot;TRUE&quot; &amp;&amp; count &lt;15)	   	    	
+		   	    {	   	    	
+		   	    	if ( (month ==&quot;1&quot; &amp;&amp; day == &quot;31&quot;) || (month ==&quot;2&quot; &amp;&amp; day == &quot;28&quot;) || (month ==&quot;3&quot; &amp;&amp; day == &quot;31&quot;) || (month ==&quot;4&quot; &amp;&amp; day == &quot;30&quot;) || (month ==&quot;5&quot; &amp;&amp; day == &quot;31&quot;) || (month ==&quot;6&quot; &amp;&amp; day == &quot;30&quot;) || (month ==&quot;7&quot; &amp;&amp; day == &quot;31&quot;) || (month ==&quot;8&quot; &amp;&amp; day == &quot;31&quot;) || (month ==&quot;9&quot; &amp;&amp; day == &quot;30&quot;) || (month ==&quot;10&quot; &amp;&amp; day == &quot;30&quot;) || (month ==&quot;11&quot; &amp;&amp; day == &quot;30&quot;) || (month ==&quot;12&quot; &amp;&amp; day == &quot;31&quot;) ) 
+	 		        { 		            
+	 		        	if (month ==&quot;12&quot; &amp;&amp; day == &quot;31&quot;)   
+	 		             {
+	 		               day=1;
+	 		               month = 1;
+	 		               year= year +1;
+	 		             } 		               
+	 		               else 
+	 		             {
+	 		               day=1;
+	 		               month = month +1;
+	 		             } 		             
+	 		            }
+	 		          
+	 		            else {
+	       		
+	 		            day = day +1;
+	 		                 }
+	 		           
+	 		            stringDate2 = (month)+ &quot;/&quot;+ (day) + &quot;/&quot;+year+ &quot; 23:58:59&quot;;
+	 		            
+	 		            var PSOut = TheApplication().NewPropertySet();
+				        var PSIn = TheApplication().NewPropertySet();
+	       				PSIn.SetProperty(&quot;Date Time&quot;, stringDate2);
+	       				PSIn.SetProperty(&quot;Calender Id&quot;,CalendId);
+			         	PSIn.SetProperty(&quot;Time Zone&quot;,&quot;GTB Standard Time&quot;);
+				        BS.InvokeMethod(&quot;IsHoliday&quot;,PSIn, PSOut);  
+				        isHoliday = PSOut.GetProperty(&quot;Is Holiday&quot;);
+				        count=count +1;
+			           
+		   	    	}
+		   	    		
+				PSOut = null;
+				PSIn = null;
+				
+			    this.SetFieldValue(&quot;VF Due Date&quot;,stringDate2);//Oracle Review October 2011 - SetFieldValue in this BC
+				this.SetFieldValue(&quot;İnvoice Due Date&quot;,stringDate2);//Oracle Review October 2011 - SetFieldValue in this BC
+				//end code retrofits 20150427 - February Minor
+		}
+		if(Reason == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;PRE_ADJ_REASON&quot;,&quot;Donation Refund&quot;))
+		{
+			var sValue = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_ADJ_TAX_PERCENT&quot;,&quot;Tahsilatına aracılık edilen&quot;);
+			var oBCPick = GetPicklistBusComp(&quot;VF Invoice Item&quot;);
+			with (oBCPick)
+			{
+			  ClearToQuery();
+			  SetSearchSpec(&quot;VFTRCBU Value&quot;,sValue);
+			  ExecuteQuery(ForwardOnly);
+			  if (FirstRecord())
+				 Pick();
+			}
+			oBCPick = null;
+		}
+	}
+}"
+			   SEQUENCE="11"
+			   UPDATED="01/27/2017 17:26:24"
+			   UPDATED_BY="LROSADO"
+			   CREATED="06/10/2013 01:44:39"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Cancel"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Cancel()
+{
+	var Inputs : PropertySet;
+	var Outputs : PropertySet;
+	var BSAdjustCancel : Service;
+	
+	
+	try
+	{
+		var iRecord = this.FirstSelected();
+	
+		var sStatus;
+		
+		var sErrorMessage;
+	
+		var sCancelled = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;PRE_ADJ_STATUS&quot;, &quot;Cancelled&quot;);
+		
+		while (iRecord)
+		{                     
+			Inputs = TheApplication().NewPropertySet();
+			Outputs = TheApplication().NewPropertySet();
+			
+			BSAdjustCancel = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+			
+			Inputs.SetProperty(&quot;ProcessName&quot;,&quot;VF Adjustment Cancellation&quot;);
+			Inputs.SetProperty(&quot;Adjustment ID&quot;, this.GetFieldValue(&quot;Adjustment ID&quot;));
+			Inputs.SetProperty(&quot;Account Code&quot;, this.GetFieldValue(&quot;Account Code&quot;));
+			
+			BSAdjustCancel.InvokeMethod(&quot;RunProcess&quot;,Inputs,Outputs);
+			
+			sStatus = Outputs.GetProperty(&quot;STATUS_CODE&quot;);
+			
+			if(sStatus == &quot;1&quot;)
+			{
+				sErrorMessage = Outputs.GetProperty(&quot;ERROR_REASON&quot;);
+				
+				TheApplication().RaiseErrorText(sErrorMessage);
+			}
+			else
+			{
+				this.SetFieldValue(&quot;Status&quot;, sCancelled);
+			}
+			
+			iRecord = NextSelected();
+		}
+	}
+	finally
+	{
+		Inputs = null;
+		Outputs = null;
+		BSAdjustCancel = null;
+	}
+			
+}"
+			   SEQUENCE="2"
+			   UPDATED="05/27/2015 18:15:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="LimitCheck"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function LimitCheck(BACode, sDay, var3, ErrorMessage)
+{
+	try
+	{
+		
+		//ALINO VFTRCBU-27764 16-05-2016
+		var BS	: Service = TheApplication().GetService(&quot;VF Virtual Prepaid Adjustment BS&quot;);
+        var inProp :PropertySet	= TheApplication().NewPropertySet();
+		var outProp :PropertySet= TheApplication().NewPropertySet();
+              
+        var CustType;
+        var InvoiceItem;
+		var ErrorCode = 0;
+		var ErrorMessage = &quot;&quot;;
+		
+		if (BACode == null || BACode == &quot;&quot;)
+		{
+			return;
+		}
+		
+		//ALINO VFTRCBU-27764 16-05-2016
+
+		CustType = this.GetFieldValue(&quot;VFTRCBU Customer Type Calc&quot;);
+        InvoiceItem  = this.GetFieldValue(&quot;VF Invoice Item&quot;);
+
+		inProp.SetProperty(&quot;Request Date&quot;,  sDay);
+		
+        inProp.SetProperty(&quot;Request Amt&quot;, var3);
+        inProp.SetProperty(&quot;Account Code&quot;, BACode);
+        inProp.SetProperty(&quot;Customer Type&quot;, CustType);
+        inProp.SetProperty(&quot;Invoice Item&quot;, InvoiceItem);
+        
+		BS.InvokeMethod(&quot;LimitCheckInquiry&quot;,inProp, outProp);
+        ErrorCode = outProp.GetProperty(&quot;Error Code&quot;);
+        ErrorMessage = outProp.GetProperty(&quot;Error Message&quot;);
+        
+        return(ErrorMessage);
+	
+	}
+	finally
+	{
+		CustType = null;
+		InvoiceItem = null;
+				
+	}
+}"
+			   SEQUENCE="4"
+			   UPDATED="09/14/2016 15:49:23"
+			   UPDATED_BY="ALINO"
+			   CREATED="05/27/2015 18:15:00"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="LimitCheckAll"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function LimitCheckAll(BACode, var3)
+{
+	/*
+	try
+	{
+		var boBillAccount : BusObject = TheApplication().GetBusObject(&quot;Billing Account&quot;);
+		var bcBillAccount : BusComp   = boBillAccount.GetBusComp(&quot;Billing Account&quot;);
+		var bcAdjustment  : BusComp   = null;
+		
+		if (BACode == null || BACode == &quot;&quot;)
+		{
+			return;
+		}
+
+		bcBillAccount.SetViewMode(AllView);
+		bcBillAccount.ClearToQuery();
+		bcBillAccount.ActivateField(&quot;Account Code&quot;);
+		bcBillAccount.SetSearchSpec(&quot;Account Code&quot;, BACode);
+		bcBillAccount.ExecuteQuery(ForwardOnly);
+
+		if (!bcBillAccount.FirstRecord())
+		{
+			return;
+		}
+
+		bcAdjustment = boBillAccount.GetBusComp(&quot;VF Virtual Prepaid Adjustment&quot;);
+
+		bcAdjustment.SetViewMode(AllView);
+		bcAdjustment.ClearToQuery();
+		bcAdjustment.SetSearchSpec(&quot;CustomMethodName&quot;, &quot;LimitCheckAll Inquiry&quot;);
+		bcAdjustment.SetSearchSpec(&quot;RequestAmt&quot;, var3);
+		bcAdjustment.ExecuteQuery(ForwardOnly);	
+	}
+	finally
+	{
+		bcAdjustment =  null;
+		bcBillAccount = null;
+		bcAdjustment  = null;
+		
+	}
+	*/
+}"
+			   SEQUENCE="5"
+			   UPDATED="05/16/2016 14:40:14"
+			   UPDATED_BY="ALINO"
+			   CREATED="05/27/2015 18:15:00"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Replace"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Replace(src, trg, rep) //ITSL-2105
+{ 
+var i = src.indexOf(trg); 
+while (i &gt;= 0) 
+{ 
+src = src.substring(0, i) + rep + src.substring(i + trg.length, src.length); 
+i = src.indexOf(trg); 
+} 
+return(src); 
+}"
+			   SEQUENCE="6"
+			   UPDATED="02/03/2017 12:25:25"
+			   UPDATED_BY="LROSADO"
+			   CREATED="02/03/2017 12:25:25"
+			   CREATED_BY="LROSADO">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Submit"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Submit()
+{
+	var oBS : Service;
+	var oInputs : PropertySet;
+	var oOutputs : PropertySet;
+	var sMessage = &quot;&quot;;
+	
+	//  FCARRIL/ALINO VFTRCBU-27764 16-05-2016
+	var ErrorCode = 0;
+	var ErrorMessage = &quot;&quot;;
+
+	try
+	{
+//TheApplication().TraceOn(&quot;c:\\BC_ADJ.log&quot;, &quot;Allocation&quot;, &quot;All&quot;);
+		this.WriteRecord();
+
+		var sInvoiceItem = this.GetFieldValue(&quot;VF Invoice Item&quot;);
+		var sCustomerType = this.GetFieldValue(&quot;VFTRCBU Customer Type Calc&quot;);
+		
+		var BSGeneric:Service = TheApplication().GetService(&quot;TELCO Generic Utilities&quot;);
+		var InputsBS:PropertySet = TheApplication().NewPropertySet();
+		var OutputsBS:PropertySet = TheApplication().NewPropertySet();
+		 
+		var sSearch = &quot;[Type]=&apos;ACCOUNT_TYPE&apos; AND [Value]=&apos;&quot; + sCustomerType + &quot;&apos; AND [Active]=&apos;Y&apos;&quot;;
+		InputsBS.SetProperty(&quot;FieldQuery&quot;, &quot;Name&quot;);
+		InputsBS.SetProperty(&quot;SearchExpression&quot;, sSearch);
+		BSGeneric.InvokeMethod(&quot;GetLOV&quot;, InputsBS , OutputsBS );
+	  	var CustTypeCalc = OutputsBS.GetProperty(&quot;Name&quot;);
+	  	
+//TheApplication().Trace(&quot;Customer:&quot;+CustTypeCalc);
+       
+		if(sInvoiceItem == &quot;&quot;)
+		{
+			sMessage = TheApplication().LookupMessage(&quot;VF Message Category&quot;, &quot;X_VF_INVOICE_ITEM_REQUIRED&quot;);
+			
+			TheApplication().RaiseErrorText(sMessage);
+		}
+		
+		var sReason = this.GetFieldValue(&quot;Reason For Request&quot;);
+		
+		var sDonationRefund = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;PRE_ADJ_REASON&quot;, &quot;Donation Refund&quot;);
+		
+		if(sReason == sDonationRefund)
+		{
+			var sDonatingName = this.GetFieldValue(&quot;VF Donating Name&quot;);
+			if(sDonatingName == &quot;&quot;)
+			{
+				sMessage = TheApplication().LookupMessage(&quot;VF Message Category&quot;, &quot;X_VF_DONATING_NAME_REQUIRED&quot;);
+			
+				TheApplication().RaiseErrorText(sMessage);
+			}
+		}
+//TheApplication().Trace(&quot;Reason:&quot;+sReason);
+
+		oBS = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		
+	
+		oInputs = TheApplication().NewPropertySet();
+		
+		oInputs.SetProperty(&quot;Account Code&quot;, this.GetFieldValue(&quot;Account Code&quot;));
+		
+		var sAdjustmentId = this.GetFieldValue(&quot;Adjustment ID&quot;);
+		
+		if(sAdjustmentId == &quot;&quot;)
+		{
+			sAdjustmentId = this.GetFieldValue(&quot;Id&quot;);
+		}
+		
+		oInputs.SetProperty(&quot;Adjustment ID&quot;, sAdjustmentId);
+		
+		//oInputs.SetProperty(&quot;Asset Id&quot;, this.GetFieldValue(&quot;Asset Id&quot;));
+		oInputs.SetProperty(&quot;Created By Login&quot;, this.GetFieldValue(&quot;Created By Login&quot;));
+		var var7 = this.GetFieldValue(&quot;Created By Login&quot;);
+		
+		var CorpControlFlag = this.GetFieldValue(&quot;VF Corporate Role&quot;);
+	//	var pat = /(|)/g; //ITSL-2105
+		var sMaximoId = this.GetFieldValue(&quot;Maximo Id&quot;);//ITSL-2105
+		var sDescription = this.GetFieldValue(&quot;Description&quot;);//ITSL-2105
+		var sClearMaximoId = Replace(sMaximoId,&quot;|&quot;,&quot;&quot;);//ITSL-2105	
+		var sClearDescription =Replace(sDescription,&quot;|&quot;,&quot;&quot;);//ITSL-2105	
+		sClearDescription = sClearDescription.substring(0,150);//ITSL-2105		
+	//	oInputs.SetProperty(&quot;Description&quot;, this.GetFieldValue(&quot;Description&quot;)); //ITSL-2105
+		var var5 = sClearDescription+&quot;|&quot;+sClearMaximoId+&quot;|&quot;+this.GetFieldValue(&quot;Adjustment Source&quot;);//ITSL-2105
+		oInputs.SetProperty(&quot;Description&quot;, var5); //ITSL-2105
+		//oInputs.SetProperty(&quot;Product Id&quot;, this.GetFieldValue(&quot;Product Id&quot;));
+		oInputs.SetProperty(&quot;Reason For Request&quot;, this.GetFieldValue(&quot;Reason For Request&quot;));
+		var var6 = this.GetFieldValue(&quot;Reason For Request&quot;);
+		oInputs.SetProperty(&quot;Request Amt&quot;, this.GetFieldValue(&quot;Request Amt&quot;));
+		var var3 = this.GetFieldValue(&quot;Request Amt&quot;);
+		oInputs.SetProperty(&quot;Request Date&quot;, this.GetFieldValue(&quot;Request Date&quot;));
+		var var2 = this.GetFieldValue(&quot;Request Date&quot;);
+		oInputs.SetProperty(&quot;Status&quot;, this.GetFieldValue(&quot;Status&quot;));
+		oInputs.SetProperty(&quot;Type&quot;, this.GetFieldValue(&quot;Type&quot;));
+		var var1 = this.GetFieldValue(&quot;Type&quot;);
+		oInputs.SetProperty(&quot;VF Division&quot;, this.GetFieldValue(&quot;VF Division&quot;));
+		oInputs.SetProperty(&quot;VF Donating Name&quot;, this.GetFieldValue(&quot;VF Donating Name&quot;));
+		oInputs.SetProperty(&quot;VF Due Date&quot;, this.GetFieldValue(&quot;VF Due Date&quot;));
+		oInputs.SetProperty(&quot;VF Dunning Action&quot;, this.GetFieldValue(&quot;VF Dunning Action&quot;));
+		oInputs.SetProperty(&quot;VF Invoice Item&quot;, this.GetFieldValue(&quot;VF Invoice Item&quot;));
+		var var4 = this.GetFieldValue(&quot;VF Invoice Item&quot;);		
+		oInputs.SetProperty(&quot;VF MSISDN&quot;, this.GetFieldValue(&quot;VF MSISDN&quot;));
+		oInputs.SetProperty(&quot;VF Billing Common Id&quot;, this.GetFieldValue(&quot;VF Billing Common Id&quot;));
+		var sRightness = this.GetFieldValue(&quot;VF Subscriber Rightness&quot;);
+		
+		//oInputs.SetProperty(&quot;VF Ths Action Id&quot;, this.GetFieldValue(&quot;VF Ths Action Id&quot;));
+
+		oInputs.SetProperty(&quot;ProcessName&quot;, &quot;VF Submit Adjustment&quot;);
+		
+		oOutputs = TheApplication().NewPropertySet();
+		
+		//VFTRCBU GAP02 AYILDIZ
+		var ComponentBA = this.ParentBusComp();
+		var BACode = this.GetFieldValue(&quot;Account Code&quot;);
+		
+		var accountType = null;
+		var strAccountId = null;
+//TheApplication().Trace(&quot;ComponentBA:&quot;+ComponentBA);
+		
+		if(ComponentBA ==&quot;BusComp [Asset Mgmt - Asset]&quot;)
+		{
+			var sDay = ComponentBA.GetFieldValue(&quot;VFTRCBU Bill Cycle&quot;);
+			var sBAId = ComponentBA.GetFieldValue(&quot;Billing Account Id&quot;);
+			var boBillAsset : BusObject = TheApplication().GetBusObject(&quot;Billing Account&quot;);
+			var bcBillAsset : BusComp   = boBillAsset.GetBusComp(&quot;Billing Account&quot;);
+			bcBillAsset.SetViewMode(AllView);
+			bcBillAsset.ClearToQuery();
+			bcBillAsset.ActivateField(&quot;Id&quot;);
+			bcBillAsset.SetSearchSpec(&quot;Id&quot;, sBAId);
+			bcBillAsset.ExecuteQuery(ForwardOnly);
+			if(bcBillAsset.FirstRecord())
+			{
+				accountType = bcBillAsset.GetFieldValue(&quot;TeXCo Account Type&quot;);
+				strAccountId = bcBillAsset.GetFieldValue(&quot;Parent Account Id&quot;);
+			}	
+		}
+		else
+		{
+			var sDay = ComponentBA.GetFieldValue(&quot;VF Bill Cycle&quot;);
+			var sBAId = ComponentBA.GetFieldValue(&quot;Id&quot;);
+			accountType = ComponentBA.GetFieldValue(&quot;TeXCo Account Type&quot;);
+			strAccountId = ComponentBA.GetFieldValue(&quot;Parent Account Id&quot;);
+		}
+				
+		// VFTRCBU WA04 TiagoRocha  || ALINO VFTRCBU-27764 16-05-2016
+		//VFTRCBU-31349 - disable bypass validation for Limit Checks
+		//if(!isPositionEnabled(&quot;VFTRCBU_ADJ_VALIDATION_ROLES&quot;,&quot;No Active Lines&quot;)) //Role27
+		//{
+//TheApplication().Trace(&quot;ENTREI NO LIMITCHECK&quot;);
+		var rErrorLimit = LimitCheck(BACode, sDay, var3, ErrorMessage);						
+		if (rErrorLimit != &quot;&quot;) 
+		{
+			//TheApplication().Trace(&quot;ENTREI NO LIMITCHECK ERROR&quot;);		
+			TheApplication().RaiseErrorText(rErrorLimit);
+			return(ContinueOperation);
+		}
+		//}//END VFTRCBU-31349 - disable bypass validation for Limit Checks
+
+		
+//TheApplication().Trace(&quot;BEFORE SUBMIT ADJUSTMENT&quot;);				
+		oBS.InvokeMethod(&quot;RunProcess&quot;, oInputs, oOutputs);
+		
+		var sErrorMessage = oOutputs.GetProperty(&quot;Error Message&quot;);
+//TheApplication().Trace(&quot;AFTER SUBMIT ADJUSTMENT - Error Message:&quot; + sErrorMessage);
+		
+		if(sErrorMessage == &quot;&quot;)
+		{
+			var submittedSt = TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;PRE_ADJ_STATUS&quot;,&quot;Submitted&quot;);
+
+
+			//VFTRCBU - TiagoRocha
+			if(isPositionEnabled(&quot;VFTRCBU_ADJ_VALIDATION_ROLES&quot;,&quot;Special Role List&quot;)) //VFTRCBU Retrofits | Tiago Rocha | 26.01.2015 //Role7, Role28, Role29
+			{
+				//FCARRIL: VFTRCBU-30913
+				AdjustmentInquiry(); 
+				//this.InvokeMethod(&quot;AdjustmentInquiry&quot;);
+
+			}	
+			
+			this.SetFieldValue(&quot;Status&quot;,submittedSt);
+			this.WriteRecord(); 
+						
+			// VFTRCBU WA04 TiagoRocha
+			if(isPositionEnabled(&quot;VFTRCBU_ADJ_VALIDATION_ROLES&quot;,&quot;Special Role List&quot;))
+			{
+//TheApplication().Trace(&quot;ENTER TO CREATE SR&quot;);		
+			//  SR will be created here
+			
+				//var accountType = ComponentBA.GetFieldValue(&quot;TeXCo Account Type&quot;);
+				var sPrepaid = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PAYMENT_MODALITY&quot;,&quot;Prepaid&quot;);
+				var sPostpaid = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PAYMENT_MODALITY&quot;,&quot;Postpaid&quot;);				
+			
+				var psInputs			= 	TheApplication().NewPropertySet();
+				var psOutputs			= 	TheApplication().NewPropertySet();
+				var bsGeneralOperations	=	TheApplication().GetService (&quot;ACS General Operations&quot;);
+				var maximoInputs		= 	TheApplication().NewPropertySet();
+				var maximoOutputs		= 	TheApplication().NewPropertySet();
+				
+				//var strAccountId 	= ComponentBA.GetFieldValue(&quot;Parent Account Id&quot;);
+				var strSubStatus   	= TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;SR_SUB_STATUS&quot;,&quot;Assigned&quot;);
+				var strStatus	   	= TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;SR_STATUS&quot;,&quot;Closed&quot;);
+				var strType		   	= &quot;&quot;;
+				var strArea	       	= &quot;&quot;;
+				var strSubArea	   	= &quot;&quot;;
+				var strSRCategory	= &quot;&quot;;
+				var strOwnerGroup  	= TheApplication().PositionName();
+				var strDescription 	= &quot;&quot;;
+				
+				/*if (accountType == sPostpaid)
+				{
+					strType		= &quot;ŞIKAYET&quot;;
+					strArea		= &quot;FATURA İŞLEMLERI&quot;;
+					//strSubArea	    = &quot;CC OTOMATIK EMP. IADE-FATURALI&quot;;
+					strSubArea	    = &quot;CC OTOMATIK EMP. İADE-FATURALI&quot;; //FCARRIL: VFTRCBU-30913
+				}
+				else if (accountType == sPrepaid)
+				{*/
+					strType		= &quot;ŞIKAYET&quot;;
+					//strArea		= &quot;CEP LIRA&quot;;
+					strArea		= &quot;FATURA İŞLEMLERI&quot;;//FCARRIL: VFTRCBU-30913
+					//strSubArea	    = &quot;CC OTOMATIK EMP IADE-FATURASIZ&quot;; 
+					strSubArea	    = &quot;CC OTOMATIK EMP. İADE-FATURALI&quot;; //FCARRIL: VFTRCBU-30913
+				//}
+			
+				psInputs.SetProperty (&quot;Type&quot;, strType);
+				psInputs.SetProperty (&quot;Area&quot;, strArea);
+				psInputs.SetProperty (&quot;Sub Area&quot;, strSubArea);
+				psInputs.SetProperty (&quot;Status&quot;, strStatus);
+				psInputs.SetProperty (&quot;Sub Status&quot;, strSubStatus);
+				psInputs.SetProperty (&quot;VF SR Category&quot;, strSRCategory);
+				psInputs.SetProperty (&quot;Owner Group&quot;, strOwnerGroup);
+				psInputs.SetProperty (&quot;Description&quot;, strDescription);
+				psInputs.SetProperty (&quot;Account Id&quot;, strAccountId);
+				
+				bsGeneralOperations.InvokeMethod (&quot;CreateSR&quot;, psInputs, psOutputs);
+				var strSRId = psOutputs.GetProperty(&quot;Service Request Id&quot;);
+//TheApplication().Trace(&quot;SR CREATED:&quot;+strSRId);
+				
+				// find new created SR nummber to send maximo ...
+				//
+				//
+				var boServiceRequest = TheApplication().GetBusObject(&quot;VF Maximo Ticket Flat BO&quot;);	
+				var bcServiceRequest = boServiceRequest.GetBusComp(&quot;VF Service Request Maximo&quot;);
+				
+				with(bcServiceRequest)
+				{
+					ClearToQuery();
+					SetViewMode(AllView);
+					SetSearchExpr(&quot;[Id]=&apos;&quot;+strSRId+&quot;&apos;&quot;);
+					ActivateField(&quot;SR Number&quot;);
+					ActivateField(&quot;Billing Account Code&quot;);
+					ActivateField(&quot;Triplet No&quot;);
+					ActivateField(&quot;SR Type&quot;);
+					ActivateField(&quot;Area&quot;);
+					ActivateField(&quot;Sub-Area&quot;);					
+					ActivateField(&quot;Status&quot;);										
+					ExecuteQuery(ForwardOnly);
+					if(FirstRecord())
+					{
+					    var strSRNumber	= GetFieldValue(&quot;SR Number&quot;);
+					    SetFieldValue(&quot;Billing Account Id&quot;,sBAId);
+					    
+						//if (accountType == sPostpaid) //FCARRIL: VFTRCBU-30913
+						if (CustTypeCalc == &quot;101&quot;) // EBU
+						{
+							SetFieldValue(&quot;Triplet No&quot;,&quot;12205&quot;);
+							SetFieldValue(&quot;SR Type&quot;,&quot;ŞIKAYET&quot;);
+							SetFieldValue(&quot;Area&quot;,&quot;FATURA İŞLEMLERI&quot;); //FCARRIL: VFTRCBU-30913
+							SetFieldValue(&quot;Sub-Area&quot;,&quot;CC OTOMATIK EMP. İADE-FATURALI&quot;); //FCARRIL: VFTRCBU-30913
+							//SetFieldValue(&quot;Status&quot;,&quot;Closed&quot;);
+																
+						}
+						//else if (accountType == sPrepaid) //FCARRIL: VFTRCBU-30913
+						else if (CustTypeCalc == &quot;102&quot;) // CBU
+						{
+//TheApplication().Trace(&quot;SR MAXIMO VALUES - CBU&quot;);
+							SetFieldValue(&quot;Triplet No&quot;,&quot;1908&quot;); //FCARRIL: VFTRCBU-30913
+							SetFieldValue(&quot;SR Type&quot;,&quot;ŞIKAYET&quot;); //FCARRIL: VFTRCBU-30913
+							SetFieldValue(&quot;Area&quot;,&quot;FATURA İŞLEMLERI&quot;); //FCARRIL: VFTRCBU-30913
+							SetFieldValue(&quot;Sub-Area&quot;,&quot;CC OTOMATIK EMP. İADE-FATURALI&quot;);	 //FCARRIL: VFTRCBU-30913
+							//SetFieldValue(&quot;Status&quot;,&quot;Closed&quot;);															
+						}					    
+					    
+					    WriteRecord(); 
+					    		
+					}
+				}					
+//TheApplication().Trace(&quot;SR MAXIMO - WRITE RECORD&quot;);				
+				//
+				
+				//create note
+				
+				var boNote = TheApplication().GetBusObject(&quot;Service Request&quot;);	
+				var bcNote = boNote.GetBusComp(&quot;PLW Request Note&quot;);
+				
+				bcNote.NewRecord(NewBefore);
+				bcNote.SetFieldValue(&quot;Note&quot;,var3+&quot; TL&quot;);
+				bcNote.SetFieldValue(&quot;Source Id&quot;,strSRId);
+				
+				bcNote.NewRecord(NewBefore);
+				bcNote.SetFieldValue(&quot;Note&quot;,sRightness);
+				bcNote.SetFieldValue(&quot;Source Id&quot;,strSRId);	
+				
+				bcNote.WriteRecord(); 		
+				
+				//
+//TheApplication().Trace(&quot;NOTE CREATED&quot;);
+				
+				maximoInputs.SetProperty (&quot;REFUND_AMOUNT&quot;, var3);
+				
+				if (sRightness == &quot;Kanitlanan&quot; || sRightness ==&quot;Provable&quot; )
+				{
+					maximoInputs.SetProperty (&quot;REFUND_STAUS&quot;, &quot;CAT1&quot;);
+				}
+				else
+				{
+					maximoInputs.SetProperty (&quot;REFUND_STAUS&quot;, &quot;CAT2&quot;);
+				}
+//TheApplication().Trace(&quot;CALL SUBMIT TO MAXIMO&quot;);				
+				maximoInputs.SetProperty (&quot;SR_NUMBER&quot;, strSRNumber);
+				SubmitSR_ToMaximo(maximoInputs, maximoOutputs);
+			//  SR Creation end				
+			}
+			
+		}
+		else
+		{
+//TheApplication().Trace(&quot;SUBMIT - BRANCH ERROR&quot;);
+		
+			TheApplication().RaiseErrorText(sErrorMessage);
+			return(ContinueOperation);
+		}
+
+//TheApplication().TraceOff();	
+	}
+	finally
+	{
+		oBS = null;
+		oInputs = null;
+		oOutputs = null;
+		//ObjectBA = null ;
+		ComponentBA = null;
+		boServiceRequest =  null;
+		bcServiceRequest = null ;
+	}
+}"
+			   SEQUENCE="7"
+			   UPDATED="02/03/2017 12:25:25"
+			   UPDATED_BY="LROSADO"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SubmitSR_ToMaximo"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SubmitSR_ToMaximo(Inputs,Outputs)
+{
+	try
+	{
+		var boServiceRequest = TheApplication().GetBusObject(&quot;VF Maximo Ticket Flat BO&quot;);	
+		var bcServiceRequest = boServiceRequest.GetBusComp(&quot;VF Service Request Maximo&quot;);
+		
+		var boServiceRequest1= TheApplication().GetBusObject(&quot;VF Maximo Ticket Flat BO&quot;);	
+		var bcServiceRequest1= boServiceRequest1.GetBusComp(&quot;VF Service Request Maximo&quot;);
+		
+		var BS	: Service = TheApplication().GetService(&quot;VF TRK Utilities&quot;);
+		var oBS	: Service = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		
+		var inProp :PropertySet	= TheApplication().NewPropertySet();
+		var outProp :PropertySet= TheApplication().NewPropertySet();
+		
+		var strREFUND_AMOUNT= Inputs.GetProperty(&quot;REFUND_AMOUNT&quot;);
+		var strREFUND_STATUS= Inputs.GetProperty(&quot;REFUND_STAUS&quot;);
+		var strSR_NUMBER	= Inputs.GetProperty(&quot;SR_NUMBER&quot;);
+		var strVFTripletNo	= &quot;&quot;;
+		var strTripletLOV	= &quot;&quot;;
+		var strBA_CODE		= &quot;&quot;;
+		var strCONTACT_NAME = &quot;&quot;;
+		var strCUSTOMER_NAME= &quot;&quot;;
+		var strREQUEST_DATE	= &quot;&quot;;
+		var strSUBSCRIPTION_DATE	= &quot;&quot;;
+		var strCUSTOMER_TYPE		= &quot;&quot;;
+		var strSERVICE_TYPE			= &quot;&quot;;
+		var strREVENUE_SEGMENT		= &quot;&quot;;
+		var strPREVIOUS_REQUESTS	= &quot;&quot;;
+		var strPROBLEM_NAME			= &quot;&quot;;
+		
+		var bNextRecord  = false;
+		var strAccountId = &quot;&quot;;
+		var strPreContactName = &quot;&quot;;
+		var strPreProblemName = &quot;&quot;;
+		var strUser = TheApplication().LoginName();
+				
+//		Validate mandatory fields
+		inProp.SetProperty(&quot;SR_NUMBER&quot;,strSR_NUMBER);
+		BS.InvokeMethod(&quot;Input Validation&quot;,inProp, outProp);
+
+//TheApplication().Trace(&quot;SUBMIT TO MAXIMO - BEFORE QUERY&quot;);
+		
+		with(bcServiceRequest)
+		{
+			ClearToQuery();
+			SetViewMode(AllView);
+			SetSearchExpr(&quot;[SR Number]=&apos;&quot;+strSR_NUMBER+&quot;&apos;&quot;);
+			ExecuteQuery(ForwardOnly);
+			if(FirstRecord())
+			{
+				strVFTripletNo	= GetFieldValue(&quot;Triplet No&quot;);
+				strBA_CODE		= GetFieldValue(&quot;Billing Account Code&quot;);
+				strCONTACT_NAME	= GetFieldValue(&quot;Pim Contact Name&quot;);	
+				strCUSTOMER_NAME= GetFieldValue(&quot;Account Last Name&quot;);
+				strPROBLEM_NAME	= GetFieldValue(&quot;Sub-Area&quot;);
+				strREQUEST_DATE	= GetFieldValue(&quot;Opened Date&quot;);
+				strSUBSCRIPTION_DATE=GetFieldValue(&quot;Customer Since&quot;);
+				strREVENUE_SEGMENT	= GetFieldValue(&quot;Customer Class&quot;);
+				strCUSTOMER_TYPE	= GetFieldValue(&quot;Customer Type&quot;);
+				strSERVICE_TYPE		= GetFieldValue(&quot;Billing Account Type&quot;);
+				
+				strAccountId = GetFieldValue(&quot;Account Id&quot;);
+				
+				with(bcServiceRequest1)
+				{
+					ClearToQuery();
+					SetViewMode(AllView);
+					SetSearchExpr(&quot;[Account Id]=&apos;&quot;+strAccountId+&quot;&apos; AND [SR Number] &lt;&gt;&apos;&quot;+strSR_NUMBER+&quot;&apos;AND [Created]&gt;=Today()-365&quot;);
+					ExecuteQuery(ForwardOnly);
+					bNextRecord = FirstRecord();
+					while(bNextRecord)
+					{
+						strPreProblemName= GetFieldValue(&quot;Sub-Area&quot;);
+						if(strPreProblemName != null &amp;&amp; strPreProblemName!=&quot;&quot;)
+						{
+							strPREVIOUS_REQUESTS = strPREVIOUS_REQUESTS + strPreProblemName+&quot;\n&quot;;
+						}
+						bNextRecord = NextRecord();
+					}
+				}
+				inProp.Reset();
+				outProp.Reset();
+				
+				inProp.SetProperty(&quot;SR_NUMBER&quot;,strSR_NUMBER);
+				inProp.SetProperty(&quot;BA_CODE&quot;,strBA_CODE);
+				inProp.SetProperty(&quot;CUSTOMER_NAME&quot;,strCUSTOMER_NAME);
+				inProp.SetProperty(&quot;PROBLEM_NAME&quot;,strPROBLEM_NAME);
+				inProp.SetProperty(&quot;REQ_DATE&quot;,strREQUEST_DATE);
+				inProp.SetProperty(&quot;SUBS_DATE&quot;,strSUBSCRIPTION_DATE);
+				inProp.SetProperty(&quot;CUSTOMER_SEGMENT&quot;,strREVENUE_SEGMENT);
+				inProp.SetProperty(&quot;CUSTOMER_TYPE&quot;,strCUSTOMER_TYPE);
+				inProp.SetProperty(&quot;SERVICE_TYPE&quot;,strSERVICE_TYPE);
+				inProp.SetProperty(&quot;PREVIOS_REQS&quot;,strPREVIOUS_REQUESTS);
+				inProp.SetProperty (&quot;REFUND_AMOUNT&quot;,strREFUND_AMOUNT );
+				inProp.SetProperty (&quot;REFUND_STATUS&quot;,strREFUND_STATUS);
+				inProp.SetProperty (&quot;USER&quot;, strUser);
+//TheApplication().Trace(&quot;SUBMIT TO MAXIMO - BEFORE WF CALL&quot;);				
+				inProp.SetProperty(&quot;ProcessName&quot;, &quot;VF Submit SR To Maximo&quot;);
+				oBS.InvokeMethod(&quot;RunProcess&quot;, inProp, outProp);
+				
+				var sErrorMessage = outProp.GetProperty(&quot;Error Message&quot;);
+
+//TheApplication().Trace(&quot;SUBMIT TO MAXIMO - AFTER WF CALL. ERROR:&quot;+sErrorMessage);	
+	
+				if(sErrorMessage != &quot;&quot; &amp;&amp; sErrorMessage != null)
+				{
+					TheApplication().RaiseErrorText(sErrorMessage);
+				}
+			}
+			else
+			{
+				TheApplication().RaiseErrorText(&quot;There is no service request found!!!&quot;);
+			}
+		}
+	}
+	catch(e)
+	{
+		//TheApplication().RaiseErrorText(e.ToString()); //FCARRIL:VFTRCBU-31243
+		TheApplication().RaiseErrorText(e.errText);
+	}
+	finally
+	{		
+		boServiceRequest	= null;
+		boServiceRequest1	= null;
+		bcServiceRequest	= null;
+		bcServiceRequest1	= null;
+	}
+}"
+			   SEQUENCE="7"
+			   UPDATED="01/27/2017 17:26:24"
+			   UPDATED_BY="LROSADO"
+			   CREATED="07/15/2014 12:05:42"
+			   CREATED_BY="PCASTRO">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="isPositionEnabled"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function isPositionEnabled(sLovType, sLovName)
+{
+	//VFTRCBU WA04 - Check user number of roles - TiagoRocha - 14.10.2014
+	var oBS:Service = TheApplication().GetService(&quot;VF TRK Utilities&quot;);
+	var oPSInputs:PropertySet = TheApplication().NewPropertySet();
+	var oPSOutputs:PropertySet = TheApplication().NewPropertySet();
+	var sHasRole = &quot;&quot;;
+	
+	oPSInputs.SetProperty(&quot;Type&quot;, sLovType);
+	oPSInputs.SetProperty(&quot;Name&quot;, sLovName);
+	
+	oBS.InvokeMethod(&quot;HasRolesLOV&quot;,oPSInputs, oPSOutputs);
+	
+	sHasRole = oPSOutputs.GetProperty(&quot;hasRole&quot;);
+	
+	if (sHasRole == &quot;True&quot;)
+		return true;
+	else
+		return false;
+	
+	oPSInputs = null;
+	oPSOutputs = null;
+	oBS = null;
+}"
+			   SEQUENCE="3"
+			   UPDATED="05/27/2015 18:15:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 16:45:55"
+			   CREATED_BY="RLOURENCO">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSINESS_COMPONENT_USER_PROP
+			   COMMENTS="ITSL-2105"
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: Adjustment Source"
+			   VALUE="VF BC Read Only"
+			   UPDATED="02/03/2017 12:25:25"
+			   UPDATED_BY="LROSADO"
+			   CREATED="02/03/2017 12:25:25"
+			   CREATED_BY="LROSADO">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: Description"
+			   VALUE="VF BC Read Only"
+			   UPDATED="06/02/2016 10:47:32"
+			   UPDATED_BY="ALINO"
+			   CREATED="06/10/2013 01:44:39"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   COMMENTS="ITSL-2105"
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: Maximo Id"
+			   VALUE="VF BC Read Only"
+			   UPDATED="02/03/2017 12:25:25"
+			   UPDATED_BY="LROSADO"
+			   CREATED="02/03/2017 12:25:25"
+			   CREATED_BY="LROSADO">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   COMMENTS="FCARRIL/ALINO VFTRCBU-27764 16-05-2016"
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: Reason For Request"
+			   VALUE="VFTRCBU CorporateReadOnly"
+			   UPDATED="06/06/2016 13:43:16"
+			   UPDATED_BY="ALINO"
+			   CREATED="06/10/2013 01:44:39"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: Request Amt"
+			   VALUE="VF BC Read Only"
+			   UPDATED="06/02/2016 10:44:03"
+			   UPDATED_BY="ALINO"
+			   CREATED="06/10/2013 01:44:39"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: Type"
+			   VALUE="VF BC Read Only"
+			   UPDATED="06/02/2016 10:44:01"
+			   UPDATED_BY="ALINO"
+			   CREATED="06/10/2013 01:44:39"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: VF Donating Name"
+			   VALUE="VF BC Read Only"
+			   UPDATED="05/31/2016 19:08:01"
+			   UPDATED_BY="ALINO"
+			   CREATED="06/10/2013 01:44:39"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: VF Due Date"
+			   VALUE="VF BC Read Only"
+			   UPDATED="05/31/2016 19:08:02"
+			   UPDATED_BY="ALINO"
+			   CREATED="06/10/2013 01:44:39"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: VF Dunning Action"
+			   VALUE="VF BC Read Only"
+			   UPDATED="05/31/2016 19:08:04"
+			   UPDATED_BY="ALINO"
+			   CREATED="06/10/2013 01:44:39"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   COMMENTS="FCARRIL/ALINO VFTRCBU-27764 16-05-2016"
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: VF Invoice Item"
+			   VALUE="VFTRCBU CorporateReadOnly"
+			   UPDATED="06/06/2016 13:43:18"
+			   UPDATED_BY="ALINO"
+			   CREATED="06/10/2013 01:44:39"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   COMMENTS="FCARRIL/ALINO VFTRCBU-27764 16-05-2016"
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: VF Subscriber Rightness"
+			   VALUE="VFTRCBU ChargingReadOnly"
+			   UPDATED="06/06/2016 13:43:31"
+			   UPDATED_BY="ALINO"
+			   CREATED="07/15/2014 12:05:42"
+			   CREATED_BY="PCASTRO">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Service Name"
+			   VALUE="VF Virtual Prepaid Adjustment BS"
+			   UPDATED="05/30/2016 17:57:40"
+			   UPDATED_BY="ALINO"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Account Code"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/17/2016 17:56:06"
+			   UPDATED_BY="HRODRIGUES"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Account Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2013 15:10:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Adjustment ID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2013 15:10:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMMENTS="ITSL-2105"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Adjustment Source"
+			   NO_COPY="N"
+			   PICKLIST="VF Adjustment Source"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/26/2017 19:03:28"
+			   UPDATED_BY="LROSADO"
+			   CREATED="02/03/2017 12:25:25"
+			   CREATED_BY="LROSADO">
+				<PICK_MAP
+				   FIELD="Adjustment Source"
+				   INACTIVE="N"
+				   NAME="Adjustment Source"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="02/03/2017 12:25:25"
+				   UPDATED_BY="LROSADO"
+				   CREATED="02/03/2017 12:25:25"
+				   CREATED_BY="LROSADO">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VF Language"
+				   INACTIVE="N"
+				   NAME="VF Language"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Language"
+				   UPDATED="04/26/2017 19:03:28"
+				   UPDATED_BY="LROSADO"
+				   CREATED="04/26/2017 19:03:28"
+				   CREATED_BY="LROSADO">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VF Reason VAS Calc"
+				   INACTIVE="N"
+				   NAME="VF Reason VAS Calc"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="High"
+				   UPDATED="04/26/2017 19:03:28"
+				   UPDATED_BY="LROSADO"
+				   CREATED="04/26/2017 19:03:28"
+				   CREATED_BY="LROSADO">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Asset Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2013 15:10:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="BillDate"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/15/2014 12:05:42"
+			   UPDATED_BY="PCASTRO"
+			   CREATED="07/15/2014 12:05:42"
+			   CREATED_BY="PCASTRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf (ParentFieldValue(&quot;Billing Account Status&quot;)=LookupValue(&quot;BILLING_ACCOUNT_STATUS&quot;, &quot;100&quot;) OR ParentFieldValue(&quot;Billing Account Status&quot;)=LookupValue(&quot;BILLING_ACCOUNT_STATUS&quot;, &quot;130&quot;), TRUE , FALSE )"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Check"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/22/2015 11:40:16"
+			   UPDATED_BY="SKILICSAL"
+			   CREATED="07/22/2015 07:20:38"
+			   CREATED_BY="SKILICSAL">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Created By Login"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2013 15:10:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CustomMethodName"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2013 15:10:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Customer Decision Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2013 15:10:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Description"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="150"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/03/2017 12:25:25"
+			   UPDATED_BY="LROSADO"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+				<FIELD_USER_PROP
+				   INACTIVE="N"
+				   NAME="Text Length Override"
+				   VALUE="TRUE"
+				   UPDATED="02/03/2017 12:25:25"
+				   UPDATED_BY="LROSADO"
+				   CREATED="02/03/2017 12:25:25"
+				   CREATED_BY="LROSADO">
+				</FIELD_USER_PROP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF ([VF Corporate Role] = &quot;Y&quot;, &quot;Not Empty&quot;, &quot;&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="If Corporate Null Flag"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/15/2014 12:05:42"
+			   UPDATED_BY="PCASTRO"
+			   CREATED="07/15/2014 12:05:42"
+			   CREATED_BY="PCASTRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Invoice Number"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2013 15:10:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMMENTS="ITSL-2105"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Maximo Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/03/2017 12:25:25"
+			   UPDATED_BY="LROSADO"
+			   CREATED="02/03/2017 12:25:25"
+			   CREATED_BY="LROSADO">
+				<FIELD_USER_PROP
+				   INACTIVE="N"
+				   NAME="Text Length Override"
+				   VALUE="TRUE"
+				   UPDATED="02/03/2017 12:25:25"
+				   UPDATED_BY="LROSADO"
+				   CREATED="02/03/2017 12:25:25"
+				   CREATED_BY="LROSADO">
+				</FIELD_USER_PROP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Product Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2013 15:10:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF ([VF Corporate Role] = &quot;Y&quot;, LookupValue(&quot;PRE_ADJ_REASON&quot;, &quot;Usage correction&quot;),&quot;&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Reason For Request"
+			   NO_COPY="N"
+			   PICKLIST="Prepaid Adjust Reason Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/26/2017 19:03:28"
+			   UPDATED_BY="LROSADO"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Reason For Request"
+				   INACTIVE="N"
+				   NAME="Reason For Request"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="04/19/2013 15:10:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/19/2013 15:10:45"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Type"
+				   INACTIVE="N"
+				   NAME="Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Parent"
+				   UPDATED="04/19/2013 15:10:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/19/2013 15:10:45"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Request Amt"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2013 15:31:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Request Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2013 15:10:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="RequestAmt"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/02/2016 14:56:10"
+			   UPDATED_BY="ALINO"
+			   CREATED="07/15/2014 12:05:42"
+			   CREATED_BY="PCASTRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Status"
+			   NO_COPY="N"
+			   PICKLIST="Prepaid Adjust Status Picklist"
+			   POST_DEFAULT_VALUE="Expr: &quot;LookupValue (&apos;PRE_ADJ_STATUS&apos;, Open&apos;)&quot;"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/30/2016 17:09:47"
+			   UPDATED_BY="ALINO"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Status"
+				   INACTIVE="N"
+				   NAME="Status"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="04/19/2013 15:10:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/19/2013 15:10:45"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF ([VF Corporate Role] = &quot;Y&quot;, LookupValue(&quot;INVC_ADJ_REQ_TYPE_CD&quot;, &quot;Debit&quot;), &quot;&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Type"
+			   NO_COPY="N"
+			   PICKLIST="VF Adjustment Type"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/15/2014 12:05:42"
+			   UPDATED_BY="PCASTRO"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Reason For Request"
+				   INACTIVE="N"
+				   NAME="Reason For Request"
+				   NO_CLEAR="N"
+				   UPDATED="07/15/2014 12:05:42"
+				   UPDATED_BY="PCASTRO"
+				   CREATED="04/19/2013 15:10:45"
+				   CREATED_BY="SADMIN">
+					<PICK_MAP_UPDONLYIFNULL
+					   FIELD="If Corporate Null Flag"
+					   INACTIVE="N"
+					   NAME="If Corporate Null Flag"
+					   UPDATED="07/15/2014 12:05:42"
+					   UPDATED_BY="PCASTRO"
+					   CREATED="07/15/2014 12:05:42"
+					   CREATED_BY="PCASTRO">
+					</PICK_MAP_UPDONLYIFNULL>
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Type"
+				   INACTIVE="N"
+				   NAME="Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="04/19/2013 15:10:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/19/2013 15:10:45"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Adjustment Calculation Type"
+			   NO_COPY="N"
+			   PICKLIST="VF Invoice Adjust Type Calc Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2013 15:10:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Adjustment Calculation Type"
+				   INACTIVE="N"
+				   NAME="VF Adjustment Calculation Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="04/19/2013 15:10:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/19/2013 15:10:45"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Adjustment Generator"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/10/2013 01:44:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/10/2013 01:44:39"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Adjustment Type"
+			   NO_COPY="N"
+			   PICKLIST="FS Invoice Adjust Type Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2013 15:10:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Adjustment Type"
+				   INACTIVE="N"
+				   NAME="VF Adjustment Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="04/19/2013 15:10:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/19/2013 15:10:45"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([Status] = LookupValue(&quot;PRE_ADJ_STATUS&quot;, &quot;Open&quot;), &quot;N&quot;, &quot;Y&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF BC Read Only"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/10/2013 01:44:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/10/2013 01:44:39"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Billing Common Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2013 15:10:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf(InvokeServiceMethod(&quot;VF TRK Utilities&quot;, &quot;HasRolesLOV&quot;, &quot;Type=&apos;VFTRCBU_ADJ_VALIDATION_ROLES&apos;,Name=&apos;No Active Lines&apos;&quot;, &quot;hasRole&quot;) = &quot;True&quot;, &quot;Y&quot;, &quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Charging Role"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/28/2015 11:29:13"
+			   UPDATED_BY="RLOURENCO"
+			   CREATED="07/15/2014 12:05:42"
+			   CREATED_BY="PCASTRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf(InvokeServiceMethod(&quot;VF TRK Utilities&quot;, &quot;HasRolesLOV&quot;, &quot;Type=&apos;VFTRCBU_ADJ_VALIDATION_ROLES&apos;,Name=&apos;Special Role List&apos;&quot;, &quot;hasRole&quot;) = &quot;True&quot;, &quot;Y&quot;, &quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Corporate Role"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/28/2015 09:33:37"
+			   UPDATED_BY="RLOURENCO"
+			   CREATED="07/15/2014 12:05:42"
+			   CREATED_BY="PCASTRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Division"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/10/2013 01:44:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="DivisionName()"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF DivisionName"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/10/2013 01:44:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/10/2013 01:44:39"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Donating Name"
+			   NO_COPY="N"
+			   PICKLIST="VF Donating Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2013 15:10:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:46"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Donating Name"
+				   INACTIVE="N"
+				   NAME="VF Donating Name"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="04/19/2013 15:10:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/19/2013 15:10:46"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Due Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2013 15:10:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:46"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Dunning Action"
+			   NO_COPY="N"
+			   PICKLIST="VF PickList Dunning Action"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/20/2014 09:26:22"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:46"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Dunning Action"
+				   INACTIVE="N"
+				   NAME="VF Dunning Action"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="04/19/2013 15:10:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/19/2013 15:10:46"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF From Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/10/2013 01:44:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/10/2013 01:44:39"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Input Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2013 15:10:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:46"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF ([VF Corporate Role] = &quot;Y&quot;, LookupValue(&quot;VF_ADJ_TAX_PERCENT&quot;, &quot;Müşteri memnuniyeti&quot;), &quot;&quot;)"
+			   COMMENTS="FCARRIL/ALINO VFTRCBU-27764 16-05-2016"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Invoice Item"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU Adj Tax Percent"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/06/2016 17:48:00"
+			   UPDATED_BY="FCARRIL"
+			   CREATED="04/19/2013 15:10:46"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   COMMENTS="ALINO VFTRCBU-27764 16-05-2016"
+				   FIELD="VF Invoice Item"
+				   INACTIVE="N"
+				   NAME="VF Invoice Item"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VFTRCBU Value"
+				   UPDATED="05/18/2016 15:29:17"
+				   UPDATED_BY="ALINO"
+				   CREATED="04/19/2013 15:10:46"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="ALINO VFTRCBU-27764 16-05-2016"
+				   CONSTRAIN="Y"
+				   FIELD="VFTRCBU Customer Type Calc"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Customer Type Calc"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VFTRCBU Parent"
+				   UPDATED="05/18/2016 15:04:39"
+				   UPDATED_BY="ALINO"
+				   CREATED="05/16/2016 14:02:36"
+				   CREATED_BY="ALINO">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf ([VF Reason VAS Calc] = &quot;1&quot;,&quot;ENU&quot;,Language())"
+			   COMMENTS="TC-7892"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Language"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/26/2017 19:03:28"
+			   UPDATED_BY="LROSADO"
+			   CREATED="04/26/2017 19:03:28"
+			   CREATED_BY="LROSADO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF MSISDN"
+			   NO_COPY="N"
+			   PICKLIST="VF MSISDN Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2013 15:31:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:46"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Account Code"
+				   INACTIVE="N"
+				   NAME="Account Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Billing Account Code"
+				   UPDATED="04/19/2013 15:10:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/19/2013 15:10:46"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF MSISDN"
+				   INACTIVE="N"
+				   NAME="VF MSISDN"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF MSISDN"
+				   UPDATED="04/19/2013 15:10:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/19/2013 15:10:46"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Product Added - Adjustment"
+			   NO_COPY="N"
+			   PICKLIST="VF Product Picklist - Adjustment"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/31/2015 21:42:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:46"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Product Added - Adjustment"
+				   INACTIVE="N"
+				   NAME="VF Product Added - Adjustment"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Product Number"
+				   UPDATED="03/31/2015 21:42:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/19/2013 15:10:46"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Product Added Name - Adjustment"
+			   NO_COPY="N"
+			   PICKLIST="VF Product Picklist - Adjustment"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/31/2015 21:42:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/10/2013 01:44:39"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Product Added - Adjustment"
+				   INACTIVE="N"
+				   NAME="VF Product Added - Adjustment"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Product Number"
+				   UPDATED="03/31/2015 21:42:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/10/2013 01:44:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Product Added Name - Adjustment"
+				   INACTIVE="N"
+				   NAME="VF Product Added Name - Adjustment"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Product Name"
+				   UPDATED="03/31/2015 21:42:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/10/2013 01:44:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Product Removed - Adjustment"
+			   NO_COPY="N"
+			   PICKLIST="VF Product Picklist - Adjustment"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/31/2015 21:42:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:46"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Product Removed - Adjustment"
+				   INACTIVE="N"
+				   NAME="VF Product Removed - Adjustment"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Product Number"
+				   UPDATED="03/31/2015 21:42:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/19/2013 15:10:46"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Product Removed Name - Adjustment"
+			   NO_COPY="N"
+			   PICKLIST="VF Product Picklist - Adjustment"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/31/2015 21:42:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/10/2013 01:44:39"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Product Removed - Adjustment"
+				   INACTIVE="N"
+				   NAME="VF Product Removed - Adjustment"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Product Number"
+				   UPDATED="03/31/2015 21:42:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/10/2013 01:44:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Product Removed Name - Adjustment"
+				   INACTIVE="N"
+				   NAME="VF Product Removed Name - Adjustment"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Product Name"
+				   UPDATED="03/31/2015 21:42:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/10/2013 01:44:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf ( [Reason For Request] = LookupValue(&quot;PRE_ADJ_REASON&quot;, &quot;VAS&quot;),&quot;1&quot;,&quot;&quot;)"
+			   COMMENTS="TC-7892"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Reason VAS Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/26/2017 19:03:28"
+			   UPDATED_BY="LROSADO"
+			   CREATED="04/26/2017 19:03:28"
+			   CREATED_BY="LROSADO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Start Date of Missing Product"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2013 15:10:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:46"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Subscriber Rightness"
+			   NO_COPY="N"
+			   PICKLIST="VF Subscriber Rightness"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/15/2014 12:05:42"
+			   UPDATED_BY="PCASTRO"
+			   CREATED="07/15/2014 12:05:42"
+			   CREATED_BY="PCASTRO">
+				<PICK_MAP
+				   FIELD="VF Subscriber Rightness"
+				   INACTIVE="N"
+				   NAME="VF Subscriber Rightness"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="07/15/2014 12:05:42"
+				   UPDATED_BY="PCASTRO"
+				   CREATED="07/15/2014 12:05:42"
+				   CREATED_BY="PCASTRO">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Ths Action Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2013 15:10:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:46"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="Timestamp()"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Timestamp"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2013 15:10:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:46"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF ([VF Charging Role] = &quot;N&quot;, [VF Charging Role], [VF BC Read Only])"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU ChargingReadOnly"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/03/2016 17:57:37"
+			   UPDATED_BY="ALINO"
+			   CREATED="07/15/2014 12:05:42"
+			   CREATED_BY="PCASTRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF ([VF Corporate Role] = &quot;N&quot;, [VF Corporate Role], [VF BC Read Only])"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU CorporateReadOnly"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/03/2016 17:57:43"
+			   UPDATED_BY="ALINO"
+			   CREATED="07/15/2014 12:05:42"
+			   CREATED_BY="PCASTRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF (ParentBCName() = &quot;Billing Account&quot;, ParentFieldValue(&quot;Customer Account Type&quot;), &quot;&quot;)"
+			   COMMENTS="FCARRIL/ALINO VFTRCBU-27764 16-05-2016"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Customer Type Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/18/2016 14:57:26"
+			   UPDATED_BY="ALINO"
+			   CREATED="05/16/2016 13:57:22"
+			   CREATED_BY="ALINO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="İnvoice Due Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/10/2013 01:44:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/10/2013 01:44:39"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<JOIN
+			   COMMENTS="FCARRIL/ALINO VFTRCBU-27764 18-05-2016"
+			   INACTIVE="Y"
+			   NAME="Customer"
+			   OUTER_JOIN_FLAG="N"
+			   TABLE="S_ORG_EXT"
+			   UPDATED="06/02/2016 15:15:15"
+			   UPDATED_BY="ALINO"
+			   CREATED="05/18/2016 18:22:54"
+			   CREATED_BY="ALINO">
+			</JOIN>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

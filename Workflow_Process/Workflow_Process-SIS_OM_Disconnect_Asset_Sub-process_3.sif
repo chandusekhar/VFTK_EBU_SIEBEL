@@ -1,0 +1,4578 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LANGUAGE_LOCKED="ENU"
+	   LOCKED="Y"
+	   LOCKED_DATE="03/13/2017 12:02:20"
+	   NAME="SIS OM Base Architecture"
+	   UI_FREEZE="N"
+	   LOCKED_BY_NAME="FCABRAL"
+	   UPDATED="04/19/2017 14:28:36"
+	   UPDATED_BY="FCABRAL"
+	   CREATED="10/27/2001 11:50:11"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<WORKFLOW_PROCESS
+		   BUSINESS_OBJECT="Account"
+		   CACHE_LOCALE="N"
+		   DESCRIPTION="Retrieve an asset, project its future state, delta with an empty end state and then write a delta quote / order."
+		   EDIT="N"
+		   GROUP="Asset Based Ordering"
+		   INACTIVE="N"
+		   NAME="SIS OM Disconnect Asset Sub-process: 2"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="04/17/2017 15:54:10"
+		   PASS_BY_REF_HIERARCHY_ARGUMENT="N"
+		   PERSISTENT_FREQUENCY="N"
+		   PROCESS_NAME="SIS OM Disconnect Asset Sub-process"
+		   REPLICATION_LEVEL="None"
+		   RUNNABLE="Y"
+		   STATE_MANAGEMENT_TYPE="STATEFUL"
+		   STATUS="NOT_IN_USE"
+		   VERSION="2"
+		   WEB_SERVICE_ENABLED="N"
+		   WORKFLOW_MODE="Service Flow"
+		   OBJECT_LOCKED_BY_NAME="FCABRAL"
+		   UPDATED="04/19/2017 14:28:36"
+		   UPDATED_BY="FCABRAL"
+		   CREATED="10/22/2015 15:55:36"
+		   CREATED_BY="SADMIN">
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Active Document Id"
+			   INOUT="IN"
+			   NAME="Active Document Id"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Apply Result Empty"
+			   INOUT="NONE"
+			   NAME="Apply Result Empty"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="SIS OM Asset"
+			   DISPLAY_NAME="Asset IO Name"
+			   INOUT="NONE"
+			   NAME="Asset IO Name"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Asset Integration Id"
+			   INOUT="IN"
+			   NAME="Asset Integration Id"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   DISPLAY_NAME="Blank Prop Set"
+			   INOUT="NONE"
+			   NAME="Blank Prop Set"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="FALSE"
+			   DISPLAY_NAME="CalculateOneTimeServiceCharge"
+			   INOUT="OUT"
+			   NAME="CalculateOneTimeServiceCharge"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   DISPLAY_NAME="Current Asset"
+			   INOUT="NONE"
+			   NAME="Current Asset"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   DISPLAY_NAME="Delta Document"
+			   INOUT="NONE"
+			   NAME="Delta Document"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="DATE"
+			   DISPLAY_NAME="Due Date"
+			   INOUT="IN"
+			   NAME="Due Date"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   DISPLAY_NAME="Empty Asset"
+			   INOUT="NONE"
+			   NAME="Empty Asset"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="Quote Id"
+			   DISPLAY_NAME="Id Field Name"
+			   INOUT="IN"
+			   NAME="Id Field Name"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="NUMBER"
+			   DISPLAY_NAME="Number of Assets"
+			   INOUT="NONE"
+			   NAME="Number of Assets"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Object Id"
+			   INOUT="IN"
+			   NAME="Object Id"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   DISPLAY_NAME="Open Orders"
+			   INOUT="NONE"
+			   NAME="Open Orders"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="Order Entry - Orders"
+			   DISPLAY_NAME="Order Header BC Name"
+			   INOUT="NONE"
+			   NAME="Order Header BC Name"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="SIS OM Order"
+			   DISPLAY_NAME="Order IO Name"
+			   INOUT="NONE"
+			   NAME="Order IO Name"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="Order Header Id"
+			   DISPLAY_NAME="Order Id Field Name"
+			   INOUT="NONE"
+			   NAME="Order Id Field Name"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="Order Entry - Line Items"
+			   DISPLAY_NAME="Order Item BC Name"
+			   INOUT="NONE"
+			   NAME="Order Item BC Name"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Order Type"
+			   INOUT="IN"
+			   NAME="Order Type"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Prod Prom Source Id"
+			   INOUT="IN"
+			   NAME="Prod Prom Source Id"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Promotion Operation Id"
+			   INOUT="IN"
+			   NAME="Promotion Operation Id"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Promotion Operation Type"
+			   INOUT="IN"
+			   NAME="Promotion Operation Type"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="Quote"
+			   DISPLAY_NAME="Quote Header BC Name"
+			   INOUT="NONE"
+			   NAME="Quote Header BC Name"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="SIS OM Quote"
+			   DISPLAY_NAME="Quote IO Name"
+			   INOUT="NONE"
+			   NAME="Quote IO Name"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="Quote Id"
+			   DISPLAY_NAME="Quote Id Field Name"
+			   INOUT="NONE"
+			   NAME="Quote Id Field Name"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="Quote Item"
+			   DISPLAY_NAME="Quote Item BC Name"
+			   INOUT="NONE"
+			   NAME="Quote Item BC Name"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Related Product Id"
+			   INOUT="IN"
+			   NAME="Related Product Id"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Target Document"
+			   INOUT="IN"
+			   NAME="Target Document"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*144 264 240 3129*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Add Disconnect Charge?"
+			   TYPE="DECISION_POINT"
+			   UPDATED="10/22/2015 15:55:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:36"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*456 3374*FrHS1*32*P17*192 3374*NPts1*42*P07*192 3122*P37*456 3124*ToHS1*38*ArrowEnd1*4"
+				   NAME="NO"
+				   TO_STEP_NAME="Ensure New Line Item"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:36"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:36"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Add Disconnect Charge?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*456 3374*FrHS1*32*P17*192 3374*NPts1*42*P07*192 3122*P37*456 3124*ToHS1*38*ArrowEnd1*4"
+					   NAME="NO"
+					   TO_STEP_NAME="Ensure New Line Item"
+					   UPDATED="10/22/2015 15:55:36"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:36"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(CalculateOneTimeServiceCharge All Must Match (Ignore Case)(&apos;TRUE&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*276 2884*NPts1*22*P07*240 2884*ToHS1*08*ArrowEnd1*4"
+				   NAME="YES"
+				   TO_STEP_NAME="Add Service Charge"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:36"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:36"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Add Disconnect Charge?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*276 2884*NPts1*22*P07*240 2884*ToHS1*08*ArrowEnd1*4"
+					   NAME="YES"
+					   TO_STEP_NAME="Add Service Charge"
+					   UPDATED="10/22/2015 15:55:36"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:36"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="PROPERTY"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="YES1"
+					   OPERATION="EQ_ALL_NC"
+					   PROPERTY_NAME="CalculateOneTimeServiceCharge"
+					   SEQUENCE="3"
+					   UPDATED="10/22/2015 15:55:36"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:36"
+					   CREATED_BY="SADMIN">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR1="TRUE"
+						   NAME="YES11"
+						   SEQUENCE="1"
+						   UPDATED="10/22/2015 15:55:36"
+						   UPDATED_BY="SADMIN"
+						   CREATED="10/22/2015 15:55:36"
+						   CREATED_BY="SADMIN">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*276 264 372 3129*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="Add Service Charge"
+			   SUBPROCESS_NAME="SIS OM Add Service Charge Sub-Process"
+			   TYPE="SUB_PROCESS"
+			   UPDATED="10/22/2015 15:55:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:37"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*408 2884*NPts1*22*P07*372 2884*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 4"
+				   TO_STEP_NAME="Ensure New Line Item"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Add Service Charge"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*408 2884*NPts1*22*P07*372 2884*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 4"
+					   TO_STEP_NAME="Ensure New Line Item"
+					   UPDATED="10/22/2015 15:55:37"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:37"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Delta Document"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="2"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Add Service Charge70"
+				   OUTPUT_ARG="Delta Document"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="7"
+				   TYPE="ARGUMENT"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Order Type"
+				   PROPERTY_NAME="Order Type"
+				   SEQUENCE="6"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Target Document"
+				   PROPERTY_NAME="Target Document"
+				   SEQUENCE="4"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Apply"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*672 96 768 1449*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Apply Changes"
+			   TYPE="TASK"
+			   UPDATED="10/22/2015 15:55:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:37"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*636 1204*FrHS1*02*P17*672 1204*NPts1*32*P07*672 1204*ToHS1*28*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Trim"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Apply Changes"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*636 1204*FrHS1*02*P17*672 1204*NPts1*32*P07*672 1204*ToHS1*28*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Trim"
+					   UPDATED="10/22/2015 15:55:37"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:37"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Apply Changes1"
+				   OUTPUT_ARG="Is Apply Result Empty"
+				   PROPERTY_NAME="Apply Result Empty"
+				   SEQUENCE="1"
+				   TYPE="ARGUMENT"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Apply Changes2"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Current Asset"
+				   SEQUENCE="2"
+				   TYPE="ARGUMENT"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="OpenOrders"
+				   PROPERTY_NAME="Open Orders"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Delta"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*12 180 108 2289*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Create Delta"
+			   TYPE="TASK"
+			   UPDATED="10/22/2015 15:55:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:37"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*60 2644*NPts1*22*P06*60 2284*ToHS1*18*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Set Due Date"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Create Delta"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*60 2644*NPts1*22*P06*60 2284*ToHS1*18*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Set Due Date"
+					   UPDATED="10/22/2015 15:55:37"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:37"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Create Delta1"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="1"
+				   TYPE="ARGUMENT"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Empty Asset"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r16*936 264 1032 3129*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="End"
+			   TYPE="END"
+			   UPDATED="10/22/2015 15:55:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:37"
+			   CREATED_BY="SADMIN">
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Field Value"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*408 264 504 3129*FillBgClr8*167641598*ArrowEnd1*1"
+			   NAME="Ensure New Line Item"
+			   TYPE="TASK"
+			   UPDATED="10/22/2015 15:55:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:37"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*516 2884*FrHS1*22*P17*516 2884*NPts1*42*P07*504 2882*P37*540 2874*ToHS1*08*ArrowEnd1*1"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Set Product Instance (EAI Op)"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Ensure New Line Item"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*516 2884*FrHS1*22*P17*516 2884*NPts1*42*P07*504 2882*P37*540 2874*ToHS1*08*ArrowEnd1*1"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Set Product Instance (EAI Op)"
+					   UPDATED="10/22/2015 15:55:37"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:37"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Field Name"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Integration Id"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Generate New Id"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Y"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Ensure New Line Item1"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="1"
+				   TYPE="ARGUMENT"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   ERROR_CODE="SISOM_WF_ERR_ALREADY_DISCONNECTED"
+			   ERROR_MESSAGE="A request has already been made to disconnect."
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*4*0*0*0*1*r15*408 180 504 2289*FillBgClr8*100794369*LineColor3*2558*ArrowEnd1*1"
+			   NAME="Error Out"
+			   TYPE="ABORT"
+			   UPDATED="10/22/2015 15:55:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:37"
+			   CREATED_BY="SADMIN">
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Query"
+			   BUSINESS_SERVICE_NAME="EAI Siebel Adapter"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*144 96 240 1449*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Get Active Document"
+			   TYPE="TASK"
+			   UPDATED="10/22/2015 15:55:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:37"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*02*P17*108 1204*NPts1*22*P07*144 1204*ToHS1*28*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Set Active Document Header"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Get Active Document"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*02*P17*108 1204*NPts1*22*P07*144 1204*ToHS1*28*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Set Active Document Header"
+					   UPDATED="10/22/2015 15:55:37"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:37"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Get Active Document1"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="1"
+				   TYPE="ARGUMENT"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="OutputIntObjectName"
+				   SEQUENCE="0"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="IIF([&amp;Target Document] = &apos;Quote&apos;, [&amp;Quote IO Name], [&amp;Order IO Name])"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="PrimaryRowId"
+				   PROPERTY_NAME="Active Document Id"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SearchSpec"
+				   SEQUENCE="0"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="&apos;[Header.Id] = &quot;&apos; + [&amp;Active Document Id] + &apos;&quot; AND [Line Item.Id] = &quot;SomeBogusId&quot;&apos;"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*12 360 108 4089*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Is Merge Operation?"
+			   TYPE="DECISION_POINT"
+			   UPDATED="10/22/2015 15:55:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:37"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*126 2884*FrHS1*22*P17*126 3844*NPts1*42*P07*108 3842*P37*144 2884*ToHS1*08*ArrowEnd1*4"
+				   NAME="No"
+				   TO_STEP_NAME="Add Disconnect Charge?"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Is Merge Operation?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*126 2884*FrHS1*22*P17*126 3844*NPts1*42*P07*108 3842*P37*144 2884*ToHS1*08*ArrowEnd1*4"
+					   NAME="No"
+					   TO_STEP_NAME="Add Disconnect Charge?"
+					   UPDATED="10/22/2015 15:55:37"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:37"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(Promotion Operation Id Is Not Null)"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*60 4684*NPts1*22*P06*60 4084*ToHS1*18*ArrowEnd1*4"
+				   NAME="Yes"
+				   TO_STEP_NAME="Set Promotion Operation Id"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Is Merge Operation?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*60 4684*NPts1*22*P06*60 4084*ToHS1*18*ArrowEnd1*4"
+					   NAME="Yes"
+					   TO_STEP_NAME="Set Promotion Operation Id"
+					   UPDATED="10/22/2015 15:55:37"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:37"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="PROPERTY"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="Yes1"
+					   OPERATION="IS_NOT_NULL"
+					   PROPERTY_NAME="Promotion Operation Id"
+					   SEQUENCE="2"
+					   UPDATED="10/22/2015 15:55:37"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:37"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*408 96 504 1449*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Is Product Instance Empty"
+			   TYPE="DECISION_POINT"
+			   UPDATED="10/22/2015 15:55:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:37"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*372 1204*FrHS1*02*P17*408 1204*NPts1*32*P07*408 1204*ToHS1*28*ArrowEnd1*4"
+				   NAME="No.DECISION"
+				   TO_STEP_NAME="Set Requested Product Instance"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Is Product Instance Empty"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*372 1204*FrHS1*02*P17*408 1204*NPts1*32*P07*408 1204*ToHS1*28*ArrowEnd1*4"
+					   NAME="No.DECISION"
+					   TO_STEP_NAME="Set Requested Product Instance"
+					   UPDATED="10/22/2015 15:55:37"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:37"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="PROPERTY"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="No.DECISION1"
+					   OPERATION="EQ_ANY_NC"
+					   PROPERTY_NAME="Apply Result Empty"
+					   SEQUENCE="1"
+					   UPDATED="10/22/2015 15:55:37"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:37"
+					   CREATED_BY="SADMIN">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR1="N"
+						   NAME="No.DECISION11"
+						   SEQUENCE="1"
+						   UPDATED="10/22/2015 15:55:37"
+						   UPDATED_BY="SADMIN"
+						   CREATED="10/22/2015 15:55:37"
+						   CREATED_BY="SADMIN">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*456 1804*NPts1*22*P07*456 1444*ToHS1*18*ArrowEnd1*4"
+				   NAME="Yes.DEFAULT"
+				   TO_STEP_NAME="Error Out"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Is Product Instance Empty"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*456 1804*NPts1*22*P07*456 1444*ToHS1*18*ArrowEnd1*4"
+					   NAME="Yes.DEFAULT"
+					   TO_STEP_NAME="Error Out"
+					   UPDATED="10/22/2015 15:55:37"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:37"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Query"
+			   BUSINESS_SERVICE_NAME="EAI Siebel Adapter"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*276 12 372 609*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Load Asset"
+			   TYPE="TASK"
+			   UPDATED="10/22/2015 15:55:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:37"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*408 364*NPts1*22*P06*372 364*ToHS1*08*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Set Product Instance"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Load Asset"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*408 364*NPts1*22*P06*372 364*ToHS1*08*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Set Product Instance"
+					   UPDATED="10/22/2015 15:55:37"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:37"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Load Asset1"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Current Asset"
+				   SEQUENCE="1"
+				   TYPE="ARGUMENT"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Load Asset2"
+				   OUTPUT_ARG="NumOutputObjects"
+				   PROPERTY_NAME="Number of Assets"
+				   SEQUENCE="2"
+				   TYPE="ARGUMENT"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="OutputIntObjectName"
+				   PROPERTY_NAME="Asset IO Name"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SearchSpec"
+				   SEQUENCE="0"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="&apos;[Header.Integration Id] = &quot;&apos; + [&amp;Asset Integration Id] + &apos;&quot; AND [Header.Status] &lt;&gt; &quot;&apos; + LookupValue(&quot;IMPL_PHASE&quot;, &quot;Inactive&quot;) + &apos;&quot; AND [Line Item.Status] &lt;&gt; &quot;&apos; + LookupValue(&quot;IMPL_PHASE&quot;, &quot;Inactive&quot;) + &apos;&quot;&apos;"
+				   UPDATED="10/22/2015 15:55:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Find Orders"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*540 12 636 609*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Load Open Order Line Items"
+			   TYPE="TASK"
+			   UPDATED="10/22/2015 15:55:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:37"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*672 364*NPts1*22*P06*636 364*ToHS1*08*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Set Apply Output Header"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:37"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Load Open Order Line Items"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*672 364*NPts1*22*P06*636 364*ToHS1*08*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Set Apply Output Header"
+					   UPDATED="10/22/2015 15:55:38"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:38"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Asset Integration Id"
+				   PROPERTY_NAME="Asset Integration Id"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Load Open Order Line Items1"
+				   OUTPUT_ARG="OpenOrders"
+				   PROPERTY_NAME="Open Orders"
+				   SEQUENCE="1"
+				   TYPE="ARGUMENT"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   COMMENTS="RPIRES - Changed searchspec to consider Line Item status instead of order status for VFTRCBU-17145"
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Search Spec"
+				   SEQUENCE="0"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="&quot;[Processed Flag]&lt;&gt;&apos;Y&apos; AND [Active Order Flg]=&apos;Y&apos; AND [Order Status]&lt;&gt;&apos;&quot; + LookupValue(&quot;FS_ORDER_STATUS&quot;,&quot;Cancelled&quot;) + &quot;&apos; AND ([Order Status]=&apos;&quot; + LookupValue(&quot;FS_ORDER_STATUS&quot;,&quot;Open&quot;) + &quot;&apos; OR [Order Status]=&apos;&quot; + LookupValue(&quot;FS_ORDER_STATUS&quot;,&quot;Failed&quot;) + &quot;&apos;)&quot; + IIF([&amp;Due Date] IS NULL, &quot;&quot;, &quot; AND [Due Date]&lt;=&apos;&quot; + [&amp;Due Date] + &quot;&apos;&quot;)"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Sort Order Item By"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Due Date"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Compute EAI Operation"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*672 264 767 3129*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Prepare Sync Input (Set EAI_OPERATION codes)"
+			   TYPE="TASK"
+			   UPDATED="10/22/2015 15:55:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:38"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*804 2884*NPts1*22*P07*767 2884*ToHS1*08*ArrowEnd1*1"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Sync Line Item"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Prepare Sync Input (Set EAI_OPERATION codes)"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*804 2884*NPts1*22*P07*767 2884*ToHS1*08*ArrowEnd1*1"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Sync Line Item"
+					   UPDATED="10/22/2015 15:55:38"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:38"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Prepare Sync Input (Set EAI_OPERATION codes)1"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="1"
+				   TYPE="ARGUMENT"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Reset"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   DESCRIPTION="To prevent incomplete workflow from polluting the PMT cache."
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*144 12 240 609*FillBgClr8*167641598*ArrowEnd1*1"
+			   NAME="Reset PMT Cache"
+			   TYPE="TASK"
+			   UPDATED="10/22/2015 15:55:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:38"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*276 364*NPts1*22*P06*240 364*ToHS1*08*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Load Asset"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Reset PMT Cache"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*276 364*NPts1*22*P06*240 364*ToHS1*08*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Load Asset"
+					   UPDATED="10/22/2015 15:55:38"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:38"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Output Header"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*12 96 108 1449*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Set Active Document Header"
+			   TYPE="TASK"
+			   UPDATED="10/22/2015 15:55:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:38"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*60 1804*NPts1*22*P06*60 1444*ToHS1*18*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Create Delta"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set Active Document Header"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*60 1804*NPts1*22*P06*60 1444*ToHS1*18*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Create Delta"
+					   UPDATED="10/22/2015 15:55:38"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:38"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Output Header"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*672 12 768 609*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Set Apply Output Header"
+			   TYPE="TASK"
+			   UPDATED="10/22/2015 15:55:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:38"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*720 964*NPts1*22*P06*720 604*ToHS1*18*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Apply Changes"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set Apply Output Header"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*720 964*NPts1*22*P06*720 604*ToHS1*18*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Apply Changes"
+					   UPDATED="10/22/2015 15:55:38"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:38"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Current Asset"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Field Value"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*12 264 108 3129*FillBgClr8*167641598*ArrowEnd1*1"
+			   NAME="Set Due Date"
+			   TYPE="TASK"
+			   UPDATED="10/22/2015 15:55:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:38"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*60 3604*NPts1*22*P06*60 3124*ToHS1*18*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Is Merge Operation?"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set Due Date"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*60 3604*NPts1*22*P06*60 3124*ToHS1*18*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Is Merge Operation?"
+					   UPDATED="10/22/2015 15:55:38"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:38"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Field Name"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Due Date"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Set Due Date1"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="1"
+				   TYPE="ARGUMENT"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Set Due Date20"
+				   PROPERTY_NAME="CalculateOneTimeServiceCharge"
+				   SEQUENCE="2"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="SystemPreference(&quot;Enable AIA Comms&quot;)"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Value"
+				   PROPERTY_NAME="Due Date"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Field Value"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*5*0*0*0*8*FontSize1*91*r15*144 384 240 4329*FillBgClr8*134218238*FontName6*Tahoma8*ArrowEnd1*1"
+			   NAME="Set Prod Prom Source Id"
+			   TYPE="TASK"
+			   UPDATED="10/22/2015 15:55:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:38"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*10*0*0*0*9*LineWidth1*22*P27*144 3604*FrHS1*12*P17*192 3604*NPts1*52*P07*192 3842*P37*144 2884*ToHS1*02*P47*144 2888*ArrowEnd1*4"
+				   NAME="Connector 0"
+				   TO_STEP_NAME="Add Disconnect Charge?"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set Prod Prom Source Id"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*10*0*0*0*9*LineWidth1*22*P27*144 3604*FrHS1*12*P17*192 3604*NPts1*52*P07*192 3842*P37*144 2884*ToHS1*02*P47*144 2888*ArrowEnd1*4"
+					   NAME="Connector 0"
+					   TO_STEP_NAME="Add Disconnect Charge?"
+					   UPDATED="10/22/2015 15:55:38"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:38"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Field Name"
+				   SEQUENCE="7"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Prod Prom Source Id"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Set Prod Prom Source Id10"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="10"
+				   TYPE="ARGUMENT"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="9"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Value"
+				   PROPERTY_NAME="Prod Prom Source Id"
+				   SEQUENCE="8"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Product Instance"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*408 12 504 609*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Set Product Instance"
+			   TYPE="TASK"
+			   UPDATED="10/22/2015 15:55:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:38"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*540 364*NPts1*22*P06*504 364*ToHS1*08*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Load Open Order Line Items"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set Product Instance"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*540 364*NPts1*22*P06*504 364*ToHS1*08*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Load Open Order Line Items"
+					   UPDATED="10/22/2015 15:55:38"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:38"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Current Asset"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Product Instance"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*540 264 636 3119*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Set Product Instance (EAI Op)"
+			   TYPE="TASK"
+			   UPDATED="10/22/2015 15:55:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:38"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*654 2884*FrHS1*22*P17*648 2884*NPts1*42*P07*636 2872*P37*672 2884*ToHS1*08*ArrowEnd1*1"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Prepare Sync Input (Set EAI_OPERATION codes)"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set Product Instance (EAI Op)"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*654 2884*FrHS1*22*P17*648 2884*NPts1*42*P07*636 2872*P37*672 2884*ToHS1*08*ArrowEnd1*1"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Prepare Sync Input (Set EAI_OPERATION codes)"
+					   UPDATED="10/22/2015 15:55:38"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:38"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Blank Prop Set"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Field Value"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*5*0*0*0*8*FontSize1*91*r14*12 468 108 5169*FillBgClr8*134218238*FontName6*Tahoma8*ArrowEnd1*1"
+			   NAME="Set Promotion Operation Id"
+			   TYPE="TASK"
+			   UPDATED="10/22/2015 15:55:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:38"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*144 4924*NPts1*22*P07*108 4924*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 2"
+				   TO_STEP_NAME="Set Promotion Operation Type"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set Promotion Operation Id"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*144 4924*NPts1*22*P07*108 4924*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 2"
+					   TO_STEP_NAME="Set Promotion Operation Type"
+					   UPDATED="10/22/2015 15:55:38"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:38"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Field Name"
+				   SEQUENCE="1"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Promotion Operation Id"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Set Promotion Operation Id12"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="12"
+				   TYPE="ARGUMENT"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="3"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Value"
+				   PROPERTY_NAME="Promotion Operation Id"
+				   SEQUENCE="2"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Field Value"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*5*0*0*0*8*FontSize1*91*r15*144 468 240 5169*FillBgClr8*134218238*FontName6*Tahoma8*ArrowEnd1*1"
+			   NAME="Set Promotion Operation Type"
+			   TYPE="TASK"
+			   UPDATED="10/22/2015 15:55:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:38"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*12*P17*192 4324*NPts1*22*P07*192 4684*ToHS1*38*ArrowEnd1*4"
+				   NAME="Connector 3"
+				   TO_STEP_NAME="Set Prod Prom Source Id"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set Promotion Operation Type"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*12*P17*192 4324*NPts1*22*P07*192 4684*ToHS1*38*ArrowEnd1*4"
+					   NAME="Connector 3"
+					   TO_STEP_NAME="Set Prod Prom Source Id"
+					   UPDATED="10/22/2015 15:55:38"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:38"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Field Name"
+				   SEQUENCE="4"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Promotion Operation Type"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Set Promotion Operation Type11"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="11"
+				   TYPE="ARGUMENT"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="6"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Value"
+				   PROPERTY_NAME="Promotion Operation Type"
+				   SEQUENCE="5"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Product Instance"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*276 96 372 1449*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Set Requested Product Instance"
+			   TYPE="TASK"
+			   UPDATED="10/22/2015 15:55:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:38"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*02*P17*240 1204*NPts1*22*P07*276 1204*ToHS1*28*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Get Active Document"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:38"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set Requested Product Instance"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*02*P17*240 1204*NPts1*22*P07*276 1204*ToHS1*28*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Get Active Document"
+					   UPDATED="10/22/2015 15:55:38"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:38"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Current Asset"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:39"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r12*12 12 108 609*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="Start"
+			   TYPE="START"
+			   UPDATED="10/22/2015 15:55:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:39"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*144 364*NPts1*22*P05*96 364*ToHS1*08*ArrowEnd1*4"
+				   NAME="1"
+				   TO_STEP_NAME="Reset PMT Cache"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:39"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Start"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*144 364*NPts1*22*P05*96 364*ToHS1*08*ArrowEnd1*4"
+					   NAME="1"
+					   TO_STEP_NAME="Reset PMT Cache"
+					   UPDATED="10/22/2015 15:55:39"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:39"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Synchronize"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*804 264 900 3129*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Sync Line Item"
+			   TYPE="TASK"
+			   UPDATED="10/22/2015 15:55:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:39"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*936 2884*NPts1*22*P07*900 2884*ToHS1*08*ArrowEnd1*1"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="End"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:39"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Sync Line Item"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*936 2884*NPts1*22*P07*900 2884*ToHS1*08*ArrowEnd1*1"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="End"
+					   UPDATED="10/22/2015 15:55:39"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:39"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="BuscompHeaderName"
+				   SEQUENCE="0"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="IIF([&amp;Target Document] = &apos;Quote&apos;, [&amp;Quote Header BC Name], [&amp;Order Header BC Name])"
+				   UPDATED="10/22/2015 15:55:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:39"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="BuscompItemName"
+				   SEQUENCE="0"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="IIF([&amp;Target Document] = &apos;Quote&apos;, [&amp;Quote Item BC Name], [&amp;Order Item BC Name])"
+				   UPDATED="10/22/2015 15:55:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:39"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="BuscompObjectName"
+				   SEQUENCE="0"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="IIF([&amp;Target Document] = &apos;Quote&apos;, &apos;Quote&apos;, &apos;Order Entry (Sales)&apos;)"
+				   UPDATED="10/22/2015 15:55:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:39"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="IdFieldName"
+				   SEQUENCE="0"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="IIF([&amp;Target Document] = &apos;Quote&apos;, [&amp;Quote Id Field Name], [&amp;Order Id Field Name])"
+				   UPDATED="10/22/2015 15:55:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:39"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="LineNumberField"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Line Number"
+				   UPDATED="10/22/2015 15:55:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:39"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="PrimaryRowId"
+				   PROPERTY_NAME="Active Document Id"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:39"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Reprice"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Y"
+				   UPDATED="10/22/2015 15:55:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:39"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:39"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SyncOnly"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="N"
+				   UPDATED="10/22/2015 15:55:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:39"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="ThinBuscompFlag"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Y"
+				   UPDATED="10/22/2015 15:55:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:39"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Trim"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*540 96 636 1449*FillBgClr8*167641598*ArrowEnd1*1"
+			   NAME="Trim"
+			   TYPE="TASK"
+			   UPDATED="10/22/2015 15:55:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:55:39"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*02*P17*504 1204*NPts1*22*P07*540 1204*ToHS1*28*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Is Product Instance Empty"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="10/22/2015 15:55:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:39"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Trim"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*02*P17*504 1204*NPts1*22*P07*540 1204*ToHS1*28*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Is Product Instance Empty"
+					   UPDATED="10/22/2015 15:55:39"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/22/2015 15:55:39"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="KeepSpec"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="[Convert To Asset Flag] = &apos;Y&apos;"
+				   UPDATED="10/22/2015 15:55:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:39"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Trim1"
+				   OUTPUT_ARG="Is Trim Result Empty"
+				   PROPERTY_NAME="Apply Result Empty"
+				   SEQUENCE="1"
+				   TYPE="ARGUMENT"
+				   UPDATED="10/22/2015 15:55:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:39"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Trim2"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Current Asset"
+				   SEQUENCE="2"
+				   TYPE="ARGUMENT"
+				   UPDATED="10/22/2015 15:55:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:39"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Current Asset"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="10/22/2015 15:55:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:55:39"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+		</WORKFLOW_PROCESS>
+		<WORKFLOW_PROCESS
+		   BUSINESS_OBJECT="Account"
+		   CACHE_LOCALE="N"
+		   DESCRIPTION="Retrieve an asset, project its future state, delta with an empty end state and then write a delta quote / order."
+		   EDIT="N"
+		   GROUP="Asset Based Ordering"
+		   INACTIVE="N"
+		   NAME="SIS OM Disconnect Asset Sub-process: 3"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="04/17/2017 15:54:52"
+		   PASS_BY_REF_HIERARCHY_ARGUMENT="N"
+		   PERSISTENT_FREQUENCY="N"
+		   PROCESS_NAME="SIS OM Disconnect Asset Sub-process"
+		   REPLICATION_LEVEL="None"
+		   RUNNABLE="Y"
+		   STATE_MANAGEMENT_TYPE="STATEFUL"
+		   STATUS="COMPLETED"
+		   VERSION="3"
+		   WEB_SERVICE_ENABLED="N"
+		   WORKFLOW_MODE="Service Flow"
+		   OBJECT_LOCKED_BY_NAME="FCABRAL"
+		   UPDATED="04/19/2017 14:28:36"
+		   UPDATED_BY="FCABRAL"
+		   CREATED="04/17/2017 15:54:49"
+		   CREATED_BY="FCABRAL">
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Active Document Id"
+			   INOUT="IN"
+			   NAME="Active Document Id"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Apply Result Empty"
+			   INOUT="NONE"
+			   NAME="Apply Result Empty"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="SIS OM Asset"
+			   DISPLAY_NAME="Asset IO Name"
+			   INOUT="NONE"
+			   NAME="Asset IO Name"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Asset Integration Id"
+			   INOUT="IN"
+			   NAME="Asset Integration Id"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   DISPLAY_NAME="Blank Prop Set"
+			   INOUT="NONE"
+			   NAME="Blank Prop Set"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="FALSE"
+			   DISPLAY_NAME="CalculateOneTimeServiceCharge"
+			   INOUT="OUT"
+			   NAME="CalculateOneTimeServiceCharge"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   DISPLAY_NAME="Current Asset"
+			   INOUT="NONE"
+			   NAME="Current Asset"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   DISPLAY_NAME="Delta Document"
+			   INOUT="NONE"
+			   NAME="Delta Document"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="DATE"
+			   DISPLAY_NAME="Due Date"
+			   INOUT="IN"
+			   NAME="Due Date"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   DISPLAY_NAME="Empty Asset"
+			   INOUT="NONE"
+			   NAME="Empty Asset"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="Quote Id"
+			   DISPLAY_NAME="Id Field Name"
+			   INOUT="IN"
+			   NAME="Id Field Name"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="NUMBER"
+			   DISPLAY_NAME="Number of Assets"
+			   INOUT="NONE"
+			   NAME="Number of Assets"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Object Id"
+			   INOUT="IN"
+			   NAME="Object Id"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   DISPLAY_NAME="Open Orders"
+			   INOUT="NONE"
+			   NAME="Open Orders"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="Order Entry - Orders"
+			   DISPLAY_NAME="Order Header BC Name"
+			   INOUT="NONE"
+			   NAME="Order Header BC Name"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="SIS OM Order"
+			   DISPLAY_NAME="Order IO Name"
+			   INOUT="NONE"
+			   NAME="Order IO Name"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="Order Header Id"
+			   DISPLAY_NAME="Order Id Field Name"
+			   INOUT="NONE"
+			   NAME="Order Id Field Name"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="Order Entry - Line Items"
+			   DISPLAY_NAME="Order Item BC Name"
+			   INOUT="NONE"
+			   NAME="Order Item BC Name"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Order Type"
+			   INOUT="IN"
+			   NAME="Order Type"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Prod Prom Source Id"
+			   INOUT="IN"
+			   NAME="Prod Prom Source Id"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Promotion Operation Id"
+			   INOUT="IN"
+			   NAME="Promotion Operation Id"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Promotion Operation Type"
+			   INOUT="IN"
+			   NAME="Promotion Operation Type"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="Quote"
+			   DISPLAY_NAME="Quote Header BC Name"
+			   INOUT="NONE"
+			   NAME="Quote Header BC Name"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="SIS OM Quote"
+			   DISPLAY_NAME="Quote IO Name"
+			   INOUT="NONE"
+			   NAME="Quote IO Name"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="Quote Id"
+			   DISPLAY_NAME="Quote Id Field Name"
+			   INOUT="NONE"
+			   NAME="Quote Id Field Name"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="Quote Item"
+			   DISPLAY_NAME="Quote Item BC Name"
+			   INOUT="NONE"
+			   NAME="Quote Item BC Name"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Related Product Id"
+			   INOUT="IN"
+			   NAME="Related Product Id"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Target Document"
+			   INOUT="IN"
+			   NAME="Target Document"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+			</WF_PROCESS_PROP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*144 264 240 3129*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Add Disconnect Charge?"
+			   TYPE="DECISION_POINT"
+			   UPDATED="04/17/2017 15:54:49"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:49"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*456 3374*FrHS1*32*P17*192 3374*NPts1*42*P07*192 3122*P37*456 3124*ToHS1*38*ArrowEnd1*4"
+				   NAME="NO"
+				   TO_STEP_NAME="Ensure New Line Item"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:49"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:49"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Add Disconnect Charge?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*456 3374*FrHS1*32*P17*192 3374*NPts1*42*P07*192 3122*P37*456 3124*ToHS1*38*ArrowEnd1*4"
+					   NAME="NO"
+					   TO_STEP_NAME="Ensure New Line Item"
+					   UPDATED="04/17/2017 15:54:50"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:50"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(CalculateOneTimeServiceCharge All Must Match (Ignore Case)(&apos;TRUE&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*276 2884*NPts1*22*P07*240 2884*ToHS1*08*ArrowEnd1*4"
+				   NAME="YES"
+				   TO_STEP_NAME="Add Service Charge"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:50"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:50"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Add Disconnect Charge?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*276 2884*NPts1*22*P07*240 2884*ToHS1*08*ArrowEnd1*4"
+					   NAME="YES"
+					   TO_STEP_NAME="Add Service Charge"
+					   UPDATED="04/17/2017 15:54:50"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:50"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="PROPERTY"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="YES1"
+					   OPERATION="EQ_ALL_NC"
+					   PROPERTY_NAME="CalculateOneTimeServiceCharge"
+					   SEQUENCE="3"
+					   UPDATED="04/17/2017 15:54:50"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:50"
+					   CREATED_BY="FCABRAL">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR1="TRUE"
+						   NAME="YES11"
+						   SEQUENCE="1"
+						   UPDATED="04/17/2017 15:54:50"
+						   UPDATED_BY="FCABRAL"
+						   CREATED="04/17/2017 15:54:50"
+						   CREATED_BY="FCABRAL">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*276 264 372 3129*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="Add Service Charge"
+			   SUBPROCESS_NAME="SIS OM Add Service Charge Sub-Process"
+			   TYPE="SUB_PROCESS"
+			   UPDATED="04/17/2017 15:54:50"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:50"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*408 2884*NPts1*22*P07*372 2884*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 4"
+				   TO_STEP_NAME="Ensure New Line Item"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:50"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:50"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Add Service Charge"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*408 2884*NPts1*22*P07*372 2884*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 4"
+					   TO_STEP_NAME="Ensure New Line Item"
+					   UPDATED="04/17/2017 15:54:50"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:50"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Delta Document"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="2"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:50"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:50"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Add Service Charge70"
+				   OUTPUT_ARG="Delta Document"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="7"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/17/2017 15:54:50"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:50"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Order Type"
+				   PROPERTY_NAME="Order Type"
+				   SEQUENCE="6"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:50"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:50"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Target Document"
+				   PROPERTY_NAME="Target Document"
+				   SEQUENCE="4"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:50"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:50"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Apply"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*672 96 768 1449*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Apply Changes"
+			   TYPE="TASK"
+			   UPDATED="04/17/2017 15:54:50"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:50"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*636 1204*FrHS1*02*P17*672 1204*NPts1*32*P07*672 1204*ToHS1*28*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Trim"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:50"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:50"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Apply Changes"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*636 1204*FrHS1*02*P17*672 1204*NPts1*32*P07*672 1204*ToHS1*28*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Trim"
+					   UPDATED="04/17/2017 15:54:50"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:50"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Apply Changes1"
+				   OUTPUT_ARG="Is Apply Result Empty"
+				   PROPERTY_NAME="Apply Result Empty"
+				   SEQUENCE="1"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/17/2017 15:54:50"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:50"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Apply Changes2"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Current Asset"
+				   SEQUENCE="2"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/17/2017 15:54:50"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:50"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="OpenOrders"
+				   PROPERTY_NAME="Open Orders"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:50"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:50"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Delta"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*12 180 108 2289*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Create Delta"
+			   TYPE="TASK"
+			   UPDATED="04/17/2017 15:54:50"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:50"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*60 2644*NPts1*22*P06*60 2284*ToHS1*18*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Set Due Date"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:50"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:50"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Create Delta"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*60 2644*NPts1*22*P06*60 2284*ToHS1*18*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Set Due Date"
+					   UPDATED="04/17/2017 15:54:50"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:50"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Create Delta1"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="1"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/17/2017 15:54:50"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:50"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Empty Asset"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:50"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:50"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r16*936 264 1032 3129*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="End"
+			   TYPE="END"
+			   UPDATED="04/17/2017 15:54:50"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:50"
+			   CREATED_BY="FCABRAL">
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Field Value"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*408 264 504 3129*FillBgClr8*167641598*ArrowEnd1*1"
+			   NAME="Ensure New Line Item"
+			   TYPE="TASK"
+			   UPDATED="04/17/2017 15:54:50"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:50"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*516 2884*FrHS1*22*P17*516 2884*NPts1*42*P07*504 2882*P37*540 2874*ToHS1*08*ArrowEnd1*1"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Set Product Instance (EAI Op)"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:50"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:50"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Ensure New Line Item"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*516 2884*FrHS1*22*P17*516 2884*NPts1*42*P07*504 2882*P37*540 2874*ToHS1*08*ArrowEnd1*1"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Set Product Instance (EAI Op)"
+					   UPDATED="04/17/2017 15:54:50"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:50"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Field Name"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Integration Id"
+				   UPDATED="04/17/2017 15:54:50"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:50"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Generate New Id"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Y"
+				   UPDATED="04/17/2017 15:54:50"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:50"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Ensure New Line Item1"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="1"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/17/2017 15:54:50"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:50"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:50"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:50"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   ERROR_CODE="SISOM_WF_ERR_ALREADY_DISCONNECTED"
+			   ERROR_MESSAGE="A request has already been made to disconnect."
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*4*0*0*0*1*r15*408 180 504 2289*FillBgClr8*100794369*LineColor3*2558*ArrowEnd1*1"
+			   NAME="Error Out"
+			   TYPE="ABORT"
+			   UPDATED="04/17/2017 15:54:50"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:50"
+			   CREATED_BY="FCABRAL">
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Query"
+			   BUSINESS_SERVICE_NAME="EAI Siebel Adapter"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*144 96 240 1449*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Get Active Document"
+			   TYPE="TASK"
+			   UPDATED="04/17/2017 15:54:50"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:50"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*02*P17*108 1204*NPts1*22*P07*144 1204*ToHS1*28*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Set Active Document Header"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:50"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:50"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Get Active Document"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*02*P17*108 1204*NPts1*22*P07*144 1204*ToHS1*28*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Set Active Document Header"
+					   UPDATED="04/17/2017 15:54:50"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:50"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Get Active Document1"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="1"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="OutputIntObjectName"
+				   SEQUENCE="0"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="IIF([&amp;Target Document] = &apos;Quote&apos;, [&amp;Quote IO Name], [&amp;Order IO Name])"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="PrimaryRowId"
+				   PROPERTY_NAME="Active Document Id"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SearchSpec"
+				   SEQUENCE="0"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="&apos;[Header.Id] = &quot;&apos; + [&amp;Active Document Id] + &apos;&quot; AND [Line Item.Id] = &quot;SomeBogusId&quot;&apos;"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*12 360 108 4089*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Is Merge Operation?"
+			   TYPE="DECISION_POINT"
+			   UPDATED="04/17/2017 15:54:51"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:51"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*126 2884*FrHS1*22*P17*126 3844*NPts1*42*P07*108 3842*P37*144 2884*ToHS1*08*ArrowEnd1*4"
+				   NAME="No"
+				   TO_STEP_NAME="Add Disconnect Charge?"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Is Merge Operation?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*126 2884*FrHS1*22*P17*126 3844*NPts1*42*P07*108 3842*P37*144 2884*ToHS1*08*ArrowEnd1*4"
+					   NAME="No"
+					   TO_STEP_NAME="Add Disconnect Charge?"
+					   UPDATED="04/17/2017 15:54:51"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:51"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(Promotion Operation Id Is Not Null)"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*60 4684*NPts1*22*P06*60 4084*ToHS1*18*ArrowEnd1*4"
+				   NAME="Yes"
+				   TO_STEP_NAME="Set Promotion Operation Id"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Is Merge Operation?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*60 4684*NPts1*22*P06*60 4084*ToHS1*18*ArrowEnd1*4"
+					   NAME="Yes"
+					   TO_STEP_NAME="Set Promotion Operation Id"
+					   UPDATED="04/17/2017 15:54:51"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:51"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="PROPERTY"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="Yes1"
+					   OPERATION="IS_NOT_NULL"
+					   PROPERTY_NAME="Promotion Operation Id"
+					   SEQUENCE="2"
+					   UPDATED="04/17/2017 15:54:51"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:51"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*408 96 504 1449*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Is Product Instance Empty"
+			   TYPE="DECISION_POINT"
+			   UPDATED="04/17/2017 15:54:51"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:51"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*372 1204*FrHS1*02*P17*408 1204*NPts1*32*P07*408 1204*ToHS1*28*ArrowEnd1*4"
+				   NAME="No.DECISION"
+				   TO_STEP_NAME="Set Requested Product Instance"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Is Product Instance Empty"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*372 1204*FrHS1*02*P17*408 1204*NPts1*32*P07*408 1204*ToHS1*28*ArrowEnd1*4"
+					   NAME="No.DECISION"
+					   TO_STEP_NAME="Set Requested Product Instance"
+					   UPDATED="04/17/2017 15:54:51"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:51"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="PROPERTY"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="No.DECISION1"
+					   OPERATION="EQ_ANY_NC"
+					   PROPERTY_NAME="Apply Result Empty"
+					   SEQUENCE="1"
+					   UPDATED="04/17/2017 15:54:51"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:51"
+					   CREATED_BY="FCABRAL">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR1="N"
+						   NAME="No.DECISION11"
+						   SEQUENCE="1"
+						   UPDATED="04/17/2017 15:54:51"
+						   UPDATED_BY="FCABRAL"
+						   CREATED="04/17/2017 15:54:51"
+						   CREATED_BY="FCABRAL">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*456 1804*NPts1*22*P07*456 1444*ToHS1*18*ArrowEnd1*4"
+				   NAME="Yes.DEFAULT"
+				   TO_STEP_NAME="Error Out"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Is Product Instance Empty"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*456 1804*NPts1*22*P07*456 1444*ToHS1*18*ArrowEnd1*4"
+					   NAME="Yes.DEFAULT"
+					   TO_STEP_NAME="Error Out"
+					   UPDATED="04/17/2017 15:54:51"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:51"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Query"
+			   BUSINESS_SERVICE_NAME="EAI Siebel Adapter"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*276 12 372 609*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Load Asset"
+			   TYPE="TASK"
+			   UPDATED="04/17/2017 15:54:51"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:51"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*408 364*NPts1*22*P06*372 364*ToHS1*08*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Set Product Instance"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Load Asset"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*408 364*NPts1*22*P06*372 364*ToHS1*08*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Set Product Instance"
+					   UPDATED="04/17/2017 15:54:51"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:51"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Load Asset1"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Current Asset"
+				   SEQUENCE="1"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Load Asset2"
+				   OUTPUT_ARG="NumOutputObjects"
+				   PROPERTY_NAME="Number of Assets"
+				   SEQUENCE="2"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="OutputIntObjectName"
+				   PROPERTY_NAME="Asset IO Name"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SearchSpec"
+				   SEQUENCE="0"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="&apos;[Header.Integration Id] = &quot;&apos; + [&amp;Asset Integration Id] + &apos;&quot; AND [Header.Status] &lt;&gt; &quot;&apos; + LookupValue(&quot;IMPL_PHASE&quot;, &quot;Inactive&quot;) + &apos;&quot; AND [Line Item.Status] &lt;&gt; &quot;&apos; + LookupValue(&quot;IMPL_PHASE&quot;, &quot;Inactive&quot;) + &apos;&quot;&apos;"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Find Orders"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*540 12 636 609*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Load Open Order Line Items"
+			   TYPE="TASK"
+			   UPDATED="04/17/2017 15:56:38"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:51"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*672 364*NPts1*22*P06*636 364*ToHS1*08*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Set Apply Output Header"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Load Open Order Line Items"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*672 364*NPts1*22*P06*636 364*ToHS1*08*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Set Apply Output Header"
+					   UPDATED="04/17/2017 15:54:51"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:51"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Asset Integration Id"
+				   PROPERTY_NAME="Asset Integration Id"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Load Open Order Line Items1"
+				   OUTPUT_ARG="OpenOrders"
+				   PROPERTY_NAME="Open Orders"
+				   SEQUENCE="1"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   COMMENTS="RPIRES - Changed searchspec to consider Line Item status instead of order status for VFTRCBU-17145"
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Search Spec"
+				   SEQUENCE="0"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="&quot;[Processed Flag]&lt;&gt;&apos;Y&apos; AND [Active Order Flg]=&apos;Y&apos; AND [Order Status]&lt;&gt;&apos;&quot; + LookupValue(&quot;FS_ORDER_STATUS&quot;,&quot;Cancelled&quot;) + &quot;&apos; AND ([Order Status]=&apos;&quot; + LookupValue(&quot;FS_ORDER_STATUS&quot;,&quot;Open&quot;) + &quot;&apos; OR [Order Status]=&apos;&quot; + LookupValue(&quot;FS_ORDER_STATUS&quot;,&quot;Failed&quot;) + &quot;&apos;)&quot; + IIF([&amp;Due Date] IS NULL, &quot;&quot;, &quot; AND [TELCO Due Date W Factor]&lt;=&apos;&quot; + [&amp;Due Date] + &quot;&apos;&quot;)"
+				   UPDATED="04/17/2017 15:56:38"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Sort Order Item By"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Due Date"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Compute EAI Operation"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*672 264 767 3129*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Prepare Sync Input (Set EAI_OPERATION codes)"
+			   TYPE="TASK"
+			   UPDATED="04/17/2017 15:54:51"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:51"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*804 2884*NPts1*22*P07*767 2884*ToHS1*08*ArrowEnd1*1"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Sync Line Item"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Prepare Sync Input (Set EAI_OPERATION codes)"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*804 2884*NPts1*22*P07*767 2884*ToHS1*08*ArrowEnd1*1"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Sync Line Item"
+					   UPDATED="04/17/2017 15:54:51"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:51"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Prepare Sync Input (Set EAI_OPERATION codes)1"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="1"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Reset"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   DESCRIPTION="To prevent incomplete workflow from polluting the PMT cache."
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*144 12 240 609*FillBgClr8*167641598*ArrowEnd1*1"
+			   NAME="Reset PMT Cache"
+			   TYPE="TASK"
+			   UPDATED="04/17/2017 15:54:51"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:51"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*276 364*NPts1*22*P06*240 364*ToHS1*08*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Load Asset"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Reset PMT Cache"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*276 364*NPts1*22*P06*240 364*ToHS1*08*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Load Asset"
+					   UPDATED="04/17/2017 15:54:51"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:51"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Output Header"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*12 96 108 1449*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Set Active Document Header"
+			   TYPE="TASK"
+			   UPDATED="04/17/2017 15:54:51"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:51"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*60 1804*NPts1*22*P06*60 1444*ToHS1*18*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Create Delta"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set Active Document Header"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*60 1804*NPts1*22*P06*60 1444*ToHS1*18*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Create Delta"
+					   UPDATED="04/17/2017 15:54:51"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:51"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Output Header"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*672 12 768 609*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Set Apply Output Header"
+			   TYPE="TASK"
+			   UPDATED="04/17/2017 15:54:51"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:51"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*720 964*NPts1*22*P06*720 604*ToHS1*18*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Apply Changes"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set Apply Output Header"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*720 964*NPts1*22*P06*720 604*ToHS1*18*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Apply Changes"
+					   UPDATED="04/17/2017 15:54:51"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:51"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Current Asset"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Field Value"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*12 264 108 3129*FillBgClr8*167641598*ArrowEnd1*1"
+			   NAME="Set Due Date"
+			   TYPE="TASK"
+			   UPDATED="04/17/2017 15:54:51"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:51"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*60 3604*NPts1*22*P06*60 3124*ToHS1*18*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Is Merge Operation?"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set Due Date"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*60 3604*NPts1*22*P06*60 3124*ToHS1*18*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Is Merge Operation?"
+					   UPDATED="04/17/2017 15:54:51"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:51"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Field Name"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Due Date"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Set Due Date1"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="1"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Set Due Date20"
+				   PROPERTY_NAME="CalculateOneTimeServiceCharge"
+				   SEQUENCE="2"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="SystemPreference(&quot;Enable AIA Comms&quot;)"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Value"
+				   PROPERTY_NAME="Due Date"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Field Value"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*5*0*0*0*8*FontSize1*91*r15*144 384 240 4329*FillBgClr8*134218238*FontName6*Tahoma8*ArrowEnd1*1"
+			   NAME="Set Prod Prom Source Id"
+			   TYPE="TASK"
+			   UPDATED="04/17/2017 15:54:51"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:51"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*10*0*0*0*9*LineWidth1*22*P27*144 3604*FrHS1*12*P17*192 3604*NPts1*52*P07*192 3842*P37*144 2884*ToHS1*02*P47*144 2888*ArrowEnd1*4"
+				   NAME="Connector 0"
+				   TO_STEP_NAME="Add Disconnect Charge?"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set Prod Prom Source Id"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*10*0*0*0*9*LineWidth1*22*P27*144 3604*FrHS1*12*P17*192 3604*NPts1*52*P07*192 3842*P37*144 2884*ToHS1*02*P47*144 2888*ArrowEnd1*4"
+					   NAME="Connector 0"
+					   TO_STEP_NAME="Add Disconnect Charge?"
+					   UPDATED="04/17/2017 15:54:51"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:51"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Field Name"
+				   SEQUENCE="7"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Prod Prom Source Id"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Set Prod Prom Source Id10"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="10"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="9"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Value"
+				   PROPERTY_NAME="Prod Prom Source Id"
+				   SEQUENCE="8"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Product Instance"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*408 12 504 609*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Set Product Instance"
+			   TYPE="TASK"
+			   UPDATED="04/17/2017 15:54:51"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:51"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*540 364*NPts1*22*P06*504 364*ToHS1*08*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Load Open Order Line Items"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set Product Instance"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*540 364*NPts1*22*P06*504 364*ToHS1*08*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Load Open Order Line Items"
+					   UPDATED="04/17/2017 15:54:51"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:51"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Current Asset"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Product Instance"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*540 264 636 3119*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Set Product Instance (EAI Op)"
+			   TYPE="TASK"
+			   UPDATED="04/17/2017 15:54:51"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:51"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*654 2884*FrHS1*22*P17*648 2884*NPts1*42*P07*636 2872*P37*672 2884*ToHS1*08*ArrowEnd1*1"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Prepare Sync Input (Set EAI_OPERATION codes)"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set Product Instance (EAI Op)"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*654 2884*FrHS1*22*P17*648 2884*NPts1*42*P07*636 2872*P37*672 2884*ToHS1*08*ArrowEnd1*1"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Prepare Sync Input (Set EAI_OPERATION codes)"
+					   UPDATED="04/17/2017 15:54:51"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:51"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Blank Prop Set"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Field Value"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*5*0*0*0*8*FontSize1*91*r14*12 468 108 5169*FillBgClr8*134218238*FontName6*Tahoma8*ArrowEnd1*1"
+			   NAME="Set Promotion Operation Id"
+			   TYPE="TASK"
+			   UPDATED="04/17/2017 15:54:51"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:51"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*144 4924*NPts1*22*P07*108 4924*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 2"
+				   TO_STEP_NAME="Set Promotion Operation Type"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set Promotion Operation Id"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*144 4924*NPts1*22*P07*108 4924*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 2"
+					   TO_STEP_NAME="Set Promotion Operation Type"
+					   UPDATED="04/17/2017 15:54:51"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:51"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Field Name"
+				   SEQUENCE="1"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Promotion Operation Id"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Set Promotion Operation Id12"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="12"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="3"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Value"
+				   PROPERTY_NAME="Promotion Operation Id"
+				   SEQUENCE="2"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Field Value"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*5*0*0*0*8*FontSize1*91*r15*144 468 240 5169*FillBgClr8*134218238*FontName6*Tahoma8*ArrowEnd1*1"
+			   NAME="Set Promotion Operation Type"
+			   TYPE="TASK"
+			   UPDATED="04/17/2017 15:54:51"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:51"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*12*P17*192 4324*NPts1*22*P07*192 4684*ToHS1*38*ArrowEnd1*4"
+				   NAME="Connector 3"
+				   TO_STEP_NAME="Set Prod Prom Source Id"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:51"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:51"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set Promotion Operation Type"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*12*P17*192 4324*NPts1*22*P07*192 4684*ToHS1*38*ArrowEnd1*4"
+					   NAME="Connector 3"
+					   TO_STEP_NAME="Set Prod Prom Source Id"
+					   UPDATED="04/17/2017 15:54:52"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:52"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Field Name"
+				   SEQUENCE="4"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Promotion Operation Type"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Set Promotion Operation Type11"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="11"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="6"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Value"
+				   PROPERTY_NAME="Promotion Operation Type"
+				   SEQUENCE="5"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Product Instance"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*276 96 372 1449*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Set Requested Product Instance"
+			   TYPE="TASK"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*02*P17*240 1204*NPts1*22*P07*276 1204*ToHS1*28*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Get Active Document"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set Requested Product Instance"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*02*P17*240 1204*NPts1*22*P07*276 1204*ToHS1*28*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Get Active Document"
+					   UPDATED="04/17/2017 15:54:52"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:52"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Current Asset"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r12*12 12 108 609*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="Start"
+			   TYPE="START"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*144 364*NPts1*22*P05*96 364*ToHS1*08*ArrowEnd1*4"
+				   NAME="1"
+				   TO_STEP_NAME="Reset PMT Cache"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Start"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*144 364*NPts1*22*P05*96 364*ToHS1*08*ArrowEnd1*4"
+					   NAME="1"
+					   TO_STEP_NAME="Reset PMT Cache"
+					   UPDATED="04/17/2017 15:54:52"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:52"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Synchronize"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*804 264 900 3129*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Sync Line Item"
+			   TYPE="TASK"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*936 2884*NPts1*22*P07*900 2884*ToHS1*08*ArrowEnd1*1"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="End"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Sync Line Item"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*936 2884*NPts1*22*P07*900 2884*ToHS1*08*ArrowEnd1*1"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="End"
+					   UPDATED="04/17/2017 15:54:52"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:52"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="BuscompHeaderName"
+				   SEQUENCE="0"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="IIF([&amp;Target Document] = &apos;Quote&apos;, [&amp;Quote Header BC Name], [&amp;Order Header BC Name])"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="BuscompItemName"
+				   SEQUENCE="0"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="IIF([&amp;Target Document] = &apos;Quote&apos;, [&amp;Quote Item BC Name], [&amp;Order Item BC Name])"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="BuscompObjectName"
+				   SEQUENCE="0"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="IIF([&amp;Target Document] = &apos;Quote&apos;, &apos;Quote&apos;, &apos;Order Entry (Sales)&apos;)"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="IdFieldName"
+				   SEQUENCE="0"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="IIF([&amp;Target Document] = &apos;Quote&apos;, [&amp;Quote Id Field Name], [&amp;Order Id Field Name])"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="LineNumberField"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Line Number"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="PrimaryRowId"
+				   PROPERTY_NAME="Active Document Id"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Reprice"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Y"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Delta Document"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SyncOnly"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="N"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="ThinBuscompFlag"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Y"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Trim"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*540 96 636 1449*FillBgClr8*167641598*ArrowEnd1*1"
+			   NAME="Trim"
+			   TYPE="TASK"
+			   UPDATED="04/17/2017 15:54:52"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="04/17/2017 15:54:52"
+			   CREATED_BY="FCABRAL">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*02*P17*504 1204*NPts1*22*P07*540 1204*ToHS1*28*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Is Product Instance Empty"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Trim"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*02*P17*504 1204*NPts1*22*P07*540 1204*ToHS1*28*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Is Product Instance Empty"
+					   UPDATED="04/17/2017 15:54:52"
+					   UPDATED_BY="FCABRAL"
+					   CREATED="04/17/2017 15:54:52"
+					   CREATED_BY="FCABRAL">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="KeepSpec"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="[Convert To Asset Flag] = &apos;Y&apos;"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Trim1"
+				   OUTPUT_ARG="Is Trim Result Empty"
+				   PROPERTY_NAME="Apply Result Empty"
+				   SEQUENCE="1"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Trim2"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Current Asset"
+				   SEQUENCE="2"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Current Asset"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="04/17/2017 15:54:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="04/17/2017 15:54:52"
+				   CREATED_BY="FCABRAL">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+		</WORKFLOW_PROCESS>
+	</PROJECT>
+</REPOSITORY>
+
+
+

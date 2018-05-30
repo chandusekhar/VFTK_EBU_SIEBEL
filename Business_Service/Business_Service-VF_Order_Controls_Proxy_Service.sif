@@ -1,0 +1,715 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="11/24/2016 17:14:00"
+   UPDATED_BY="SADMIN"
+   CREATED="11/24/2016 14:49:11"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="VF CR690 HIPSTER"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VF CR690 Hipster"
+	   UI_FREEZE="N"
+	   UPDATED="04/19/2017 16:54:54"
+	   UPDATED_BY="JMARQUES"
+	   CREATED="05/06/2013 10:46:25"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="Y"
+		   CLASS="CSSService"
+		   COMMENTS="CR690 Hipster"
+		   EXTERNAL_USE="N"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VF Order Controls Proxy Service"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="04/18/2017 13:12:04"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   OBJECT_LOCKED_BY_NAME="JMARQUES"
+		   UPDATED="04/19/2017 16:54:54"
+		   UPDATED_BY="JMARQUES"
+		   CREATED="05/06/2013 10:56:47"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="(declarations)-All"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="(declarations)"
+			   SCRIPT="/*function CheckControls(Inputs,Outputs)
+{
+
+	var BS		: Service	 = TheApplication().GetService(&quot;VF Order Controls Proxy Service Business Service&quot;);
+
+	do
+	{
+		Inputs.SetProperty(&quot;ByPassControlDetailId&quot;, Outputs.GetProperty(&quot;ByPassControlDetailId&quot;));										
+		Inputs.SetProperty(&quot;ByPassOrderItemId&quot;, Outputs.GetProperty(&quot;ByPassOrderItemId&quot;));																
+		BS.InvokeMethod(&quot;CheckOrderControls&quot;,Inputs, Outputs);
+		if(VFControlResult == false)
+		{
+			if(CanSkip == false)
+			{
+				alert(VFErrorMessage);
+				return (&quot;CancelOperation&quot;); 
+			}
+			else 
+			{				
+				var msg = confirm(VFErrorMessage + &quot;\nConfirm?&quot;); 
+				if(msg) 
+				{ 				
+					alert(VFErrorMessage);
+					return (&quot;ContinueOperation&quot;); 
+				}
+				else 
+				{ 
+					return (&quot;CancelOperation&quot;); 
+				} 
+			}
+		}
+	} while (VFControlResult)
+
+	return (&quot;ContinueOperation&quot;);
+}*/"
+			   UPDATED="06/01/2013 20:56:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/01/2013 20:56:14"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_BROWSER_SCRIPT>
+			<BUSINESS_SERVICE_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="Service_PreInvokeMethod"
+			   SCRIPT="function Service_PreInvokeMethod (methodName,Inputs,Outputs)
+{
+	//alert(&quot;Browser Script:Service_PreInvokeMethod:&quot; + methodName);
+	if(methodName == &quot;CheckControls&quot;)
+	{
+		//alert(&quot;Browser Script:Service_PreInvokeMethod:&quot; + methodName + &quot; calisacak&quot;);
+		CheckControls(Inputs,Outputs);
+		return (&quot;CancelOperation&quot;);
+	}
+	return (&quot;ContinueOperation&quot;);
+}"
+			   UPDATED="06/01/2013 20:56:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/01/2013 20:56:14"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_BROWSER_SCRIPT>
+			<BUSINESS_SERVICE_LOCALE
+			   APPLICATION_CODE="STD"
+			   DISPLAY_NAME="VF Order Controls Proxy Service"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   TRANSLATE="Y"
+			   UPDATED="10/01/2014 20:08:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2014 20:08:41"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_LOCALE>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="CheckControls"
+			   UPDATED="06/01/2013 20:56:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/01/2013 20:56:14"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="CheckOrder"
+			   UPDATED="10/01/2014 20:08:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2014 20:08:41"
+			   CREATED_BY="SADMIN">
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="VF Control Result"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Output"
+				   UPDATED="10/01/2014 20:08:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2014 20:08:41"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="controlObjectMethod"
+				   OPTIONAL="Y"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="10/01/2014 20:08:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2014 20:08:42"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="controlObjectName"
+				   OPTIONAL="Y"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="10/01/2014 20:08:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2014 20:08:42"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="orderId"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="10/01/2014 20:08:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2014 20:08:42"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="productCheckType"
+				   OPTIONAL="Y"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="10/01/2014 20:08:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2014 20:08:42"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="webProductCheckType"
+				   OPTIONAL="Y"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="10/01/2014 20:08:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2014 20:08:42"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="CheckOrderControls"
+			   UPDATED="06/01/2013 20:56:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/01/2013 20:56:14"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="logBypassControls"
+			   UPDATED="06/01/2013 20:56:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/01/2013 20:56:14"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CheckOrderControls"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CheckOrderControls(/*OrderId:String,VFControlResult:Boolean,CanSkip:Boolean,VFErrorMessage:String,CustomerSubClass:String,ByPassParameters:PropertySet*/Inputs, Outputs)
+{
+	try{
+		var OrderId = Inputs.GetProperty(&quot;OrderId&quot;);
+		var CustomerSubClass = Inputs.GetProperty(&quot;CustomerSubClass&quot;); 
+		var ShopCode = Inputs.GetProperty(&quot;ShopCode&quot;);
+		var SalesChannel = ShopCode.substring(0,1);
+		var VFControlResult = &quot;Y&quot;;	
+		Outputs.SetProperty(&quot;VFControlResult&quot;, VFControlResult);
+		var CanSkip = &quot;Y&quot;;			
+		var VFErrorMessage = &quot;&quot;;		
+		var positionTypeOutput 	:PropertySet = TheApplication().NewPropertySet();		
+		TheApplication().GetService(&quot;VF Controls&quot;).InvokeMethod(&quot;GetPositionType&quot;, TheApplication().NewPropertySet(),positionTypeOutput);
+		var PositionType = positionTypeOutput.GetProperty(&quot;PositionType&quot;);
+		var AddActionCode = TheApplication ().InvokeMethod (&quot;LookupValue&quot;,&quot;DELTA_ACTION_CODE&quot;,&quot;New&quot;);
+		//delete action code
+		var DelActionCode = TheApplication ().InvokeMethod (&quot;LookupValue&quot;, &quot;DELTA_ACTION_CODE&quot;, &quot;Deleted&quot;);
+		var OrderEntryBO : BusObject = TheApplication().GetBusObject(&quot;X Order Entry&quot;);
+		var OrderLineItems : BusComp = OrderEntryBO.GetBusComp(&quot;HP Submit - Order Entry - Line Items&quot;);
+		var OrderItemSearch = &quot;[Order Header Id] = &apos;&quot;+OrderId+&quot;&apos; AND ([Action Code] = &apos;&quot;+AddActionCode+&quot;&apos; OR [Action Code] = &apos;&quot;+DelActionCode+&quot;&apos;)&quot;;
+		
+		with (OrderLineItems)
+		{
+			SetViewMode(AllView);
+			ClearToQuery();
+			ActivateField(&quot;VF Product Group&quot;);
+			ActivateField(&quot;VF Product Type&quot;);
+			ActivateField(&quot;VF Product Sub Type&quot;);
+			ActivateField(&quot;X Customer Segment&quot;);
+			ActivateField(&quot;Root Asset Integration Id&quot;);
+			ActivateField(&quot;Customer Code&quot;);
+			ActivateField(&quot;Account Id&quot;);
+			ActivateField(&quot;VF Order Header Reason&quot;);
+			ActivateField(&quot;VF Asset Activation Date&quot;);
+			//TLG-2904 Following two lines added for TLG-2904 but not removed. !no harm!
+			ActivateField(&quot;VF Product Check Type&quot;);
+			ActivateField(&quot;VF Web Product Check Type&quot;);
+			var ControlParametersBc :BusComp = TheApplication().GetBusObject(&quot;X Order Entry&quot;).GetBusComp(&quot;VF Controls Parameters&quot;);					
+			var ControlParametersBcSearchSpec= &quot;[VF Parameter Source] = &apos;Line Item&apos;&quot;;
+			ControlParametersBc.SetViewMode(AllView);
+			ControlParametersBc.ClearToQuery();
+			ControlParametersBc.ActivateField(&quot;VF Parameter Value&quot;);
+			ControlParametersBc.SetSearchExpr(ControlParametersBcSearchSpec);
+			ControlParametersBc.ExecuteQuery(ForwardOnly)
+			var LineItemsToActivate = ControlParametersBc.FirstRecord();
+			
+			while(LineItemsToActivate)
+			{
+				ActivateField(ControlParametersBc.GetFieldValue(&quot;VF Parameter Value&quot;));
+				LineItemsToActivate  = ControlParametersBc.NextRecord();
+			}											
+			
+			//Begin - Scripting 15 - Input validation
+			var inProp 	:PropertySet = TheApplication().NewPropertySet();
+			var outProp	: PropertySet = TheApplication().NewPropertySet();
+			var BS		: Service	 = TheApplication().GetService(&quot;VF TRK Utilities&quot;);
+			inProp.SetProperty(&quot;OrderId&quot;,OrderId);
+			BS.InvokeMethod(&quot;Input Validation&quot;,inProp, outProp);
+			//End - Scripting 15
+			SetSearchExpr(OrderItemSearch);
+			ExecuteQuery(ForwardOnly);
+			//var ProdToCheck = FirstRecord();
+			var numberOfRecords = OrderLineItems.CountRecords();
+			var OrderLineItem = FirstRecord();
+			if (OrderLineItem)
+			{
+				while(OrderLineItem)
+				{
+					var CustomerType = GetFieldValue(&quot;X Customer Segment&quot;);
+					var PartNum = GetFieldValue(&quot;Part Number&quot;);
+					var strBAActivationDate = GetFieldValue(&quot;Billing Activation Date&quot;);
+					var AccountId = GetFieldValue(&quot;Account Id&quot;);
+					var ProductGroup = GetFieldValue(&quot;VF Product Group&quot;);
+					var ProductType = GetFieldValue(&quot;VF Product Type&quot;);
+					var ProductSubType = GetFieldValue(&quot;VF Product Sub Type&quot;);					
+					var OrderItemId = GetFieldValue(&quot;Id&quot;);
+					var RootId = GetFieldValue(&quot;Root Order Item Id&quot;);
+					var AssetIntegId = GetFieldValue(&quot;Root Asset Integration Id&quot;); 
+					var CustomerCode = GetFieldValue(&quot;Customer Code&quot;);
+					var OrderHeaderReason = GetFieldValue(&quot;VF Order Header Reason&quot;);
+					//add Deleted line item Hipster search	
+					var LineActionCode = GetFieldValue(&quot;Action Code&quot;);
+					var strAssetActDate = GetFieldValue(&quot;VF Asset Activation Date&quot;);
+					//TLG-2904 Following two lines added for TLG-2904 but not removed. !no harm!
+					var productCheckType = GetFieldValue(&quot;VF Product Check Type&quot;);
+					var webProductCheckType = GetFieldValue(&quot;VF Web Product Check Type&quot;);
+					var ByPassOrderItemId = Inputs.GetProperty(&quot;ByPassOrderItemId&quot;);//ByPassParameters.GetProperty(&quot;ByPassOrderItemId&quot;);
+					if(ByPassOrderItemId != &quot;&quot;)
+						if(ByPassOrderItemId != OrderItemId){
+							OrderLineItem = NextRecord();
+							continue;
+						}
+						else{
+							Outputs.SetProperty(&quot;ByPassOrderItemId&quot;, &quot;&quot;);
+							Inputs.SetProperty(&quot;ByPassOrderItemId&quot;, &quot;&quot;);	//sonradan eklendi Inputs/Outputs senkronize olması için
+						}
+					
+					//Query &quot;VF Controls Details&quot; Bussiness Component With Search Spec
+					var XOrderbo :BusObject = TheApplication().GetBusObject(&quot;X Order Entry&quot;);					
+					var ControlDetbc :BusComp = XOrderbo.GetBusComp(&quot;VF Controls Details&quot;);
+					var ControlParbc :BusComp = XOrderbo.GetBusComp(&quot;VF Controls Parameters&quot;);
+					var CtrlDetSearch = &quot;&quot;;
+					var strConsumer = TheApplication ().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_ACC_TYPE_VFCONTROL&quot;,&quot;Consumer&quot;);
+					var strBusiness = TheApplication ().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_ACC_TYPE_VFCONTROL&quot;,&quot;Business&quot;);
+					var strBoth = TheApplication ().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_ACC_TYPE_VFCONTROL&quot;,&quot;Both&quot;);
+					var strSearchCustType = &quot; ([Customer Type] = &apos;&quot;+strBoth+&quot;&apos; &quot;;
+					if(CustomerType == TheApplication ().InvokeMethod(&quot;LookupValue&quot;,&quot;ACCOUNT_TYPE&quot;,&quot;102&quot;))
+						strSearchCustType = strSearchCustType+&quot;OR [Customer Type] = &apos;&quot;+strConsumer+&quot;&apos;)&quot;;
+					else
+						strSearchCustType = strSearchCustType+&quot;OR [Customer Type] = &apos;&quot;+strBusiness+&quot;&apos;)&quot;;
+
+					CtrlDetSearch = &quot;([Sales Channel] LIKE &apos;*&quot;+SalesChannel+&quot;*&apos; OR [Sales Channel] = &apos;all&apos;) AND ([Product Group] = &apos;&quot;+ProductGroup+&quot;&apos; OR [Product Group] = &apos;&apos; OR [Product Group] is null) AND ([Product Type] = &apos;&quot;+ProductType+&quot;&apos; OR [Product Type] = &apos;&apos; OR [Product Type] is null) AND ([Product Sub Type] = &apos;&quot;+ProductSubType+&quot;&apos; OR [Product Sub Type] = &apos;&apos; OR [Product Sub Type] is null) AND ([Part Num] = &apos;&quot;+PartNum+&quot;&apos; OR [Part Num] = &apos;&apos; OR [Part Num] is null) AND&quot;+strSearchCustType+&quot; AND ([Control Num] LIKE &apos;HPST:*&apos;)&quot;;
+					if(LineActionCode == DelActionCode) {
+						CtrlDetSearch = &quot;([Sales Channel] LIKE &apos;*&quot;+SalesChannel+&quot;*&apos; OR [Sales Channel] = &apos;all&apos;) AND ([Product Group] = &apos;&quot;+ProductGroup+&quot;&apos; OR [Product Group] = &apos;&apos; OR [Product Group] is null) AND ([Product Type] = &apos;&quot;+ProductType+&quot;&apos; OR [Product Type] = &apos;&apos; OR [Product Type] is null) AND ([Product Sub Type] = &apos;&quot;+ProductSubType+&quot;&apos; OR [Product Sub Type] = &apos;&apos; OR [Product Sub Type] is null) AND ([Part Num] = &apos;&quot;+PartNum+&quot;&apos; OR [Part Num] = &apos;&apos; OR [Part Num] is null) AND&quot;+strSearchCustType+&quot; AND ([Control Num] LIKE &apos;HPSTDL:*&apos;)&quot;;
+					}	
+					with(ControlDetbc)
+					{
+						SetViewMode(AllView);
+						ClearToQuery();
+						SetSearchExpr(CtrlDetSearch);
+						ExecuteQuery(ForwardOnly);
+						var numberOfControls = ControlDetbc.CountRecords();
+						var CtrlToCheck = FirstRecord();	
+						while(CtrlToCheck)
+						{	var strCustType = GetFieldValue(&quot;Customer Type&quot;);
+							var ControlNum = GetFieldValue(&quot;Control Num&quot;);
+							var ControlDetId = GetFieldValue(&quot;Control Detail Id&quot;);
+							var ActiveFlag = GetFieldValue(&quot;Active Flag&quot;);
+							var ByPassFlg = GetFieldValue(&quot;By Pass Flag&quot;);
+							var Description = GetFieldValue(&quot;Description&quot;);	
+							var VFLineSearchExpr:String = GetFieldValue(&quot;VF Line Search Expr&quot;);
+							var MaxLimit = &quot;&quot;;
+							var Trans = new Array;
+							var sayac =0;
+							var ByPassControlDetailId = Inputs.GetProperty(&quot;ByPassControlDetailId&quot;);//ByPassParameters.GetProperty(&quot;ByPassControlDetailId&quot;);							
+							if(ByPassControlDetailId != &quot;&quot;){
+								if(ByPassControlDetailId == ControlDetId){
+									//CtrlToCheck = NextRecord();
+									//continue;
+									Outputs.SetProperty(&quot;ByPassControlDetailId&quot;, &quot;&quot;);
+									Inputs.SetProperty(&quot;ByPassControlDetailId&quot;, &quot;&quot;);	//sonradan eklendi Inputs/Outputs senkronize olması için
+								}
+								/*else{
+									//ByPassParameters.SetProperty(&quot;ByPassControlDetailId&quot;,null);
+									//Outputs.SetProperty(&quot;ByPassControlDetailId&quot;, &quot;&quot;);
+									//CtrlToCheck = NextRecord();
+									//continue;
+								}*/
+								CtrlToCheck = NextRecord();
+								continue;
+							}
+							
+							if(VFLineSearchExpr.length != 0){	
+								//CheckLineItemCondition 
+								var boOrder : BusObject  = TheApplication().GetBusObject(&quot;Order Entry (Sales)&quot;);
+								//var bcOrderSimple : BusComp = boOrder.GetBusComp(&quot;Order Entry - Orders&quot;);
+	  							var bcOrderLineSimple : BusComp = boOrder.GetBusComp(&quot;Order Entry - Line Items&quot;);  	  						
+								with(bcOrderLineSimple)
+								{
+									ClearToQuery();
+									SetViewMode(AllView);								
+									SetSearchExpr(VFLineSearchExpr + &quot; AND [LineItemId] = &apos;&quot; + OrderItemId);
+									ExecuteQuery(ForwardOnly);
+									if(FirstRecord() == false){
+										CtrlToCheck = ControlDetbc.NextRecord();
+										continue;
+									}
+								}
+							}
+							var controlObject= GetFieldValue(&quot;VF Control Object&quot;);
+					        var controlObjectName= GetFieldValue(&quot;VF Control Object Name&quot;);
+					        var controlObjectMethod = GetFieldValue(&quot;VF Control Object Method&quot;);
+					        // Prepare Input Property Set for Parameters
+				        	var localInputs 	:PropertySet = TheApplication().NewPropertySet();
+							with(ControlParbc)//CR408
+							{	
+								SetViewMode(AllView);
+								ClearToQuery();
+								ActivateField(&quot;VF Control Detail Id&quot;);
+								ActivateField(&quot;VF Parameter Type&quot;);
+								ActivateField(&quot;VF Parameter Value&quot;);
+								ActivateField(&quot;VF Parameter Name&quot;);
+								ActivateField(&quot;VF Parameter Source&quot;);
+								SetSearchSpec(&quot;VF Control Detail Id&quot;,ControlDetId);
+								ExecuteQuery(ForwardOnly);
+								var record = FirstRecord();
+								sayac=0;
+								while(record)
+								{	
+									//VF Parameter Source
+									var VFParameterType = GetFieldValue(&quot;VF Parameter Type&quot;);
+									if(VFParameterType == &quot;Literal&quot;)
+									{
+										localInputs.SetProperty(GetFieldValue(&quot;VF Parameter Name&quot;) ,GetFieldValue(&quot;VF Parameter Value&quot;)); 
+									}
+									else if(VFParameterType == &quot;Line Item&quot;)
+									{
+										localInputs.SetProperty(GetFieldValue(&quot;VF Parameter Name&quot;) ,OrderLineItems.GetFieldValue(GetFieldValue(&quot;VF Parameter Value&quot;))); 
+									}
+									else
+									{
+										localInputs.SetProperty(GetFieldValue(&quot;VF Parameter Name&quot;) ,GetFieldValue(&quot;VF Parameter Value&quot;));
+									}								
+									record = NextRecord();
+								}
+							}
+							
+							// Call Workflow or Bussiness service according to  Control Object
+							var localOutputs	: PropertySet = TheApplication().NewPropertySet();
+							if(controlObject == &quot;Business Service&quot;)
+							{
+								BS = TheApplication().GetService(controlObjectName);
+								BS.InvokeMethod(controlObjectMethod,localInputs, localOutputs);
+							}
+							if(controlObject == &quot;Workflow&quot;)
+							{
+								localInputs.SetProperty(&quot;ProcessName&quot;,controlObjectName); 
+								var WF		: Service	 = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+								WF.InvokeMethod(&quot;RunProcess&quot;,localInputs, localOutputs);
+							}
+							
+							//TLG-2904 following lines were added and rolled back
+							if(controlObject == &quot;ProductCheck&quot;) //Added TC-2904 This rule is checking the product Check for mernis and allows bypassing
+							{
+								localInputs.SetProperty(&quot;orderId&quot;, OrderId);
+								localInputs.SetProperty(&quot;controlObjectName&quot;, controlObjectName);
+								localInputs.SetProperty(&quot;controlObjectMethod&quot;, controlObjectMethod);
+								localInputs.SetProperty(&quot;productCheckType&quot;, productCheckType)
+								localInputs.SetProperty(&quot;webProductCheckType&quot;, webProductCheckType)
+								checkOrder(localInputs, localOutputs);
+							}
+							var ControlResult = localOutputs.GetProperty(&quot;VF Control Result&quot;);
+							Outputs.SetProperty(&quot;VFControlResult&quot;, ControlResult);
+							if(ControlResult == &quot;N&quot;)
+							{							
+								//if Control result = N, error message set from cx_ctrl_details							
+								//VFErrorMessage = localOutputs.GetProperty(&quot;Error Message&quot;);
+								if(TheApplication().InvokeMethod(&quot;Language&quot;)==&quot;TRK&quot;)
+								{
+									VFErrorMessage = ControlDetbc.GetFieldValue(&quot;VF Detail Err Message Trk&quot;);
+									if(VFErrorMessage == &quot;&quot;)
+										VFErrorMessage = ControlDetbc.GetFieldValue(&quot;Error Message Trk&quot;);
+								}
+								else
+								{
+									VFErrorMessage = ControlDetbc.GetFieldValue(&quot;VF Detail Err Message Enu&quot;);
+									if(VFErrorMessage == &quot;&quot;)
+										VFErrorMessage = ControlDetbc.GetFieldValue(&quot;Error Message Enu&quot;);
+								}
+								Outputs.SetProperty(&quot;VFErrorMessage&quot;, VFErrorMessage);
+								BS = TheApplication().GetService(&quot;VF Controls&quot;);
+								if(BS.CheckPosition(PositionType, ControlDetId, CustomerSubClass))
+								{
+									CanSkip=&quot;Y&quot;;
+									Outputs.SetProperty(&quot;CanSkip&quot;, CanSkip);
+									Outputs.SetProperty(&quot;ByPassControlDetailId&quot;, ControlDetId);								
+									Outputs.SetProperty(&quot;ByPassOrderItemId&quot;, OrderItemId);
+								}
+								else
+								{
+									CanSkip=&quot;N&quot;;
+									Outputs.SetProperty(&quot;CanSkip&quot;, CanSkip);
+								}
+								return(CancelOperation);
+							}
+							CtrlToCheck = NextRecord();
+						}//while(CtrlToCheck)
+					}//with(ControlDetbc)
+					OrderLineItem = NextRecord();
+				}//while(OrderLineItem)
+			}//if (OrderLineItem)
+		/*	else
+			{
+				Outputs.SetProperty(&quot;Result&quot;,&quot;&quot;);
+			}*/
+		}
+	}
+	catch(e)
+	{
+		Outputs.SetProperty(&quot;VFControlResult&quot;, &quot;&quot;);
+		throw e;
+	}
+	finally
+	{
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="04/12/2015 23:26:04"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/06/2013 11:01:14"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	//return (ContinueOperation);
+	//TheApplication().RaiseErrorText(&quot;Server Script:Service_PreInvokeMethod metodunda:&quot; + MethodName);
+	if(MethodName == &quot;CheckOrderControls&quot;)
+	{
+		//TheApplication().RaiseErrorText(&quot;Server Script:Service_PreInvokeMethod metodunda:&quot; + MethodName + &quot; calisacak&quot;);
+		CheckOrderControls(Inputs,Outputs);
+		//TheApplication().RaiseErrorText(&quot;Server Script:Service_PreInvokeMethod metodunda:&quot; + MethodName + &quot; bitti&quot;);
+		return (CancelOperation);
+	}
+	if(MethodName == &quot;logBypassControls&quot;)
+	{
+		logBypassControls(Inputs,Outputs);
+		return (CancelOperation);
+	}
+	
+	if(MethodName == &quot;CheckOrder&quot;)
+	{
+		checkOrder(Inputs,Outputs);
+		return (CancelOperation);
+	}
+	
+	return (ContinueOperation);
+}"
+			   SEQUENCE="4"
+			   UPDATED="10/01/2014 20:08:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/01/2013 20:56:14"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="checkOrder"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function checkOrder (inputs, outputs) {  // TLG-2904 - Check product check type and signal if Mernis validation fails where the user can still bypass
+/*
+* TLG-2904 This method is unused since we removed codes for January 2014 Minor
+*
+*/
+//TheApplication().TraceOn(&quot;C:\\checkOrder_$p_$t.txt&quot;,&quot;Allocation&quot;,&quot;All&quot;);
+	try {
+		var orderCheckType = &quot;&quot;; var ContactId = &quot;&quot;; var OrSubType = &quot;&quot;; var sChannel = &quot;&quot;
+		var BWMSubType		= TheApplication().InvokeMethod(&quot;LookUpValue&quot;,&quot;ORDER_SUB_TYPE&quot;,&quot;131&quot;);
+		var Mern			= TheApplication().InvokeMethod(&quot;LookUpValue&quot;,&quot;PROD_CHECK_TYPE&quot;,&quot;103&quot;);
+		var BGListCepMern	= TheApplication().InvokeMethod(&quot;LookUpValue&quot;,&quot;PROD_CHECK_TYPE&quot;,&quot;104&quot;);
+		var BGListCepMernCC	= TheApplication().InvokeMethod(&quot;LookUpValue&quot;,&quot;PROD_CHECK_TYPE&quot;,&quot;105&quot;);
+		var BListMern		= TheApplication().InvokeMethod(&quot;LookUpValue&quot;,&quot;PROD_CHECK_TYPE&quot;,&quot;106&quot;);
+		var OrderEntryBO : BusObject = TheApplication().GetBusObject(&quot;X Order Entry&quot;);	
+		var bcOrderEntryOrders	: BusComp = OrderEntryBO.GetBusComp(&quot;HP Submit - Order Entry - Orders&quot;);
+		var orderId 			= inputs.GetProperty(&quot;orderId&quot;);
+		var controlObjectName 	= inputs.GetProperty(&quot;controlObjectName&quot;);
+		var controlObjectMethod	= inputs.GetProperty(&quot;controlObjectMethod&quot;);
+		var productCheckType 	= inputs.GetProperty(&quot;productCheckType&quot;);
+		var webProductCheckType = inputs.GetProperty(&quot;webProductCheckType&quot;);
+
+		bcOrderEntryOrders.SetViewMode(AllView);
+		bcOrderEntryOrders.ClearToQuery();
+		bcOrderEntryOrders.ActivateField(&quot;VF Product Check Type&quot;);
+		bcOrderEntryOrders.ActivateField(&quot;X_Primary_contact&quot;);
+		bcOrderEntryOrders.ActivateField(&quot;Order Sub Type&quot;);
+		bcOrderEntryOrders.ActivateField(&quot;Order Channel&quot;);
+		bcOrderEntryOrders.SetSearchSpec(&quot;Id&quot;, orderId);
+		bcOrderEntryOrders.ExecuteQuery(ForwardOnly);
+		if(bcOrderEntryOrders.FirstRecord()){
+			orderCheckType = bcOrderEntryOrders.GetFieldValue(&quot;VF Product Check Type&quot;);	
+			ContactId = bcOrderEntryOrders.GetFieldValue(&quot;X_Primary_contact&quot;);
+			OrSubType = bcOrderEntryOrders.GetFieldValue(&quot;Order Sub Type&quot;);
+			sChannel = bcOrderEntryOrders.GetFieldValue(&quot;Order Channel&quot;);
+//TheApplication().Trace(&quot;orderId:&quot; + orderId + &quot; orderCheckType:&quot; + orderCheckType + &quot; ContactId:&quot; + ContactId + &quot; OrSubType:&quot; + OrSubType + &quot; productCheckType:&quot; + productCheckType + &quot; webProductCheckType:&quot; + webProductCheckType + &quot; sChannel:&quot; + sChannel);
+			if(sChannel==&quot;WEB&quot;){
+				productCheckType = webProductCheckType;
+			}
+//TheApplication().Trace(&quot;Mern:&quot; + Mern + &quot;|BGListCepMern:&quot; + BGListCepMern + &quot;|productCheckType:&quot; + productCheckType + &quot;|BGListCepMernCC:&quot; + BGListCepMernCC + &quot;|BListMern:&quot; + BListMern + &quot;|1productCheckType == BGListCepMern:&quot; + (productCheckType ==BGListCepMern));
+			if(OrSubType==BWMSubType) orderCheckType=&quot;BGCM&quot;;
+			if((orderCheckType != &quot;&quot; &amp;&amp; orderCheckType == &quot;BGCM&quot;) || productCheckType == BGListCepMern || productCheckType == BGListCepMernCC || productCheckType == BListMern || productCheckType == Mern){
+				var checkMernisInput 	:PropertySet = TheApplication().NewPropertySet();
+				checkMernisInput.SetProperty(&quot;ContactId&quot;, ContactId);
+				checkMernisInput.SetProperty(&quot;orderId&quot;, orderId);
+				var checkMernisOutput 	:PropertySet = TheApplication().NewPropertySet();		
+//TheApplication().Trace(&quot;Calling &quot; + controlObjectName + &quot; - &quot; + controlObjectMethod );	
+				TheApplication().GetService(controlObjectName).InvokeMethod(controlObjectMethod, checkMernisInput, checkMernisOutput);
+				var sMernisCheck = checkMernisOutput.GetProperty(&quot;mernisOutput&quot;);   
+//TheApplication().Trace(&quot;Returned from &quot; + controlObjectName + &quot; - &quot; + controlObjectMethod + &quot; sMernisCheck:&quot; + sMernisCheck);
+				if(sMernisCheck == &quot;F&quot;){				
+					outputs.SetProperty(&quot;VF Control Result&quot;, &quot;N&quot;);
+				} else {
+					outputs.SetProperty(&quot;VF Control Result&quot;, &quot;Y&quot;);
+				}
+			} else {
+				outputs.SetProperty(&quot;VF Control Result&quot;, &quot;Y&quot;);
+			}			
+		}
+	} catch (e){
+//		TheApplication().RaiseErrorText(&quot;Error:&quot; + e);
+//		TheApplication().Trace(&quot; Exception in Check Order.... &quot; );	
+	}
+//TheApplication().Trace(&quot;leaving:&quot; + outputs.GetProperty(&quot;VF Control Result&quot;));	
+//TheApplication().TraceOff();
+}"
+			   SEQUENCE="1"
+			   UPDATED="01/10/2014 13:35:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/16/2013 12:10:15"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="logBypassControls"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function logBypassControls(Inputs, Outputs)
+{
+	try{
+
+		var LoginName 			  = &quot;&quot;;	
+		var OrderId 			  = Inputs.GetProperty(&quot;OrderId&quot;);
+		var ByPassOrderItemId 	  = Inputs.GetProperty(&quot;ByPassOrderItemId&quot;);
+		var ByPassControlDetailId = Inputs.GetProperty(&quot;ByPassControlDetailId&quot;);
+		
+		if (OrderId == null || OrderId == &quot;&quot;)
+			return;
+				
+		var LogBC 	= &quot;&quot;;
+		var OrderBO = &quot;&quot;;
+		
+		var OrderEntryBO 	: BusObject = TheApplication().GetBusObject(&quot;VFTRAD Order - Simple&quot;);
+		var OrderBC 		: BusComp  	= OrderEntryBO.GetBusComp(&quot;TELCO Orders - Simple&quot;); 
+
+		with(OrderBC)
+		{
+			SetViewMode(AllView);
+			ClearToQuery();
+			ActivateField(&quot;Created By Name&quot;);
+			SetSearchExpr(&quot;[Id] = &apos;&quot;+OrderId+&quot;&apos; &quot;);
+			ExecuteQuery(ForwardOnly);
+			var RecordExist = FirstRecord();
+			if(RecordExist)
+			{
+				
+				LoginName = GetFieldValue(&quot;Created By Name&quot;);
+				
+			}				
+
+			LogBC = OrderEntryBO.GetBusComp(&quot;VF Controls Log&quot;);
+			with (LogBC)
+			{
+					SetViewMode(AllView);
+					ClearToQuery();
+					NewRecord(NewAfter);
+					SetFieldValue(&quot;Order Id&quot;,OrderId); 
+					SetFieldValue(&quot;Order Item Id&quot;,ByPassOrderItemId); 
+					SetFieldValue(&quot;Control Detail Id&quot;,ByPassControlDetailId);						
+					SetFieldValue(&quot;Login Name&quot;,LoginName);					
+					WriteRecord();
+			}							
+		}
+		
+	}
+	catch(e)
+	{
+		throw e;
+	}
+	finally
+	{
+		OrderId 			  = &quot;&quot;;
+		ByPassOrderItemId 	  = &quot;&quot;;
+		ByPassControlDetailId = &quot;&quot;;
+		LogBC				  = &quot;&quot;;
+	}
+}"
+			   SEQUENCE="3"
+			   UPDATED="04/19/2017 16:54:54"
+			   UPDATED_BY="JMARQUES"
+			   CREATED="06/01/2013 20:56:14"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

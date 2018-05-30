@@ -1,0 +1,570 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="11/24/2016 17:14:00"
+   UPDATED_BY="SADMIN"
+   CREATED="11/24/2016 14:49:11"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="20140703 - VFTRCBU Project for WP#01 objects"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VFTRCBU Customer_Account_Subscriber Management"
+	   UI_FREEZE="N"
+	   UPDATED="02/16/2017 16:05:24"
+	   UPDATED_BY="JMARTINHO"
+	   CREATED="08/14/2014 20:13:39"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="N"
+		   CLASS="CSSBCVExtern"
+		   COMMENTS="VFTRCBU 19052015: GAP01 - IMARTINS"
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MULTI_RECIPIENT_SELECT="N"
+		   NAME="VFTRCBU Bundle Promo Inquiry VBC"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="02/10/2017 14:24:03"
+		   OWNER_DELETE="N"
+		   POPUP_VISIBILITY_AUTO_ALL="N"
+		   SCRIPTED="Y"
+		   TYPE="Non-Transient"
+		   OBJECT_LOCKED_BY_NAME="JMARTINHO"
+		   UPDATED="02/10/2017 14:23:19"
+		   UPDATED_BY="JMARTINHO"
+		   CREATED="06/03/2015 14:24:25"
+		   CREATED_BY="SADMIN">
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreInvokeMethod (MethodName)
+{
+
+	if(MethodName == &quot;VFTRCBUExecuteQuery&quot;)
+		return(CancelOperation);
+
+	return (ContinueOperation);
+}"
+			   SEQUENCE="1"
+			   UPDATED="06/03/2015 14:24:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:24:25"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreQuery"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreQuery ()
+{
+//CSANTOS: VFTRCBU-26979 --&gt;
+ try{
+ 
+ var activeBO:BusObject = this.BusObject();
+ var activeBOName : String = activeBO.Name();
+ var parentBc: BusComp; 
+ var isUnderMigration: String;
+ var migrationFlagBc: BusComp;
+ var billingAccountId: String;
+ 
+	if(activeBOName == &quot;VF TRK PRM Account&quot;){
+		isUnderMigration = &quot;N&quot;;	
+	 	parentBc = activeBO.GetBusComp(&quot;Account&quot;);
+ 		isUnderMigration = parentBc.GetFieldValue(&quot;VFTRCBU Migrating Flag&quot;);
+ 		if (isUnderMigration == &quot;Y&quot;){
+ 			TheApplication().SetProfileAttr(&quot;VFTRCBU_EMPTY_REQUEST&quot;,&quot;Y&quot;);
+ 		}
+ 	
+	} 
+ 	if(activeBOName == &quot;Asset Management - Asset Item&quot;){
+ 
+		migrationFlagBc = this.BusObject().GetBusComp(&quot;Billing Account&quot;);	
+		parentBc = this.BusObject().GetBusComp(&quot;Asset Mgmt - Asset&quot;);
+		billingAccountId = parentBc.GetFieldValue(&quot;Billing Account Id&quot;); 
+		  
+		isUnderMigration = &quot;N&quot;;		
+		migrationFlagBc.SetViewMode(AllView);
+		migrationFlagBc.ClearToQuery();
+		migrationFlagBc.ActivateField(&quot;VFTRCBU Customer Migrating Flag&quot;);
+		migrationFlagBc.SetSearchSpec (&quot;Id&quot;, billingAccountId);
+		migrationFlagBc.ExecuteQuery(ForwardOnly);
+		
+		if (migrationFlagBc.FirstRecord ()){	   		
+			isUnderMigration = migrationFlagBc.GetFieldValue(&quot;VFTRCBU Customer Migrating Flag&quot;);						
+			if(isUnderMigration == &quot;Y&quot;) 
+			{						
+				TheApplication().SetProfileAttr(&quot;VFTRCBU_EMPTY_REQUEST&quot;,&quot;Y&quot;);
+			}
+		}	
+ 	}  
+}finally{
+		activeBO = null;
+		parentBc = null;
+		migrationFlagBc = null;
+ }
+//&lt;-- CSANTOS: VFTRCBU-26979
+ return (ContinueOperation);
+}"
+			   SEQUENCE="2"
+			   UPDATED="06/09/2016 14:27:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/09/2016 14:27:57"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSINESS_COMPONENT_USER_PROP
+			   COMMENTS="VF VBC Integration BS Copy"
+			   INACTIVE="N"
+			   NAME="Service Name"
+			   VALUE="VF VBC Integration BS"
+			   UPDATED="06/03/2015 14:24:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:24:25"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Service Parameters"
+			   VALUE="IOName=VFTRCBU Bundle Promo Inquiry VBC IO;DataMap=VFTRCBU Bundle Promo Inquiry Data Map;RequireContext=Y"
+			   UPDATED="06/03/2015 14:24:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:24:25"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Bundle Type"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/03/2015 14:24:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:24:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Commercial Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/03/2015 14:24:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:24:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Direction"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/03/2015 14:24:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:24:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Expire Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/03/2015 14:24:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:24:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU HD Passport"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/03/2015 14:24:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:24:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Initial Amount"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/10/2017 14:23:14"
+			   UPDATED_BY="JMARTINHO"
+			   CREATED="06/03/2015 14:24:25"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VFTRCBU Initial Amount"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Initial Amount"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="06/03/2015 14:24:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:24:25"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Inquiry Type Pick"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU Inquiry Type PickList"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/03/2015 14:24:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:24:25"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VFTRCBU Inquiry Type Pick"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Inquiry Type Pick"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   SEQUENCE="0"
+				   UPDATED="06/03/2015 14:24:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:24:25"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU MSISDN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/03/2015 14:24:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:24:25"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VFTRCBU MSISDN"
+				   INACTIVE="N"
+				   NAME="VFTRCBU MSISDN"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="06/03/2015 14:24:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:24:25"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Offer Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/03/2015 14:24:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:24:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Parent Child Flag"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/03/2015 14:24:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:24:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Remaining Amount"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/10/2017 14:23:17"
+			   UPDATED_BY="JMARTINHO"
+			   CREATED="06/03/2015 14:24:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupName(&quot;VFTRCBU_SMS_TYPE&quot;,[VFTRCBU SMS Type Pick])"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU SMS Type LIC"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/17/2015 10:34:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/17/2015 10:34:01"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VFTRCBU_SMS_TYPE&quot;,&quot;VOICE&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU SMS Type Pick"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU SMS Type PickList"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/27/2015 19:55:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:24:25"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VFTRCBU SMS Type Pick"
+				   INACTIVE="N"
+				   NAME="VFTRCBU SMS Type Pick"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   SEQUENCE="0"
+				   UPDATED="06/03/2015 14:24:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:24:25"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Start Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/03/2015 14:24:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:24:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Units"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/03/2015 14:24:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:24:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Used Amount"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/10/2017 14:23:19"
+			   UPDATED_BY="JMARTINHO"
+			   CREATED="06/03/2015 14:24:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

@@ -1,0 +1,3497 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   LOCKED_DATE="08/11/2017 16:03:57"
+	   NAME="HP Service Request"
+	   UI_FREEZE="N"
+	   UPDATED="02/02/2018 11:43:48"
+	   UPDATED_BY="IBM_RCATITA"
+	   CREATED="10/26/2009 14:26:34"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="Y"
+		   CLASS="CSSBCServiceRequest"
+		   COMMENTS="L.B. 20091026 - HP BC created"
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MULTI_RECIPIENT_SELECT="Y"
+		   NAME="HP NET Service Request"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LOCKED="N"
+		   OWNER_DELETE="N"
+		   POPUP_VISIBILITY_AUTO_ALL="Y"
+		   POPUP_VISIBILITY_TYPE="Sub-Organization"
+		   SCRIPTED="Y"
+		   SORT_SPECIFICATION="Created (DESCENDING)"
+		   TABLE="S_SRV_REQ"
+		   TYPE="Non-Transient"
+		   UPGRADE_ANCESTOR="Service Request"
+		   UPDATED="02/02/2018 09:43:14"
+		   UPDATED_BY="IBM_RCATITA"
+		   CREATED="12/15/2009 00:56:28"
+		   CREATED_BY="SADMIN">
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreQuery"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreQuery ()
+{  
+	var today = new Date();
+	var TakeLogs ;
+	var CheckLogFlag = TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;VF_LOGGING_FLAG&quot;,&quot;FLAG_PASS&quot;);
+	TakeLogs = TheApplication().GetProfileAttr(&quot;Take_Logs&quot;);
+	
+	if (CheckLogFlag == &quot;Y&quot; &amp;&amp; TakeLogs == &quot;Y&quot;)
+	{
+		var expr = GetSearchExpr();
+		var FieldInfo ;
+		var FieldValue ;  
+		var SRNum = Clib.strstr(expr,&quot;[SR Number]&quot;);
+
+	    if (SRNum != null)
+	    {
+	    	SRNum  =  GetSearchSpec(&quot;SR Number&quot;); 
+			FieldInfo = &quot;Hizmet Talebi No&quot;;
+			FieldValue = SRNum;
+	    	LogInsert(FieldInfo,FieldValue);
+		}
+		else
+		{
+			FieldInfo = &quot;&quot;;
+	    	FieldValue = &quot;&quot;;
+	    	LogInsert(FieldInfo,FieldValue);    
+		}
+		TheApplication().SetProfileAttr(&quot;Take_Logs&quot;,&quot;N&quot;);
+ 	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="2"
+			   UPDATED="06/24/2012 16:38:53"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/19/2010 09:43:54"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreWriteRecord"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreWriteRecord ()
+{
+	//++ DSOUSA VFTRCBU-36316
+	var strSRCategory = this.GetFieldValue(&quot;VF SR Category&quot;);
+	if(strSRCategory != null &amp;&amp; strSRCategory != &quot;&quot; )
+	{
+		this.SetFieldValue(&quot;VF SR Category&quot;, strSRCategory);
+	}
+	else
+	{
+		this.SetFieldValue(&quot;VF SR Category&quot;, &quot;Standard&quot;);
+	}
+	// -- DSOUSA VFTRCBU-36316	
+	return (ContinueOperation);
+}"
+			   SEQUENCE="3"
+			   UPDATED="02/14/2017 00:23:32"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/05/2017 00:04:25"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="LogInsert"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function LogInsert(FieldInfo,FieldValue)  
+{
+	try
+	{//Oracle Review October 2011 - Deep code
+		var LogBO : BusObject = TheApplication ().GetBusObject(&quot;ACS NI Parameter&quot;);
+		var LogBC : BusComp = LogBO.GetBusComp (&quot;VF LOG EVENTS&quot;);
+		var View = TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;);
+		var Login = TheApplication().LoginName();
+		var Process = &quot;Sorgu&quot;;
+		with(LogBC)      
+		{
+			NewRecord(NewAfter);
+			SetFieldValue(&quot;Field Info&quot;,FieldInfo);
+			SetFieldValue(&quot;Process Info&quot;,Process);
+			SetFieldValue(&quot;User Name&quot;,Login);
+	    	SetFieldValue(&quot;View&quot;,View);
+	    	SetFieldValue(&quot;Field Value&quot;,FieldValue);    
+			WriteRecord();  
+		} 
+	}
+	finally
+	{
+		LogBC = null;
+		LogBO = null;
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="06/24/2012 16:39:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/02/2011 18:41:59"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSINESS_COMPONENT_USER_PROP
+			   COMMENTS="06022017 DSOUSA - DEF-17763"
+			   INACTIVE="N"
+			   NAME="Always Enable Field"
+			   VALUE="VF SR Category"
+			   UPDATED="02/14/2017 00:23:32"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/14/2017 00:23:32"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_SRV_NUMBER"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME=" SR Number"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:30"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="CST_OU_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Account Id"
+			   NO_COPY="N"
+			   PICKLIST="PickList SR Account"
+			   PRE_DEFAULT_VALUE="Parent: &apos;Customer Product.Account Id&apos;, &apos;Account.Id&apos;, &apos;Contact.Account Id&apos;, &apos;Asset Mgmt - Asset.Owner Account Id&apos;, &apos;FINS Health Facility.Id&apos;, &apos;LS Medical Product Issue.Account Id&apos;, &apos;FINCORP Account.Organization Id&apos;, &apos;LS Pharma Targeting.Account Id&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:30"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Account"
+				   INACTIVE="N"
+				   NAME="Account"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="12/15/2009 00:56:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:30"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Account Id"
+				   INACTIVE="N"
+				   NAME="Account Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="12/15/2009 00:56:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:30"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_ORG_EXT"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Account Last Name"
+			   NO_COPY="N"
+			   PICKLIST="PickList SR Account"
+			   PRE_DEFAULT_VALUE="Parent: &apos;Customer Product.Account&apos;, &apos;Account.Name&apos;, &apos;Contact.Account&apos;, &apos;Asset Mgmt - Asset.Account Name&apos;,  &apos;Quote Item.Ship To Account Name&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:30"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Account First Name"
+				   INACTIVE="N"
+				   NAME="Account First Name"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Account First Name"
+				   SEQUENCE="1"
+				   UPDATED="12/15/2009 00:56:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:30"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Account Id"
+				   INACTIVE="N"
+				   NAME="Account Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   SEQUENCE="27"
+				   UPDATED="12/15/2009 00:56:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:30"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Account Last Name"
+				   INACTIVE="N"
+				   NAME="Account Last Name"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   SEQUENCE="24"
+				   UPDATED="12/15/2009 00:56:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:30"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Account Location"
+				   INACTIVE="N"
+				   NAME="Account Location"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Location"
+				   SEQUENCE="25"
+				   UPDATED="12/15/2009 00:56:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:30"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Account Number"
+				   INACTIVE="N"
+				   NAME="Account Number"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Account Number"
+				   SEQUENCE="11"
+				   UPDATED="12/15/2009 00:56:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:30"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Asset Id"
+				   INACTIVE="N"
+				   NAME="Asset Id"
+				   NO_CLEAR="N"
+				   SEQUENCE="13"
+				   UPDATED="12/15/2009 00:56:31"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:31"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Asset Reg Id"
+				   INACTIVE="N"
+				   NAME="Asset Reg Id"
+				   NO_CLEAR="N"
+				   SEQUENCE="12"
+				   UPDATED="12/15/2009 00:56:31"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:31"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Contact Business Phone"
+				   INACTIVE="N"
+				   NAME="Contact Business Phone"
+				   NO_CLEAR="N"
+				   SEQUENCE="10"
+				   UPDATED="12/15/2009 00:56:31"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:31"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Contact First Name"
+				   INACTIVE="N"
+				   NAME="Contact First Name"
+				   NO_CLEAR="N"
+				   SEQUENCE="7"
+				   UPDATED="12/15/2009 00:56:31"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:31"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Contact Id"
+				   INACTIVE="N"
+				   NAME="Contact Id"
+				   NO_CLEAR="N"
+				   SEQUENCE="9"
+				   UPDATED="12/15/2009 00:56:31"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:31"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Contact Last Name"
+				   INACTIVE="N"
+				   NAME="Contact Last Name"
+				   NO_CLEAR="N"
+				   SEQUENCE="8"
+				   UPDATED="12/15/2009 00:56:31"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:31"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Joined Account Id"
+				   INACTIVE="N"
+				   NAME="Joined Account Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   SEQUENCE="26"
+				   UPDATED="12/15/2009 00:56:31"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:31"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Product"
+				   INACTIVE="Y"
+				   NAME="Product"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Dummy"
+				   SEQUENCE="14"
+				   UPDATED="12/15/2009 00:56:31"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:31"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Product Id"
+				   INACTIVE="Y"
+				   NAME="Product Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Dummy"
+				   SEQUENCE="15"
+				   UPDATED="12/15/2009 00:56:31"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:31"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Product Part Number"
+				   INACTIVE="N"
+				   NAME="Product Part Number"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Dummy"
+				   SEQUENCE="16"
+				   UPDATED="12/15/2009 00:56:31"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:31"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Serial Number"
+				   INACTIVE="N"
+				   NAME="Serial Number"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Dummy"
+				   SEQUENCE="23"
+				   UPDATED="12/15/2009 00:56:32"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:32"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Service City"
+				   INACTIVE="N"
+				   NAME="Service City"
+				   NO_CLEAR="N"
+				   SEQUENCE="17"
+				   UPDATED="12/15/2009 00:56:32"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:32"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Service Country"
+				   INACTIVE="N"
+				   NAME="Service Country"
+				   NO_CLEAR="N"
+				   SEQUENCE="22"
+				   UPDATED="12/15/2009 00:56:32"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:32"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Service Location Id"
+				   INACTIVE="N"
+				   NAME="Service Location Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Address Id"
+				   SEQUENCE="2"
+				   UPDATED="12/15/2009 00:56:32"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:32"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Service Point Asset"
+				   INACTIVE="N"
+				   NAME="Service Point Asset"
+				   NO_CLEAR="N"
+				   SEQUENCE="6"
+				   UPDATED="12/15/2009 00:56:32"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:32"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Service Point Asset Id"
+				   INACTIVE="N"
+				   NAME="Service Point Asset Id"
+				   NO_CLEAR="N"
+				   SEQUENCE="3"
+				   UPDATED="12/15/2009 00:56:32"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:32"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Service Point Product"
+				   INACTIVE="N"
+				   NAME="Service Point Product"
+				   NO_CLEAR="N"
+				   SEQUENCE="5"
+				   UPDATED="12/15/2009 00:56:32"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:32"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Service Point Product Id"
+				   INACTIVE="N"
+				   NAME="Service Point Product Id"
+				   NO_CLEAR="N"
+				   SEQUENCE="4"
+				   UPDATED="12/15/2009 00:56:32"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:32"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Service Postal Code"
+				   INACTIVE="N"
+				   NAME="Service Postal Code"
+				   NO_CLEAR="N"
+				   SEQUENCE="18"
+				   UPDATED="12/15/2009 00:56:32"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:32"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Service State"
+				   INACTIVE="N"
+				   NAME="Service State"
+				   NO_CLEAR="N"
+				   SEQUENCE="21"
+				   UPDATED="12/15/2009 00:56:32"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:32"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Service Street Address"
+				   INACTIVE="N"
+				   NAME="Service Street Address"
+				   NO_CLEAR="N"
+				   SEQUENCE="19"
+				   UPDATED="12/15/2009 00:56:32"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:32"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Version"
+				   INACTIVE="N"
+				   NAME="Version"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Dummy"
+				   SEQUENCE="20"
+				   UPDATED="12/15/2009 00:56:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:33"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SR_AREA"
+			   COMMENTS="	24-02-2004 substitued picklist: &quot;PickList SR Area&quot; with &quot;PLW PickList Area for Account Status&quot;"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Area"
+			   NO_COPY="Y"
+			   PICKLIST="INS PickList SR Area"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/14/2015 23:44:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:33"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Account Status"
+				   INACTIVE="Y"
+				   NAME="Account Status"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Parent LOV Value"
+				   SEQUENCE="6"
+				   UPDATED="12/15/2009 00:56:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:33"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Area"
+				   INACTIVE="N"
+				   NAME="Area"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   SEQUENCE="1"
+				   UPDATED="12/15/2009 00:56:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:33"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Dummy Request"
+				   INACTIVE="Y"
+				   NAME="Dummy Request"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="LOV Area Request Flag"
+				   SEQUENCE="7"
+				   UPDATED="12/15/2009 00:56:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:33"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Queue Id"
+				   INACTIVE="N"
+				   NAME="Queue Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Weighting Factor"
+				   SEQUENCE="2"
+				   UPDATED="12/15/2009 00:56:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:33"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="VFTRCBU-8384 - HRODRIGUES - 2015.04.22 - Changed constraint to parent Id"
+				   CONSTRAIN="Y"
+				   FIELD="SR Type"
+				   INACTIVE="Y"
+				   NAME="SR Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Parent"
+				   SEQUENCE="3"
+				   UPDATED="05/14/2015 23:44:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:33"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="Master database remove Parent external. 24-02-2004 deactivated"
+				   CONSTRAIN="Y"
+				   FIELD="Service Request Type"
+				   INACTIVE="Y"
+				   NAME="Service Request Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Parent"
+				   SEQUENCE="5"
+				   UPDATED="12/15/2009 00:56:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:33"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Sub-Area"
+				   INACTIVE="N"
+				   NAME="Sub-Area"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Dummy"
+				   SEQUENCE="4"
+				   UPDATED="12/15/2009 00:56:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:33"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="VFTRCBU-8384 - HRODRIGUES - 2015.04.22"
+				   CONSTRAIN="N"
+				   FIELD="VFTRCBU Area Id"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Area Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="05/14/2015 23:44:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/14/2015 23:44:48"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="VFTRCBU-8384 - HRODRIGUES - 2015.04.22"
+				   CONSTRAIN="Y"
+				   FIELD="VFTRCBU SR Type Id"
+				   INACTIVE="N"
+				   NAME="VFTRCBU SR Type Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Parent Id"
+				   UPDATED="05/14/2015 23:44:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/14/2015 23:44:48"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="ACT_CLOSE_DT"
+			   COMMENTS="&gt;= [Created].  MV 12/8/2005: Immediate Post Change parameter set to TRUE."
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Closed Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   VALIDATION="&gt;= [Opened Date]"
+			   UPDATED="06/10/2012 11:42:04"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:33"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="&quot;&quot;"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Dummy"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:34"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="CST_OU_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Account Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/03/2012 17:41:24"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:34"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="OU_NUM"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_ORG_EXT"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR CSN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:34"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_CALL_BACK_CHANNEL"
+			   COMMENTS="Inactivated for Oracle Review [ACQ, Jan 2013]"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Call Back Channel"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/15/2013 15:05:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:34"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_CALL_BACK_REPLY"
+			   COMMENTS="Inactivated for Oracle Review [ACQ, Jan 2013]"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Call Back Reply"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="4000"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/15/2013 15:05:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:34"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="CREATED"
+			   COMMENTS="Inactvated for Oracle Review: Stabilization Release"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Created"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/20/2013 10:17:17"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:34"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="CREATED_BY"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_USER"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Created By"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:34"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="LOGIN"
+			   COMMENTS="Changed Join for OR13 (09/2012)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_USER"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Created By Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/11/2012 11:56:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:34"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="DESC_TEXT"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Description"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="2000"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:34"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="RTNG_CD"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Geographic Area"
+			   NO_COPY="N"
+			   PICKLIST="VF Geographic Area Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:34"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="HP SR Geographic Area"
+				   INACTIVE="N"
+				   NAME="HP SR Geographic Area"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="12/15/2009 00:56:35"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:35"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SR_NUM"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="64"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:35"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_ORG_EXT"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Last Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:35"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_MNP_REQUEST_ID"
+			   COMMENTS="Inactivated for Oracle Review [ACQ, Jan 2013]"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR MNP Request ID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/15/2013 15:05:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:35"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="ACT_OPEN_DT"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Open Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:35"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="OWNER_EMP_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Owned By Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:35"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="OWNER_OU_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Owned Group By Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:35"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="LOGIN"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="Owned By Id"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Owner"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:35"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_ORG_INT"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Owner Group"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:35"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_PORT_ID"
+			   COMMENTS="Inactivated for Oracle Review [ACQ, Jan 2013]"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Port Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/15/2013 15:05:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:35"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_PORT_IN_DATE_TIME"
+			   COMMENTS="Inactivated for Oracle Review [ACQ, Jan 2013]"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Port In Date / Time"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/15/2013 15:05:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:36"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_PORT_OUT_DATE_TIME"
+			   COMMENTS="Inactivated for Oracle Review [ACQ, Jan 2013]"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Port Out Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/15/2013 15:05:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:36"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Preferred Port Out Time Frame"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:36"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SR_PRIO_CD"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Priority"
+			   NO_COPY="N"
+			   PICKLIST="PickList SR Priority"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:36"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="HP SR Priority"
+				   INACTIVE="N"
+				   NAME="HP SR Priority"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="12/15/2009 00:56:36"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:36"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_RESOLUTION_TIME"
+			   COMMENTS="Inactivated for Oracle Review [ACQ, Jan 2013]"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Resolution Time"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_INTEGER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/15/2013 15:05:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:36"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_SHOP_ID"
+			   COMMENTS="Inactivated for Oracle Review [ACQ, Jan 2013]"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   JOIN="S_EMP_PER"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Shop Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/15/2013 15:05:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:36"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SR_STAT_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Status"
+			   NO_COPY="N"
+			   PICKLIST="FIN PickList Service Request Status"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/10/2012 11:42:06"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:36"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="HP SR Status"
+				   INACTIVE="N"
+				   NAME="HP SR Status"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   SEQUENCE="1"
+				   UPDATED="12/15/2009 00:56:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:37"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SR_SUB_STAT_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR Sub-Status"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:37"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_SR_REPEATED"
+			   COMMENTS="Inactivated for Oracle Review [ACQ, Jan 2013]"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HP SR repeated"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/15/2013 15:05:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:37"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="ASSET_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HR SR Asset Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:37"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="ACT_CLOSE_DT"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HR SR Close Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:37"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SR_PRIO_CD"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HR SR Priority"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:37"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[INS Product INT] + &quot; &quot; + [INS Area INT]"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="INS CurrentArea"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:37"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="ATTRIB_41"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_SRV_REQ_X"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Order Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:37"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="12-C1OY1B"
+			   DEST_FIELD="Id"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUE_LINK="Organization"
+			   MULTI_VALUED="Y"
+			   NAME="Organization Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:37"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="OWNER_OU_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Owned By Group Id"
+			   NO_COPY="Y"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:37"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="OWNER_EMP_ID"
+			   COMMENTS="Set pre-default value: FR # 12-16J6IK4"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Owned By Id"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="System: CreatorId"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:38"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="LOGIN"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="Owner-S_USER"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Owner"
+			   NO_COPY="Y"
+			   PICKLIST="PickList SR Owner"
+			   PRE_DEFAULT_VALUE="System: Creator"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:38"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Expert"
+				   INACTIVE="N"
+				   NAME="Expert"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Login Name"
+				   UPDATED="12/15/2009 00:56:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:38"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Owned By Id"
+				   INACTIVE="N"
+				   NAME="Owned By Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="12/15/2009 00:56:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:38"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Owner"
+				   INACTIVE="N"
+				   NAME="Owner"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Login Name"
+				   UPDATED="12/15/2009 00:56:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:38"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="12-C1OY1B"
+				   FIELD="Owner Email Addr"
+				   INACTIVE="Y"
+				   NAME="Owner Email Addr"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="EMail Addr"
+				   UPDATED="12/15/2009 00:56:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:38"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Owner Group"
+				   INACTIVE="N"
+				   NAME="Owner Group"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Division"
+				   UPDATED="12/15/2009 00:56:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:38"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="12-C1OY1B"
+				   FIELD="Owner Phone"
+				   INACTIVE="Y"
+				   NAME="Owner Phone"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Phone #"
+				   UPDATED="12/15/2009 00:56:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:38"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_ORG_INT"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Owner Group"
+			   NO_COPY="N"
+			   PICKLIST="PickList SR Owner Group"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:38"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   COMMENTS="FF 16_01_02"
+				   CONSTRAIN="Y"
+				   FIELD="Organization Id"
+				   INACTIVE="N"
+				   NAME="Organization Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Organization Id"
+				   UPDATED="12/15/2009 00:56:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:38"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Owned By Group Id"
+				   INACTIVE="N"
+				   NAME="Owned By Group Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="12/15/2009 00:56:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Owner Group"
+				   INACTIVE="N"
+				   NAME="Owner Group"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="12/15/2009 00:56:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="BU_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Primary Organization Id"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="System: OrganizationId"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:39"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SR_NUM"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SR Number"
+			   NO_COPY="Y"
+			   PRE_DEFAULT_VALUE="Expr: &apos;RowIdToRowIdNum ([Id])&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="64"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:39"
+			   CREATED_BY="SADMIN">
+				<FIELD_USER_PROP
+				   INACTIVE="N"
+				   NAME="DisplayType"
+				   VALUE="DTYPE_ID"
+				   UPDATED="12/15/2009 00:56:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:39"
+				   CREATED_BY="SADMIN">
+				</FIELD_USER_PROP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SR_CAT_TYPE_CD"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SR Type"
+			   NO_COPY="Y"
+			   PICKLIST="INS PickList SR Product"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/14/2015 23:44:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:39"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Area"
+				   INACTIVE="N"
+				   NAME="Area"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Dummy"
+				   UPDATED="12/15/2009 00:56:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Parent SR Abstract"
+				   INACTIVE="Y"
+				   NAME="Parent SR Abstract"
+				   NO_CLEAR="N"
+				   UPDATED="12/15/2009 00:56:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Parent SR Number"
+				   INACTIVE="Y"
+				   NAME="Parent SR Number"
+				   NO_CLEAR="N"
+				   UPDATED="12/15/2009 00:56:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Parent Service Request Id"
+				   INACTIVE="Y"
+				   NAME="Parent Service Request Id"
+				   NO_CLEAR="N"
+				   UPDATED="12/15/2009 00:56:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="Inactivated for 12-CB0OVE fix"
+				   FIELD="SR Sub Type"
+				   INACTIVE="Y"
+				   NAME="SR Sub Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Dummy"
+				   UPDATED="12/15/2009 00:56:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:40"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="SR Type"
+				   INACTIVE="N"
+				   NAME="SR Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="12/15/2009 00:56:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:40"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Sub-Area"
+				   INACTIVE="N"
+				   NAME="Sub-Area"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Dummy"
+				   UPDATED="12/15/2009 00:56:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:40"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="VFTRCBU-8384 - HRODRIGUES - 2015.04.22"
+				   FIELD="VFTRCBU SR Type Id"
+				   INACTIVE="N"
+				   NAME="VFTRCBU SR Type Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="05/14/2015 23:44:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/14/2015 23:44:48"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SERIAL_NUM"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_ASSET"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Serial Number"
+			   NO_COPY="N"
+			   PICKLIST="PickList Asset Mgmt - Asset"
+			   PRE_DEFAULT_VALUE="Parent: &apos;Customer Product.Serial Number&apos;, &apos;Asset Mgmt - Asset.Serial Number&apos;, &apos;Auto Vehicle.Serial Number&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/03/2012 10:40:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:40"
+			   CREATED_BY="SADMIN">
+				<FIELD_USER_PROP
+				   INACTIVE="N"
+				   NAME="DisplayType"
+				   VALUE="DTYPE_ID"
+				   UPDATED="12/15/2009 00:56:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:40"
+				   CREATED_BY="SADMIN">
+				</FIELD_USER_PROP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Account"
+				   INACTIVE="Y"
+				   NAME="Account"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Account Name"
+				   SEQUENCE="2"
+				   UPDATED="04/03/2012 10:40:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:40"
+				   CREATED_BY="SADMIN">
+					<PICK_MAP_UPDONLYIFNULL
+					   COMMENTS="ACS_Removal"
+					   FIELD="Account"
+					   INACTIVE="Y"
+					   NAME="Account"
+					   UPDATED="04/03/2012 10:40:23"
+					   UPDATED_BY="SADMIN"
+					   CREATED="12/15/2009 00:56:40"
+					   CREATED_BY="SADMIN">
+					</PICK_MAP_UPDONLYIFNULL>
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Account Id"
+				   INACTIVE="N"
+				   NAME="Account Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Owner Account Id"
+				   SEQUENCE="17"
+				   UPDATED="12/15/2009 00:56:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:40"
+				   CREATED_BY="SADMIN">
+					<PICK_MAP_UPDONLYIFNULL
+					   FIELD="Account"
+					   INACTIVE="N"
+					   NAME="Account"
+					   UPDATED="12/15/2009 00:56:40"
+					   UPDATED_BY="SADMIN"
+					   CREATED="12/15/2009 00:56:40"
+					   CREATED_BY="SADMIN">
+					</PICK_MAP_UPDONLYIFNULL>
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Account Location"
+				   INACTIVE="Y"
+				   NAME="Account Location"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Account Location"
+				   SEQUENCE="16"
+				   UPDATED="04/03/2012 10:40:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:40"
+				   CREATED_BY="SADMIN">
+					<PICK_MAP_UPDONLYIFNULL
+					   COMMENTS="ACS_Removal"
+					   FIELD="Account"
+					   INACTIVE="Y"
+					   NAME="Account"
+					   UPDATED="04/03/2012 10:40:23"
+					   UPDATED_BY="SADMIN"
+					   CREATED="12/15/2009 00:56:40"
+					   CREATED_BY="SADMIN">
+					</PICK_MAP_UPDONLYIFNULL>
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Asset Id"
+				   INACTIVE="N"
+				   NAME="Asset Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   SEQUENCE="11"
+				   UPDATED="12/15/2009 00:56:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:41"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Asset Number"
+				   INACTIVE="N"
+				   NAME="Asset Number"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Asset Number"
+				   SEQUENCE="10"
+				   UPDATED="12/15/2009 00:56:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:41"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Asset Type"
+				   INACTIVE="N"
+				   NAME="Asset Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Type"
+				   SEQUENCE="15"
+				   UPDATED="12/15/2009 00:56:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:41"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="created to fix bug 12-5WNLR"
+				   CONSTRAIN="N"
+				   FIELD="Calculated Account Id"
+				   INACTIVE="Y"
+				   NAME="Calculated Account Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Account Id"
+				   SEQUENCE="9"
+				   UPDATED="04/03/2012 10:40:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:41"
+				   CREATED_BY="SADMIN">
+					<PICK_MAP_UPDONLYIFNULL
+					   COMMENTS="ACS_Removal"
+					   FIELD="Account"
+					   INACTIVE="Y"
+					   NAME="Account"
+					   UPDATED="04/03/2012 10:40:23"
+					   UPDATED_BY="SADMIN"
+					   CREATED="12/15/2009 00:56:41"
+					   CREATED_BY="SADMIN">
+					</PICK_MAP_UPDONLYIFNULL>
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Customer Product Id"
+				   INACTIVE="N"
+				   NAME="Customer Product Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   SEQUENCE="8"
+				   UPDATED="12/15/2009 00:56:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:41"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Joined Account Id"
+				   INACTIVE="Y"
+				   NAME="Joined Account Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Account Id"
+				   SEQUENCE="7"
+				   UPDATED="04/03/2012 10:40:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:41"
+				   CREATED_BY="SADMIN">
+					<PICK_MAP_UPDONLYIFNULL
+					   COMMENTS="ACS_Removal"
+					   FIELD="Account"
+					   INACTIVE="Y"
+					   NAME="Account"
+					   UPDATED="04/03/2012 10:40:23"
+					   UPDATED_BY="SADMIN"
+					   CREATED="12/15/2009 00:56:41"
+					   CREATED_BY="SADMIN">
+					</PICK_MAP_UPDONLYIFNULL>
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Make"
+				   INACTIVE="N"
+				   NAME="Make"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Make"
+				   SEQUENCE="12"
+				   UPDATED="12/15/2009 00:56:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:41"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Model"
+				   INACTIVE="N"
+				   NAME="Model"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Vehicle Model"
+				   SEQUENCE="13"
+				   UPDATED="12/15/2009 00:56:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:42"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Model Year"
+				   INACTIVE="N"
+				   NAME="Model Year"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Model Year"
+				   SEQUENCE="14"
+				   UPDATED="12/15/2009 00:56:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:42"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="PSD"
+				   INACTIVE="N"
+				   NAME="PSD"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Preferred Service Dealer"
+				   SEQUENCE="19"
+				   UPDATED="12/15/2009 00:56:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:42"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Pref SRV Dealer Id"
+				   INACTIVE="N"
+				   NAME="Pref SRV Dealer Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Preferred Service Dealer Id"
+				   SEQUENCE="18"
+				   UPDATED="12/15/2009 00:56:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:42"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Product"
+				   INACTIVE="N"
+				   NAME="Product"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Product Name"
+				   SEQUENCE="6"
+				   UPDATED="12/15/2009 00:56:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:42"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Product Id"
+				   INACTIVE="N"
+				   NAME="Product Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Product Id"
+				   SEQUENCE="5"
+				   UPDATED="12/15/2009 00:56:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:42"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="SD"
+				   INACTIVE="N"
+				   NAME="SD"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Selling Dealer"
+				   SEQUENCE="21"
+				   UPDATED="12/15/2009 00:56:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:42"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Sel Dealer Id"
+				   INACTIVE="N"
+				   NAME="Sel Dealer Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Site Id"
+				   SEQUENCE="20"
+				   UPDATED="12/15/2009 00:56:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:42"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Selected SR Routing Dealer"
+				   INACTIVE="N"
+				   NAME="Selected SR Routing Dealer"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Selected SR Routing Dealer"
+				   SEQUENCE="23"
+				   UPDATED="12/15/2009 00:56:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:42"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Selected SR Routing Dealer Id"
+				   INACTIVE="N"
+				   NAME="Selected SR Routing Dealer Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Selected SR Routing Dealer Id"
+				   SEQUENCE="22"
+				   UPDATED="12/15/2009 00:56:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:42"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Serial Number"
+				   INACTIVE="N"
+				   NAME="Serial Number"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Serial Number"
+				   SEQUENCE="4"
+				   UPDATED="12/15/2009 00:56:43"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:43"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Vehicle License Number"
+				   INACTIVE="N"
+				   NAME="Vehicle License Number"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Vehicle License Number"
+				   SEQUENCE="1"
+				   UPDATED="12/15/2009 00:56:43"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:43"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Version"
+				   INACTIVE="N"
+				   NAME="Version"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Version"
+				   SEQUENCE="3"
+				   UPDATED="12/15/2009 00:56:43"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:43"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SR_STAT_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Status"
+			   NO_COPY="N"
+			   PICKLIST="FIN PickList Service Request Status"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/10/2012 11:42:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/07/2010 16:33:16"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="HP SR Status"
+				   INACTIVE="N"
+				   NAME="HP SR Status"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   SEQUENCE="1"
+				   UPDATED="07/07/2010 16:33:16"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/07/2010 16:33:16"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SR_SUB_AREA"
+			   COMMENTS="11-03-2004 Deleted PickList SR Hierarchical Sub-Area"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Sub-Area"
+			   NO_COPY="Y"
+			   PICKLIST="INS PickList SR Hierarchical Sub-Area"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/14/2015 23:44:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:43"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   COMMENTS="TK Inactivated"
+				   CONSTRAIN="Y"
+				   FIELD="Area"
+				   INACTIVE="Y"
+				   NAME="Area"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Parent"
+				   UPDATED="04/03/2012 10:40:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:43"
+				   CREATED_BY="SADMIN">
+					<PICK_MAP_UPDONLYIFNULL
+					   COMMENTS="ACS_Removal"
+					   FIELD="Area"
+					   INACTIVE="Y"
+					   NAME="Area"
+					   UPDATED="04/03/2012 10:40:24"
+					   UPDATED_BY="SADMIN"
+					   CREATED="12/15/2009 00:56:43"
+					   CREATED_BY="SADMIN">
+					</PICK_MAP_UPDONLYIFNULL>
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="This is causing problem in the hierachy as data isn&apos;t refreshed."
+				   CONSTRAIN="Y"
+				   FIELD="CurrentArea"
+				   INACTIVE="Y"
+				   NAME="CurrentArea"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Parent"
+				   UPDATED="04/03/2012 10:40:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:43"
+				   CREATED_BY="SADMIN">
+					<PICK_MAP_UPDONLYIFNULL
+					   COMMENTS="ACS_Removal"
+					   FIELD="Area"
+					   INACTIVE="Y"
+					   NAME="Area"
+					   UPDATED="04/03/2012 10:40:24"
+					   UPDATED_BY="SADMIN"
+					   CREATED="12/15/2009 00:56:43"
+					   CREATED_BY="SADMIN">
+					</PICK_MAP_UPDONLYIFNULL>
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="TK Added | VFTRCBU-8384 - HRODRIGUES - 2015.04.22 - Changed constraint to parent id"
+				   CONSTRAIN="Y"
+				   FIELD="INS CurrentArea"
+				   INACTIVE="Y"
+				   NAME="INS CurrentArea"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Parent INT"
+				   SEQUENCE="1"
+				   UPDATED="05/14/2015 23:44:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:43"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Owned By Group Id"
+				   INACTIVE="N"
+				   NAME="Owned By Group Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Owned By Group Id"
+				   SEQUENCE="2"
+				   UPDATED="12/15/2009 00:56:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:44"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Owner Group"
+				   INACTIVE="N"
+				   NAME="Owner Group"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Owner Group"
+				   SEQUENCE="3"
+				   UPDATED="12/15/2009 00:56:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:44"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Priority"
+				   INACTIVE="N"
+				   NAME="Priority"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Priority"
+				   SEQUENCE="4"
+				   UPDATED="12/15/2009 00:56:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:44"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Queue Id"
+				   INACTIVE="N"
+				   NAME="Queue Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="High"
+				   SEQUENCE="5"
+				   UPDATED="12/15/2009 00:56:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:44"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="SR Type"
+				   INACTIVE="Y"
+				   NAME="SR Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Sr Type"
+				   UPDATED="12/15/2009 00:56:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:44"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="picklist eliminated &quot;Value&quot;"
+				   CONSTRAIN="N"
+				   FIELD="Sub-Area"
+				   INACTIVE="N"
+				   NAME="Sub-Area"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   SEQUENCE="9"
+				   UPDATED="12/15/2009 00:56:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:44"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Call Back Channel"
+				   INACTIVE="N"
+				   NAME="VF Call Back Channel"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Call Back Channel"
+				   SEQUENCE="6"
+				   UPDATED="12/15/2009 00:56:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:44"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Call Back Reply"
+				   INACTIVE="N"
+				   NAME="VF Call Back Reply"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Call Back Reply"
+				   SEQUENCE="7"
+				   UPDATED="12/15/2009 00:56:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:44"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Resolution Time"
+				   INACTIVE="N"
+				   NAME="VF Resolution Time"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Resolution Time"
+				   SEQUENCE="8"
+				   UPDATED="12/15/2009 00:56:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:44"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="VFTRCBU-8384 - HRODRIGUES - 2015.04.22"
+				   FIELD="VF Triplet No"
+				   INACTIVE="N"
+				   NAME="VF Triplet No"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Triplet No"
+				   UPDATED="05/14/2015 23:44:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/14/2015 23:44:48"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="VFTRCBU-8384 - HRODRIGUES - 2015.04.22"
+				   CONSTRAIN="Y"
+				   FIELD="VFTRCBU Area Id"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Area Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Parent Id"
+				   UPDATED="05/14/2015 23:44:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/14/2015 23:44:48"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="VFTRCBU-8384 - HRODRIGUES - 2015.04.22"
+				   CONSTRAIN="N"
+				   FIELD="VFTRCBU SubArea Id"
+				   INACTIVE="N"
+				   NAME="VFTRCBU SubArea Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="05/14/2015 23:44:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/14/2015 23:44:48"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="ATTRIB_36"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_SRV_REQ_X"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Sub-Conclusion"
+			   NO_COPY="N"
+			   PICKLIST="ACS Sub-Conclusion PickList"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/10/2012 11:42:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:44"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="ACS CurrentConclusion"
+				   INACTIVE="N"
+				   NAME="ACS CurrentConclusion"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Parent"
+				   UPDATED="12/15/2009 00:56:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:44"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Sub-Area"
+				   INACTIVE="Y"
+				   NAME="Sub-Area"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Sr Sub Area"
+				   UPDATED="12/15/2009 00:56:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:45"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Sub-Conclusion"
+				   INACTIVE="N"
+				   NAME="Sub-Conclusion"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="12/15/2009 00:56:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:45"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SR_SUB_STAT_ID"
+			   COMMENTS="MR 21/03/06 Predefault was: Field: &apos;Default Sub-Status&apos;   JD: Made field Required as per business requirements 06/16/06"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Sub-Status"
+			   NO_COPY="N"
+			   PICKLIST="VF PickList SR Sub-Status"
+			   PRE_DEFAULT_VALUE="Field: &apos;Default Sub-Status&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:45"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Current Status"
+				   INACTIVE="N"
+				   NAME="Current Status"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Parent"
+				   UPDATED="12/15/2009 00:56:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:45"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Sub-Status"
+				   INACTIVE="N"
+				   NAME="Sub-Status"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="12/15/2009 00:56:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:45"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_CALL_BACK_CHANNEL"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Call Back Channel"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_CALL_BACK_REPLY"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Call Back Reply"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="4000"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_FIRST_POSITION"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_SRV_REQ_X"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF First Position"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="System: PositionId"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/02/2018 11:24:35"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/02/2018 11:24:14"
+			   CREATED_BY="IBM_RCATITA">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_MNP_REQUEST_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF MNP Request ID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_PORT_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Port Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_PORT_IN_DATE_TIME"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Port In Date / Time"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_PORT_OUT_DATE_TIME"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Port Out Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="7"
+			   TYPE="DTYPE_DATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/04/2012 12:51:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:46"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Preferred Port Out Time Frame"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_DATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:46"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[VF Resolution Time] - ((TimeStamp()-[Created])*24)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Remaining Resolution Time"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_INTEGER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:46"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_RESOLUTION_TIME"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Resolution Time"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_INTEGER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:46"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_SR_CATEGORY"
+			   COMMENTS="DSOUSA 27012017 - VFTRCBU-36299 - added &quot;Standard&quot; to post value"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF SR Category"
+			   NO_COPY="N"
+			   POST_DEFAULT_VALUE="Standard"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/05/2017 00:04:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:46"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_SR_REPEATED"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF SR repeated"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:46"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_SHOP_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_EMP_PER"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Shop Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:46"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_TRIPLET_NO"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Triplet No"
+			   NO_COPY="N"
+			   PICKLIST="VF Triplet Selection Pick List"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/14/2015 23:44:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/20/2013 10:17:17"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   COMMENTS="VFTRCBU-8384 - HRODRIGUES - 2015.04.22"
+				   FIELD="Area"
+				   INACTIVE="N"
+				   NAME="Area"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Area Value"
+				   UPDATED="05/14/2015 23:44:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/14/2015 23:44:48"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="VFTRCBU-8384 - HRODRIGUES - 2015.04.22"
+				   FIELD="SR Type"
+				   INACTIVE="N"
+				   NAME="SR Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Type Value"
+				   UPDATED="05/14/2015 23:44:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/14/2015 23:44:48"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="VFTRCBU-8384 - HRODRIGUES - 2015.04.22"
+				   FIELD="Sub-Area"
+				   INACTIVE="N"
+				   NAME="Sub-Area"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Subarea Value"
+				   UPDATED="05/14/2015 23:44:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/14/2015 23:44:48"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Triplet No"
+				   INACTIVE="N"
+				   NAME="VF Triplet No"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Triplet No"
+				   UPDATED="03/15/2013 23:18:34"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/15/2013 23:18:34"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="VFTRCBU-8384 - HRODRIGUES - 2015.04.22"
+				   FIELD="VFTRCBU Area Id"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Area Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VFTRCBU Area Id"
+				   UPDATED="05/14/2015 23:44:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/14/2015 23:44:48"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="VFTRCBU-8384 - HRODRIGUES - 2015.04.22"
+				   FIELD="VFTRCBU SR Type Id"
+				   INACTIVE="N"
+				   NAME="VFTRCBU SR Type Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VFTRCBU Type Id"
+				   UPDATED="05/14/2015 23:44:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/14/2015 23:44:48"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="VFTRCBU-8384 - HRODRIGUES - 2015.04.22"
+				   FIELD="VFTRCBU SubArea Id"
+				   INACTIVE="N"
+				   NAME="VFTRCBU SubArea Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Subarea Id"
+				   UPDATED="05/14/2015 23:44:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/14/2015 23:44:48"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_WRONG_DATA_FLAG"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Wrong Data Flag"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/15/2009 00:56:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:46"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMMENTS="VFTRCBU-8384 - HRODRIGUES - 2015.04.22"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Area Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/14/2015 23:44:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/14/2015 23:44:48"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMMENTS="VFTRCBU-8384 - HRODRIGUES - 2015.04.22"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU SR Type Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/14/2015 23:44:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/14/2015 23:44:48"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_SUB_AREA_ID"
+			   COMMENTS="VFTRCBU-8384 - HRODRIGUES - 2015.04.22"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU SubArea Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/14/2015 23:44:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/14/2015 23:44:48"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<JOIN
+			   COMMENTS="[L.B. 20091209 created by person for HP BC]    Inactivated for OR13 (09/2012)"
+			   INACTIVE="Y"
+			   NAME="HP Created By Person"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_USER"
+			   UPDATED="09/11/2012 11:56:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:28"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Created by Person"
+				   SOURCE_FIELD="Created By"
+				   UPDATED="12/15/2009 00:56:28"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:28"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   COMMENTS="[L.B. 20091026] Added for HP BC"
+			   INACTIVE="N"
+			   NAME="Owned By Id"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_USER"
+			   UPDATED="12/15/2009 00:56:28"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:28"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Owned By Id"
+				   SOURCE_FIELD="HP SR Owned By Id"
+				   UPDATED="12/15/2009 00:56:28"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:28"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="Owner-S_USER"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_USER"
+			   UPDATED="12/15/2009 00:56:28"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:28"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Owned by Id"
+				   SOURCE_FIELD="Owned By Id"
+				   UPDATED="12/15/2009 00:56:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:29"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   COMMENTS="[L.B. 20091026] Added for HP BC"
+			   INACTIVE="N"
+			   NAME="S_ASSET"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_ASSET"
+			   UPDATED="12/15/2009 00:56:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:29"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="Join Asset to Service Request"
+				   SOURCE_FIELD="HR SR Asset Id"
+				   UPDATED="12/15/2009 00:56:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:29"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   COMMENTS="[L.B. 20091026] Added for HP BC"
+			   INACTIVE="N"
+			   NAME="S_EMP_PER"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_EMP_PER"
+			   UPDATED="09/03/2012 17:41:24"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:29"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Shop Id"
+				   SOURCE_FIELD="Created By"
+				   UPDATED="09/03/2012 17:41:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:29"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   COMMENTS="[L.B. 20091026] Added for HP BC"
+			   INACTIVE="N"
+			   NAME="S_ORG_EXT"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_ORG_EXT"
+			   UPDATED="12/15/2009 00:56:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:29"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Account Id"
+				   SOURCE_FIELD="HP SR Account Id"
+				   UPDATED="12/15/2009 00:56:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:29"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   COMMENTS="[L.B. 20091026] Added for HP BC"
+			   INACTIVE="N"
+			   NAME="S_ORG_INT"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_ORG_EXT"
+			   UPDATED="12/15/2009 00:56:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:29"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Owned by Group Id"
+				   SOURCE_FIELD="HP SR Owned Group By Id"
+				   UPDATED="12/15/2009 00:56:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:29"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   COMMENTS="[L.B. 20091026] Added for HP BC"
+			   INACTIVE="N"
+			   NAME="S_USER"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_USER"
+			   UPDATED="12/15/2009 00:56:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:29"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Created by"
+				   SOURCE_FIELD="Created By"
+				   UPDATED="12/15/2009 00:56:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2009 00:56:30"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<MULTI_VALUE_LINK
+			   AUTO_PRIMARY="Default"
+			   CHECK_NO_MATCH="N"
+			   DESTINATION_BUSINESS_COMPONENT="Organization"
+			   DESTINATION_LINK="Service Request/Organization"
+			   INACTIVE="N"
+			   NAME="Organization"
+			   NO_ASSOCIATE="N"
+			   NO_COPY="Y"
+			   NO_DELETE="N"
+			   NO_INSERT="Y"
+			   NO_UPDATE="N"
+			   POPUP_UPDATE_ONLY="N"
+			   PRIMARY_ID_FIELD="Primary Organization Id"
+			   SOURCE_FIELD="Id"
+			   USE_PRIMARY_JOIN="Y"
+			   UPDATED="12/15/2009 00:56:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/15/2009 00:56:47"
+			   CREATED_BY="SADMIN">
+			</MULTI_VALUE_LINK>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

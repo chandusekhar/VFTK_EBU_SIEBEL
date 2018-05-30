@@ -1,0 +1,4772 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="11/24/2016 17:14:00"
+   UPDATED_BY="SADMIN"
+   CREATED="11/24/2016 14:49:11"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="20140703 - VFTRCBU Project for WP#05 objects"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VFTRCBU Billing_Revenue Management"
+	   UI_FREEZE="N"
+	   UPDATED="05/17/2017 14:29:47"
+	   UPDATED_BY="CJANEIRO"
+	   CREATED="09/22/2014 22:00:58"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<WORKFLOW_PROCESS
+		   EDIT="N"
+		   INACTIVE="N"
+		   NAME="VFTRCBU Retrieve Invoices WF: 14"
+		   OBJECT_LOCKED="N"
+		   PASS_BY_REF_HIERARCHY_ARGUMENT="N"
+		   PROCESS_NAME="VFTRCBU Retrieve Invoices WF"
+		   REPLICATION_LEVEL="None"
+		   RUNNABLE="N"
+		   STATE_MANAGEMENT_TYPE="STATEFUL"
+		   STATUS="NOT_IN_USE"
+		   VERSION="14"
+		   WEB_SERVICE_ENABLED="N"
+		   WORKFLOW_MODE="Service Flow"
+		   UPDATED="05/03/2017 15:40:56"
+		   UPDATED_BY="CJANEIRO"
+		   CREATED="04/22/2016 17:58:01"
+		   CREATED_BY="SADMIN">
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="NONE"
+			   NAME="BA Search Spec"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   INOUT="INOUT"
+			   NAME="BASiebelMessage"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Error Code"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Error Message"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="[VF Billing Account HP_ACS Asset Mgmt - Asset - Header.ACS MSISDN]=&apos;0-1&apos;"
+			   INOUT="NONE"
+			   NAME="IC1NullQuerySearcExpr"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="[VF Billing Account HP_Com Invoice Profile.VF Bill Type]=&apos;0-1&apos;"
+			   INOUT="NONE"
+			   NAME="IC2NullQuerySearcExpr"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   INOUT="INOUT"
+			   NAME="InquiryHeader"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="NUMBER"
+			   INOUT="INOUT"
+			   NAME="NumIORecs"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Object Id"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   INOUT="OUT"
+			   NAME="OutputSiebelMessage"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Process Instance Id"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   INOUT="INOUT"
+			   NAME="Response Siebel Header"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   INOUT="INOUT"
+			   NAME="Response Siebel Message"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   INOUT="INOUT"
+			   NAME="Siebel Message"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Siebel Operation Object Id"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="1-0"
+			   INOUT="IN"
+			   NAME="inDummyBAId"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="DATE"
+			   INOUT="INOUT"
+			   NAME="inEndDate"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="inInvoiceStatusReq"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="IN"
+			   NAME="inInvoiceTypeId"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="IN"
+			   NAME="inPaymentStatus"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="IN"
+			   NAME="inSearchExpr"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="DATE"
+			   INOUT="INOUT"
+			   NAME="inStartDate"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="out1"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="out2"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="IN"
+			   NAME="sIPReqID"
+			   UPDATED="04/22/2016 17:58:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*804 95 900 1439*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="Check Response Header"
+			   SUBPROCESS_NAME="TELCO Check Outbound WS Header Response"
+			   TYPE="SUB_PROCESS"
+			   UPDATED="04/22/2016 17:58:02"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:01"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*924 1194*NPts1*22*P07*900 1194*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 0"
+				   TO_STEP_NAME="EAI Error?"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:01"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Check Response Header"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*924 1194*NPts1*22*P07*900 1194*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 0"
+					   TO_STEP_NAME="EAI Error?"
+					   UPDATED="04/22/2016 17:58:01"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:01"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="HeaderResponse"
+				   PROPERTY_NAME="Response Siebel Header"
+				   SEQUENCE="1"
+				   TYPE="PROPERTY"
+				   UPDATED="04/22/2016 17:58:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:01"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Check Response Header20"
+				   OUTPUT_ARG="Error Code"
+				   PROPERTY_NAME="Error Code"
+				   SEQUENCE="2"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/22/2016 17:58:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:01"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Check Response Header30"
+				   OUTPUT_ARG="Error Message"
+				   PROPERTY_NAME="Error Message"
+				   SEQUENCE="3"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*589 95 649 1439*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Check T"
+			   TYPE="DECISION_POINT"
+			   UPDATED="04/22/2016 17:58:02"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:02"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(Billing Account All Must Match (Ignore Case)(&apos;LookupValue(&apos;VFTRCBU_INVOICE_TEST_FLAG&apos;, &apos;GetInvoice&apos;) = &apos;T&apos;&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*545 2044*FrHS1*32*P17*619 2044*NPts1*32*P07*619 1434*ToHS1*28*ArrowEnd1*4"
+				   NAME="Check T"
+				   TO_STEP_NAME="Write to file"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Check T"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*545 2044*FrHS1*32*P17*619 2044*NPts1*32*P07*619 1434*ToHS1*28*ArrowEnd1*4"
+					   NAME="Check T"
+					   TO_STEP_NAME="Write to file"
+					   UPDATED="04/22/2016 17:58:02"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:02"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="EXPRESSION"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="Check T1"
+					   OPERATION="EQ_ALL_NC"
+					   SEQUENCE="1"
+					   UPDATED="04/22/2016 17:58:02"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:02"
+					   CREATED_BY="SADMIN">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR5="LookupValue(&apos;VFTRCBU_INVOICE_TEST_FLAG&apos;, &apos;GetInvoice&apos;) = &apos;T&apos;"
+						   NAME="Check T11"
+						   SEQUENCE="1"
+						   UPDATED="04/22/2016 17:58:02"
+						   UPDATED_BY="SADMIN"
+						   CREATED="04/22/2016 17:58:02"
+						   CREATED_BY="SADMIN">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*701 1194*NPts1*22*P07*649 1194*ToHS1*08*ArrowEnd1*4"
+				   NAME="Normal Operation 1"
+				   TO_STEP_NAME="Send to EAI"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Check T"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*701 1194*NPts1*22*P07*649 1194*ToHS1*08*ArrowEnd1*4"
+					   NAME="Normal Operation 1"
+					   TO_STEP_NAME="Send to EAI"
+					   UPDATED="04/22/2016 17:58:02"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:02"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*252 96 348 1449*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Decision Point 0"
+			   TYPE="DECISION_POINT"
+			   UPDATED="04/22/2016 17:58:02"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:02"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(NumIORecs Greater Than(&apos;0&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*382 1204*NPts1*22*P07*348 1204*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 4"
+				   TO_STEP_NAME="EAI Data Mapper"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Decision Point 0"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*382 1204*NPts1*22*P07*348 1204*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 4"
+					   TO_STEP_NAME="EAI Data Mapper"
+					   UPDATED="04/22/2016 17:58:02"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:02"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="PROPERTY"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="Connector 41"
+					   OPERATION="GREATER_THAN"
+					   PROPERTY_NAME="NumIORecs"
+					   SEQUENCE="5"
+					   UPDATED="04/22/2016 17:58:02"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:02"
+					   CREATED_BY="SADMIN">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR1="0"
+						   LO_NUM1="0"
+						   NAME="Connector 411"
+						   SEQUENCE="1"
+						   UPDATED="04/22/2016 17:58:02"
+						   UPDATED_BY="SADMIN"
+						   CREATED="04/22/2016 17:58:02"
+						   CREATED_BY="SADMIN">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P28*1113 3614*FrHS1*32*P17*300 3614*NPts1*42*P07*300 1442*P38*1113 3364*ToHS1*38*ArrowEnd1*4"
+				   NAME="Connector 5"
+				   TO_STEP_NAME="End"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Decision Point 0"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P28*1113 3614*FrHS1*32*P17*300 3614*NPts1*42*P07*300 1442*P38*1113 3364*ToHS1*38*ArrowEnd1*4"
+					   NAME="Connector 5"
+					   TO_STEP_NAME="End"
+					   UPDATED="04/22/2016 17:58:02"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:02"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1065 180 1161 2289*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Decision Point 1"
+			   TYPE="DECISION_POINT"
+			   UPDATED="04/22/2016 17:58:02"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:02"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="( All Must Match (Ignore Case)(&apos;LookupValue(&apos;VFTRCBU_INVOICE_TEST_FLAG&apos;, &apos;GetInvoice&apos;) = &apos;T&apos;&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*02*P18*1020 2044*NPts1*22*P08*1065 2044*ToHS1*28*ArrowEnd1*4"
+				   NAME="C.Yes"
+				   TO_STEP_NAME="Wirte To File 2"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Decision Point 1"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*02*P18*1020 2044*NPts1*22*P08*1065 2044*ToHS1*28*ArrowEnd1*4"
+					   NAME="C.Yes"
+					   TO_STEP_NAME="Wirte To File 2"
+					   UPDATED="04/22/2016 17:58:02"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:02"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="EXPRESSION"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="C.Yes8"
+					   OPERATION="EQ_ALL_NC"
+					   SEQUENCE="8"
+					   UPDATED="04/22/2016 17:58:02"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:02"
+					   CREATED_BY="SADMIN">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR5="LookupValue(&apos;VFTRCBU_INVOICE_TEST_FLAG&apos;, &apos;GetInvoice&apos;) = &apos;T&apos;"
+						   NAME="C.Yes81"
+						   SEQUENCE="1"
+						   UPDATED="04/22/2016 17:58:02"
+						   UPDATED_BY="SADMIN"
+						   CREATED="04/22/2016 17:58:02"
+						   CREATED_BY="SADMIN">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P18*1113 2884*NPts1*22*P08*1113 2284*ToHS1*18*ArrowEnd1*4"
+				   NAME="Connector 7"
+				   TO_STEP_NAME="End"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Decision Point 1"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P18*1113 2884*NPts1*22*P08*1113 2284*ToHS1*18*ArrowEnd1*4"
+					   NAME="Connector 7"
+					   TO_STEP_NAME="End"
+					   UPDATED="04/22/2016 17:58:02"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:02"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Execute"
+			   BUSINESS_SERVICE_NAME="EAI Data Transformation Engine"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*382 96 454 1449*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="EAI Data Mapper"
+			   TYPE="TASK"
+			   UPDATED="04/22/2016 17:58:02"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:02"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*10*0*0*0*9*LineWidth1*22*P28*1113 3484*FrHS1*32*P17*418 3484*NPts1*42*P07*418 1442*P38*1113 3364*ToHS1*39*LineColor3*2558*ArrowEnd1*1"
+				   NAME="Error on Eai Data Mapper"
+				   TO_STEP_NAME="End"
+				   TYPE="ERROR_EXC"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="EAI Data Mapper"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*10*0*0*0*9*LineWidth1*22*P28*1113 3484*FrHS1*32*P17*418 3484*NPts1*42*P07*418 1442*P38*1113 3364*ToHS1*39*LineColor3*2558*ArrowEnd1*1"
+					   NAME="Error on Eai Data Mapper"
+					   TO_STEP_NAME="End"
+					   UPDATED="04/22/2016 17:58:02"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:02"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*473 1204*NPts1*22*P07*454 1204*ToHS1*08*ArrowEnd1*1"
+				   NAME="NewConn:1-6GG4K"
+				   TO_STEP_NAME="Test?"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="EAI Data Mapper"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*473 1204*NPts1*22*P07*454 1204*ToHS1*08*ArrowEnd1*1"
+					   NAME="NewConn:1-6GG4K"
+					   TO_STEP_NAME="Test?"
+					   UPDATED="04/22/2016 17:58:02"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:02"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="MapName"
+				   SEQUENCE="4"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="VFTRCBU Retrieve Billing Account DataMap"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:EAI Data Mapper7"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Siebel Message"
+				   SEQUENCE="7"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="OutputIntObjectName"
+				   SEQUENCE="5"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="GetPaymentsRequest"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="BASiebelMessage"
+				   SEQUENCE="6"
+				   TYPE="PROPERTY"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="inEndDate"
+				   PROPERTY_NAME="inEndDate"
+				   SEQUENCE="26"
+				   TYPE="PROPERTY"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="inInvoiceStatusReq"
+				   PROPERTY_NAME="inInvoiceStatusReq"
+				   SEQUENCE="24"
+				   TYPE="PROPERTY"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="inInvoiceTypeId"
+				   PROPERTY_NAME="inInvoiceTypeId"
+				   SEQUENCE="22"
+				   TYPE="PROPERTY"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="inPaymentStatus"
+				   PROPERTY_NAME="inPaymentStatus"
+				   SEQUENCE="23"
+				   TYPE="PROPERTY"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="inStartDate"
+				   PROPERTY_NAME="inStartDate"
+				   SEQUENCE="25"
+				   TYPE="PROPERTY"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*924 95 1020 1439*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="EAI Error?"
+			   TYPE="DECISION_POINT"
+			   UPDATED="04/22/2016 17:58:02"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:02"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(Error Code All Must Match (Ignore Case)(&apos;0&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1065 1194*NPts1*22*P08*1020 1194*ToHS1*08*ArrowEnd1*4"
+				   NAME="C.No"
+				   TO_STEP_NAME="EAI Response Data Mapper"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="EAI Error?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1065 1194*NPts1*22*P08*1020 1194*ToHS1*08*ArrowEnd1*4"
+					   NAME="C.No"
+					   TO_STEP_NAME="EAI Response Data Mapper"
+					   UPDATED="04/22/2016 17:58:02"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:02"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="PROPERTY"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="C.No1"
+					   OPERATION="EQ_ALL_NC"
+					   PROPERTY_NAME="Error Code"
+					   SEQUENCE="11"
+					   UPDATED="04/22/2016 17:58:02"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:02"
+					   CREATED_BY="SADMIN">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR1="0"
+						   NAME="C.No11"
+						   SEQUENCE="3"
+						   UPDATED="04/22/2016 17:58:02"
+						   UPDATED_BY="SADMIN"
+						   CREATED="04/22/2016 17:58:02"
+						   CREATED_BY="SADMIN">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*1176 644*FrHS1*12*P16*972 644*NPts1*32*P06*972 954*ToHS1*08*ArrowEnd1*4"
+				   NAME="D.Yes"
+				   TO_STEP_NAME="Error Logger"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="EAI Error?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*1176 644*FrHS1*12*P16*972 644*NPts1*32*P06*972 954*ToHS1*08*ArrowEnd1*4"
+					   NAME="D.Yes"
+					   TO_STEP_NAME="Error Logger"
+					   UPDATED="04/22/2016 17:58:02"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:02"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Execute"
+			   BUSINESS_SERVICE_NAME="EAI Data Transformation Engine"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r16*1065 95 1161 1439*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="EAI Response Data Mapper"
+			   TYPE="TASK"
+			   UPDATED="04/22/2016 17:58:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:02"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P18*1113 1804*NPts1*22*P08*1113 1434*ToHS1*18*ArrowEnd1*4"
+				   NAME="Connector 3"
+				   TO_STEP_NAME="Decision Point 1"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="EAI Response Data Mapper"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P18*1113 1804*NPts1*22*P08*1113 1434*ToHS1*18*ArrowEnd1*4"
+					   NAME="Connector 3"
+					   TO_STEP_NAME="Decision Point 1"
+					   UPDATED="04/22/2016 17:58:02"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:02"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="MapName"
+				   SEQUENCE="2"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="VFTRCBU Payments Response Map"
+				   UPDATED="04/22/2016 17:58:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:02"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:EAI Response Data Mapper40"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="OutputSiebelMessage"
+				   SEQUENCE="4"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="OutputIntObjectName"
+				   SEQUENCE="1"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="VFTRCBU Payments Response IO"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Response Siebel Message"
+				   SEQUENCE="3"
+				   TYPE="PROPERTY"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1080 288 1146 3369*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="End"
+			   TYPE="END"
+			   UPDATED="04/22/2016 17:58:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:03"
+			   CREATED_BY="SADMIN">
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="LogWorkflowErrors"
+			   BUSINESS_SERVICE_NAME="ACS General Operations"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*1176 40 1272 889*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Error Logger"
+			   TYPE="TASK"
+			   UPDATED="04/22/2016 17:58:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:03"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P28*1146 3124*FrHS1*32*P18*1224 3124*NPts1*32*P07*1224 884*ToHS1*28*ArrowEnd1*4"
+				   NAME="Connector 2"
+				   TO_STEP_NAME="End"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Error Logger"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P28*1146 3124*FrHS1*32*P18*1224 3124*NPts1*32*P07*1224 884*ToHS1*28*ArrowEnd1*4"
+					   NAME="Connector 2"
+					   TO_STEP_NAME="End"
+					   UPDATED="04/22/2016 17:58:03"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:03"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*12 96 108 1449*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="Generate Header"
+			   SUBPROCESS_NAME="VFTRCBU Generate Header IO WF"
+			   TYPE="SUB_PROCESS"
+			   UPDATED="04/22/2016 17:58:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:03"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*132 1204*NPts1*22*P07*108 1204*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 1"
+				   TO_STEP_NAME="Get Billing Account Data"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Generate Header"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*132 1204*NPts1*22*P07*108 1204*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 1"
+					   TO_STEP_NAME="Get Billing Account Data"
+					   UPDATED="04/22/2016 17:58:03"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:03"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Generate Header8"
+				   OUTPUT_ARG="Header"
+				   PROPERTY_NAME="InquiryHeader"
+				   SEQUENCE="8"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Generate Header90"
+				   PROPERTY_NAME="BA Search Spec"
+				   SEQUENCE="9"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="IIF([&amp;inDummyBAId] = &quot;&quot; OR [&amp;inDummyBAId] IS NULL, &quot;[VF Billing Account HP.Id] = &apos;No_BA_Id&apos;&quot;, &quot;[VF Billing Account HP.Id] = &apos;&quot;+[&amp;inDummyBAId]+&quot;&apos; AND ([VF Billing Account HP.Account Status Code]=&apos;&quot;+LookupValue(&quot;BILLING_ACCOUNT_STATUS&quot;,&quot;100&quot;)+&quot;&apos; OR [VF Billing Account HP.Account Status Code]=&apos;&quot;+LookupValue(&quot;BILLING_ACCOUNT_STATUS&quot;,&quot;120&quot;)+&quot;&apos; OR [VF Billing Account HP.Account Status Code]=&apos;&quot;+LookupValue(&quot;BILLING_ACCOUNT_STATUS&quot;,&quot;130&quot;)+&quot;&apos;)&quot;)"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="RequestId"
+				   PROPERTY_NAME="sIPReqID"
+				   SEQUENCE="10"
+				   TYPE="PROPERTY"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Query"
+			   BUSINESS_SERVICE_NAME="EAI Siebel Adapter"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*132 96 218 1449*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Get Billing Account Data"
+			   TYPE="TASK"
+			   UPDATED="04/22/2016 17:58:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:03"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*252 1204*NPts1*22*P07*218 1204*ToHS1*08*ArrowEnd1*1"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Decision Point 0"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Get Billing Account Data"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*252 1204*NPts1*22*P07*218 1204*ToHS1*08*ArrowEnd1*1"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Decision Point 0"
+					   UPDATED="04/22/2016 17:58:03"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:03"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Get Billing Account Data11"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="BASiebelMessage"
+				   SEQUENCE="11"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Get Billing Account Data210"
+				   OUTPUT_ARG="NumOutputObjects"
+				   PROPERTY_NAME="NumIORecs"
+				   SEQUENCE="21"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="OutputIntObjectName"
+				   SEQUENCE="9"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="VFTRCBU Billing Account HP IO"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="PrimaryRowId"
+				   SEQUENCE="10"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="IIF([&amp;inDummyBAId] = &quot;&quot; OR [&amp;inDummyBAId] IS NULL, &quot;No_BA_Id&quot;, [&amp;inDummyBAId])"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SearchSpec"
+				   SEQUENCE="20"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="IIF([&amp;inSearchExpr] IS NULL, [&amp;BA Search Spec] + &quot; AND &quot; + [&amp;IC1NullQuerySearcExpr] + &quot; AND &quot; + [&amp;IC2NullQuerySearcExpr]  , &quot;(&quot;+[&amp;BA Search Spec]+&quot;) AND (&quot;+[&amp;inSearchExpr]+&quot;)&quot; + &quot; AND &quot; + [&amp;IC1NullQuerySearcExpr] + &quot; AND &quot; + [&amp;IC2NullQuerySearcExpr])"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*473 250 545 2989*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Recheck T"
+			   TYPE="DECISION_POINT"
+			   UPDATED="04/22/2016 17:58:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:03"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P28*1080 3124*FrHS1*32*P17*509 3124*NPts1*32*P07*509 2984*ToHS1*08*ArrowEnd1*4"
+				   NAME="Normal Operation 2"
+				   TO_STEP_NAME="End"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Recheck T"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P28*1080 3124*FrHS1*32*P17*509 3124*NPts1*32*P07*509 2984*ToHS1*08*ArrowEnd1*4"
+					   NAME="Normal Operation 2"
+					   TO_STEP_NAME="End"
+					   UPDATED="04/22/2016 17:58:03"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:03"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(Billing Account All Must Match (Ignore Case)(&apos;LookupValue(&apos;VFTRCBU_INVOICE_TEST_FLAG&apos;, &apos;GetInvoice&apos;) = &apos;T&apos;&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*736 1434*FrHS1*22*P17*736 2744*NPts1*32*P07*545 2744*ToHS1*38*ArrowEnd1*4"
+				   NAME="Recheck T"
+				   TO_STEP_NAME="Send to EAI"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Recheck T"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*736 1434*FrHS1*22*P17*736 2744*NPts1*32*P07*545 2744*ToHS1*38*ArrowEnd1*4"
+					   NAME="Recheck T"
+					   TO_STEP_NAME="Send to EAI"
+					   UPDATED="04/22/2016 17:58:03"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:03"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="EXPRESSION"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="Recheck T2"
+					   OPERATION="EQ_ALL_NC"
+					   SEQUENCE="2"
+					   UPDATED="04/22/2016 17:58:03"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:03"
+					   CREATED_BY="SADMIN">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR5="LookupValue(&apos;VFTRCBU_INVOICE_TEST_FLAG&apos;, &apos;GetInvoice&apos;) = &apos;T&apos;"
+						   NAME="Recheck T22"
+						   SEQUENCE="2"
+						   UPDATED="04/22/2016 17:58:03"
+						   UPDATED_BY="SADMIN"
+						   CREATED="04/22/2016 17:58:03"
+						   CREATED_BY="SADMIN">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="GetPayments_v1"
+			   BUSINESS_SERVICE_NAME="SiebelAdapterBillingServicesPortType"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*701 95 771 1439*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Send to EAI"
+			   TYPE="TASK"
+			   UPDATED="04/22/2016 17:58:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:03"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*804 1194*NPts1*22*P07*771 1194*ToHS1*08*ArrowEnd1*1"
+				   NAME="NewConn:1-6GHZW"
+				   TO_STEP_NAME="Check Response Header"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Send to EAI"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*804 1194*NPts1*22*P07*771 1194*ToHS1*08*ArrowEnd1*1"
+					   NAME="NewConn:1-6GHZW"
+					   TO_STEP_NAME="Check Response Header"
+					   UPDATED="04/22/2016 17:58:03"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:03"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*10*0*0*0*9*LineWidth1*22*P27*1224 204*FrHS1*12*P16*736 204*NPts1*42*P06*736 952*P37*1224 404*ToHS1*19*LineColor3*2558*ArrowEnd1*1"
+				   NAME="Send to EAI Error"
+				   TO_STEP_NAME="Error Logger"
+				   TYPE="ERROR_EXC"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Send to EAI"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*10*0*0*0*9*LineWidth1*22*P27*1224 204*FrHS1*12*P16*736 204*NPts1*42*P06*736 952*P37*1224 404*ToHS1*19*LineColor3*2558*ArrowEnd1*1"
+					   NAME="Send to EAI Error"
+					   TO_STEP_NAME="Error Logger"
+					   UPDATED="04/22/2016 17:58:03"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:03"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="GetPaymentsRequest_v1:Body"
+				   PROPERTY_NAME="Siebel Message"
+				   SEQUENCE="15"
+				   TYPE="PROPERTY"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="GetPaymentsRequest_v1:Header"
+				   PROPERTY_NAME="InquiryHeader"
+				   SEQUENCE="14"
+				   TYPE="PROPERTY"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Send to EAI16"
+				   OUTPUT_ARG="GetPaymentsResponse_v1:Body"
+				   PROPERTY_NAME="Response Siebel Message"
+				   SEQUENCE="16"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Send to EAI17"
+				   OUTPUT_ARG="GetPaymentsResponse_v1:Header"
+				   PROPERTY_NAME="Response Siebel Header"
+				   SEQUENCE="17"
+				   TYPE="ARGUMENT"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="siebel_ws_param:RemoveEmptyTags"
+				   SEQUENCE="13"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Y"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r12*12 12 108 609*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="Start"
+			   TYPE="START"
+			   UPDATED="04/22/2016 17:58:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:03"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P15*60 964*NPts1*22*P05*60 604*ToHS1*18*ArrowEnd1*1"
+				   NAME="Default.DECISION"
+				   TO_STEP_NAME="Generate Header"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Start"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P15*60 964*NPts1*22*P05*60 604*ToHS1*18*ArrowEnd1*1"
+					   NAME="Default.DECISION"
+					   TO_STEP_NAME="Generate Header"
+					   UPDATED="04/22/2016 17:58:03"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:03"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*473 97 545 1439*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Test?"
+			   TYPE="DECISION_POINT"
+			   UPDATED="04/22/2016 17:58:04"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:03"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*567 1194*FrHS1*22*P17*567 1204*NPts1*42*P07*545 1202*P37*589 1194*ToHS1*08*ArrowEnd1*1"
+				   NAME="Test: N"
+				   TO_STEP_NAME="Check T"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Test?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*567 1194*FrHS1*22*P17*567 1204*NPts1*42*P07*545 1202*P37*589 1194*ToHS1*08*ArrowEnd1*1"
+					   NAME="Test: N"
+					   TO_STEP_NAME="Check T"
+					   UPDATED="04/22/2016 17:58:03"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:03"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(Billing Account All Must Match (Ignore Case)(&apos;LookupValue(&apos;VFTRCBU_INVOICE_TEST_FLAG&apos;, &apos;GetInvoice&apos;) = &apos;Y&apos;&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*509 1804*NPts1*22*P07*509 1434*ToHS1*18*ArrowEnd1*1"
+				   NAME="Test: Y"
+				   TO_STEP_NAME="Write to file"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:04"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:03"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Test?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*509 1804*NPts1*22*P07*509 1434*ToHS1*18*ArrowEnd1*1"
+					   NAME="Test: Y"
+					   TO_STEP_NAME="Write to file"
+					   UPDATED="04/22/2016 17:58:03"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:03"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="EXPRESSION"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="Test: Y1"
+					   OPERATION="EQ_ALL_NC"
+					   SEQUENCE="3"
+					   UPDATED="04/22/2016 17:58:04"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:04"
+					   CREATED_BY="SADMIN">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR1="Y"
+						   LO_CHAR5="LookupValue(&apos;VFTRCBU_INVOICE_TEST_FLAG&apos;, &apos;GetInvoice&apos;) = &apos;Y&apos;"
+						   NAME="Test: Y13"
+						   SEQUENCE="3"
+						   UPDATED="04/22/2016 17:58:04"
+						   UPDATED_BY="SADMIN"
+						   CREATED="04/22/2016 17:58:04"
+						   CREATED_BY="SADMIN">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="WritePropSet"
+			   BUSINESS_SERVICE_NAME="EAI XML Write to File"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r16*924 180 1020 2289*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Wirte To File 2"
+			   TYPE="TASK"
+			   UPDATED="04/22/2016 17:58:04"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:04"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P28*1080 3124*FrHS1*32*P17*972 3124*NPts1*32*P07*972 2284*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 8"
+				   TO_STEP_NAME="End"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:04"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:04"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Wirte To File 2"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P28*1080 3124*FrHS1*32*P17*972 3124*NPts1*32*P07*972 2284*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 8"
+					   TO_STEP_NAME="End"
+					   UPDATED="04/22/2016 17:58:04"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:04"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="FileName"
+				   SEQUENCE="1"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="LookupValue(&apos;VFTRCBU_MAIN_PATH&apos;, &apos;MainPath&apos;) + LookupValue(&apos;VFTRCBU_DEBUGTEST_PATH&apos;, &apos;DebugTestPath&apos;) + &apos;RetrieveInvoices_Response&apos; + mid(timestamp(),7,4) + mid(timestamp(),1,2) + mid(timestamp(),4,2) + mid(timestamp(),9,2) + mid(timestamp(),12,2) + mid(timestamp(),15,2) + &apos;.xml&apos;"
+				   UPDATED="04/22/2016 17:58:04"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:04"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="OutputSiebelMessage"
+				   SEQUENCE="2"
+				   TYPE="PROPERTY"
+				   UPDATED="04/22/2016 17:58:04"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:04"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="WritePropSet"
+			   BUSINESS_SERVICE_NAME="EAI XML Write to File"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*473 180 545 2289*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Write to file"
+			   TYPE="TASK"
+			   UPDATED="04/22/2016 17:58:04"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/22/2016 17:58:04"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*509 2504*NPts1*22*P07*509 2284*ToHS1*18*ArrowEnd1*1"
+				   NAME="New Debug Connector"
+				   TO_STEP_NAME="Recheck T"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="04/22/2016 17:58:04"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:04"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Write to file"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*509 2504*NPts1*22*P07*509 2284*ToHS1*18*ArrowEnd1*1"
+					   NAME="New Debug Connector"
+					   TO_STEP_NAME="Recheck T"
+					   UPDATED="04/22/2016 17:58:04"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/22/2016 17:58:04"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="FileName"
+				   SEQUENCE="18"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="LookupValue(&apos;VFTRCBU_MAIN_PATH&apos;, &apos;MainPath&apos;) + LookupValue(&apos;VFTRCBU_DEBUGTEST_PATH&apos;, &apos;DebugTestPath&apos;) + &apos;RetrieveInvoices&apos; + mid(timestamp(),7,4) + mid(timestamp(),1,2) + mid(timestamp(),4,2) + mid(timestamp(),9,2) + mid(timestamp(),12,2) + mid(timestamp(),15,2) + &apos;.xml&apos;"
+				   UPDATED="04/22/2016 17:58:04"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:04"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Siebel Message"
+				   SEQUENCE="19"
+				   TYPE="PROPERTY"
+				   UPDATED="04/22/2016 17:58:04"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/22/2016 17:58:04"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+		</WORKFLOW_PROCESS>
+		<WORKFLOW_PROCESS
+		   EDIT="N"
+		   INACTIVE="N"
+		   NAME="VFTRCBU Retrieve Invoices WF: 15"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="05/03/2017 14:25:05"
+		   PASS_BY_REF_HIERARCHY_ARGUMENT="N"
+		   PROCESS_NAME="VFTRCBU Retrieve Invoices WF"
+		   REPLICATION_LEVEL="None"
+		   RUNNABLE="N"
+		   STATE_MANAGEMENT_TYPE="STATEFUL"
+		   STATUS="COMPLETED"
+		   VERSION="15"
+		   WEB_SERVICE_ENABLED="N"
+		   WORKFLOW_MODE="Service Flow"
+		   OBJECT_LOCKED_BY_NAME="CJANEIRO"
+		   UPDATED="05/17/2017 14:29:47"
+		   UPDATED_BY="CJANEIRO"
+		   CREATED="05/03/2017 14:24:56"
+		   CREATED_BY="CJANEIRO">
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="NONE"
+			   NAME="BA Search Spec"
+			   UPDATED="05/03/2017 14:25:04"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:04"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   INOUT="NONE"
+			   NAME="BASiebelMessage"
+			   UPDATED="05/10/2017 16:02:27"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:04"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="IN"
+			   NAME="BILLING_ACCOUNT_ID"
+			   UPDATED="05/08/2017 12:08:01"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/08/2017 12:08:01"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="IN"
+			   NAME="BILLING_ACCOUNT_NUM"
+			   UPDATED="05/08/2017 11:54:27"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/08/2017 11:54:27"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="NONE"
+			   NAME="Empty_Invoice_Query"
+			   UPDATED="05/03/2017 15:19:32"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 15:19:32"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Error Code"
+			   UPDATED="05/03/2017 14:25:04"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:04"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Error Message"
+			   UPDATED="05/03/2017 14:25:04"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:04"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="NONE"
+			   NAME="HasChilds"
+			   UPDATED="05/11/2017 15:33:41"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/11/2017 15:33:41"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="[VF Billing Account HP_ACS Asset Mgmt - Asset - Header.ACS MSISDN]=&apos;0-1&apos;"
+			   INOUT="NONE"
+			   NAME="IC1NullQuerySearcExpr"
+			   UPDATED="05/03/2017 14:25:04"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:04"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="[VF Billing Account HP_Com Invoice Profile.VF Bill Type]=&apos;0-1&apos;"
+			   INOUT="NONE"
+			   NAME="IC2NullQuerySearcExpr"
+			   UPDATED="05/03/2017 14:25:04"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:04"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   INOUT="NONE"
+			   NAME="InquiryHeader"
+			   UPDATED="05/10/2017 16:02:43"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:04"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="NONE"
+			   NAME="InvoiceEndDate"
+			   UPDATED="05/03/2017 18:33:54"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 18:33:54"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="NONE"
+			   NAME="InvoiceStartDate"
+			   UPDATED="05/03/2017 18:33:26"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 18:33:26"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="NONE"
+			   NAME="Months"
+			   UPDATED="05/04/2017 14:41:09"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2017 14:41:09"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="NUMBER"
+			   INOUT="INOUT"
+			   NAME="NumIORecs"
+			   UPDATED="05/03/2017 14:25:04"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:04"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Object Id"
+			   UPDATED="05/03/2017 14:25:04"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:04"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   INOUT="OUT"
+			   NAME="OutputSiebelMessage"
+			   UPDATED="05/03/2017 14:25:04"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:04"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="PERIOD_END_DATE"
+			   UPDATED="05/08/2017 14:02:38"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/08/2017 14:02:38"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="IN"
+			   NAME="PERIOD_START_DATE"
+			   UPDATED="05/08/2017 14:02:30"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/08/2017 14:02:30"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Process Instance Id"
+			   UPDATED="05/03/2017 14:25:05"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:05"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   INOUT="NONE"
+			   NAME="Response Siebel Header"
+			   UPDATED="05/10/2017 16:02:56"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:05"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   INOUT="NONE"
+			   NAME="Response Siebel Message"
+			   UPDATED="05/10/2017 16:03:00"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:05"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   INOUT="NONE"
+			   NAME="ResponseChild"
+			   UPDATED="05/11/2017 16:21:55"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/11/2017 16:20:39"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="PROPSET_CHILD"
+			   INOUT="NONE"
+			   NAME="Siebel Message"
+			   UPDATED="05/10/2017 16:03:08"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:05"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Siebel Operation Object Id"
+			   UPDATED="05/03/2017 14:25:05"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:05"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="1-0"
+			   INOUT="IN"
+			   NAME="inDummyBAId"
+			   UPDATED="05/03/2017 14:25:05"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:05"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="DATE"
+			   INOUT="INOUT"
+			   NAME="inEndDate"
+			   UPDATED="05/03/2017 14:25:05"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:05"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="inInvoiceStatusReq"
+			   UPDATED="05/03/2017 14:25:05"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:05"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="IN"
+			   NAME="inInvoiceTypeId"
+			   UPDATED="05/03/2017 14:25:05"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:05"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="IN"
+			   NAME="inPaymentStatus"
+			   UPDATED="05/03/2017 14:25:05"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:05"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="IN"
+			   NAME="inSearchExpr"
+			   UPDATED="05/03/2017 14:25:05"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:05"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="DATE"
+			   INOUT="INOUT"
+			   NAME="inStartDate"
+			   UPDATED="05/03/2017 14:25:05"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:05"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="out1"
+			   UPDATED="05/03/2017 14:25:05"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:05"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="out2"
+			   UPDATED="05/03/2017 14:25:05"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:05"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="IN"
+			   NAME="sIPReqID"
+			   UPDATED="05/03/2017 14:25:05"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:05"
+			   CREATED_BY="CJANEIRO">
+			</WF_PROCESS_PROP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r16*928 218 1024 2669*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="Check Response Header"
+			   SUBPROCESS_NAME="TELCO Check Outbound WS Header Response"
+			   TYPE="SUB_PROCESS"
+			   UPDATED="05/11/2017 15:47:45"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:24:56"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1048 2424*NPts1*22*P08*1024 2424*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 0"
+				   TO_STEP_NAME="EAI Error?"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/05/2017 18:06:35"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:56"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Check Response Header"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1048 2424*NPts1*22*P08*1024 2424*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 0"
+					   TO_STEP_NAME="EAI Error?"
+					   UPDATED="05/05/2017 18:06:35"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:24:57"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="HeaderResponse"
+				   PROPERTY_NAME="Response Siebel Header"
+				   SEQUENCE="1"
+				   TYPE="PROPERTY"
+				   UPDATED="05/03/2017 14:24:57"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:57"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Check Response Header20"
+				   OUTPUT_ARG="Error Code"
+				   PROPERTY_NAME="Error Code"
+				   SEQUENCE="2"
+				   TYPE="ARGUMENT"
+				   UPDATED="05/03/2017 14:24:57"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:57"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Check Response Header30"
+				   OUTPUT_ARG="Error Message"
+				   PROPERTY_NAME="Error Message"
+				   SEQUENCE="3"
+				   TYPE="ARGUMENT"
+				   UPDATED="05/03/2017 14:24:57"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:57"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*713 218 773 2669*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Check T"
+			   TYPE="DECISION_POINT"
+			   UPDATED="05/05/2017 18:06:35"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:24:57"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(Billing Account All Must Match (Ignore Case)(&apos;LookupValue(&apos;VFTRCBU_INVOICE_TEST_FLAG&apos;, &apos;GetInvoice&apos;) = &apos;T&apos;&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*669 3274*FrHS1*32*P17*743 3274*NPts1*32*P07*743 2664*ToHS1*28*ArrowEnd1*4"
+				   NAME="Check T"
+				   TO_STEP_NAME="Write to file"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/05/2017 18:06:35"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:57"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Check T"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*669 3274*FrHS1*32*P17*743 3274*NPts1*32*P07*743 2664*ToHS1*28*ArrowEnd1*4"
+					   NAME="Check T"
+					   TO_STEP_NAME="Write to file"
+					   UPDATED="05/05/2017 18:06:35"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:24:58"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="EXPRESSION"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="Check T1"
+					   OPERATION="EQ_ALL_NC"
+					   SEQUENCE="1"
+					   UPDATED="05/03/2017 14:24:57"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:24:57"
+					   CREATED_BY="CJANEIRO">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR5="LookupValue(&apos;VFTRCBU_INVOICE_TEST_FLAG&apos;, &apos;GetInvoice&apos;) = &apos;T&apos;"
+						   NAME="Check T11"
+						   SEQUENCE="1"
+						   UPDATED="05/03/2017 14:24:57"
+						   UPDATED_BY="CJANEIRO"
+						   CREATED="05/03/2017 14:24:57"
+						   CREATED_BY="CJANEIRO">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*825 2424*NPts1*22*P07*773 2424*ToHS1*08*ArrowEnd1*4"
+				   NAME="Normal Operation 1"
+				   TO_STEP_NAME="Send to EAI"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/05/2017 18:06:35"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:58"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Check T"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*825 2424*NPts1*22*P07*773 2424*ToHS1*08*ArrowEnd1*4"
+					   NAME="Normal Operation 1"
+					   TO_STEP_NAME="Send to EAI"
+					   UPDATED="05/05/2017 18:06:35"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:24:58"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="CreateEmptyPropSet"
+			   BUSINESS_SERVICE_NAME="PRM ANI Utility Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*385 35 481 839*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Create Empty Hierarchy Response"
+			   TYPE="TASK"
+			   UPDATED="05/05/2017 16:50:44"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 15:19:00"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*518 594*NPts1*22*P06*481 594*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 9"
+				   TO_STEP_NAME="Get Months"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/05/2017 16:50:44"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 15:33:24"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Create Empty Hierarchy Response"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*518 594*NPts1*22*P06*481 594*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 9"
+					   TO_STEP_NAME="Get Months"
+					   UPDATED="05/05/2017 16:50:44"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 15:33:24"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Hierarchy Name"
+				   SEQUENCE="3"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="GetPaymentsResponse"
+				   UPDATED="05/03/2017 15:28:29"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 15:19:00"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Create Empty Hierarchy Response4"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Response Siebel Message"
+				   SEQUENCE="4"
+				   TYPE="ARGUMENT"
+				   UPDATED="05/03/2017 15:48:52"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 15:19:00"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="CreateEmptyPropSet"
+			   BUSINESS_SERVICE_NAME="PRM ANI Utility Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1474 344 1570 3929*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Create Empty Response"
+			   TYPE="TASK"
+			   UPDATED="05/11/2017 16:14:58"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/11/2017 15:30:26"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P18*1522 4294*NPts1*22*P08*1522 3924*ToHS1*18*ArrowEnd1*4"
+				   NAME="Connector 16"
+				   TO_STEP_NAME="Response Data Mapper"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/11/2017 16:14:58"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/11/2017 15:32:15"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Create Empty Response"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P18*1522 4294*NPts1*22*P08*1522 3924*ToHS1*18*ArrowEnd1*4"
+					   NAME="Connector 16"
+					   TO_STEP_NAME="Response Data Mapper"
+					   UPDATED="05/11/2017 16:14:58"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/11/2017 15:32:15"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Hierarchy Name"
+				   SEQUENCE="35"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="GetPaymentsResponse"
+				   UPDATED="05/11/2017 15:30:26"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/11/2017 15:30:26"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Create Empty Response36"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Response Siebel Message"
+				   SEQUENCE="36"
+				   TYPE="ARGUMENT"
+				   UPDATED="05/11/2017 15:30:57"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/11/2017 15:30:26"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1188 456 1284 5049*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Decision Point 1"
+			   TYPE="DECISION_POINT"
+			   UPDATED="05/08/2017 14:48:30"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:24:58"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="( All Must Match (Ignore Case)(&apos;LookupValue(&apos;VFTRCBU_INVOICE_TEST_FLAG&apos;, &apos;GetInvoice&apos;) = &apos;T&apos;&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P28*1166 3274*FrHS1*02*P18*1166 4804*NPts1*42*P08*1188 4802*P38*1144 3274*ToHS1*28*ArrowEnd1*4"
+				   NAME="C.Yes"
+				   TO_STEP_NAME="Wirte To File 2"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/08/2017 14:48:30"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:58"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Decision Point 1"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P28*1166 3274*FrHS1*02*P18*1166 4804*NPts1*42*P08*1188 4802*P38*1144 3274*ToHS1*28*ArrowEnd1*4"
+					   NAME="C.Yes"
+					   TO_STEP_NAME="Wirte To File 2"
+					   UPDATED="05/08/2017 14:48:30"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:24:59"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="EXPRESSION"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="C.Yes8"
+					   OPERATION="EQ_ALL_NC"
+					   SEQUENCE="8"
+					   UPDATED="05/03/2017 14:24:58"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:24:58"
+					   CREATED_BY="CJANEIRO">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR5="LookupValue(&apos;VFTRCBU_INVOICE_TEST_FLAG&apos;, &apos;GetInvoice&apos;) = &apos;T&apos;"
+						   NAME="C.Yes81"
+						   SEQUENCE="1"
+						   UPDATED="05/03/2017 14:24:58"
+						   UPDATED_BY="CJANEIRO"
+						   CREATED="05/03/2017 14:24:58"
+						   CREATED_BY="CJANEIRO">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P28*1237 5214*FrHS1*32*P18*1236 5214*NPts1*42*P08*1236 5042*P38*1237 5394*ToHS1*18*ArrowEnd1*4"
+				   NAME="D : N"
+				   TO_STEP_NAME="End"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/08/2017 14:48:30"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:59"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Decision Point 1"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P28*1237 5214*FrHS1*32*P18*1236 5214*NPts1*42*P08*1236 5042*P38*1237 5394*ToHS1*18*ArrowEnd1*4"
+					   NAME="D : N"
+					   TO_STEP_NAME="End"
+					   UPDATED="05/08/2017 14:48:30"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:24:59"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Execute"
+			   BUSINESS_SERVICE_NAME="EAI Data Transformation Engine"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*506 219 578 2679*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="EAI Data Mapper"
+			   TYPE="TASK"
+			   UPDATED="05/08/2017 14:48:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:24:59"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*10*0*0*0*9*LineWidth1*22*P28*1237 6124*FrHS1*32*P17*542 6124*NPts1*42*P07*542 2672*P38*1237 5874*ToHS1*39*LineColor3*2558*ArrowEnd1*1"
+				   NAME="Error on Eai Data Mapper"
+				   TO_STEP_NAME="End"
+				   TYPE="ERROR_EXC"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/08/2017 14:48:13"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:59"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="EAI Data Mapper"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*10*0*0*0*9*LineWidth1*22*P28*1237 6124*FrHS1*32*P17*542 6124*NPts1*42*P07*542 2672*P38*1237 5874*ToHS1*39*LineColor3*2558*ArrowEnd1*1"
+					   NAME="Error on Eai Data Mapper"
+					   TO_STEP_NAME="End"
+					   UPDATED="05/08/2017 14:48:13"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:24:59"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*597 2434*NPts1*22*P07*578 2434*ToHS1*08*ArrowEnd1*1"
+				   NAME="NewConn:1-6GG4K"
+				   TO_STEP_NAME="Test?"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/05/2017 18:06:35"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:59"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="EAI Data Mapper"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*597 2434*NPts1*22*P07*578 2434*ToHS1*08*ArrowEnd1*1"
+					   NAME="NewConn:1-6GG4K"
+					   TO_STEP_NAME="Test?"
+					   UPDATED="05/05/2017 18:06:35"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:24:59"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="MapName"
+				   SEQUENCE="4"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="VFTRCBU Retrieve Billing Account DataMap"
+				   UPDATED="05/03/2017 14:24:59"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:59"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:EAI Data Mapper7"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="Siebel Message"
+				   SEQUENCE="7"
+				   TYPE="ARGUMENT"
+				   UPDATED="05/03/2017 14:24:59"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:59"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="OutputIntObjectName"
+				   SEQUENCE="5"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="GetPaymentsRequest"
+				   UPDATED="05/03/2017 14:24:59"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:59"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="BASiebelMessage"
+				   SEQUENCE="6"
+				   TYPE="PROPERTY"
+				   UPDATED="05/03/2017 14:24:59"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:59"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="inEndDate"
+				   PROPERTY_NAME="inEndDate"
+				   SEQUENCE="26"
+				   TYPE="PROPERTY"
+				   UPDATED="05/03/2017 14:24:59"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:59"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="inInvoiceStatusReq"
+				   PROPERTY_NAME="inInvoiceStatusReq"
+				   SEQUENCE="24"
+				   TYPE="PROPERTY"
+				   UPDATED="05/03/2017 14:24:59"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:59"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="inInvoiceTypeId"
+				   PROPERTY_NAME="inInvoiceTypeId"
+				   SEQUENCE="22"
+				   TYPE="PROPERTY"
+				   UPDATED="05/03/2017 14:24:59"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:59"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="inPaymentStatus"
+				   PROPERTY_NAME="inPaymentStatus"
+				   SEQUENCE="23"
+				   TYPE="PROPERTY"
+				   UPDATED="05/03/2017 14:24:59"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:59"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="inStartDate"
+				   PROPERTY_NAME="inStartDate"
+				   SEQUENCE="25"
+				   TYPE="PROPERTY"
+				   UPDATED="05/03/2017 14:24:59"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:59"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1048 218 1144 2669*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="EAI Error?"
+			   TYPE="DECISION_POINT"
+			   UPDATED="05/09/2017 11:01:27"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:24:59"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(Error Code All Must Match (Ignore Case)(&apos;0&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P28*1166 2414*FrHS1*22*P18*1166 2424*NPts1*42*P08*1144 2422*P38*1188 2414*ToHS1*08*ArrowEnd1*4"
+				   NAME="C.No"
+				   TO_STEP_NAME="Subscriber Context?"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/09/2017 11:01:27"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:59"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="EAI Error?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P28*1166 2414*FrHS1*22*P18*1166 2424*NPts1*42*P08*1144 2422*P38*1188 2414*ToHS1*08*ArrowEnd1*4"
+					   NAME="C.No"
+					   TO_STEP_NAME="Subscriber Context?"
+					   UPDATED="05/09/2017 11:01:27"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:24:59"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="PROPERTY"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="C.No1"
+					   OPERATION="EQ_ALL_NC"
+					   PROPERTY_NAME="Error Code"
+					   SEQUENCE="11"
+					   UPDATED="05/03/2017 14:24:59"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:24:59"
+					   CREATED_BY="CJANEIRO">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR1="0"
+						   NAME="C.No11"
+						   SEQUENCE="3"
+						   UPDATED="05/03/2017 14:24:59"
+						   UPDATED_BY="CJANEIRO"
+						   CREATED="05/03/2017 14:24:59"
+						   CREATED_BY="CJANEIRO">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*976 2794*FrHS1*32*P18*1096 2794*NPts1*42*P08*1096 2662*P37*976 3034*ToHS1*18*ArrowEnd1*4"
+				   NAME="D.Yes"
+				   TO_STEP_NAME="Error Logger"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/05/2017 18:06:35"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:00"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="EAI Error?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*976 2794*FrHS1*32*P18*1096 2794*NPts1*42*P08*1096 2662*P37*976 3034*ToHS1*18*ArrowEnd1*4"
+					   NAME="D.Yes"
+					   TO_STEP_NAME="Error Logger"
+					   UPDATED="05/05/2017 18:06:35"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:25:00"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Execute"
+			   BUSINESS_SERVICE_NAME="EAI Data Transformation Engine"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1188 302 1284 3509*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="EAI Response Data Mapper"
+			   TYPE="TASK"
+			   UPDATED="05/09/2017 11:03:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:00"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P18*1236 4564*NPts1*22*P08*1236 3504*ToHS1*18*ArrowEnd1*4"
+				   NAME="Connector 3"
+				   TO_STEP_NAME="Decision Point 1"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/09/2017 11:03:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:00"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="EAI Response Data Mapper"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P18*1236 4564*NPts1*22*P08*1236 3504*ToHS1*18*ArrowEnd1*4"
+					   NAME="Connector 3"
+					   TO_STEP_NAME="Decision Point 1"
+					   UPDATED="05/09/2017 11:03:48"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:25:00"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="MapName"
+				   SEQUENCE="2"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="VFTRCBU Payments Response Map"
+				   UPDATED="05/03/2017 14:25:00"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:00"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:EAI Response Data Mapper40"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="OutputSiebelMessage"
+				   SEQUENCE="4"
+				   TYPE="ARGUMENT"
+				   UPDATED="05/03/2017 14:25:00"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:00"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="OutputIntObjectName"
+				   SEQUENCE="1"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="VFTRCBU Payments Response IO"
+				   UPDATED="05/03/2017 14:25:00"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:00"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Response Siebel Message"
+				   SEQUENCE="3"
+				   TYPE="PROPERTY"
+				   UPDATED="05/03/2017 14:25:00"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:00"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*255 122 351 1709*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Empty Invoice?"
+			   TYPE="DECISION_POINT"
+			   UPDATED="05/09/2017 10:08:20"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:48:42"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(Empty_Invoice_Query This Must Match (Ignore Case)(&apos;N&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*384 1464*NPts1*22*P07*351 1464*ToHS1*08*ArrowEnd1*4"
+				   NAME="C : N"
+				   TO_STEP_NAME="Get Dates"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/08/2017 16:55:59"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/05/2017 16:51:22"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Empty Invoice?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*384 1464*NPts1*22*P07*351 1464*ToHS1*08*ArrowEnd1*4"
+					   NAME="C : N"
+					   TO_STEP_NAME="Get Dates"
+					   UPDATED="05/08/2017 16:55:59"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/05/2017 16:51:22"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="PROPERTY"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="C : N3"
+					   OPERATION="EQ_THIS_NC"
+					   PROPERTY_NAME="Empty_Invoice_Query"
+					   SEQUENCE="3"
+					   UPDATED="05/05/2017 18:14:56"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/05/2017 18:14:56"
+					   CREATED_BY="CJANEIRO">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR1="N"
+						   NAME="C : N31"
+						   SEQUENCE="1"
+						   UPDATED="05/05/2017 18:14:56"
+						   UPDATED_BY="CJANEIRO"
+						   CREATED="05/05/2017 18:14:56"
+						   CREATED_BY="CJANEIRO">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(Empty_Invoice_Query This Must Match (Ignore Case)(&apos;Y&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P26*385 594*FrHS1*12*P16*303 594*NPts1*32*P07*303 1224*ToHS1*08*ArrowEnd1*4"
+				   NAME="C : Y"
+				   TO_STEP_NAME="Create Empty Hierarchy Response"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/05/2017 16:51:04"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 15:32:03"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Empty Invoice?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P26*385 594*FrHS1*12*P16*303 594*NPts1*32*P07*303 1224*ToHS1*08*ArrowEnd1*4"
+					   NAME="C : Y"
+					   TO_STEP_NAME="Create Empty Hierarchy Response"
+					   UPDATED="05/05/2017 16:51:04"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 15:32:03"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="PROPERTY"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="Connector 96"
+					   OPERATION="EQ_THIS_NC"
+					   PROPERTY_NAME="Empty_Invoice_Query"
+					   SEQUENCE="6"
+					   UPDATED="05/03/2017 15:32:43"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 15:32:43"
+					   CREATED_BY="CJANEIRO">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR1="Y"
+						   NAME="Connector 962"
+						   SEQUENCE="2"
+						   UPDATED="05/03/2017 15:32:43"
+						   UPDATED_BY="CJANEIRO"
+						   CREATED="05/03/2017 15:32:43"
+						   CREATED_BY="CJANEIRO">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*303 2204*NPts1*22*P07*303 1704*ToHS1*18*ArrowEnd1*4"
+				   NAME="D"
+				   TO_STEP_NAME="Get Billing Account Data"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/09/2017 10:08:20"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:49:03"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Empty Invoice?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*303 2204*NPts1*22*P07*303 1704*ToHS1*18*ArrowEnd1*4"
+					   NAME="D"
+					   TO_STEP_NAME="Get Billing Account Data"
+					   UPDATED="05/09/2017 10:08:20"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:49:03"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1204 539 1270 5879*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="End"
+			   TYPE="END"
+			   UPDATED="05/08/2017 14:48:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:00"
+			   CREATED_BY="CJANEIRO">
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="LogWorkflowErrors"
+			   BUSINESS_SERVICE_NAME="ACS General Operations"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r16*928 303 1024 3519*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Error Logger"
+			   TYPE="TASK"
+			   UPDATED="05/08/2017 14:48:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:00"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P28*1204 5634*FrHS1*32*P17*976 5634*NPts1*32*P07*976 3514*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 2"
+				   TO_STEP_NAME="End"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/08/2017 14:48:13"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:00"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Error Logger"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P28*1204 5634*FrHS1*32*P17*976 5634*NPts1*32*P07*976 3514*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 2"
+					   TO_STEP_NAME="End"
+					   UPDATED="05/08/2017 14:48:13"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:25:00"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*144 122 240 1709*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="Generate Header"
+			   SUBPROCESS_NAME="VFTRCBU Generate Header IO WF"
+			   TYPE="SUB_PROCESS"
+			   UPDATED="05/09/2017 10:08:09"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:00"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*255 1464*NPts1*22*P07*240 1464*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 1"
+				   TO_STEP_NAME="Empty Invoice?"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/09/2017 10:08:09"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:00"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Generate Header"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*255 1464*NPts1*22*P07*240 1464*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 1"
+					   TO_STEP_NAME="Empty Invoice?"
+					   UPDATED="05/09/2017 10:08:09"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:25:00"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Generate Header8"
+				   OUTPUT_ARG="Header"
+				   PROPERTY_NAME="InquiryHeader"
+				   SEQUENCE="8"
+				   TYPE="ARGUMENT"
+				   UPDATED="05/03/2017 14:25:00"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:00"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Generate Header90"
+				   PROPERTY_NAME="BA Search Spec"
+				   SEQUENCE="9"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="IIF([&amp;inDummyBAId] = &quot;&quot; OR [&amp;inDummyBAId] IS NULL, &quot;[VF Billing Account HP.Id] = &apos;No_BA_Id&apos;&quot;, &quot;[VF Billing Account HP.Id] = &apos;&quot;+[&amp;inDummyBAId]+&quot;&apos; AND ([VF Billing Account HP.Account Status Code]=&apos;&quot;+LookupValue(&quot;BILLING_ACCOUNT_STATUS&quot;,&quot;100&quot;)+&quot;&apos; OR [VF Billing Account HP.Account Status Code]=&apos;&quot;+LookupValue(&quot;BILLING_ACCOUNT_STATUS&quot;,&quot;120&quot;)+&quot;&apos; OR [VF Billing Account HP.Account Status Code]=&apos;&quot;+LookupValue(&quot;BILLING_ACCOUNT_STATUS&quot;,&quot;130&quot;)+&quot;&apos;)&quot;)"
+				   UPDATED="05/03/2017 14:25:00"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:00"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="RequestId"
+				   PROPERTY_NAME="sIPReqID"
+				   SEQUENCE="10"
+				   TYPE="PROPERTY"
+				   UPDATED="05/03/2017 14:25:00"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:00"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Query"
+			   BUSINESS_SERVICE_NAME="EAI Siebel Adapter"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*260 220 346 2689*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Get Billing Account Data"
+			   TYPE="TASK"
+			   UPDATED="05/09/2017 10:08:20"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:00"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*379 2444*NPts1*22*P07*346 2444*ToHS1*08*ArrowEnd1*1"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="Result?"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/09/2017 10:08:20"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:00"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Get Billing Account Data"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*379 2444*NPts1*22*P07*346 2444*ToHS1*08*ArrowEnd1*1"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="Result?"
+					   UPDATED="05/09/2017 10:08:20"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:25:00"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Get Billing Account Data11"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="BASiebelMessage"
+				   SEQUENCE="11"
+				   TYPE="ARGUMENT"
+				   UPDATED="05/03/2017 14:25:01"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:01"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Get Billing Account Data210"
+				   OUTPUT_ARG="NumOutputObjects"
+				   PROPERTY_NAME="NumIORecs"
+				   SEQUENCE="21"
+				   TYPE="ARGUMENT"
+				   UPDATED="05/03/2017 14:25:01"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:01"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="OutputIntObjectName"
+				   SEQUENCE="9"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="VFTRCBU Billing Account HP IO"
+				   UPDATED="05/03/2017 14:25:00"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:00"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="PrimaryRowId"
+				   SEQUENCE="10"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="IIF([&amp;inDummyBAId] = &quot;&quot; OR [&amp;inDummyBAId] IS NULL, &quot;No_BA_Id&quot;, [&amp;inDummyBAId])"
+				   UPDATED="05/03/2017 14:25:00"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:01"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SearchSpec"
+				   SEQUENCE="20"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="IIF([&amp;inSearchExpr] IS NULL, [&amp;BA Search Spec] + &quot; AND &quot; + [&amp;IC1NullQuerySearcExpr] + &quot; AND &quot; + [&amp;IC2NullQuerySearcExpr]  , &quot;(&quot;+[&amp;BA Search Spec]+&quot;) AND (&quot;+[&amp;inSearchExpr]+&quot;)&quot; + &quot; AND &quot; + [&amp;IC1NullQuerySearcExpr] + &quot; AND &quot; + [&amp;IC2NullQuerySearcExpr])"
+				   UPDATED="05/03/2017 14:25:01"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:01"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Query"
+			   BUSINESS_SERVICE_NAME="EAI Siebel Adapter"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*516 122 602 1709*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Get Billing Account Info"
+			   TYPE="TASK"
+			   UPDATED="05/08/2017 16:55:59"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/08/2017 12:04:48"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*427 1944*FrHS1*32*P17*559 1944*NPts1*42*P07*559 1702*P37*427 2204*ToHS1*18*ArrowEnd1*4"
+				   NAME="Connector 15"
+				   TO_STEP_NAME="Result?"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/08/2017 16:55:59"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/08/2017 12:05:16"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Get Billing Account Info"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*427 1944*FrHS1*32*P17*559 1944*NPts1*42*P07*559 1702*P37*427 2204*ToHS1*18*ArrowEnd1*4"
+					   NAME="Connector 15"
+					   TO_STEP_NAME="Result?"
+					   UPDATED="05/08/2017 16:55:59"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/08/2017 12:05:16"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Copy of Get Billing Account Data4"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="BASiebelMessage"
+				   SEQUENCE="4"
+				   TYPE="ARGUMENT"
+				   UPDATED="05/08/2017 12:04:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/08/2017 12:04:48"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Copy of Get Billing Account Data5"
+				   OUTPUT_ARG="NumOutputObjects"
+				   PROPERTY_NAME="NumIORecs"
+				   SEQUENCE="5"
+				   TYPE="ARGUMENT"
+				   UPDATED="05/08/2017 12:04:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/08/2017 12:04:48"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="OutputIntObjectName"
+				   SEQUENCE="1"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="VFTRCBU Billing Account HP IO"
+				   UPDATED="05/08/2017 12:04:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/08/2017 12:04:48"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="PrimaryRowId"
+				   SEQUENCE="2"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="IIF([&amp;BILLING_ACCOUNT_ID] = &quot;&quot; OR [&amp;BILLING_ACCOUNT_ID] IS NULL, &quot;No_BA_Id&quot;, [&amp;BILLING_ACCOUNT_ID])"
+				   UPDATED="05/08/2017 12:10:43"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/08/2017 12:04:48"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SearchSpec"
+				   SEQUENCE="3"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="&quot;[VF Billing Account HP 2.Account Code]= &apos;&quot; + [&amp;BILLING_ACCOUNT_NUM] + &quot;&apos;&quot;"
+				   UPDATED="05/08/2017 12:12:31"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/08/2017 12:04:48"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Echo"
+			   BUSINESS_SERVICE_NAME="Workflow Utilities"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*384 122 480 1709*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Dates"
+			   TYPE="TASK"
+			   UPDATED="05/08/2017 16:55:59"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/08/2017 14:04:00"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*516 1464*NPts1*22*P07*480 1464*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 4"
+				   TO_STEP_NAME="Get Billing Account Info"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/08/2017 16:55:59"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/08/2017 14:05:27"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Get Dates"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*516 1464*NPts1*22*P07*480 1464*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 4"
+					   TO_STEP_NAME="Get Billing Account Info"
+					   UPDATED="05/08/2017 16:55:59"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/08/2017 14:05:27"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Get Dates6"
+				   PROPERTY_NAME="inStartDate"
+				   SEQUENCE="6"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="[&amp;PERIOD_START_DATE]"
+				   UPDATED="05/08/2017 14:05:07"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/08/2017 14:04:00"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Get Dates70"
+				   PROPERTY_NAME="inEndDate"
+				   SEQUENCE="7"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="[&amp;PERIOD_END_DATE]"
+				   UPDATED="05/08/2017 14:05:07"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/08/2017 14:05:07"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Get Profile Attribute"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*24 122 120 1709*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Empty Invoice Profile Attribute"
+			   TYPE="TASK"
+			   UPDATED="05/09/2017 10:08:09"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:47:03"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*144 1464*NPts1*22*P07*120 1464*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 6"
+				   TO_STEP_NAME="Generate Header"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/09/2017 10:08:09"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 15:30:33"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Get Empty Invoice Profile Attribute"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*144 1464*NPts1*22*P07*120 1464*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 6"
+					   TO_STEP_NAME="Generate Header"
+					   UPDATED="05/09/2017 10:08:09"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 15:30:33"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Get Empty Invoice Profile Attribute2"
+				   OUTPUT_ARG="Profile Attribute Value"
+				   PROPERTY_NAME="Empty_Invoice_Query"
+				   SEQUENCE="2"
+				   TYPE="ARGUMENT"
+				   UPDATED="05/03/2017 15:20:13"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:47:03"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Profile Attribute Name"
+				   SEQUENCE="1"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="VFTRCBU_GET_EMPTY_INVOICE"
+				   UPDATED="05/03/2017 15:20:08"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:47:03"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Echo"
+			   BUSINESS_SERVICE_NAME="Workflow Utilities"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*782 35 878 839*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get End Date"
+			   TYPE="TASK"
+			   UPDATED="05/11/2017 16:17:25"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 18:34:40"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*559 1024*FrHS1*32*P17*830 1024*NPts1*42*P06*830 832*P37*559 1224*ToHS1*18*ArrowEnd1*4"
+				   NAME="Connector 12"
+				   TO_STEP_NAME="Get Billing Account Info"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/11/2017 16:17:25"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 18:35:03"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Get End Date"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*559 1024*FrHS1*32*P17*830 1024*NPts1*42*P06*830 832*P37*559 1224*ToHS1*18*ArrowEnd1*4"
+					   NAME="Connector 12"
+					   TO_STEP_NAME="Get Billing Account Info"
+					   UPDATED="05/11/2017 16:17:25"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 18:35:03"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Get End Date14"
+				   PROPERTY_NAME="inEndDate"
+				   SEQUENCE="14"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="Timestamp()"
+				   UPDATED="05/08/2017 14:40:08"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 18:34:40"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Echo"
+			   BUSINESS_SERVICE_NAME="Workflow Utilities"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*518 35 614 839*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Months"
+			   TYPE="TASK"
+			   UPDATED="05/17/2017 14:26:07"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2017 14:30:49"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*649 594*NPts1*22*P06*614 594*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 7"
+				   TO_STEP_NAME="Get Start Date"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/05/2017 16:50:44"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/04/2017 15:49:22"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Get Months"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*649 594*NPts1*22*P06*614 594*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 7"
+					   TO_STEP_NAME="Get Start Date"
+					   UPDATED="05/05/2017 16:50:44"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/04/2017 15:49:22"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Get Start Date12"
+				   PROPERTY_NAME="Months"
+				   SEQUENCE="22"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="LookupValue(&quot;VFTRAD_INVOICE_LAST_MONTHS&quot;,&quot;MONTHS&quot;)"
+				   UPDATED="05/17/2017 14:26:07"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/04/2017 14:30:49"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="GetChildPropertySet"
+			   BUSINESS_SERVICE_NAME="TELCO PropertySet Utils"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1320 216 1416 2649*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Response"
+			   TYPE="TASK"
+			   UPDATED="05/12/2017 12:01:07"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/11/2017 16:15:00"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P18*1368 3004*NPts1*22*P08*1368 2644*ToHS1*18*ArrowEnd1*4"
+				   NAME="Connector 17"
+				   TO_STEP_NAME="Get Response Childs"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/12/2017 11:42:55"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/11/2017 16:15:33"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Get Response"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P18*1368 3004*NPts1*22*P08*1368 2644*ToHS1*18*ArrowEnd1*4"
+					   NAME="Connector 17"
+					   TO_STEP_NAME="Get Response Childs"
+					   UPDATED="05/12/2017 11:42:55"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/11/2017 16:15:33"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Get Response39"
+				   OUTPUT_ARG="ChildPropertySet"
+				   PROPERTY_NAME="ResponseChild"
+				   SEQUENCE="39"
+				   TYPE="ARGUMENT"
+				   UPDATED="05/11/2017 16:22:09"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/11/2017 16:15:00"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="PathElementSeparator"
+				   SEQUENCE="38"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="."
+				   UPDATED="05/11/2017 16:16:36"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/11/2017 16:15:00"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="PropertySetPath"
+				   SEQUENCE="40"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="^.^.^."
+				   UPDATED="05/12/2017 12:01:07"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/11/2017 16:16:52"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SourcePropertySet"
+				   PROPERTY_NAME="Response Siebel Message"
+				   SEQUENCE="41"
+				   TYPE="PROPERTY"
+				   UPDATED="05/11/2017 16:20:17"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/11/2017 16:20:17"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="GetChildCount"
+			   BUSINESS_SERVICE_NAME="TELCO PropertySet Utils"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1320 300 1416 3489*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Response Childs"
+			   TYPE="TASK"
+			   UPDATED="05/11/2017 16:22:19"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/11/2017 15:27:39"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P18*1368 3844*NPts1*22*P08*1368 3484*ToHS1*18*ArrowEnd1*4"
+				   NAME="Connector 13"
+				   TO_STEP_NAME="Has Childs?"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/11/2017 16:14:58"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/11/2017 15:28:45"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Get Response Childs"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P18*1368 3844*NPts1*22*P08*1368 3484*ToHS1*18*ArrowEnd1*4"
+					   NAME="Connector 13"
+					   TO_STEP_NAME="Has Childs?"
+					   UPDATED="05/11/2017 16:14:58"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/11/2017 15:28:45"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Get Response Childs34"
+				   OUTPUT_ARG="ChildNum"
+				   PROPERTY_NAME="HasChilds"
+				   SEQUENCE="34"
+				   TYPE="ARGUMENT"
+				   UPDATED="05/11/2017 15:34:02"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/11/2017 15:27:39"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="PropertySet"
+				   PROPERTY_NAME="ResponseChild"
+				   SEQUENCE="37"
+				   TYPE="PROPERTY"
+				   UPDATED="05/11/2017 16:22:19"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/11/2017 15:33:12"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="AddMonths"
+			   BUSINESS_SERVICE_NAME="TELCO DateTime Utils"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*649 35 745 839*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Start Date"
+			   TYPE="TASK"
+			   UPDATED="05/08/2017 14:40:00"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 18:32:40"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*782 594*NPts1*22*P06*745 594*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 11"
+				   TO_STEP_NAME="Get End Date"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/05/2017 16:50:44"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 18:32:55"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Get Start Date"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*782 594*NPts1*22*P06*745 594*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 11"
+					   TO_STEP_NAME="Get End Date"
+					   UPDATED="05/05/2017 16:50:44"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 18:32:55"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Date"
+				   SEQUENCE="11"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="Timestamp()"
+				   UPDATED="05/04/2017 14:30:03"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 18:32:40"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Months"
+				   SEQUENCE="19"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="&quot;-&quot; + [&amp;Months]"
+				   UPDATED="05/04/2017 15:55:05"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/04/2017 14:30:08"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Get Start Date12"
+				   OUTPUT_ARG="Result"
+				   PROPERTY_NAME="inStartDate"
+				   SEQUENCE="12"
+				   TYPE="ARGUMENT"
+				   UPDATED="05/08/2017 14:40:00"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 18:32:41"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1320 384 1416 4329*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Has Childs?"
+			   TYPE="DECISION_POINT"
+			   UPDATED="05/11/2017 16:14:58"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/11/2017 15:28:48"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(HasChilds Greater Than(&apos;0&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P28*1441 4534*FrHS1*22*P18*1441 4084*NPts1*42*P08*1416 4082*P38*1474 4534*ToHS1*08*ArrowEnd1*4"
+				   NAME="C : Y"
+				   TO_STEP_NAME="Response Data Mapper"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/11/2017 16:14:58"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/11/2017 15:29:31"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Has Childs?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P28*1441 4534*FrHS1*22*P18*1441 4084*NPts1*42*P08*1416 4082*P38*1474 4534*ToHS1*08*ArrowEnd1*4"
+					   NAME="C : Y"
+					   TO_STEP_NAME="Response Data Mapper"
+					   UPDATED="05/11/2017 16:14:58"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/11/2017 15:29:31"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="PROPERTY"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="C : Y3"
+					   OPERATION="GREATER_THAN"
+					   PROPERTY_NAME="HasChilds"
+					   SEQUENCE="3"
+					   UPDATED="05/11/2017 15:34:37"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/11/2017 15:34:37"
+					   CREATED_BY="CJANEIRO">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR1="0"
+						   NAME="C : Y31"
+						   SEQUENCE="1"
+						   UPDATED="05/11/2017 15:34:37"
+						   UPDATED_BY="CJANEIRO"
+						   CREATED="05/11/2017 15:34:37"
+						   CREATED_BY="CJANEIRO">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P28*1441 3684*FrHS1*22*P18*1441 4084*NPts1*42*P08*1416 4082*P38*1474 3684*ToHS1*08*ArrowEnd1*4"
+				   NAME="D : N"
+				   TO_STEP_NAME="Create Empty Response"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/11/2017 16:14:58"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/11/2017 15:31:03"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Has Childs?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P28*1441 3684*FrHS1*22*P18*1441 4084*NPts1*42*P08*1416 4082*P38*1474 3684*ToHS1*08*ArrowEnd1*4"
+					   NAME="D : N"
+					   TO_STEP_NAME="Create Empty Response"
+					   UPDATED="05/11/2017 16:14:58"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/11/2017 15:31:03"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*597 373 669 4219*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Recheck T"
+			   TYPE="DECISION_POINT"
+			   UPDATED="05/08/2017 14:48:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:01"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P28*1204 5634*FrHS1*32*P17*633 5634*NPts1*32*P07*633 4214*ToHS1*08*ArrowEnd1*4"
+				   NAME="Normal Operation 2"
+				   TO_STEP_NAME="End"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/08/2017 14:48:13"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:01"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Recheck T"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P28*1204 5634*FrHS1*32*P17*633 5634*NPts1*32*P07*633 4214*ToHS1*08*ArrowEnd1*4"
+					   NAME="Normal Operation 2"
+					   TO_STEP_NAME="End"
+					   UPDATED="05/08/2017 14:48:13"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:25:01"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(Billing Account All Must Match (Ignore Case)(&apos;LookupValue(&apos;VFTRCBU_INVOICE_TEST_FLAG&apos;, &apos;GetInvoice&apos;) = &apos;T&apos;&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*860 2664*FrHS1*22*P17*860 3974*NPts1*32*P07*669 3974*ToHS1*38*ArrowEnd1*4"
+				   NAME="Recheck T"
+				   TO_STEP_NAME="Send to EAI"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/05/2017 18:06:35"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:01"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Recheck T"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*860 2664*FrHS1*22*P17*860 3974*NPts1*32*P07*669 3974*ToHS1*38*ArrowEnd1*4"
+					   NAME="Recheck T"
+					   TO_STEP_NAME="Send to EAI"
+					   UPDATED="05/05/2017 18:06:35"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:25:01"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="EXPRESSION"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="Recheck T2"
+					   OPERATION="EQ_ALL_NC"
+					   SEQUENCE="2"
+					   UPDATED="05/03/2017 14:25:01"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:25:01"
+					   CREATED_BY="CJANEIRO">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR5="LookupValue(&apos;VFTRCBU_INVOICE_TEST_FLAG&apos;, &apos;GetInvoice&apos;) = &apos;T&apos;"
+						   NAME="Recheck T22"
+						   SEQUENCE="2"
+						   UPDATED="05/03/2017 14:25:01"
+						   UPDATED_BY="CJANEIRO"
+						   CREATED="05/03/2017 14:25:01"
+						   CREATED_BY="CJANEIRO">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Execute"
+			   BUSINESS_SERVICE_NAME="EAI Data Transformation Engine"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1474 429 1570 4779*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Response Data Mapper"
+			   TYPE="TASK"
+			   UPDATED="05/11/2017 16:14:58"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/09/2017 11:02:18"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P18*1522 5134*NPts1*22*P08*1522 4774*ToHS1*18*ArrowEnd1*4"
+				   NAME="Connector 10"
+				   TO_STEP_NAME="Set Empty Invoice Profile Attribute"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/11/2017 16:14:58"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/09/2017 11:04:33"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Response Data Mapper"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P18*1522 5134*NPts1*22*P08*1522 4774*ToHS1*18*ArrowEnd1*4"
+					   NAME="Connector 10"
+					   TO_STEP_NAME="Set Empty Invoice Profile Attribute"
+					   UPDATED="05/11/2017 16:14:58"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/09/2017 11:04:33"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="MapName"
+				   SEQUENCE="23"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="VFTRAD Retrieve Invoices Response"
+				   UPDATED="05/09/2017 11:22:05"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/09/2017 11:02:18"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Copy of EAI Response Data Mapper26"
+				   OUTPUT_ARG="SiebelMessage"
+				   PROPERTY_NAME="OutputSiebelMessage"
+				   SEQUENCE="26"
+				   TYPE="ARGUMENT"
+				   UPDATED="05/10/2017 16:03:31"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/09/2017 11:02:18"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="OutputIntObjectName"
+				   SEQUENCE="24"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="VFTRAD Retrieve Invoices Response IO"
+				   UPDATED="05/09/2017 11:21:52"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/09/2017 11:02:18"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Response Siebel Message"
+				   SEQUENCE="25"
+				   TYPE="PROPERTY"
+				   UPDATED="05/09/2017 11:02:18"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/09/2017 11:02:18"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="inEndDate"
+				   PROPERTY_NAME="inEndDate"
+				   SEQUENCE="27"
+				   TYPE="PROPERTY"
+				   UPDATED="05/10/2017 15:09:27"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/10/2017 15:09:27"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="inStartDate"
+				   PROPERTY_NAME="inStartDate"
+				   SEQUENCE="28"
+				   TYPE="PROPERTY"
+				   UPDATED="05/10/2017 15:11:12"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/10/2017 15:10:51"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*379 220 475 2689*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Result?"
+			   TYPE="DECISION_POINT"
+			   UPDATED="05/08/2017 18:01:26"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:24:58"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(NumIORecs Greater Than(&apos;0&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*477 2434*FrHS1*22*P17*477 2444*NPts1*42*P07*475 2442*P37*506 2434*ToHS1*08*ArrowEnd1*4"
+				   NAME="C : Y"
+				   TO_STEP_NAME="EAI Data Mapper"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/08/2017 18:01:26"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:58"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Result?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*477 2434*FrHS1*22*P17*477 2444*NPts1*42*P07*475 2442*P37*506 2434*ToHS1*08*ArrowEnd1*4"
+					   NAME="C : Y"
+					   TO_STEP_NAME="EAI Data Mapper"
+					   UPDATED="05/08/2017 18:01:26"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:24:58"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="PROPERTY"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="Connector 41"
+					   OPERATION="GREATER_THAN"
+					   PROPERTY_NAME="NumIORecs"
+					   SEQUENCE="5"
+					   UPDATED="05/03/2017 14:24:58"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:24:58"
+					   CREATED_BY="CJANEIRO">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR1="0"
+						   LO_NUM1="0"
+						   NAME="Connector 411"
+						   SEQUENCE="1"
+						   UPDATED="05/03/2017 14:24:58"
+						   UPDATED_BY="CJANEIRO"
+						   CREATED="05/03/2017 14:24:58"
+						   CREATED_BY="CJANEIRO">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P28*1237 6124*FrHS1*32*P17*427 6124*NPts1*42*P07*427 2682*P38*1237 5874*ToHS1*38*ArrowEnd1*4"
+				   NAME="Connector 5"
+				   TO_STEP_NAME="End"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/08/2017 14:48:13"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:24:58"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Result?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P28*1237 6124*FrHS1*32*P17*427 6124*NPts1*42*P07*427 2682*P38*1237 5874*ToHS1*38*ArrowEnd1*4"
+					   NAME="Connector 5"
+					   TO_STEP_NAME="End"
+					   UPDATED="05/08/2017 14:48:13"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:24:58"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="GetPayments_v1"
+			   BUSINESS_SERVICE_NAME="SiebelAdapterBillingServicesPortType"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*825 218 895 2669*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Send to EAI"
+			   TYPE="TASK"
+			   UPDATED="05/05/2017 18:06:35"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:01"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*976 1934*FrHS1*12*P17*860 1934*NPts1*42*P07*860 2182*P37*976 2184*ToHS1*18*ArrowEnd1*1"
+				   NAME="NewConn:1-6GHZW"
+				   TO_STEP_NAME="Check Response Header"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/05/2017 18:06:35"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:01"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Send to EAI"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*976 1934*FrHS1*12*P17*860 1934*NPts1*42*P07*860 2182*P37*976 2184*ToHS1*18*ArrowEnd1*1"
+					   NAME="NewConn:1-6GHZW"
+					   TO_STEP_NAME="Check Response Header"
+					   UPDATED="05/05/2017 18:06:35"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:25:01"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*10*0*0*0*9*LineWidth1*22*P27*911 3274*FrHS1*22*P17*911 2424*NPts1*42*P07*895 2422*P37*928 3274*ToHS1*09*LineColor3*2558*ArrowEnd1*1"
+				   NAME="Send to EAI Error"
+				   TO_STEP_NAME="Error Logger"
+				   TYPE="ERROR_EXC"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/05/2017 18:06:35"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:01"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Send to EAI"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*10*0*0*0*9*LineWidth1*22*P27*911 3274*FrHS1*22*P17*911 2424*NPts1*42*P07*895 2422*P37*928 3274*ToHS1*09*LineColor3*2558*ArrowEnd1*1"
+					   NAME="Send to EAI Error"
+					   TO_STEP_NAME="Error Logger"
+					   UPDATED="05/05/2017 18:06:35"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:25:01"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="GetPaymentsRequest_v1:Body"
+				   PROPERTY_NAME="Siebel Message"
+				   SEQUENCE="15"
+				   TYPE="PROPERTY"
+				   UPDATED="05/03/2017 14:25:02"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:02"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="GetPaymentsRequest_v1:Header"
+				   PROPERTY_NAME="InquiryHeader"
+				   SEQUENCE="14"
+				   TYPE="PROPERTY"
+				   UPDATED="05/03/2017 14:25:01"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:01"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Send to EAI16"
+				   OUTPUT_ARG="GetPaymentsResponse_v1:Body"
+				   PROPERTY_NAME="Response Siebel Message"
+				   SEQUENCE="16"
+				   TYPE="ARGUMENT"
+				   UPDATED="05/03/2017 14:25:02"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:02"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Send to EAI17"
+				   OUTPUT_ARG="GetPaymentsResponse_v1:Header"
+				   PROPERTY_NAME="Response Siebel Header"
+				   SEQUENCE="17"
+				   TYPE="ARGUMENT"
+				   UPDATED="05/03/2017 14:25:02"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:02"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="siebel_ws_param:RemoveEmptyTags"
+				   SEQUENCE="13"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Y"
+				   UPDATED="05/03/2017 14:25:01"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:01"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Profile Attribute"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1474 513 1570 5619*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Set Empty Invoice Profile Attribute"
+			   TYPE="TASK"
+			   UPDATED="05/11/2017 16:14:58"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/09/2017 11:04:58"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*10*0*0*0*9*LineWidth1*22*P28*1449 5744*FrHS1*32*P18*1522 5744*NPts1*52*P08*1522 5612*P38*1449 4804*ToHS1*22*P48*1284 4808*ArrowEnd1*4"
+				   NAME="Connector 14"
+				   TO_STEP_NAME="Decision Point 1"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/11/2017 16:14:58"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/09/2017 11:05:29"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set Empty Invoice Profile Attribute"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*10*0*0*0*9*LineWidth1*22*P28*1449 5744*FrHS1*32*P18*1522 5744*NPts1*52*P08*1522 5612*P38*1449 4804*ToHS1*22*P48*1284 4808*ArrowEnd1*4"
+					   NAME="Connector 14"
+					   TO_STEP_NAME="Decision Point 1"
+					   UPDATED="05/11/2017 16:14:58"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/09/2017 11:05:29"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Set Empty Invoice Profile Attribute28"
+				   OUTPUT_ARG="Profile Attribute Value"
+				   PROPERTY_NAME="Empty_Invoice_Query"
+				   SEQUENCE="28"
+				   TYPE="ARGUMENT"
+				   UPDATED="05/09/2017 11:05:24"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/09/2017 11:04:58"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Profile Attribute Name"
+				   SEQUENCE="27"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="VFTRCBU_GET_EMPTY_INVOICE"
+				   UPDATED="05/09/2017 11:04:58"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/09/2017 11:04:58"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Profile Attribute Value"
+				   SEQUENCE="29"
+				   TYPE="LITERAL"
+				   UPDATED="05/09/2017 11:06:16"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/09/2017 11:06:16"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r12*24 24 120 729*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="Start"
+			   TYPE="START"
+			   UPDATED="05/12/2017 10:59:26"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:02"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*72 1224*NPts1*22*P05*72 724*ToHS1*18*ArrowEnd1*4"
+				   NAME="Start"
+				   TO_STEP_NAME="Get Empty Invoice Profile Attribute"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/12/2017 10:59:26"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 15:29:50"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Start"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*72 1224*NPts1*22*P05*72 724*ToHS1*18*ArrowEnd1*4"
+					   NAME="Start"
+					   TO_STEP_NAME="Get Empty Invoice Profile Attribute"
+					   UPDATED="05/12/2017 10:59:26"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 15:29:50"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1188 217 1284 2659*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Subscriber Context?"
+			   TYPE="DECISION_POINT"
+			   UPDATED="05/12/2017 11:42:55"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/09/2017 11:00:04"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(Empty_Invoice_Query Is Not Null)"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P28*1302 2404*FrHS1*22*P18*1302 2414*NPts1*42*P08*1284 2412*P38*1320 2404*ToHS1*08*ArrowEnd1*4"
+				   NAME="C : Y"
+				   TO_STEP_NAME="Get Response"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/12/2017 11:42:55"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/09/2017 11:03:04"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Subscriber Context?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P28*1302 2404*FrHS1*22*P18*1302 2414*NPts1*42*P08*1284 2412*P38*1320 2404*ToHS1*08*ArrowEnd1*4"
+					   NAME="C : Y"
+					   TO_STEP_NAME="Get Response"
+					   UPDATED="05/12/2017 11:42:55"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/09/2017 11:03:04"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="PROPERTY"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="C : Y2"
+					   OPERATION="IS_NOT_NULL"
+					   PROPERTY_NAME="Empty_Invoice_Query"
+					   SEQUENCE="2"
+					   UPDATED="05/09/2017 11:04:48"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/09/2017 11:04:48"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P18*1236 3024*NPts1*22*P08*1236 2654*ToHS1*18*ArrowEnd1*4"
+				   NAME="D : N"
+				   TO_STEP_NAME="EAI Response Data Mapper"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/09/2017 11:43:38"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/09/2017 11:03:38"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Subscriber Context?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P18*1236 3024*NPts1*22*P08*1236 2654*ToHS1*18*ArrowEnd1*4"
+					   NAME="D : N"
+					   TO_STEP_NAME="EAI Response Data Mapper"
+					   UPDATED="05/09/2017 11:03:58"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/09/2017 11:03:38"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*597 220 669 2669*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Test?"
+			   TYPE="DECISION_POINT"
+			   UPDATED="05/05/2017 18:06:35"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:02"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*691 2424*FrHS1*22*P17*691 2434*NPts1*42*P07*669 2432*P37*713 2424*ToHS1*08*ArrowEnd1*1"
+				   NAME="Test: N"
+				   TO_STEP_NAME="Check T"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/05/2017 18:06:35"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:02"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Test?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*691 2424*FrHS1*22*P17*691 2434*NPts1*42*P07*669 2432*P37*713 2424*ToHS1*08*ArrowEnd1*1"
+					   NAME="Test: N"
+					   TO_STEP_NAME="Check T"
+					   UPDATED="05/05/2017 18:06:35"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:25:02"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(Billing Account All Must Match (Ignore Case)(&apos;LookupValue(&apos;VFTRCBU_INVOICE_TEST_FLAG&apos;, &apos;GetInvoice&apos;) = &apos;Y&apos;&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*633 3034*NPts1*22*P07*633 2664*ToHS1*18*ArrowEnd1*1"
+				   NAME="Test: Y"
+				   TO_STEP_NAME="Write to file"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/05/2017 18:06:35"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:03"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Test?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*633 3034*NPts1*22*P07*633 2664*ToHS1*18*ArrowEnd1*1"
+					   NAME="Test: Y"
+					   TO_STEP_NAME="Write to file"
+					   UPDATED="05/05/2017 18:06:35"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:25:03"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="EXPRESSION"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="Test: Y1"
+					   OPERATION="EQ_ALL_NC"
+					   SEQUENCE="3"
+					   UPDATED="05/03/2017 14:25:03"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:25:03"
+					   CREATED_BY="CJANEIRO">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR1="Y"
+						   LO_CHAR5="LookupValue(&apos;VFTRCBU_INVOICE_TEST_FLAG&apos;, &apos;GetInvoice&apos;) = &apos;Y&apos;"
+						   NAME="Test: Y13"
+						   SEQUENCE="3"
+						   UPDATED="05/03/2017 14:25:03"
+						   UPDATED_BY="CJANEIRO"
+						   CREATED="05/03/2017 14:25:03"
+						   CREATED_BY="CJANEIRO">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="WritePropSet"
+			   BUSINESS_SERVICE_NAME="EAI XML Write to File"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1048 303 1144 3519*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Wirte To File 2"
+			   TYPE="TASK"
+			   UPDATED="05/08/2017 14:48:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:03"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P28*1204 5634*FrHS1*32*P18*1096 5634*NPts1*32*P08*1096 3514*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 8"
+				   TO_STEP_NAME="End"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/08/2017 14:48:13"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:03"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Wirte To File 2"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P28*1204 5634*FrHS1*32*P18*1096 5634*NPts1*32*P08*1096 3514*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 8"
+					   TO_STEP_NAME="End"
+					   UPDATED="05/08/2017 14:48:13"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:25:03"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="FileName"
+				   SEQUENCE="1"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="LookupValue(&apos;VFTRCBU_MAIN_PATH&apos;, &apos;MainPath&apos;) + LookupValue(&apos;VFTRCBU_DEBUGTEST_PATH&apos;, &apos;DebugTestPath&apos;) + &apos;RetrieveInvoices_Response&apos; + mid(timestamp(),7,4) + mid(timestamp(),1,2) + mid(timestamp(),4,2) + mid(timestamp(),9,2) + mid(timestamp(),12,2) + mid(timestamp(),15,2) + &apos;.xml&apos;"
+				   UPDATED="05/03/2017 14:25:03"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:03"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="OutputSiebelMessage"
+				   SEQUENCE="2"
+				   TYPE="PROPERTY"
+				   UPDATED="05/03/2017 14:25:03"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:03"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="WritePropSet"
+			   BUSINESS_SERVICE_NAME="EAI XML Write to File"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*597 303 669 3519*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Write to file"
+			   TYPE="TASK"
+			   UPDATED="05/05/2017 18:06:35"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:25:03"
+			   CREATED_BY="CJANEIRO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*633 3734*NPts1*22*P07*633 3514*ToHS1*18*ArrowEnd1*1"
+				   NAME="New Debug Connector"
+				   TO_STEP_NAME="Recheck T"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="05/05/2017 18:06:35"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:03"
+				   CREATED_BY="CJANEIRO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Write to file"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*633 3734*NPts1*22*P07*633 3514*ToHS1*18*ArrowEnd1*1"
+					   NAME="New Debug Connector"
+					   TO_STEP_NAME="Recheck T"
+					   UPDATED="05/05/2017 18:06:35"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="05/03/2017 14:25:03"
+					   CREATED_BY="CJANEIRO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="FileName"
+				   SEQUENCE="18"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="LookupValue(&apos;VFTRCBU_MAIN_PATH&apos;, &apos;MainPath&apos;) + LookupValue(&apos;VFTRCBU_DEBUGTEST_PATH&apos;, &apos;DebugTestPath&apos;) + &apos;RetrieveInvoices&apos; + mid(timestamp(),7,4) + mid(timestamp(),1,2) + mid(timestamp(),4,2) + mid(timestamp(),9,2) + mid(timestamp(),12,2) + mid(timestamp(),15,2) + &apos;.xml&apos;"
+				   UPDATED="05/03/2017 14:25:04"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:04"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SiebelMessage"
+				   PROPERTY_NAME="Siebel Message"
+				   SEQUENCE="19"
+				   TYPE="PROPERTY"
+				   UPDATED="05/03/2017 14:25:04"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/03/2017 14:25:04"
+				   CREATED_BY="CJANEIRO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+		</WORKFLOW_PROCESS>
+	</PROJECT>
+</REPOSITORY>
+
+
+

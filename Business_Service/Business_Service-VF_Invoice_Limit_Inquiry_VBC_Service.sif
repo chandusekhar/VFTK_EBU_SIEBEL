@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="LOCKED BY VTAO UI UPGRADE"
+	   INACTIVE="N"
+	   LANGUAGE_LOCKED="ENU"
+	   LOCKED="Y"
+	   LOCKED_DATE="02/09/2018 19:33:43"
+	   NAME="Account (SSE)"
+	   UI_FREEZE="N"
+	   LOCKED_BY_NAME="IBM_FSIDDIQUE"
+	   UPDATED="02/09/2018 19:46:17"
+	   UPDATED_BY="IBM_FSIDDIQUE"
+	   CREATED="01/01/1980 00:00:00"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   EXTERNAL_USE="N"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VF Invoice Limit Inquiry VBC Service"
+		   OBJECT_LOCKED="N"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   UPDATED="02/09/2018 19:57:54"
+		   UPDATED_BY="IBM_FSIDDIQUE"
+		   CREATED="04/23/2013 22:24:29"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Init"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Init(Inputs,Outputs)
+{
+  return (CancelOperation);
+}"
+			   SEQUENCE="1"
+			   UPDATED="04/25/2013 14:10:06"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:24:29"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Query"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Query (Inputs, Outputs)
+{	
+	try
+	{
+		//var strMSISDN = TheApplication().GetProfileAttr(&quot;HLR MSISDN&quot;);
+		//var strLOGIN =TheApplication().GetProfileAttr(&quot;LOGIN&quot;);	
+		//var strHLR = TheApplication().GetProfileAttr(&quot;HLRInquiry&quot;);
+		var strP2 : PropertySet = TheApplication().NewPropertySet();
+		var strP3 : PropertySet = TheApplication().NewPropertySet();	
+		var psInputs  : PropertySet;
+		var psOutputs : PropertySet;
+		var svcWF	  : Service;			
+		//if(strMSISDN != &quot;&quot; &amp;&amp; strLOGIN!=&quot;&quot; &amp;&amp; strHLR ==&quot;Y&quot;)
+		//{
+			psInputs  = TheApplication().NewPropertySet();
+			psOutputs = TheApplication().NewPropertySet();
+			svcWF	  = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+			
+			//Added by SALI // 17-Jan-2018 to not query Consumer Account	
+		
+			psInputs.SetProperty(&quot;BA_CODE&quot;,TheApplication().GetProfileAttr(&quot;BACode_InvLim&quot;));
+			psInputs.SetProperty(&quot;ProcessName&quot;, &quot;VFCheck Account Class&quot;);
+			svcWF.InvokeMethod(&quot;RunProcess&quot;, psInputs, psOutputs);
+			if(psOutputs.GetProperty(&quot;Result&quot;) == &quot;Y&quot;) //For Consumer the Result is Y
+			{
+			TheApplication().SetProfileAttr(&quot;sReqLimApp&quot;,&quot;&quot;);
+			TheApplication().SetProfileAttr(&quot;sMSISDNApp&quot;,&quot;&quot;);
+			
+			}
+					
+			else{	
+			psInputs=null;
+			psOutputs=null;
+			psInputs  = TheApplication().NewPropertySet();
+			psOutputs = TheApplication().NewPropertySet();
+			
+			psInputs.SetProperty(&quot;ProcessName&quot;, &quot;VFInvoiceLimitInquiry&quot;);
+			var strBACode = TheApplication().GetProfileAttr(&quot;BACode_InvLim&quot;);	
+		//	psInputs.SetProperty(&quot;BA_CODE&quot;, Inputs.GetProperty(&quot;BA_CODE&quot;));	
+			psInputs.SetProperty(&quot;BA_CODE&quot;, strBACode);
+						
+			svcWF.InvokeMethod(&quot;RunProcess&quot;, psInputs, psOutputs);
+			if(psOutputs.GetProperty(&quot;Status Code&quot;) == 0)
+			{
+				var strP1 = psOutputs.GetChild(0).GetChild(0).GetChild(0).GetType();
+				if (strP1 == &quot;VF Invoice Limit VBC&quot;)
+				{
+					
+					strP2 =   psOutputs.GetChild(0).GetChild(0).GetChild(0);
+					strP3 = strP2.Copy();
+					Outputs.AddChild(strP3);
+			var sReqLim=strP3.GetProperty(&quot;REQ_LIMIT&quot;);
+			var sMSISDN	=strP3.GetProperty(&quot;CONTACT_MSISDN&quot;);
+			TheApplication().SetProfileAttr(&quot;sReqLimApp&quot;,sReqLim);
+			TheApplication().SetProfileAttr(&quot;sMSISDNApp&quot;,sMSISDN);
+				}
+			}
+		  }		
+	}
+	finally
+	{
+		svcWF = null;
+		psInputs = null;
+		psOutputs = null;
+		strP3	= null;
+		strP2 = null;
+	//	TheApplication().SetProfileAttr(&quot;HLR MSISDN&quot;,&quot;&quot;);
+	//	TheApplication().SetProfileAttr(&quot;LOGIN&quot;,&quot;&quot;);
+	//	TheApplication().SetProfileAttr(&quot;HLRInquiry&quot;,&quot;&quot;);
+	}		
+}"
+			   SEQUENCE="2"
+			   UPDATED="02/09/2018 19:46:17"
+			   UPDATED_BY="IBM_FSIDDIQUE"
+			   CREATED="04/23/2013 22:24:29"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	if (MethodName == &quot;Init&quot;)
+	{
+		Init (Inputs, Outputs);
+		return (CancelOperation);
+	}
+	else if (MethodName == &quot;Query&quot;)
+	{
+		Query (Inputs, Outputs);
+		return (CancelOperation);
+	}
+	else if (MethodName == &quot;Update&quot;)
+	{
+		Update (Inputs, Outputs);
+		return (CancelOperation);
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="4"
+			   UPDATED="06/27/2013 20:52:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:24:29"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Update"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Update(Inputs,Outputs)
+{
+  return (CancelOperation);
+}"
+			   SEQUENCE="3"
+			   UPDATED="06/27/2013 20:52:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/27/2013 20:52:18"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

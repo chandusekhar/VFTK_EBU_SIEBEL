@@ -1,0 +1,218 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VF Tibco Interfaces"
+	   UI_FREEZE="N"
+	   UPDATED="02/02/2017 10:54:08"
+	   UPDATED_BY="JCARVALHO"
+	   CREATED="10/05/2009 16:31:50"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   EXTERNAL_USE="Y"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="CRM VF Get Billing Data"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="02/02/2017 10:23:32"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   OBJECT_LOCKED_BY_NAME="JMARQUES"
+		   UPDATED="02/02/2017 10:23:32"
+		   UPDATED_BY="JMARQUES"
+		   CREATED="04/12/2011 18:10:52"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_LOCALE
+			   APPLICATION_CODE="STD"
+			   DISPLAY_NAME="CRM VF Get Billing Data"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   TRANSLATE="Y"
+			   UPDATED="04/12/2011 18:10:52"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/12/2011 18:10:52"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_LOCALE>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="RetrieveCustomerAccountName"
+			   UPDATED="06/06/2011 14:06:09"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/12/2011 18:10:52"
+			   CREATED_BY="SADMIN">
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="BillingAccountCode"
+				   OPTIONAL="Y"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="06/06/2011 14:06:09"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/06/2011 13:03:50"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="CustomerAccountName"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Output"
+				   UPDATED="04/12/2011 18:10:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/12/2011 18:10:52"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="CustomerCode"
+				   OPTIONAL="Y"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="06/06/2011 14:05:50"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/12/2011 18:10:52"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="Msisdn"
+				   OPTIONAL="Y"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="06/06/2011 14:05:56"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/12/2011 18:10:52"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_LOCALE
+				   APPLICATION_CODE="STD"
+				   DISPLAY_NAME="RetrieveCustomerAccountName"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/12/2011 18:10:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/12/2011 18:10:52"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_LOCALE>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="RetrieveCustomerAccountName"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function RetrieveCustomerAccountName(Inputs, Outputs)
+{
+	try
+	{
+		var boBillingAc  : BusObject = TheApplication().GetBusObject(&quot;VF Billing Account HP&quot;);
+		var bcBillingAc : BusComp = boBillingAc.GetBusComp(&quot;VF Billing Account HP&quot;);
+		var strBill;
+		if(Inputs.GetProperty(&quot;CustomerCode&quot;)!=&quot;&quot;)
+		{
+			    
+				strBill = &quot;[Customer Account Number] = &apos;&quot;+Inputs.GetProperty(&quot;CustomerCode&quot;)+&quot;&apos;&quot;;
+				
+				bcBillingAc.ClearToQuery();
+				bcBillingAc.SetViewMode(AllView);
+				bcBillingAc.ActivateField(&quot;Customer Account Name&quot;);
+				bcBillingAc.SetSearchExpr(strBill);
+				bcBillingAc.ExecuteQuery(ForwardOnly);//VFTK Venkata 12052012 : No changes for OracleScript 15 review since Null Check already exist
+				
+				if (bcBillingAc.FirstRecord())
+				{
+					Outputs.SetProperty (&quot;CustomerAccountName&quot;,bcBillingAc.GetFieldValue(&quot;Customer Account Name&quot;));
+				}		
+		}
+		else if (Inputs.GetProperty(&quot;Msisdn&quot;)!=&quot;&quot;)
+		{
+	     	
+				strBill =  &quot;EXISTS ([ACS MSISDN] =&apos;&quot;+Inputs.GetProperty(&quot;Msisdn&quot;)+&quot;&apos;)&quot;;
+							
+				bcBillingAc.ClearToQuery();
+				bcBillingAc.SetViewMode(AllView);
+				bcBillingAc.ActivateField(&quot;Customer Account Name&quot;);
+				bcBillingAc.SetSearchExpr(strBill);
+				bcBillingAc.ExecuteQuery(ForwardOnly);//VFTK Venkata 12052012 : No changes for OracleScript 15 review since Null Check already exist
+				
+				if (bcBillingAc.FirstRecord())
+				{
+					Outputs.SetProperty (&quot;CustomerAccountName&quot;,bcBillingAc.GetFieldValue(&quot;Customer Account Name&quot;));
+				}		
+		}
+		else if (Inputs.GetProperty(&quot;BillingAccountCode&quot;)!=&quot;&quot;)
+		{
+				strBill =  &quot;[Account Code] =&apos;&quot;+Inputs.GetProperty(&quot;BillingAccountCode&quot;)+&quot;&apos;&quot;;
+							
+				bcBillingAc.ClearToQuery();
+				bcBillingAc.SetViewMode(AllView);
+				bcBillingAc.ActivateField(&quot;Customer Account Name&quot;);
+				bcBillingAc.SetSearchExpr(strBill);
+				bcBillingAc.ExecuteQuery(ForwardOnly);//VFTK Venkata 12052012 : No changes for OracleScript 15 review since Null Check already exist
+				
+				if (bcBillingAc.FirstRecord())
+				{
+					Outputs.SetProperty (&quot;CustomerAccountName&quot;,bcBillingAc.GetFieldValue(&quot;Customer Account Name&quot;));
+				}		
+		}
+	}
+	finally
+	{
+		bcBillingAc = null;
+		boBillingAc = null;		
+	}	
+}"
+			   SEQUENCE="1"
+			   UPDATED="02/01/2017 16:28:22"
+			   UPDATED_BY="JMARQUES"
+			   CREATED="04/12/2011 18:10:52"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+    if (MethodName == &quot;RetrieveCustomerAccountName&quot;) { 
+    	RetrieveCustomerAccountName(Inputs, Outputs);
+		return (CancelOperation);
+    }
+	return (ContinueOperation);
+}"
+			   SEQUENCE="2"
+			   UPDATED="07/11/2012 19:03:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/12/2011 18:10:52"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

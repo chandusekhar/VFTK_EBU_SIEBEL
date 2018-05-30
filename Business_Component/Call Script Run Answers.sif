@@ -1,0 +1,652 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="04/28/2018 18:51:18"
+   UPDATED_BY="SADMIN"
+   CREATED="04/28/2018 10:52:36"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="LOCKED BY VTAO UI UPGRADE"
+	   INACTIVE="N"
+	   LANGUAGE_LOCKED="ENU"
+	   LOCKED="N"
+	   NAME="Csadmin"
+	   UI_FREEZE="N"
+	   UPDATED="05/02/2018 16:29:40"
+	   UPDATED_BY="DEVUSER"
+	   CREATED="01/01/1980 00:00:00"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="N"
+		   CLASS="CSSBCCSRunAnswers"
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MULTI_RECIPIENT_SELECT="N"
+		   NAME="Call Script Run Answers"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LOCKED="N"
+		   OWNER_DELETE="N"
+		   SCRIPTED="Y"
+		   TABLE="S_CS_RUN_ANSWR"
+		   TYPE="Non-Transient"
+		   UPDATED="05/02/2018 16:29:40"
+		   UPDATED_BY="DEVUSER"
+		   CREATED="07/14/1998 10:18:46"
+		   CREATED_BY="SADMIN">
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_WriteRecord"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_WriteRecord ()
+{
+	try
+	{  
+		
+		var RunId = this.GetFieldValue(&quot;Run Id&quot;);
+		var Id = this.GetFieldValue(&quot;Id&quot;);
+		var SRId = &quot;&quot;;
+		var SRBO : BusObject;
+		var SRBC : BusComp;
+		var ParBusComp : BusComp = this.ParentBusComp();
+		
+	//	TheApplication().Trace(&quot;RunId= &quot;+RunId);
+	//	TheApplication().Trace(&quot;Id= &quot;+Id);
+			
+		if(ParBusComp != null &amp;&amp; ParBusComp.Name() == &quot;Call Script Runs&quot;)
+		{
+			 SRId = ParBusComp.GetFieldValue(&quot;Target Row Id&quot;);	
+	//		 TheApplication().Trace(&quot;SRId=&quot; +SRId);					 
+		}
+		//Traces for Def-26007 To Be Removed
+	//	TheApplication().TraceOn(&quot;/swstage/CallScriptsRunAnswers&quot;+SRId+&quot;.txt&quot;, &quot;Allocation&quot;, &quot;All&quot;);
+	//	TheApplication().Trace(&quot;WriteRecord&quot;); 
+		
+		var QuestId = this.GetFieldValue(&quot;Question Id&quot;);
+	//	 TheApplication().Trace(&quot;QuestId=&quot; +QuestId);
+		var MustAnwer = &quot;&quot;;
+		var SSBO : BusObject = TheApplication().GetBusObject(&quot;Smart Scripts&quot;);
+		var SQBC : BusComp = SSBO.GetBusComp(&quot;Smart Script Questions&quot;);
+		with (SQBC)
+		{
+			SetViewMode(AllView);
+			ActivateField(&quot;Must Answer&quot;);
+			ClearToQuery();
+			SetSearchExpr(&quot;[Id] = &apos;&quot;+QuestId+&quot;&apos;&quot;);
+			ExecuteQuery(ForwardOnly);
+			if (FirstRecord())
+			{
+				MustAnwer = GetFieldValue(&quot;Must Answer&quot;);
+	//			TheApplication().Trace(&quot;MustAnwer=&quot; +MustAnwer);
+			}
+		}						
+		var Mandatory = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;CALL_SCRIPT_MUST_ANS&quot;,&quot;Mandatory&quot;);
+	//	TheApplication().Trace(&quot;Mandatory=&quot; +Mandatory);
+		if (MustAnwer == Mandatory)
+		{	
+			var CountParent; //VFTRCBU-35716 DEF-15813
+					    
+			SRBO = TheApplication().GetBusObject(&quot;Service Request&quot;);
+			SRBC = SRBO.GetBusComp(&quot;Service Request (Simple)&quot;);
+			with (SRBC)
+			{
+				SetViewMode(AllView);
+				ActivateField(&quot;Amount&quot;);
+				ClearToQuery();
+				SetSearchExpr(&quot;[Id] = &apos;&quot;+SRId+&quot;&apos;&quot;);
+				ExecuteQuery(ForwardOnly);
+						
+				if (FirstRecord())
+				{
+					CountParent = GetFieldValue(&quot;Amount&quot;); 
+	//				TheApplication().Trace(&quot;CountParent=&quot; +CountParent);
+					if (CountParent == &quot;&quot;)
+					{
+						CountParent = 0;
+					}
+				}
+			}
+			//START: VFTRCBU-35716 DEF-15813			
+		    with (this)
+	        {	         
+				SetViewMode(AllView);
+				ClearToQuery();
+				ActivateField(&quot;Run Id&quot;);
+				ActivateField(&quot;Question Id&quot;);							
+				SetSearchExpr(&quot;[Question Id] = &apos;&quot;+QuestId+&quot;&apos; AND [Run Id] = &apos;&quot;+RunId+&quot;&apos;&quot;);
+				ExecuteQuery(ForwardBackward);															
+														
+				if(CountRecords() &lt; 2)
+				{									
+		        	CountParent = ToNumber(CountParent) + 1;			        												
+	//	        	TheApplication().Trace(&quot;CountParent=&quot; +CountParent);
+				}											
+		    } 
+		    with (SRBC)
+			{
+				SetViewMode(AllView);
+				ActivateField(&quot;Amount&quot;);
+				ClearToQuery();
+				SetSearchExpr(&quot;[Id] = &apos;&quot;+SRId+&quot;&apos;&quot;);
+				ExecuteQuery(ForwardOnly);
+						
+				if (FirstRecord())
+				{ 
+					SetFieldValue(&quot;Amount&quot;,CountParent);
+	//				TheApplication().Trace(&quot;CountParent=&quot; +CountParent);	
+		            WriteRecord();
+				}
+			}		    
+	        //END: VFTRCBU-35716 DEF-15813
+		 }    												
+	}
+	finally
+	{
+		ParBusComp = null;
+		SRBC = null;
+		SRBO = null;
+		SQBC = null;
+		SSBO = null;
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="05/02/2018 16:28:48"
+			   UPDATED_BY="DEVUSER"
+			   CREATED="03/25/2011 19:44:15"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="ANSWR_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Answer ID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/08/2002 23:05:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/08/2002 23:05:01"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="ANSWER_TEXT"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Answer Text"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="2000"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/14/1998 10:28:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 10:28:01"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_PARAM_NUM"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_CS_QUEST"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Maximo Problem Type Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/17/2011 12:34:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/17/2011 12:34:18"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="PAGE_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Page Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/14/1998 10:24:56"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 10:24:56"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_CS_PAGE"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Page Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/14/1998 10:26:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 10:26:48"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="PATH_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_CS_RUN"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Path Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/28/2010 19:10:05"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/28/2010 19:10:05"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="QUESTION"
+			   COMMENTS="Added for Madagascar Sprint 7 PBI47 by IBM_FIGENB"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_CS_QUEST_LANG"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Question"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="2000"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/02/2018 16:28:49"
+			   UPDATED_BY="DEVUSER"
+			   CREATED="01/17/2018 10:27:05"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="QUEST_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Question Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/14/1998 10:25:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 10:25:30"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="MUST_ANSWER_CD"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_CS_QUEST"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Question Must Answer"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/25/2011 19:44:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/25/2011 19:44:15"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_CS_QUEST"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Question Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/14/1998 10:26:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 10:26:16"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="RUN_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Run Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/25/2011 19:44:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 10:23:51"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_CS_PATH"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Script Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/25/2011 19:44:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/28/2010 19:10:05"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="ROW_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_CS_RUN"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Session Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/28/2010 19:10:05"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/28/2010 19:10:05"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="STATUS_CD"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_CS_RUN"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Status Code"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/28/2010 19:10:05"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/28/2010 19:10:05"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="TARGET_ROW_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_CS_RUN"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Target Row Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/28/2010 19:10:05"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/28/2010 19:10:05"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_CS_PAGE"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_CS_PAGE"
+			   UPDATED="07/14/1998 11:10:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 10:25:58"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="Page"
+				   SOURCE_FIELD="Page Id"
+				   UPDATED="07/14/1998 11:10:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/14/1998 11:08:57"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_CS_PATH"
+			   OUTER_JOIN_FLAG="N"
+			   TABLE="S_CS_PATH"
+			   UPDATED="10/28/2010 19:10:05"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/28/2010 19:10:05"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="S_CS_PATH"
+				   SOURCE_FIELD="Path Id"
+				   UPDATED="10/28/2010 19:10:05"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/28/2010 19:10:05"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_CS_QUEST"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_CS_QUEST"
+			   UPDATED="07/14/1998 11:09:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 10:25:53"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="Question"
+				   SOURCE_FIELD="Question Id"
+				   UPDATED="07/14/1998 11:09:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/14/1998 11:09:24"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   COMMENTS="Added for Madagascar Sprint 7 PBI47 by IBM_FIGENB"
+			   INACTIVE="N"
+			   NAME="S_CS_QUEST_LANG"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_CS_QUEST_LANG"
+			   UPDATED="05/02/2018 16:28:49"
+			   UPDATED_BY="DEVUSER"
+			   CREATED="01/17/2018 10:41:40"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="QUEST_ID"
+				   INACTIVE="N"
+				   NAME="Question Id"
+				   SOURCE_FIELD="Question Id"
+				   UPDATED="01/17/2018 10:42:17"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/17/2018 10:42:17"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_CS_RUN"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_CS_RUN"
+			   UPDATED="07/14/1998 11:09:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 10:22:46"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="Parent Run"
+				   SOURCE_FIELD="Run Id"
+				   UPDATED="07/14/1998 11:09:43"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/14/1998 11:09:43"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

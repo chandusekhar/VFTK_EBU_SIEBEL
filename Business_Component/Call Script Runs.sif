@@ -1,0 +1,1405 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="04/28/2018 18:51:18"
+   UPDATED_BY="SADMIN"
+   CREATED="04/28/2018 10:52:36"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="LOCKED BY VTAO UI UPGRADE"
+	   INACTIVE="N"
+	   LANGUAGE_LOCKED="ENU"
+	   LOCKED="N"
+	   NAME="Csadmin"
+	   UI_FREEZE="N"
+	   UPDATED="05/02/2018 16:29:40"
+	   UPDATED_BY="DEVUSER"
+	   CREATED="01/01/1980 00:00:00"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="N"
+		   CLASS="CSSBCImportSSFile"
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MAXIMUM_CURSOR_SIZE="200"
+		   MULTI_RECIPIENT_SELECT="N"
+		   NAME="Call Script Runs"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LOCKED="N"
+		   OWNER_DELETE="N"
+		   PREFETCH_SIZE="200"
+		   SCRIPTED="Y"
+		   SORT_SPECIFICATION="Start Date (DESCENDING)"
+		   TABLE="S_CS_RUN"
+		   TYPE="Non-Transient"
+		   UPDATED="05/02/2018 16:29:41"
+		   UPDATED_BY="DEVUSER"
+		   CREATED="07/14/1998 10:18:21"
+		   CREATED_BY="SADMIN">
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreWriteRecord"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreWriteRecord ()
+{
+	try
+	{
+		//TheApplication().TraceOn(&quot;&quot;, &quot;Allocation&quot;, &quot;Script&quot;); //Retrofits MAR15 0023 | TiagoRocha	
+		var SRID = TheApplication().GetProfileAttr(&quot;ServiceRequestId&quot;);	
+		//TheApplication().TraceOn(&quot;/swstage/CallScriptRuns&quot;+SRID+&quot;.txt&quot;, &quot;Allocation&quot;, &quot;All&quot;);
+		//TheApplication().Trace(&quot;PreWriteRecord&quot;);
+		var StartPageId = &quot;&quot;;
+		var StartQuestionId = &quot;&quot;;
+		var NextQuestionId = &quot;&quot;;
+		var MQCounter = 0;
+		var PathId = this.GetFieldValue(&quot;Path Id&quot;);
+		var RunId = this.GetFieldValue(&quot;Id&quot;);
+		TheApplication().SetSharedGlobal(&quot;SessionNum&quot;, RunId);  // Used in &quot;Smart Script Player Applet (Player Only)&quot;
+		var Mandatory = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;CALL_SCRIPT_MUST_ANS&quot;,&quot;Mandatory&quot;);		
+		var SSBO : BusObject = TheApplication().GetBusObject(&quot;Smart Scripts&quot;);
+		var SSPathBC : BusComp = SSBO.GetBusComp(&quot;Smart Script Paths&quot;);
+		var SSPageBC : BusComp;
+		var SSQuestionBC : BusComp;
+		var SSEdgeBC : BusComp;
+		
+		//TheApplication().Trace(&quot;PathId= &quot;+PathId);
+		//TheApplication().Trace(&quot;RunId= &quot;+RunId);
+		
+		with (SSPathBC)
+		{
+			SetViewMode(AllView);
+			ActivateField(&quot;Start Page Id&quot;);
+			ClearToQuery();
+			SetSearchExpr(&quot;[Id] = &apos;&quot;+PathId+&quot;&apos;&quot;);
+			ExecuteQuery(ForwardOnly);
+			if(FirstRecord())
+			{
+				StartPageId = GetFieldValue(&quot;Start Page Id&quot;);
+				//TheApplication().Trace(&quot;StartPageId= &quot;+StartPageId);
+			}
+		}
+		if (StartPageId != &quot;&quot;)
+		{
+			SSPageBC = SSBO.GetBusComp(&quot;Smart Script Pages&quot;);
+			with (SSPageBC)
+			{
+				SetViewMode(AllView);
+				ActivateField(&quot;Start Question Id&quot;);
+				ClearToQuery();
+				SetSearchExpr(&quot;[Id] = &apos;&quot;+StartPageId+&quot;&apos;&quot;);
+				ExecuteQuery(ForwardOnly);
+				if(FirstRecord())
+				{
+					StartQuestionId = GetFieldValue(&quot;Start Question Id&quot;);
+					//TheApplication().Trace(&quot;StartQuestionId= &quot;+StartQuestionId);
+					if (StartQuestionId != &quot;&quot;)
+					{
+						SSQuestionBC = SSBO.GetBusComp(&quot;Smart Script Questions&quot;);
+						with(SSQuestionBC)
+						{
+							SetViewMode(AllView);
+							ActivateField(&quot;Must Answer&quot;);
+							ClearToQuery();
+							SetSearchExpr(&quot;[Id] = &apos;&quot;+StartQuestionId+&quot;&apos;&quot;);
+							ExecuteQuery(ForwardOnly);
+							if(FirstRecord())
+							{
+								var MustAnswer = GetFieldValue(&quot;Must Answer&quot;);
+					//			TheApplication().Trace(&quot;MustAnswer= &quot;+MustAnswer);
+								if (MustAnswer == Mandatory)
+								{
+									MQCounter = MQCounter + 1;
+					//				TheApplication().Trace(&quot;MQCounter= &quot;+MQCounter);
+								}
+							}						
+						}
+					}
+				}
+			}
+			SSEdgeBC = SSBO.GetBusComp(&quot;Smart Script Page Edges&quot;);
+			with (SSEdgeBC)
+			{
+				SetViewMode(AllView);
+				ClearToQuery();
+				SetSearchExpr(&quot;[Page Id] = &apos;&quot;+StartPageId+&quot;&apos; AND [Next Question Must Answer] = &apos;&quot;+Mandatory+&quot;&apos;&quot;);
+				ExecuteQuery(ForwardOnly);
+				MQCounter = MQCounter + CountRecords();//CountRecords() cannot be removed since its used for setting counter
+			}
+		}
+	//	TheApplication().Trace(&quot;MQCounter= &quot;+MQCounter);
+		this.SetFieldValue(&quot;VF Current Counter&quot;,MQCounter);
+		
+		var strSRId = TheApplication().GetProfileAttr(&quot;ServiceRequestId&quot;);
+	//	TheApplication().Trace(&quot;Call Script Runs :: SR Id 4:: &quot;+strSRId); 		// Retrofits | DEF-2880
+		TheApplication().SetProfileAttr(&quot;SSid&quot;, this.GetFieldValue(&quot;Id&quot;));		// Retrofits | DEF-2880
+		
+		if ((this.GetFieldValue(&quot;Target Row Id&quot;))==&quot;&quot;)  //Retrofits | DEF-2880 15/11/2015 | GBRAZ
+		{
+			if(strSRId == &quot;&quot;)
+				strSRId = TheApplication().GetSharedGlobal(&quot;sssSRId&quot;);
+			if(strSRId!=&quot;&quot;)
+			{
+				this.SetFieldValue(&quot;Target Row Id&quot;, strSRId);
+			}	
+			var strInteractionId = TheApplication().GetProfileAttr(&quot;VFTKInteractionsId&quot;);
+			if(strInteractionId!=&quot;&quot;)
+			{
+				this.SetFieldValue(&quot;Target Row Id&quot;, strInteractionId);
+			}
+			var strActionId = TheApplication().GetSharedGlobal(&quot;sssActId&quot;);
+			if(strActionId!=&quot;&quot;)
+			{
+				this.SetFieldValue(&quot;Target Row Id&quot;, strActionId);
+			}
+		}  //Retrofits | DEF-2880 15/11/2015 | GBRAZ
+		
+		//DEF-16402
+			TheApplication().SetProfileAttr(&quot;ServiceRequestId&quot;,&quot;&quot;);
+			TheApplication().SetProfileAttr(&quot;VFTKInteractionsId&quot;,&quot;&quot;);
+			TheApplication().SetProfileAttr(&quot;SSid&quot;,&quot;&quot;);
+
+		//DEF-16402
+	//	TheApplication().Trace(&quot;Call Script Runs :: SR Id 5:: &quot;+strSRId);  	//Retrofits | DEF-2880
+		
+		return (ContinueOperation);		
+	}
+	finally
+	{	
+		SSPathBC = null;
+		SSPageBC = null;
+		SSQuestionBC = null;
+		SSEdgeBC = null;
+		SSBO = null;
+		TheApplication().SetProfileAttr(&quot;VFTKInteractionsId&quot;,&quot;&quot;);
+	//	TheApplication().TraceOff();
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="05/02/2018 16:26:36"
+			   UPDATED_BY="DEVUSER"
+			   CREATED="05/24/2013 19:23:08"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSINESS_COMPONENT_USER_PROP
+			   COMMENTS="CR# 12-BVIEIF"
+			   INACTIVE="N"
+			   NAME="All Mode Sort"
+			   VALUE="Normal"
+			   UPDATED="05/18/2002 06:45:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/18/2002 06:45:11"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="DefaultPrefix"
+			   VALUE="Session"
+			   UPDATED="07/10/2000 14:29:51"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/10/2000 14:29:29"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="FileMustExist"
+			   VALUE="FALSE"
+			   UPDATED="07/10/2000 14:30:10"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/10/2000 14:30:10"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="PATH_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Campaign Contact Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/13/2010 11:25:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/09/2001 23:47:38"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SRC_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Campaign Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/14/1998 10:20:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 10:20:58"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_SRC"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Campaign Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/14/1998 11:13:27"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 10:21:05"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="PR_DEPT_OU_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_CONTACT"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Contact Account Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/14/1998 11:15:05"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 11:15:05"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FST_NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_CONTACT"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Contact First Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/14/1998 11:14:43"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 11:14:32"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="CON_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Contact Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/14/1998 10:21:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 10:21:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="LAST_NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_CONTACT"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Contact Last Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/14/1998 11:14:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 11:14:14"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="MID_NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_CONTACT"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Contact Middle Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/14/1998 11:15:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 11:14:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="DURATION"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Duration"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_INTEGER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/25/2011 19:44:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 10:20:06"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="DURATION_UOM_CD"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Duration UOM Code"
+			   NO_COPY="N"
+			   PICKLIST="Duration UOM Code Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/13/1998 16:51:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 10:20:13"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Duration UOM Code"
+				   INACTIVE="N"
+				   NAME="Duration UOM Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="08/13/1998 16:51:35"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/13/1998 16:51:35"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;CALL_SCRIPT_IMP_ERR_FIX&quot;, &quot;Add&quot;)"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Error Handling Action"
+			   NO_COPY="N"
+			   PICKLIST="Smart Script Import Error Fix Method PickList"
+			   PRE_DEFAULT_VALUE="Expr: &apos;LookupValue(&quot;CALL_SCRIPT_IMP_ERR_FIX&quot;, &quot;Add&quot;)&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/01/2001 00:05:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/22/2000 12:30:40"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Error Handling Action"
+				   INACTIVE="N"
+				   NAME="Error Handling Action"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="11/22/2000 16:24:57"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/22/2000 16:24:45"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="LANG_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Language Code"
+			   NO_COPY="N"
+			   PICKLIST="PickList Language"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="5"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/18/2002 00:30:56"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/11/2000 14:54:38"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Language Code"
+				   INACTIVE="N"
+				   NAME="Language Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Language Code"
+				   UPDATED="05/18/2002 00:30:43"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/18/2002 00:30:43"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FST_NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_EMPLOYEE"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Owner First Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/10/2000 16:20:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/10/2000 16:20:30"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[Owner First Name] + &quot; &quot; + [Owner Last Name]"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Owner Full Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/08/2001 18:17:56"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/08/2001 18:06:16"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="PR_EMP_ID"
+			   COMMENTS="Stores the primary position of the owner"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_POSTN"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Owner Id"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="System: PositionId"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/15/2001 18:35:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/10/2000 15:23:58"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="LAST_NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_EMPLOYEE"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Owner Last Name"
+			   NO_COPY="N"
+			   PICKLIST="PickList Position"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/19/2000 15:48:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/10/2000 16:20:05"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Owner First Name"
+				   INACTIVE="N"
+				   NAME="Owner First Name"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Active First Name"
+				   UPDATED="10/19/2000 15:47:27"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/10/2000 16:22:47"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Owner Id"
+				   INACTIVE="N"
+				   NAME="Owner Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Primary Employee Id"
+				   UPDATED="10/19/2000 15:47:14"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/10/2000 16:22:34"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Owner Last Name"
+				   INACTIVE="N"
+				   NAME="Owner Last Name"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Active Last Name"
+				   UPDATED="10/19/2000 15:46:54"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/10/2000 16:23:09"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Position Id"
+				   INACTIVE="N"
+				   NAME="Position Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="10/19/2000 15:47:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/19/2000 15:47:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Position Name"
+				   INACTIVE="N"
+				   NAME="Position Name"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="10/19/2000 15:47:27"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/19/2000 15:47:27"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="PATH_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Path Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/04/2013 19:26:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 10:19:04"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_CS_PATH"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Path Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/14/1998 11:13:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 10:19:18"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[Path Name] + &apos; @ &apos; +  [Start Date]"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Path Name and Start Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/14/1998 17:37:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 17:35:23"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="CS_TYPE_CD"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_CS_PATH"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Path Type"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/09/2002 20:31:31"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/09/2002 20:28:28"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="POSTN_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Position Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/14/1998 10:19:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 10:19:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_POSTN"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Position Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/14/1998 11:14:05"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 10:20:00"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SESSION_NUM"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Run UID"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Field: &apos;Id&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/02/2002 19:43:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/17/2001 01:21:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf ([SessionFileDockStatFlg] = &quot;N&quot; OR [SessionFileDockStatFlg] IS NULL,&quot;N&quot;,&quot;Y&quot; )"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SessionDockStatus"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/10/2000 18:19:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/10/2000 14:30:56"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FILE_AUTO_UPD_FLG"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SessionFileAutoUpdFlg"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Y"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/10/2000 18:19:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/10/2000 14:30:37"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FILE_DATE"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SessionFileDate"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/21/2001 05:44:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/10/2000 14:31:52"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FILE_DEFER_FLG"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SessionFileDeferFlg"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/27/2002 01:33:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/10/2000 14:32:18"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FILE_DOCK_REQ_FLG"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SessionFileDockReqFlg"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/26/2002 19:39:06"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/10/2000 14:32:36"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FILE_DOCK_STAT_FLG"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SessionFileDockStatFlg"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/09/2003 22:55:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/10/2000 14:32:56"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FILE_EXT"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SessionFileExt"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="10"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/10/2000 18:20:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/10/2000 14:33:14"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FILE_NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SessionFileName"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="200"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/27/2001 21:28:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/10/2000 14:33:31"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FILE_REV_NUM"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SessionFileRev"
+			   NO_COPY="N"
+			   POST_DEFAULT_VALUE="0"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/10/2000 18:21:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/10/2000 14:33:48"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FILE_SIZE"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SessionFileSize"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="22"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/18/2000 17:01:50"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/10/2000 18:26:13"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FILE_SRC_PATH"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SessionFileSrcPath"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="220"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/10/2000 18:23:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/10/2000 14:34:21"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FILE_SRC_TYPE"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SessionFileSrcType"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/10/2000 18:22:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/10/2000 14:34:38"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="START_DT"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Start Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/19/2001 22:08:04"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 10:19:30"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="STATUS_CD"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Status Code"
+			   NO_COPY="N"
+			   PICKLIST="PickList Call Script Save Status Type"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/18/2002 00:35:32"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/10/2000 14:28:45"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Status Code"
+				   INACTIVE="N"
+				   NAME="Status Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="07/10/2000 20:02:32"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/10/2000 17:11:08"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="TARGET_ROW_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Target Row Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/13/2010 11:25:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_CURRENT_COUNTER"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Current Counter"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_INTEGER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/25/2011 19:44:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/25/2011 19:44:14"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_REC_TO_BE_DEL_FLG"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Rec to be deleted"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/18/2014 22:16:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:16:39"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_CONTACT"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_CONTACT"
+			   UPDATED="07/14/1998 11:11:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 11:11:09"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Contact"
+				   SOURCE_FIELD="Contact Id"
+				   UPDATED="01/20/2001 03:18:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/14/1998 11:11:46"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_CS_PATH"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_CS_PATH"
+			   UPDATED="07/14/1998 11:12:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 11:10:39"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="Path"
+				   SOURCE_FIELD="Path Id"
+				   UPDATED="07/14/1998 11:12:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/14/1998 11:12:29"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_EMPLOYEE"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_CONTACT"
+			   UPDATED="07/24/2000 18:47:56"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/10/2000 16:19:25"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Employee"
+				   SOURCE_FIELD="Owner Id"
+				   UPDATED="01/20/2001 03:18:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/10/2000 16:19:54"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_POSTN"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_POSTN"
+			   UPDATED="07/14/1998 11:12:27"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 11:10:48"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Position"
+				   SOURCE_FIELD="Position Id"
+				   UPDATED="01/20/2001 03:18:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/14/1998 11:12:22"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_SRC"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_SRC"
+			   UPDATED="07/14/1998 11:12:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/14/1998 11:10:59"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="Campaign"
+				   SOURCE_FIELD="Campaign Id"
+				   UPDATED="07/14/1998 11:12:07"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/14/1998 11:12:07"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

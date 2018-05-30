@@ -1,0 +1,1606 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="11/24/2016 17:14:00"
+   UPDATED_BY="SADMIN"
+   CREATED="11/24/2016 14:49:11"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="Task UI Framework (SWE)"
+	   UI_FREEZE="N"
+	   UPDATED="12/22/2016 13:34:51"
+	   UPDATED_BY="FCABRAL"
+	   CREATED="08/27/2005 00:40:14"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="Y"
+		   CLASS="CSSSWETaskUIService"
+		   DISPLAY_NAME_-_STRING_REFERENCE="SBL_TASK_UI_SERVICE"
+		   EXTERNAL_USE="Y"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="Task UI Service (SWE)"
+		   OBJECT_LOCKED="N"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   UPDATED="12/22/2016 13:34:50"
+		   UPDATED_BY="FCABRAL"
+		   CREATED="08/27/2005 03:07:36"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_LOCALE
+			   APPLICATION_CODE="STD"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   TRANSLATE="Y"
+			   UPDATED="08/27/2005 03:09:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2005 03:09:25"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_LOCALE>
+			<BUSINESS_SERVICE_METHOD
+			   COMMENTS="Cutomer can use this method to launch a task from menu
+."
+			   DISPLAY_NAME_-_STRING_REFERENCE="SBL_LAUNCHTASK"
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="LaunchTask"
+			   UPDATED="04/03/2006 23:06:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/03/2006 22:30:13"
+			   CREATED_BY="SADMIN">
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_TASKNAME_ARG"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="TaskName"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="04/03/2006 22:31:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/03/2006 22:31:00"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_METHOD
+			   COMMENTS="Cutomer can use this method to launch a task from script.
+"
+			   DISPLAY_NAME_-_STRING_REFERENCE="SBL_LAUNCHTASKFROMSCRIPT"
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="LaunchTaskFromScript"
+			   UPDATED="04/03/2006 23:07:27"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/03/2006 23:05:34"
+			   CREATED_BY="SADMIN">
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_TASKNAME_ARG"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="TaskName"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="04/03/2006 23:07:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/03/2006 23:07:11"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="LoggingTask"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function LoggingTask()
+{
+	try
+	{
+		var BsLog : Service;
+		var BSLogInputs : PropertySet;
+		var BSLogOutputs : PropertySet;
+		var TestMode = TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;VF_PRM_TASK_LOG_FLAG&quot;,&quot;ENABLE&quot;);
+		if (TestMode != &quot;N&quot;)
+		{
+			BsLog = TheApplication().GetService(&quot;VF PRM Task Log&quot;);
+			BSLogInputs = TheApplication().NewPropertySet();
+			BSLogOutputs = TheApplication().NewPropertySet();
+			
+			//Create Task Number
+			BsLog.InvokeMethod(&quot;CreateTaskNumber&quot;,BSLogInputs,BSLogOutputs);
+			var TaskNum= BSLogOutputs.GetProperty(&quot;Task Num&quot;);
+			TheApplication().SetProfileAttr(&quot;TaskNum&quot;, TaskNum);
+			
+			//Log started task
+			//BSLogInputs.SetProperty(&quot;Attrib1&quot;,&quot;&quot;);
+			BSLogInputs.SetProperty(&quot;Task Name&quot;,TheApplication().GetProfileAttr(&quot;VFPA_TaskInitiated&quot;));
+			BSLogInputs.SetProperty(&quot;Task Number&quot;,TaskNum);
+			BSLogInputs.SetProperty(&quot;Task Step&quot;,&quot;Start Task&quot;);
+			BsLog.InvokeMethod(&quot;LoggingTask&quot;,BSLogInputs,BSLogOutputs);		
+		}//end if
+		return;	
+	}
+	finally
+	{
+		BsLog		= null;
+		BSLogInputs	= null;
+		BSLogOutputs	= null;
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="02/03/2015 21:20:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/23/2012 13:46:17"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	try
+	{
+	    var AccId;
+		var AssetId;
+		var BillAccId;
+		var StartCAC;
+		var PRMUtil : Service;
+		var BSInputs : PropertySet;
+		var BSOutputs : PropertySet;
+		
+		if ( MethodName == &quot;StartTask&quot; )
+		{  
+				
+		// ----------------------Layout - Logic to start the task on CRM - PRM Views----------------------
+	if(Inputs.GetProperty(&quot;TaskName&quot;)!=&quot;PRM VF TR Post Activation Task&quot;){
+		PRMUtil = TheApplication().GetService(&quot;PRM VF TR Utility Service&quot;);
+		BSInputs = TheApplication().NewPropertySet();
+		BSOutputs = TheApplication().NewPropertySet();
+		PRMUtil.InvokeMethod(&quot;checkFuncOnView&quot;,BSInputs,BSOutputs);
+		StartCAC = BSOutputs.GetProperty(&quot;StartCAC&quot;);
+		if(StartCAC == &quot;Y&quot;) TheApplication().SetProfileAttr(&quot;StartCAC&quot;,&quot;Y&quot;);
+		else TheApplication().SetProfileAttr(&quot;StartCAC&quot;,&quot;N&quot;); //used in task to differentiate the flow
+    }
+		// --------------------- Start Switch -----------------------------------------------------------
+			switch (Inputs.GetProperty(&quot;TaskName&quot;))
+			{			
+				//CBU TASK INFO
+				case &quot;VFTRCBU Activate New Line Task&quot;:
+				case &quot;VFTRCBU MNP Port In Activate New Line Task&quot;:
+				{
+					var ActiveViewName = TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;);
+									
+					if(ActiveViewName == &quot;SIS OM Customer Account Portal View - Poste&quot;)
+						SetProfileAttActivationTask();
+					return(ContinueOperation);
+				}
+				break;
+				
+				case &quot;PRM VF TR Activation MobileLine Task&quot;:
+				{
+					if(StartCAC == &quot;Y&quot;)
+					    if(StartValidationActivationTaskFromHome()){
+					         SetProfileAttActivationTaskFromHome();
+					         return(ContinueOperation);
+					         }
+					    else return(CancelOperation);
+					else if(StartValidationActivationTask())
+					{
+						SetProfileAttActivationTask();
+						return(ContinueOperation);
+					}
+				    	else return(CancelOperation);
+				}
+				break;
+				
+				case &quot;PRM VF TR Activation VPN_Group Task&quot;:
+				{
+					if(StartCAC == &quot;Y&quot;)
+					    if(StartValidationActivationTaskFromHome()){
+					         SetProfileAttActivationTaskFromHome();
+					         return(ContinueOperation);
+					         }
+					    else return(CancelOperation);
+					else if(StartValidationVPNActivationTask())
+					{
+						SetProfileAttActivationTask();
+						return(ContinueOperation);
+					}
+				    	else return(CancelOperation);
+				}
+				break;
+				
+				/* ---------------------------------------------INIZIO GEN_REQ_205 e GEN_REQ_18--------------------------------------------*/
+				case &quot;VF PRM TR VPN Group Act Task&quot;:
+				case &quot;PRM VF TR VPN Group Activation Task&quot;:
+				{
+					 if(StartValidationVPN_GROUP_ActivationTask())
+					{
+						SetProfileAttActivationNew_VPNTask();
+						TheApplication().SetProfileAttr(&quot;VFPA_TaskInitiated&quot;,&quot;GROUP_VPNAct_Task&quot;);
+						return(ContinueOperation);
+					}
+				    	else return(CancelOperation);
+				}
+				break;
+				case &quot;VF PRM TR Modify VPN Group Task&quot;:
+				{
+					 if(StartValidation_Modify_VPN_GROUP_Task())
+					{
+						SetProfileAttModifyGroup_VPNTask();
+						return(ContinueOperation);
+					}
+				    	else return(CancelOperation);
+				}
+				break;
+				
+				case &quot;VF PRM TR Group Act Task&quot;:
+				case &quot;VFTRCBU Group Creation Task&quot;:
+				{
+					 if(StartValidationGROUP_ActivationTask())
+					{
+						SetProfileAttActivationNew_VPNTask();
+						TheApplication().SetProfileAttr(&quot;VFPA_TaskInitiated&quot;,&quot;GROUP_Act_Task&quot;);
+						TheApplication().SetProfileAttr(&quot;GROUP_Act_Task_MSG&quot;,TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;PRM_STA06&quot;));
+						return(ContinueOperation);
+					}
+				    	else return(CancelOperation);
+				}
+				break;
+				
+				case &quot;VF PRM TR Modify Group Task&quot;:
+				case &quot;VFTRCBU Group Modify Task&quot;:
+				{
+					 if(StartValidationGROUP_ModifyTask())
+					{
+						SetProfileAttModifyGroup_Task();
+						return(ContinueOperation);
+					}
+				    	else return(CancelOperation);
+				}
+				break;
+				/*----------------------------------------------------------------------------------------------------------*/
+				case &quot;PRM VF TR Activation MNP Task&quot;:
+				{
+					if(StartCAC == &quot;Y&quot;)
+					    if(StartValidationMNPActivationTaskFromHome()){
+					         SetProfileAttActivationMNPTaskFromHome();
+					         return(ContinueOperation);
+					         }
+					    else return(CancelOperation);
+					else if(StartValidationMNPActivationTask())
+					{
+						SetProfileAttMNPActivationTask();
+						return(ContinueOperation);
+					}
+					else return(CancelOperation);
+					}
+				break;
+
+				case &quot;PRM VF TR Post Activation Task&quot;:
+				{
+
+				if(StartValidationPostActivationTask())
+					{
+						//CheckOrderStatus(); //Changed for CR564:on 18/02/2013 ISCKMOHAN
+						SetProfileAttPostActivationTask(); 
+						return(ContinueOperation);
+					}
+					else return(CancelOperation);
+				}
+				break;
+				
+				//VFTRCBU-3582-JSARMENTO-START
+				case &quot;VFTRCBU Change End User Task&quot;:
+				case &quot;VFTRCBU Change MSISDN Task&quot;:
+				case &quot;VFTRCBU Sawp SIM Card Task&quot;:
+				case &quot;VFTRCBU Subscriber Disconnect Task&quot;:
+				case &quot;VFTRCBU Subscriber Resume Task&quot;:
+				case &quot;VFTRCBU Subscriber Suspend Task&quot;:
+				case &quot;VFTRCBU Swap Tariff Plan Task&quot;:
+				//VFTRCBU-34978 - added additional tasks to the validation
+				case &quot;VFTRCBU Modify Order Task&quot;: 
+				//case &quot;VFTRCBU Transfer Within Customer Task&quot;:
+				case &quot;VFTRCBU Transfer Within Change BA Task&quot;:
+				{
+					var boAcc=TheApplication().GetBusObject(&quot;Account&quot;);
+					var bcAcc=boAcc.GetBusComp(&quot;Account&quot;);
+					var ownId = TheApplication().ActiveBusObject().GetBusComp(&quot;Asset Mgmt - Asset&quot;).GetFieldValue(&quot;Owner Account Id&quot;);
+					var migFlag;	
+						with(bcAcc){
+						SetViewMode(AllView);
+						
+							ActivateField(&quot;VFTRCBU Migrating Flag&quot;);
+	                       	ClearToQuery();
+	                        SetSearchExpr(&quot;[Id] = &apos;&quot;+ownId+&quot;&apos;&quot;);
+	                        ExecuteQuery(ForwardOnly);
+	                        if (FirstRecord())
+	                        {
+		    					migFlag = GetFieldValue(&quot;VFTRCBU Migrating Flag&quot;);
+		                    }
+					}
+					//var migFlag = TheApplication().ActiveBusObject().GetBusComp(&quot;Billing Account&quot;).GetFieldValue(&quot;VFTRCBU Customer Migrating Flag&quot;);
+					if(migFlag == &quot;Y&quot;){
+						var sMsg = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;,&quot;0219&quot;);
+						TheApplication().RaiseErrorText(sMsg);
+						return(CancelOperation);
+					}
+					else {
+						return(ContinueOperation);
+					}
+				}
+				break;
+				//VFTRCBU-3582-JSARMENTO-END
+				
+				//++WA#13 RPIRES
+				case &quot;VFTRCBU Transfer Cross Customer Task&quot;:
+				case &quot;VFTRCBU Transfer Within Customer Task&quot;:
+				{
+					SetProfileAttTransferCrossTask();
+					return(ContinueOperation);
+				}
+				//--WA#13 RPIRES
+
+				//++CA#08 FCABRAL				
+				case &quot;VFTRCBU Manage Sharing Group Task&quot;:
+				{
+					SetProfileAttManageSharingGroupTask();
+					return(ContinueOperation);
+				}
+				//--CA#08 FCABRAL
+				
+				
+				default:
+					return(ContinueOperation);
+			}	
+		}
+		// --------------------- End Switch ---------------------
+		  
+		if ( MethodName == &quot;ResumeTask&quot; )
+	         TheApplication ().SetProfileAttr(&quot;Automatically_Config&quot;,&quot;Y&quot;);
+		  							
+		return (ContinueOperation);
+	}
+	finally
+	{
+		PRMUtil = null;
+		BSInputs = null;
+		BSOutputs = null;	
+	}
+}"
+			   SEQUENCE="22"
+			   UPDATED="12/22/2016 13:33:46"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="08/25/2011 19:10:17"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SetProfileAttActivationMNPTaskFromHome"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SetProfileAttActivationMNPTaskFromHome()
+{
+// List of Profile Attributes to be set for MNP Activation Task---------------------------------------------------------------------
+	TheApplication().SetProfileAttr(&quot;VFPA_TaskInitiated&quot;, &quot;MNPActTask&quot;);
+	LoggingTask();
+	TheApplication().SetProfileAttr(&quot;VFPA_ActivationType&quot;,&quot;MobileLine&quot;);
+//--------------------------------------------------------------------------------------------------------------------------
+return;	
+}"
+			   SEQUENCE="2"
+			   UPDATED="02/03/2015 21:20:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/25/2011 18:51:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SetProfileAttActivationNew_VPNTask"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SetProfileAttActivationNew_VPNTask()
+{
+	try
+	{
+		// List of Profile Attributes to be set for Activation Task---------------------------------------------------------------------
+		var App = TheApplication();
+		var bo: BusObject = App.GetBusObject(&quot;System Preferences&quot;);
+		var bc: BusComp = bo.GetBusComp(&quot;System Preferences&quot;);
+		bc.ActivateField(&quot;Value&quot;);
+		bc.ClearToQuery();
+		bc.SetViewMode(AllView);
+		bc.SetSearchSpec(&quot;Name&quot;,&quot;Demo_Acc_Id&quot;);
+		bc.ExecuteQuery();
+		var AccId = bc.GetFieldValue(&quot;Value&quot;);
+		//var AccId = bc.GetFieldValue(&quot;VF Demo AccId&quot;);
+		App.SetProfileAttr(&quot;VFPA_AccountId&quot;,AccId);
+		App.SetProfileAttr(&quot;VFPRM_Cust_Type&quot;,&quot;101&quot;);
+		App.SetProfileAttr(&quot;VFPA_TaskInitiated&quot;, &quot;ActTask&quot;);
+		App.SetProfileAttr(&quot;VFPA_ActivationType&quot;,&quot;VPN&quot;);
+		TheApplication ().SetProfileAttr(&quot;Automatically_Config&quot;,&quot;N&quot;);
+		LoggingTask();
+		//--------------------------------------------------------------------------------------------------------------------------
+		return;	
+	}
+	finally
+	{
+	    bc = null;
+		bo = null
+		App = null;
+	}		
+}"
+			   SEQUENCE="3"
+			   UPDATED="02/03/2015 21:20:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/01/2013 17:51:14"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SetProfileAttActivationTask"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SetProfileAttActivationTask()
+{
+	try
+	{
+		// List of Profile Attributes to be set for Activation Task---------------------------------------------------------------------
+		var bcAccount : BusComp = TheApplication().ActiveBusObject().GetBusComp(&quot;Account&quot;);
+		var AccId = bcAccount.GetFieldValue(&quot;Id&quot;);
+		var CusType = bcAccount.GetFieldValue(&quot;Market Class&quot;);
+		TheApplication().SetProfileAttr(&quot;VFPA_AccountId&quot;,AccId);
+		TheApplication().SetProfileAttr(&quot;VFPRM_Cust_Type&quot;,CusType);
+		TheApplication().SetProfileAttr(&quot;VFPA_TaskInitiated&quot;, &quot;ActTask&quot;);
+		LoggingTask();
+		//--------------------------------------------------------------------------------------------------------------------------
+		return;	
+	}
+	finally
+	{
+		bcAccount = null;
+	}		
+}"
+			   SEQUENCE="4"
+			   UPDATED="02/03/2015 21:20:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/29/2011 18:54:36"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SetProfileAttActivationTaskFromHome"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SetProfileAttActivationTaskFromHome()
+{
+// List of Profile Attributes to be set for Activation Task Started From Home---------------------------------------------------------------------
+  TheApplication().SetProfileAttr(&quot;VFPA_TaskInitiated&quot;, &quot;ActTask&quot;);
+  LoggingTask(); 
+//--------------------------------------------------------------------------------------------------------------------------
+return;	
+}"
+			   SEQUENCE="5"
+			   UPDATED="02/03/2015 21:20:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/25/2011 18:51:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SetProfileAttMNPActivationTask"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SetProfileAttMNPActivationTask()
+{
+	try
+	{
+		// List of Profile Attributes to be set for MNP Activation Task---------------------------------------------------------------------
+	    var bcAccount : BusComp = TheApplication().ActiveBusObject().GetBusComp(&quot;Account&quot;);
+		var AccId = bcAccount.GetFieldValue(&quot;Id&quot;);
+		var CustType = bcAccount.GetFieldValue(&quot;Market Class&quot;);
+		TheApplication().SetProfileAttr(&quot;VFPA_AccountId&quot;,AccId);
+		TheApplication().SetProfileAttr(&quot;VFPA_TaskInitiated&quot;, &quot;MNPActTask&quot;);
+		TheApplication().SetProfileAttr(&quot;VFPRM_Cust_Type&quot;, CustType);
+		LoggingTask();
+		TheApplication().SetProfileAttr(&quot;VFPA_ActivationType&quot;,&quot;MobileLine&quot;);
+		//--------------------------------------------------------------------------------------------------------------------------
+		
+		return;	
+	}
+	finally
+	{
+		bcAccount = null;
+	}
+}"
+			   SEQUENCE="7"
+			   UPDATED="12/22/2016 13:33:46"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="08/29/2011 18:54:36"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SetProfileAttManageSharingGroupTask"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SetProfileAttManageSharingGroupTask()
+{
+	try
+	{
+		// List of Profile Attributes to be set for Transfer Cross Task---------------------------------------------------------------------
+		var bcAsset : BusComp = TheApplication().ActiveBusObject().GetBusComp(&quot;Asset Mgmt - Asset&quot;);
+		var assetId = null;
+		if(bcAsset != null)
+		{	
+		
+			if(TheApplication().GetProfileAttr(&quot;ApplicationName&quot;)  == &quot;TeXCo Application&quot; || TheApplication().GetProfileAttr(&quot;ApplicationName&quot;)  == &quot;Siebel eChannel&quot;)
+			{
+				assetId = bcAsset.GetFieldValue(&quot;Id&quot;);
+				TheApplication().SetProfileAttr(&quot;VFTRCBU_TaskManageSharingGroup&quot;,assetId);			
+			}
+		}
+		//--------------------------------------------------------------------------------------------------------------------------
+		return;	
+	}
+	catch(e){
+	 	TheApplication().SetProfileAttr(&quot;VFTRCBU_TaskManageSharingGroup&quot;,&quot;&quot;);
+	}
+	finally
+	{
+		bcAsset = null;
+	}		
+}"
+			   SEQUENCE="6"
+			   UPDATED="12/22/2016 13:33:46"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="12/22/2016 13:33:46"
+			   CREATED_BY="FCABRAL">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SetProfileAttModifyGroup_Task"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SetProfileAttModifyGroup_Task()
+{
+	try{
+		var CurrentAssetBC: BusComp;
+		var PRMut: Service;
+		var In: PropertySet;
+		var Out : PropertySet;
+		
+	 	if(TheApplication().GetProfileAttr(&quot;ApplicationName&quot;)==&quot;Siebel eChannel&quot;){
+	    	CurrentAssetBC = TheApplication().ActiveBusObject().GetBusComp(&quot;VF Groups BC&quot;);
+	    
+	       
+	var	AssetId = CurrentAssetBC.GetFieldValue(&quot;Id&quot;);
+	PRMut = TheApplication().GetService(&quot;PRM VF TR Utility Service&quot;);
+	var GroupNum = CurrentAssetBC.GetFieldValue(&quot;VF Group Num&quot;);
+	In = TheApplication().NewPropertySet();
+	Out = TheApplication().NewPropertySet();
+	In.SetProperty(&quot;GroupNum&quot;,GroupNum);
+	PRMut.InvokeMethod(&quot;setOwnerAccountId&quot;,In,Out);
+	
+	if(Out.GetProperty(&quot;Error Code&quot;) != &quot;0&quot;)
+		TheApplication().RaiseErrorText(Out.GetProperty(&quot;Error Message&quot;));
+		
+	TheApplication().SetProfileAttr(&quot;VFPA_AssetId&quot;, AssetId);
+	TheApplication().SetProfileAttr(&quot;VFPA_AssetIntegId&quot;, CurrentAssetBC.GetFieldValue(&quot;VF Int Id&quot;));
+	TheApplication ().SetProfileAttr(&quot;Automatically_Config&quot;,&quot;N&quot;);
+		}
+		
+	}
+	catch(e){
+	 	throw(&quot;Task Service SWE: SetProfilAttrModGroup: --&gt; &quot;+ e);
+	}
+	finally{
+		CurrentAssetBC = null;
+		PRMut = null;
+		In = null;
+		Out = null;
+	}
+}"
+			   SEQUENCE="8"
+			   UPDATED="12/22/2016 13:33:46"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="03/21/2013 19:56:01"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SetProfileAttModifyGroup_VPNTask"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SetProfileAttModifyGroup_VPNTask()
+{
+	try{
+   var CurrentAssetBC: BusComp;
+
+ 	if(TheApplication().GetProfileAttr(&quot;ApplicationName&quot;)==&quot;Siebel eChannel&quot;){
+    	CurrentAssetBC = TheApplication().ActiveBusObject().GetBusComp(&quot;VF VPN Group BC&quot;);
+    }
+       
+	var	AssetId = CurrentAssetBC.GetFieldValue(&quot;Id&quot;);
+	TheApplication().SetProfileAttr(&quot;VFPA_AssetId&quot;, AssetId);
+	TheApplication().SetProfileAttr(&quot;VFPA_AssetIntegId&quot;, CurrentAssetBC.GetFieldValue(&quot;VF Int Id&quot;));
+	TheApplication ().SetProfileAttr(&quot;Automatically_Config&quot;,&quot;N&quot;);
+		
+	}
+	finally{
+		CurrentAssetBC = null;
+	}
+}"
+			   SEQUENCE="9"
+			   UPDATED="12/22/2016 13:33:46"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="03/18/2013 13:12:28"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SetProfileAttPostActivationTask"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SetProfileAttPostActivationTask()
+{
+try{
+   var CurrentAssetBC: BusComp;
+   var In = TheApplication().NewPropertySet();
+   var Out = TheApplication().NewPropertySet();
+   var LookupN: Service;
+   
+   var DunningStatus;
+     // Take asset context depending on the place where post activation task is called
+	 	if(TheApplication().GetProfileAttr(&quot;ApplicationName&quot;)==&quot;Siebel eChannel&quot;)
+	 	{
+	 		if(TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;) == &quot;PRM VF TR Account Detail (Asset)&quot;)
+	 		{
+	 			CurrentAssetBC = TheApplication().ActiveBusObject().GetBusComp(&quot;VF Asset Light&quot;);
+	 		}
+	 		else
+	 		{
+	    		CurrentAssetBC = TheApplication().ActiveBusObject().GetBusComp(&quot;Asset Mgmt - Asset&quot;);
+	    	}
+	    	DunningStatus = CurrentAssetBC.GetFieldValue(&quot;VF Root Dunning Status&quot;);
+	    }
+	    else if(TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;) == &quot;SIS OM Customer Account Portal View - Poste&quot;){
+	           CurrentAssetBC = TheApplication().ActiveBusObject().GetBusComp(&quot;Asset Mgmt - Asset - Header&quot;);
+	           DunningStatus = CurrentAssetBC.GetFieldValue(&quot;VF Root Dunning Status&quot;);
+	           }
+	         else {
+	         	CurrentAssetBC = TheApplication().ActiveBusObject().GetBusComp(&quot;Asset Mgmt - Asset - Header (Simple)&quot;);
+	         	DunningStatus = CurrentAssetBC.GetFieldValue(&quot;VF Dunning Status&quot;);
+	         }
+	 // --------------------------------------------------------------------------------
+	 
+// List of Profile Attributes to be set for Post Activation Task------------------------------------------------------------
+		var AccId = CurrentAssetBC.GetFieldValue(&quot;Owner Account Id&quot;);
+		var	AssetId = CurrentAssetBC.GetFieldValue(&quot;Id&quot;);
+		var	BillAccId = CurrentAssetBC.GetFieldValue(&quot;Billing Account Id&quot;);
+		var Old_MSISDN = CurrentAssetBC.GetFieldValue(&quot;VF MSISDN&quot;);
+		//Vaibhav 21/03/2012: Added new PA used to populate the post activation type - C_MSP00000636
+		var SIMType = CurrentAssetBC.GetFieldValue(&quot;VF SIM Type&quot;);
+		if(DunningStatus == &quot;211&quot;)
+			TheApplication().SetProfileAttr(&quot;VF_PickType_Dun&quot;, &quot;Dun&quot;);
+		else
+			TheApplication().SetProfileAttr(&quot;VF_PickType_Dun&quot;, &quot;NoDun&quot;);
+			
+		if(SIMType != &quot;Dual&quot;)
+			TheApplication().SetProfileAttr(&quot;VF_PickType_Dual&quot;, &quot;Dual&quot;);
+		else
+			TheApplication().SetProfileAttr(&quot;VF_PickType_Dual&quot;, &quot;NoDual&quot;);
+			
+	var ProdPartNum =CurrentAssetBC.GetFieldValue(&quot;Product Part Number&quot;);
+	//LookupName for asset status
+    LookupN = TheApplication().GetService(&quot;ACS General Operations&quot;);
+	In.SetProperty(&quot;LOV&quot;,&quot;IMPL_PHASE&quot;);
+	In.SetProperty(&quot;Val&quot;,CurrentAssetBC.GetFieldValue(&quot;Status&quot;));
+	LookupN.InvokeMethod(&quot;LookupName&quot;,In,Out);
+	var StatusCode = Out.GetProperty(&quot;Name&quot;);
+	TheApplication().SetProfileAttr(&quot;ProdPartNum&quot;,ProdPartNum); //Constraint 1
+ 	TheApplication().SetProfileAttr(&quot;StatusCode&quot;,StatusCode); //Constraint 2
+	TheApplication().SetProfileAttr(&quot;VFPA_AccountId&quot;,AccId);
+	TheApplication().SetProfileAttr(&quot;VFPA_AssetId&quot;, AssetId);
+	TheApplication().SetProfileAttr(&quot;VFPA_TaskInitiated&quot;, &quot;PostActTask&quot;);
+	TheApplication().SetProfileAttr(&quot;VFPA_BillingAccId&quot;, BillAccId);
+	TheApplication().SetProfileAttr(&quot;Old_MSISDN&quot;,Old_MSISDN);
+	//LoggingTask();
+//--------------------------------------------------------------------------------------------------------------------------
+return;	
+}
+finally{
+   CurrentAssetBC = null;
+   In = null;
+   Out = null;
+   LookupN = null;
+  }
+}"
+			   SEQUENCE="10"
+			   UPDATED="12/22/2016 13:33:47"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="08/29/2011 18:54:36"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SetProfileAttTransferCrossTask"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SetProfileAttTransferCrossTask()
+{
+	try
+	{
+		// List of Profile Attributes to be set for Transfer Cross Task---------------------------------------------------------------------
+		var bcAsset : BusComp = TheApplication().ActiveBusObject().GetBusComp(&quot;Asset Mgmt - Asset&quot;);
+		var assetMSISDN = null;
+		if(bcAsset != null)
+		{	
+		
+			//DEF-11601 and DEF-10538 - SJOAO - RETROFIT - CBU: JFONSECA  - BEGIN
+			if(TheApplication().GetProfileAttr(&quot;ApplicationName&quot;)  == &quot;TeXCo Application&quot;)
+			{
+				assetMSISDN = bcAsset.GetFieldValue(&quot;VF MSISDN&quot;);
+				TheApplication().SetProfileAttr(&quot;VFTRCBU_TaskTransferCross_AssetMSISDN&quot;,assetMSISDN);			
+			}
+			else if(TheApplication().GetProfileAttr(&quot;ApplicationName&quot;)  == &quot;Siebel eChannel&quot;)
+			{
+			//DEF-11601 and DEF-10538 - SJOAO - RETROFIT - CBU: JFONSECA  - END
+				var x= TheApplication().GetProfileAttr(&quot;CrossMSISDN&quot;);
+				var expr = &quot;[Id] =&apos;&quot;+x+&quot;&apos;&quot;;   
+				bcAsset.SetSearchExpr(expr);
+				bcAsset.ExecuteQuery(ForwardOnly);
+				var RecordExists = bcAsset.FirstRecord ();	
+			
+			 	if (RecordExists){ 
+					assetMSISDN = bcAsset.GetFieldValue(&quot;VF MSISDN&quot;);
+					TheApplication().SetProfileAttr(&quot;VFTRCBU_TaskTransferCross_AssetMSISDN&quot;,assetMSISDN);
+				}
+			} //DEF-11601 and DEF-10538 - SJOAO - RETROFIT - CBU: JFONSECA  - Added
+		}
+		//--------------------------------------------------------------------------------------------------------------------------
+		return;	
+	}
+	catch(e){
+	 	TheApplication().SetProfileAttr(&quot;VFTRCBU_TaskTransferCross_AssetMSISDN&quot;,&quot;&quot;);
+	}
+	finally
+	{
+		bcAsset = null;
+	}		
+}"
+			   SEQUENCE="11"
+			   UPDATED="12/22/2016 13:33:47"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="02/03/2015 21:20:16"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="StartValidationActivationTask"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function StartValidationActivationTask()
+{
+/* Added by Luca Cisoni on 11/08/2011. 
+Reason: Added Validations of Step #1 in FD PRM for Act Orders Task
+*/
+	try
+	{
+		var boParameters : BusObject;
+		var BcParameter : BusComp;
+		var bcAccount : BusComp = TheApplication().ActiveBusObject().GetBusComp(&quot;Account&quot;);
+		var message = &quot;&quot;;
+// List of Validations for Activation Order Task: -----------------------------------------------------------------------------------------------------
+
+    //Added NJC (2014-07-31) for CBU WA#01 Customer Creation
+    //Validation #1.0 - Only Accounts of type &quot;Business&quot;     
+	    var AccType= bcAccount.GetFieldValue(&quot;Type&quot;);
+	    if(AccType != TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACCOUNT_TYPE&quot;,&quot;101&quot;))
+	    {
+		     message = &quot;Only Business Customers are allowed for Activate New Line&quot;;//TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;362&quot;);				
+	         TheApplication().RaiseErrorText(message);
+		     return false;
+	    }	
+    //NJC END
+    
+    //Validation #1
+	    var AccStatus= bcAccount.GetFieldValue(&quot;Account Status Code&quot;);
+	    if(AccStatus != TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACCOUNT_STATUS&quot;,&quot;95&quot;) &amp;&amp; AccStatus != TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACCOUNT_STATUS&quot;,&quot;100&quot;)){
+	    	message = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;362&quot;);				
+        	TheApplication().RaiseErrorText(message);
+	      return false;
+	    }
+	    
+	//Validation #2
+	    var Citizenship = bcAccount.GetFieldValue(&quot;VF Contact Citizenship&quot;);
+	    var MernisStatus = bcAccount.GetFieldValue(&quot;VF Mernis Status&quot;);
+	    if(Citizenship == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_CITIZENSHIP&quot;,&quot;Turkish&quot;) &amp;&amp; MernisStatus != &quot;Y&quot;){//not Turch and not mernis validated){
+	     TheApplication().RaiseErrorText(&quot;Turkish Customer not Mernis Validated&quot;);
+	     return false;
+	    }
+	    
+	//Validation #3 (Following Grant Matrix Annex ID3)
+	    boParameters = TheApplication().GetBusObject (&quot;ACS NI Parameter&quot;);
+		BcParameter = boParameters.GetBusComp (&quot;ACS NI Parameter&quot;);
+		var userRoles = TheApplication().GetProfileAttr(&quot;TELCO.PositionProfile:Role.AvailableRoles&quot;).split(&quot;,&quot;);
+		var numberOfRoles = userRoles.length;
+		var sRolesExp = &quot;&quot;;
+		
+		while(numberOfRoles&gt;0)
+		{
+			if ( numberOfRoles-1 &gt; 0)
+				sRolesExp = sRolesExp + &quot;[Condition4] = &apos;&quot; +userRoles[numberOfRoles-1]+&quot;&apos; OR &quot;;
+			else 
+				sRolesExp = sRolesExp + &quot;[Condition4] = &apos;&quot; +userRoles[numberOfRoles-1]+&quot;&apos;&quot;;
+		
+			numberOfRoles = numberOfRoles-1;
+		}
+		
+		var CustType= bcAccount.GetFieldValue(&quot;Market Class&quot;);
+			//query Account Type
+	
+		//Query CX_PARAMETER
+		BcParameter.SetViewMode(AllView); 
+		BcParameter.ClearToQuery(); 
+		var strFunction =&quot;PRM_ACT_VAL&quot;;
+		var LookupN : Service = TheApplication().GetService(&quot;ACS General Operations&quot;);
+		var In : PropertySet = TheApplication().NewPropertySet();
+		var Out : PropertySet = TheApplication().NewPropertySet();
+		In.SetProperty(&quot;LOV&quot;,&quot;ACCOUNT_TYPE&quot;);
+		In.SetProperty(&quot;Val&quot;,CustType);
+		LookupN.InvokeMethod(&quot;LookupName&quot;,In,Out);
+		var expr = &quot;[Function] = &apos;&quot;+strFunction+&quot;&apos; AND [Name] = &apos;&quot;+Out.GetProperty(&quot;Name&quot;)+&quot;&apos; AND (&quot; + sRolesExp +&quot;)&quot;;
+	    BcParameter.SetSearchExpr(expr);
+	   	BcParameter.ExecuteQuery(ForwardOnly);
+		var booRecordExists = BcParameter.FirstRecord ();	 
+	    if (!booRecordExists){ 
+	     //TheApplication().RaiseErrorText(&quot;You don&apos;t have the right Role to Start the Task.&quot;);
+	     var err1 = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;VF_PRM_WRONG_ROLE&quot;);
+			TheApplication().RaiseErrorText(err1);
+	    return false;
+	    }
+//- -----------------------------------------------------------------END OF VALIDATIONS, TASK CAN START----------------------------------------------------------------------
+	    return true; //Task Can Start
+	}
+	finally
+	{
+		BcParameter = null;
+		bcAccount = null;
+		boParameters = null;
+		LookupN = null;
+		In = null;
+		Out = null;
+	}
+}"
+			   SEQUENCE="13"
+			   UPDATED="12/22/2016 13:33:47"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="08/29/2011 18:54:36"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="StartValidationActivationTaskFromHome"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function StartValidationActivationTaskFromHome()
+{
+/* Added by Luca Cisoni on 11/08/2011. 
+Reason: Added Validations of Step #1 in FD PRM for Act Orders Task
+*/
+	try
+	{
+// List of Validations for Activation Order Task from Home Page (no control on Customer Type): -----------------------------------------------------------------------------------------------------
+
+	//Validation #1 (Following Grant Matrix Annex ID3)
+	    var boParameters : BusObject = TheApplication().GetBusObject (&quot;ACS NI Parameter&quot;);
+		var BcParameter : BusComp = boParameters.GetBusComp (&quot;ACS NI Parameter&quot;);
+		
+		var userRoles = TheApplication().GetProfileAttr(&quot;TELCO.PositionProfile:Role.AvailableRoles&quot;).split(&quot;,&quot;);
+		var numberOfRoles = userRoles.length;
+		var sRolesExp = &quot;&quot;;
+		
+		while(numberOfRoles&gt;0)
+		{
+			if ( numberOfRoles-1 &gt; 0)
+				sRolesExp = sRolesExp + &quot;[Condition4] = &apos;&quot; +userRoles[numberOfRoles-1]+&quot;&apos; OR &quot;;
+			else 
+				sRolesExp = sRolesExp + &quot;[Condition4] = &apos;&quot; +userRoles[numberOfRoles-1]+&quot;&apos;&quot;;
+		
+			numberOfRoles = numberOfRoles-1;
+		}
+
+		//Query CX_PARAMETER
+		BcParameter.SetViewMode(AllView); 
+		BcParameter.ClearToQuery(); 
+		var strFunction =&quot;PRM_ACT_VAL&quot;;
+		var expr = &quot;[Function] = &apos;&quot;+strFunction+&quot;&apos; AND (&quot; + sRolesExp +&quot;)&quot;;
+	    BcParameter.SetSearchExpr(expr);
+	   	BcParameter.ExecuteQuery(ForwardOnly);
+		var booRecordExists = BcParameter.FirstRecord ();	 
+	    if (!booRecordExists){ 
+	      //TheApplication().RaiseErrorText(&quot;You don&apos;t have the right Role to Start the Task.&quot;);
+	      var err1 = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;VF_PRM_WRONG_ROLE&quot;);
+			TheApplication().RaiseErrorText(err1);
+	    return false;
+	    }
+//- -----------------------------------------------------------------END OF VALIDATIONS, TASK CAN START----------------------------------------------------------------------
+	    return true; //Task Can Start
+	}
+	finally
+	{
+		BcParameter=null;
+		boParameters= null;
+	}
+}"
+			   SEQUENCE="14"
+			   UPDATED="12/22/2016 13:33:47"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="11/25/2011 18:51:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="StartValidationGROUP_ActivationTask"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function StartValidationGROUP_ActivationTask()
+{
+
+// List of Validations for Activation VPN Group Order Task: -----------------------------------------------------------------------------------------------------
+   try
+   { 
+		//Validation #4
+		var Err;
+		var userRoles = TheApplication().GetProfileAttr(&quot;TELCO.PositionProfile:Role.AvailableRoles&quot;).split(&quot;,&quot;); // JMARQUES
+		var numberOfRoles = userRoles.length; // JMARQUES  
+		var sRolesExp = &quot;&quot;; // JMARQUES  
+		//Validation #5 (Following Grant Matrix Annex ID3)
+	    var boParameters : BusObject = TheApplication().GetBusObject (&quot;ACS NI Parameter&quot;);
+		var BcParameter : BusComp = boParameters.GetBusComp (&quot;ACS NI Parameter&quot;);// JMARQUES - ACS NI Parameter
+		//var CustType= bcAccount.GetFieldValue(&quot;Market Class&quot;);
+		//var currRole = TheApplication().GetProfileAttr(&quot;PositionType&quot;); // JMARQUES
+		 
+		while(numberOfRoles&gt;0)
+		{
+			if ( numberOfRoles-1 &gt; 0)
+				sRolesExp = sRolesExp + &quot;[Condition4] = &apos;&quot; +userRoles[numberOfRoles-1]+&quot;&apos; OR &quot;;
+			else 
+				sRolesExp = sRolesExp + &quot;[Condition4] = &apos;&quot; +userRoles[numberOfRoles-1]+&quot;&apos;&quot;;
+
+			numberOfRoles = numberOfRoles-1;
+		}
+
+		 
+		//Query CX_PARAMETER
+		BcParameter.SetViewMode(AllView); 
+		BcParameter.ClearToQuery(); 
+		//BcParameter.ActivateField(&quot;VFTRCBU User Has Role Calc&quot;); // JMARQUES
+		var strFunction =&quot;PRM_ACT_VAL&quot;;
+		var expr = &quot;[Function] = &apos;&quot;+strFunction+&quot;&apos;&quot;; //JMARQUES
+		expr = expr + &quot; AND (&quot; + sRolesExp +&quot;)&quot;; // JMARQUES
+	    BcParameter.SetSearchExpr(expr);
+	   	BcParameter.ExecuteQuery(ForwardOnly);
+		var booRecordExists = BcParameter.FirstRecord ();	 
+	    if (!booRecordExists){ 
+			//TheApplication().RaiseErrorText(&quot;You don&apos;t have the right Role to Start the Task.&quot;);
+			var err1 = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;VF_PRM_WRONG_ROLE&quot;);
+			TheApplication().RaiseErrorText(err1);
+	    	return false;
+	    }
+		    
+	//- -----------------------------------------------------------------END OF VALIDATIONS, TASK CAN START----------------------------------------------------------------------
+		return true; //Task Can Start
+	}
+	finally
+	{
+		BcParameter = null;
+		boParameters = null;
+	}
+}"
+			   SEQUENCE="15"
+			   UPDATED="12/22/2016 13:33:47"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="03/21/2013 19:56:01"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="StartValidationGROUP_ModifyTask"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function StartValidationGROUP_ModifyTask()
+{
+	try{
+		var sPartNum = &quot;&quot;;
+		var CurrentAssetBC :BusComp = TheApplication().ActiveBusObject().GetBusComp(&quot;VF Groups BC&quot;);
+		try{
+			sPartNum = CurrentAssetBC.GetFieldValue(&quot;VF Product Part Number&quot;);
+		}catch(e){
+			sPartNum = &quot;&quot;;	
+		}
+		
+		if(sPartNum != &quot;3300&quot;){
+			var stext = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;PRM_STA07&quot;);
+			TheApplication().RaiseErrorText(stext);
+			return false;
+		}
+		
+		//Validation #5 (Following Grant Matrix Annex ID3)
+	    var boParameters : BusObject = TheApplication().GetBusObject (&quot;ACS NI Parameter&quot;);
+		var BcParameter : BusComp = boParameters.GetBusComp (&quot;ACS NI Parameter&quot;);
+	    var sHasRoles = &quot;&quot;;
+	    
+	    BcParameter.SetViewMode(AllView); 
+	    BcParameter.ActivateField(&quot;Function&quot;);
+		BcParameter.ActivateField(&quot;Value&quot;);
+		BcParameter.ClearToQuery(); 
+		var strFunction =&quot;ModifyOptions&quot;;
+		//var expr = &quot;[Function] = &apos;&quot;+strFunction+&quot;&apos; AND [Condition4] = &apos;&quot;+currRole+&quot;&apos; AND [Value] = &apos;VF_Modify_Group&apos;&quot;;
+	    var expr = &quot;[Function] = &apos;&quot;+strFunction+&quot;&apos; AND [Value] = &apos;ModifyProdSvc&apos;&quot;; // JMARQUES
+	    BcParameter.SetSearchExpr(expr);
+	   	BcParameter.ExecuteQuery(ForwardOnly);
+		var booRecordExists = BcParameter.FirstRecord ();	 
+	    if (booRecordExists)
+	    { 
+	    	sHasRoles = BcParameter.GetFieldValue(&quot;VFTRCBU User Has Role Calc&quot;);
+			
+			if(sHasRoles == &quot;N&quot;)
+			{
+			    //TheApplication().RaiseErrorText(&quot;You don&apos;t have the right Role to Start the Task.&quot;);  
+			    var err1 = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;VF_PRM_WRONG_ROLE&quot;);
+				TheApplication().RaiseErrorText(err1);
+			   	return false;
+			}
+	    }
+		     
+	//- -----------------------------------------------------------------END OF VALIDATIONS, TASK CAN START----------------------------------------------------------------------
+		return true; //Task Can Start
+	
+	}finally{
+		BcParameter = null;
+		boParameters = null;
+	}
+}"
+			   SEQUENCE="16"
+			   UPDATED="12/22/2016 13:33:47"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="03/21/2013 19:56:01"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="StartValidationMNPActivationTask"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function StartValidationMNPActivationTask()
+{
+/* Added by Luca Cisoni on 11/08/2011. 
+Reason: Added Validations of Step #1 in FD PRM for MNP Act Orders Task
+*/
+
+// List of Validations for MNP Activation Order Task: -----------------------------------------------------------------------------------------------------
+
+	try
+	{
+		var bcAccount : BusComp = TheApplication().ActiveBusObject().GetBusComp(&quot;Account&quot;);
+    	//Validation #1
+	    var AccStatus= bcAccount.GetFieldValue(&quot;Account Status Code&quot;);
+	    if(AccStatus != TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACCOUNT_STATUS&quot;,&quot;95&quot;) &amp;&amp; AccStatus != TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACCOUNT_STATUS&quot;,&quot;100&quot;)){
+		    var message = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;362&quot;);				
+			TheApplication().RaiseErrorText(message);
+		    return false;
+		}
+	    
+	//Validation #2
+	    var Citizenship = bcAccount.GetFieldValue(&quot;VF Contact Citizenship&quot;);
+	    var MernisStatus = bcAccount.GetFieldValue(&quot;VF Mernis Status&quot;);
+	    if(Citizenship == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_CITIZENSHIP&quot;,&quot;Turkish&quot;) &amp;&amp; MernisStatus != &quot;Y&quot;){
+	    //not Turch and not mernis validated){
+			TheApplication().RaiseErrorText(&quot;Turkish Customer not Mernis Validated&quot;);
+			return false;
+	    }
+
+    //Validation #3 (Following Grant Matrix Annex ID3)
+	    var boParameters : BusObject = TheApplication().GetBusObject (&quot;ACS NI Parameter&quot;);
+		var BcParameter : BusComp = boParameters.GetBusComp (&quot;ACS NI Parameter&quot;);
+		var userRoles = TheApplication().GetProfileAttr(&quot;TELCO.PositionProfile:Role.AvailableRoles&quot;).split(&quot;,&quot;);
+		var numberOfRoles = userRoles.length;
+		var sRolesExp = &quot;&quot;;
+		
+		while(numberOfRoles&gt;0)
+		{
+			if ( numberOfRoles-1 &gt; 0)
+				sRolesExp = sRolesExp + &quot;[Condition4] = &apos;&quot; +userRoles[numberOfRoles-1]+&quot;&apos; OR &quot;;
+			else 
+				sRolesExp = sRolesExp + &quot;[Condition4] = &apos;&quot; +userRoles[numberOfRoles-1]+&quot;&apos;&quot;;
+		
+			numberOfRoles = numberOfRoles-1;
+		}
+		
+		var CustType= bcAccount.GetFieldValue(&quot;Market Class&quot;);
+		
+		//Query CX_PARAMETER
+		BcParameter.SetViewMode(AllView); 
+		BcParameter.ClearToQuery(); 
+		var strFunction =&quot;PRM_MNP_VAL&quot;;
+		var LookupN : Service = TheApplication().GetService(&quot;ACS General Operations&quot;);
+		var In : PropertySet = TheApplication().NewPropertySet()
+		var Out : PropertySet = TheApplication().NewPropertySet();
+		In.SetProperty(&quot;LOV&quot;,&quot;ACCOUNT_TYPE&quot;);
+		In.SetProperty(&quot;Val&quot;,CustType);
+		LookupN.InvokeMethod(&quot;LookupName&quot;,In,Out);
+		var expr = &quot;[Function] = &apos;&quot;+strFunction+&quot;&apos; AND [Name] = &apos;&quot;+Out.GetProperty(&quot;Name&quot;)+&quot;&apos; AND (&quot; + sRolesExp +&quot;)&quot;;
+	    BcParameter.SetSearchExpr(expr);
+	   	BcParameter.ExecuteQuery(ForwardOnly);
+		var booRecordExists = BcParameter.FirstRecord ();	 
+	    if (!booRecordExists){ 
+			//TheApplication().RaiseErrorText(&quot;You don&apos;t have the right Role to Start the Task.&quot;);
+			var err1 = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;VF_PRM_WRONG_ROLE&quot;);
+			TheApplication().RaiseErrorText(err1);
+	    	return false;
+	    }   
+//- -----------------------------------------------------------------VALIDATIONS PASSED----------------------------------------------------------------------
+	    return true; //Task Can Start
+	}
+	finally
+	{
+		BcParameter = null;
+		bcAccount = null;
+		boParameters = null;
+		In	= null;
+		Out = null;
+		LookupN = null;	
+	}
+}"
+			   SEQUENCE="17"
+			   UPDATED="12/22/2016 13:33:47"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="08/29/2011 18:54:36"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="StartValidationMNPActivationTaskFromHome"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function StartValidationMNPActivationTaskFromHome()
+{
+/* Added by Luca Cisoni on 24/11/2011. 
+*/
+
+// List of Validations for MNP Activation Order Task: -----------------------------------------------------------------------------------------------------
+	try
+	{
+	    //Validation #1 (Following Grant Matrix Annex ID3)
+	    var boParameters : BusObject = TheApplication().GetBusObject (&quot;ACS NI Parameter&quot;);
+		var BcParameter : BusComp = boParameters.GetBusComp (&quot;ACS NI Parameter&quot;);
+		var userRoles = TheApplication().GetProfileAttr(&quot;TELCO.PositionProfile:Role.AvailableRoles&quot;).split(&quot;,&quot;);
+		var numberOfRoles = userRoles.length;
+		var sRolesExp = &quot;&quot;;
+		
+		while(numberOfRoles&gt;0)
+		{
+			if ( numberOfRoles-1 &gt; 0)
+				sRolesExp = sRolesExp + &quot;[Condition4] = &apos;&quot; +userRoles[numberOfRoles-1]+&quot;&apos; OR &quot;;
+			else 
+				sRolesExp = sRolesExp + &quot;[Condition4] = &apos;&quot; +userRoles[numberOfRoles-1]+&quot;&apos;&quot;;
+		
+			numberOfRoles = numberOfRoles-1;
+		}
+		
+		//Query CX_PARAMETER
+		BcParameter.SetViewMode(AllView); 
+		BcParameter.ClearToQuery(); 
+		var strFunction =&quot;PRM_MNP_VAL&quot;;
+
+		var expr = &quot;[Function] = &apos;&quot;+strFunction+&quot;&apos; AND (&quot; + sRolesExp +&quot;)&quot;;
+	    BcParameter.SetSearchExpr(expr);
+	   	BcParameter.ExecuteQuery(ForwardOnly);
+		var booRecordExists = BcParameter.FirstRecord ();	 
+	    if (!booRecordExists){ 
+	     //TheApplication().RaiseErrorText(&quot;You don&apos;t have the right Role to Start the Task.&quot;);
+	     var err1 = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;VF_PRM_WRONG_ROLE&quot;);
+			TheApplication().RaiseErrorText(err1);
+		     //TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;#&quot;); // Please add a proper Message on Message Category
+	    return false;
+	    }
+//- -----------------------------------------------------------------VALIDATIONS PASSED----------------------------------------------------------------------
+	    return true; //Task Can Start
+	}
+	finally
+	{	
+		BcParameter = null;
+		boParameters = null;
+	}
+}"
+			   SEQUENCE="18"
+			   UPDATED="12/22/2016 13:33:47"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="11/25/2011 18:51:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="StartValidationPostActivationTask"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function StartValidationPostActivationTask()
+{
+	try
+	{
+	// List of Validations for PostActivation Order Task: -----------------------------------------------------------------------	
+		var start = true;
+	 	var StatusCode	= &quot;&quot;;
+	 	var ProdPartNum	= &quot;&quot;;
+	 	var CurrentAssetBC: BusComp;
+     // Take asset context depending on the place where post activation task is called
+	 	if(TheApplication().GetProfileAttr(&quot;ApplicationName&quot;)==&quot;Siebel eChannel&quot;)
+	 	{
+	 		if(TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;) == &quot;PRM VF TR Account Detail (Asset)&quot;)
+	 		{
+	 			CurrentAssetBC = TheApplication().ActiveBusObject().GetBusComp(&quot;VF Asset Light&quot;);
+	 		}
+	 		else
+	 		{
+	    		CurrentAssetBC = TheApplication().ActiveBusObject().GetBusComp(&quot;Asset Mgmt - Asset&quot;);
+	    	}
+	    }
+	    else if(TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;) == &quot;SIS OM Customer Account Portal View - Poste&quot;)
+	    {
+	    	CurrentAssetBC = TheApplication().ActiveBusObject().GetBusComp(&quot;Asset Mgmt - Asset - Header&quot;);
+	    }
+	    else 
+	    {
+	    	CurrentAssetBC = TheApplication().ActiveBusObject().GetBusComp(&quot;Asset Mgmt - Asset - Header (Simple)&quot;);
+		}
+	 // --------------------------------------------------------------------------------
+	 
+	    //Validation #1
+	 	var AccId = CurrentAssetBC.GetFieldValue(&quot;Owner Account Id&quot;);
+	    var lsAssetPresent = CurrentAssetBC.FirstSelected();
+	    
+		if(!lsAssetPresent)
+		{
+			var error = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;R21_PRM_018&quot;); 
+			TheApplication().RaiseErrorText(error);
+		}
+		//Validation #2 (Following Grant Matrix Annex ID3) - If NOTHING has been returned the user doesn&apos;t have the rights to perform any type of postativation,
+		                                                    // then the task is not launched at all
+	    var boParameters : BusObject = TheApplication().GetBusObject (&quot;ACS NI Parameter&quot;);
+		var BcParameter : BusComp= boParameters.GetBusComp (&quot;ACS NI Parameter&quot;);
+		
+	    StatusCode= CurrentAssetBC.GetFieldValue(&quot;Status&quot;);
+	    	
+		var LookupN : Service = TheApplication().GetService(&quot;ACS General Operations&quot;);
+		var In : PropertySet = TheApplication().NewPropertySet()
+		var Out : PropertySet = TheApplication().NewPropertySet();
+		In.SetProperty(&quot;LOV&quot;,&quot;IMPL_PHASE&quot;);
+		In.SetProperty(&quot;Val&quot;,StatusCode);
+		LookupN.InvokeMethod(&quot;LookupName&quot;,In,Out);
+		var StatusCodeLIC = Out.GetProperty(&quot;Name&quot;);
+		if (StatusCodeLIC == &quot;Inactive&quot;)
+		{
+			var err = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;R21_PRM_010&quot;);
+			TheApplication().RaiseErrorText(err);
+		}
+	    ProdPartNum = CurrentAssetBC.GetFieldValue(&quot;Product Part Number&quot;);
+			
+		//Query CX_PARAMETER
+		BcParameter.SetViewMode(AllView); 
+		BcParameter.ActivateField(&quot;Function&quot;);
+		BcParameter.ActivateField(&quot;Condition1&quot;);
+		BcParameter.ActivateField(&quot;Condition2&quot;);
+		BcParameter.ClearToQuery(); 
+		var strFunction =&quot;ModifyOptions&quot;;
+		var sHasRoles = &quot;&quot;;
+
+		var expr = &quot;[Function] = &apos;&quot;+strFunction+&quot;&apos; AND [Condition1] = &apos;&quot;+ProdPartNum+&quot;&apos; AND [Condition2] = &apos;&quot;+StatusCodeLIC+&quot;&apos;&quot;;
+	    BcParameter.SetSearchExpr(expr);
+	   	BcParameter.ExecuteQuery(ForwardOnly);
+		var booRecordExists = BcParameter.FirstRecord ();	 
+	    if (booRecordExists)
+	    { 
+	    	sHasRoles = BcParameter.GetFieldValue(&quot;VFTRCBU User Has Role Calc&quot;);
+			
+			if(sHasRoles == &quot;N&quot;)
+			{
+			    //TheApplication().RaiseErrorText(&quot;You don&apos;t have the right Role to Start the Task.&quot;);  
+			    var err1 = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;VF_PRM_WRONG_ROLE&quot;);
+				TheApplication().RaiseErrorText(err1);
+			   	return false;
+			}
+	    }
+	//- --------------------------------END OF VALIDATIONS TASK CAN START----------------------------------------------------------------------
+	 return true;
+	}
+	finally
+	{
+		BcParameter = null;
+		boParameters = null;
+		LookupN = null;
+		CurrentAssetBC = null;
+		In	= null;
+		Out	= null;
+	}
+}"
+			   SEQUENCE="19"
+			   UPDATED="12/22/2016 13:33:47"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="08/29/2011 18:54:36"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="StartValidationVPNActivationTask"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function StartValidationVPNActivationTask()
+{
+/* Added by Claudio Trameri on 30/01/2012. 
+Reason: Added Validations for Act VPN Group Orders Task
+*/
+
+// List of Validations for Activation VPN Group Order Task: -----------------------------------------------------------------------------------------------------
+   try
+   {
+   		var bcAccount : BusComp = TheApplication().ActiveBusObject().GetBusComp(&quot;Account&quot;);
+	    //Validation #1
+		var AccType= bcAccount.GetFieldValue(&quot;Market Class&quot;);
+		if(AccType == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACCOUNT_TYPE&quot;,&quot;102&quot;))
+		{
+			var message = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;R21_PRM_031&quot;);
+	        TheApplication().RaiseErrorText(message);
+		    return false;
+		}
+	
+	    //Validation #2
+	    var AccStatus= bcAccount.GetFieldValue(&quot;Account Status Code&quot;);
+	    if(AccStatus != TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACCOUNT_STATUS&quot;,&quot;95&quot;) &amp;&amp; AccStatus != TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACCOUNT_STATUS&quot;,&quot;100&quot;)){
+			var message = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;362&quot;);				
+			TheApplication().RaiseErrorText(message);
+			return false;
+	    }
+	    
+		//Validation #3
+		var Citizenship = bcAccount.GetFieldValue(&quot;VF Contact Citizenship&quot;);
+		var MernisStatus = bcAccount.GetFieldValue(&quot;VF Mernis Status&quot;);
+		if(Citizenship == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_CITIZENSHIP&quot;,&quot;Turkish&quot;) &amp;&amp; MernisStatus != &quot;Y&quot;){//not Turch and not mernis validated){
+			TheApplication().RaiseErrorText(&quot;Turkish Customer not Mernis Validated&quot;);
+			return false;
+		}
+		
+		//Validation #4
+		var Err;
+		    
+		//Validation #5 (Following Grant Matrix Annex ID3)
+	    var boParameters : BusObject = TheApplication().GetBusObject (&quot;ACS NI Parameter&quot;);
+		var BcParameter : BusComp = boParameters.GetBusComp (&quot;ACS NI Parameter&quot;);
+		var userRoles = TheApplication().GetProfileAttr(&quot;TELCO.PositionProfile:Role.AvailableRoles&quot;).split(&quot;,&quot;);
+		var numberOfRoles = userRoles.length;
+		var sRolesExp = &quot;&quot;;
+		
+		while(numberOfRoles&gt;0)
+		{
+			if ( numberOfRoles-1 &gt; 0)
+				sRolesExp = sRolesExp + &quot;[Condition4] = &apos;&quot; +userRoles[numberOfRoles-1]+&quot;&apos; OR &quot;;
+			else 
+				sRolesExp = sRolesExp + &quot;[Condition4] = &apos;&quot; +userRoles[numberOfRoles-1]+&quot;&apos;&quot;;
+		
+			numberOfRoles = numberOfRoles-1;
+		}
+		
+		var CustType= bcAccount.GetFieldValue(&quot;Market Class&quot;);
+		
+		//Query CX_PARAMETER
+		BcParameter.SetViewMode(AllView); 
+		BcParameter.ClearToQuery(); 
+		var strFunction =&quot;PRM_ACT_VAL&quot;;
+		var LookupN : Service = TheApplication().GetService(&quot;ACS General Operations&quot;);
+		var In : PropertySet = TheApplication().NewPropertySet()
+		var Out : PropertySet = TheApplication().NewPropertySet();
+		In.SetProperty(&quot;LOV&quot;,&quot;ACCOUNT_TYPE&quot;);
+		In.SetProperty(&quot;Val&quot;,CustType);
+		LookupN.InvokeMethod(&quot;LookupName&quot;,In,Out);
+		var expr = &quot;[Function] = &apos;&quot;+strFunction+&quot;&apos; AND [Name] = &apos;&quot;+Out.GetProperty(&quot;Name&quot;)+&quot;&apos; AND (&quot; + sRolesExp +&quot;)&quot;;
+	    BcParameter.SetSearchExpr(expr);
+	   	BcParameter.ExecuteQuery(ForwardOnly);
+		var booRecordExists = BcParameter.FirstRecord ();	 
+	    if (!booRecordExists){ 
+			//TheApplication().RaiseErrorText(&quot;You don&apos;t have the right Role to Start the Task.&quot;);
+			var err1 = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;VF_PRM_WRONG_ROLE&quot;);
+			TheApplication().RaiseErrorText(err1);
+	    	return false;
+	    }
+		    
+	//- -----------------------------------------------------------------END OF VALIDATIONS, TASK CAN START----------------------------------------------------------------------
+		return true; //Task Can Start
+	}
+	finally
+	{
+		BcParameter = null;
+		bcAccount = null;
+		boParameters = null;
+		LookupN = null;
+		In = null;
+		Out = null;
+	}
+}"
+			   SEQUENCE="21"
+			   UPDATED="12/22/2016 13:33:47"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="01/31/2012 08:03:08"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="StartValidationVPN_GROUP_ActivationTask"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function StartValidationVPN_GROUP_ActivationTask()
+{
+// List of Validations for Activation VPN Group Order Task: -----------------------------------------------------------------------------------------------------
+   try
+   {	 
+		//Validation #4
+		var Err;
+	    
+		//Validation #5 (Following Grant Matrix Annex ID3)
+	    var boParameters : BusObject = TheApplication().GetBusObject (&quot;ACS NI Parameter&quot;);
+		var BcParameter : BusComp = boParameters.GetBusComp (&quot;ACS NI Parameter&quot;); // JMARQUES
+		//var CustType= bcAccount.GetFieldValue(&quot;Market Class&quot;);
+		//var currRole = TheApplication().GetProfileAttr(&quot;PositionType&quot;); // JMARQUES
+		var userRoles = TheApplication().GetProfileAttr(&quot;TELCO.PositionProfile:Role.AvailableRoles&quot;).split(&quot;,&quot;); // JMARQUES
+		var numberOfRoles = userRoles.length; // JMARQUES  
+		var sRolesExp = &quot;&quot;; // JMARQUES  
+		
+		while(numberOfRoles&gt;0)
+		{
+			if ( numberOfRoles-1 &gt; 0)
+				sRolesExp = sRolesExp + &quot;[Condition4] = &apos;&quot; +userRoles[numberOfRoles-1]+&quot;&apos; OR &quot;;
+			else 
+				sRolesExp = sRolesExp + &quot;[Condition4] = &apos;&quot; +userRoles[numberOfRoles-1]+&quot;&apos;&quot;;
+
+			numberOfRoles = numberOfRoles-1;
+		}
+		 
+		//Query CX_PARAMETER
+		BcParameter.SetViewMode(AllView); 
+		BcParameter.ClearToQuery(); 
+		//BcParameter.ActivateField(&quot;VFTRCBU Visible To User Roles Calc&quot;); // JMARQUES
+		var strFunction =&quot;PRM_ACT_VAL&quot;;
+
+		var expr = &quot;[Function] = &apos;&quot;+strFunction+&quot;&apos;&quot;;// AND [Condition4] = &apos;&quot;+currRole+&quot;&apos;&quot;; //JMARQUES
+		expr = expr + &quot; AND (&quot; + sRolesExp +&quot;)&quot;; // JMARQUES
+	    BcParameter.SetSearchExpr(expr);
+	   	BcParameter.ExecuteQuery(ForwardOnly);
+		var booRecordExists = BcParameter.FirstRecord ();	 
+	    if (!booRecordExists){ 
+			//TheApplication().RaiseErrorText(&quot;You don&apos;t have the right Role to Start the Task.&quot;);
+			var err1 = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;VF_PRM_WRONG_ROLE&quot;);
+			TheApplication().RaiseErrorText(err1);
+	    	return false;
+	    }
+		    
+	//- -----------------------------------------------------------------END OF VALIDATIONS, TASK CAN START----------------------------------------------------------------------
+		return true; //Task Can Start
+	}
+	finally
+	{
+		BcParameter = null;
+		boParameters = null;
+	}
+}"
+			   SEQUENCE="20"
+			   UPDATED="12/22/2016 13:33:47"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="02/01/2013 17:51:14"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="StartValidation_Modify_VPN_GROUP_Task"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function StartValidation_Modify_VPN_GROUP_Task()
+{
+	try{
+		var sPartNum = &quot;&quot;;
+		var CurrentAssetBC = TheApplication().ActiveBusObject().GetBusComp(&quot;VF VPN Group BC&quot;);
+		try{
+			sPartNum = CurrentAssetBC.GetFieldValue(&quot;VF Product Part Number&quot;);
+		}catch(e){
+			sPartNum = &quot;&quot;;	
+		}
+		
+		if(sPartNum != &quot;3000&quot;){
+			var stext = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;PRM_STA08&quot;);
+			TheApplication().RaiseErrorText(stext);
+			return false;
+		}
+		
+		//Validation #5 (Following Grant Matrix Annex ID3)
+	    var boParameters : BusObject = TheApplication().GetBusObject (&quot;ACS NI Parameter&quot;);
+		var BcParameter : BusComp = boParameters.GetBusComp (&quot;ACS NI Parameter&quot;);
+	    var sHasRoles = &quot;&quot;;
+	    
+	    BcParameter.SetViewMode(AllView); 
+	    BcParameter.ActivateField(&quot;Function&quot;);
+		BcParameter.ActivateField(&quot;Value&quot;);
+		BcParameter.ClearToQuery(); 
+		var strFunction =&quot;ModifyOptions&quot;;
+	    var expr = &quot;[Function] = &apos;&quot;+strFunction+&quot;&apos; AND [Name] = &apos;Modify VPN Group&apos;&quot;; // JMARQUES
+	    BcParameter.SetSearchExpr(expr);
+	   	BcParameter.ExecuteQuery(ForwardOnly);
+		var booRecordExists = BcParameter.FirstRecord ();	 
+	    if (booRecordExists)
+	    { 
+	    	sHasRoles = BcParameter.GetFieldValue(&quot;VFTRCBU User Has Role Calc&quot;);
+			
+			if(sHasRoles == &quot;N&quot;)
+			{
+			    //TheApplication().RaiseErrorText(&quot;You don&apos;t have the right Role to Start the Task.&quot;);  
+			    var err1 = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;VF_PRM_WRONG_ROLE&quot;);
+				TheApplication().RaiseErrorText(err1);
+			   	return false;
+			}
+	    }
+		     
+	//- -----------------------------------------------------------------END OF VALIDATIONS, TASK CAN START----------------------------------------------------------------------
+		return true; //Task Can Start
+		
+		/*
+		//Validation #5 (Following Grant Matrix Annex ID3)
+	    var boParameters : BusObject = TheApplication().GetBusObject (&quot;ACS NI Parameter&quot;);
+		var BcParameter : BusComp = boParameters.GetBusComp (&quot;VFTRCBU Parameter With Postion Roles Filter Picklist&quot;);
+	    
+	    BcParameter.SetViewMode(AllView);
+	    BcParameter.ActivateField(&quot;Function&quot;);
+		BcParameter.ActivateField(&quot;Condition1&quot;);
+		BcParameter.ActivateField(&quot;Condition2&quot;);
+		BcParameter.ActivateField(&quot;VFTRCBU Visible To User Roles Calc&quot;);
+		BcParameter.ClearToQuery(); 
+		var strFunction =&quot;ModifyOptions&quot;;
+		//var expr = &quot;[Function] = &apos;&quot;+strFunction+&quot;&apos; AND [Condition4] = &apos;&quot;+currRole+&quot;&apos; AND [Name] = &apos;Modify VPN Group&apos;&quot;;
+		var expr = &quot;[Function] = &apos;&quot;+strFunction+&quot;&apos; AND [Name] = &apos;Modify VPN Group&apos;&quot;;
+	    BcParameter.SetSearchExpr(expr);
+	   	BcParameter.ExecuteQuery(ForwardOnly);
+		var booRecordExists = BcParameter.FirstRecord ();	 
+	    if (!booRecordExists)
+	    { 
+		    //TheApplication().RaiseErrorText(&quot;You don&apos;t have the right Role to Start the Task.&quot;);  
+		    var err1 = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;VF_PRM_WRONG_ROLE&quot;);
+			TheApplication().RaiseErrorText(err1);
+		   	return false;
+	    }
+		     
+	//- -----------------------------------------------------------------END OF VALIDATIONS, TASK CAN START----------------------------------------------------------------------
+		return true; //Task Can Start
+		*/
+	
+	}finally{
+		BcParameter = null;
+		boParameters = null;
+	}
+	
+}"
+			   SEQUENCE="12"
+			   UPDATED="12/22/2016 13:33:47"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="03/18/2013 13:12:28"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_USER_PROP
+			   INACTIVE="N"
+			   NAME="TaskPaneFrame"
+			   VALUE="SS_TaskUIPane"
+			   UPDATED="08/27/2005 03:07:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2005 03:07:47"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_USER_PROP>
+			<BUSINESS_SERVICE_USER_PROP
+			   INACTIVE="N"
+			   NAME="TaskPaneFrameSize"
+			   VALUE="10%,90%"
+			   UPDATED="04/12/2015 23:20:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2005 03:07:47"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_USER_PROP>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

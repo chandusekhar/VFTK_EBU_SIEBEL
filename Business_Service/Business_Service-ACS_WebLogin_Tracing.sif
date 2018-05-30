@@ -1,0 +1,208 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="LOCKED BY VTAO UI UPGRADE"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="Audit Trail"
+	   UI_FREEZE="N"
+	   UPDATED="02/03/2017 17:42:48"
+	   UPDATED_BY="RMENEZES"
+	   CREATED="05/31/2000 13:43:17"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   EXTERNAL_USE="Y"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="ACS WebLogin Tracing"
+		   OBJECT_LOCKED="N"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   UPDATED="02/03/2017 17:42:35"
+		   UPDATED_BY="RMENEZES"
+		   CREATED="09/10/2010 13:35:58"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="LogIP"
+			   UPDATED="09/10/2010 13:35:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/10/2010 13:35:58"
+			   CREATED_BY="SADMIN">
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="Log type"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="09/10/2010 13:35:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/10/2010 13:35:58"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_LOCALE
+				   APPLICATION_CODE="STD"
+				   DISPLAY_NAME="LogIP"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="09/10/2010 13:35:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/10/2010 13:35:58"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_LOCALE>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="LogIP"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function LogIP(Inputs, Outputs)
+{
+	try
+	{
+		var BOpreference : BusObject;	 
+		var BCpreference : BusComp; 	 
+		var BoReadAudit : BusObject; 	 
+		var bcReadAuditItem : BusComp;  
+		var inProp :PropertySet; 
+		var outProp :PropertySet; 
+		var BS :Service; 
+		var bsWeb : Service; 
+		var psInput : PropertySet; 
+		var psOutput : PropertySet;
+		var enableLog = &quot;TRUE&quot;; //RMENEZES: VFTRCBU-36373
+		var userLoginName = TheApplication().LoginName(); //RMENEZES: VFTRCBU-36373
+		var enableWebService = TheApplication().InvokeMethod(&quot;lookupValue&quot;,&quot;VFTRCBU_ENABLE_LOGGING_AUDIT&quot;,&quot;EnableLogging&quot;); //RMENEZES: VFTRCBU-36373
+	
+		BOpreference	 = TheApplication().GetBusObject(&quot;System Preferences&quot;);
+		BCpreference 	 = BOpreference.GetBusComp(&quot;System Preferences&quot;);
+		BoReadAudit 	 = TheApplication().GetBusObject(&quot;Audit Trail&quot;);
+		bcReadAuditItem  = BoReadAudit.GetBusComp(&quot;Read/Export Audit Trail Item&quot;);
+		
+		var logType = Inputs.GetProperty(&quot;Log type&quot;);
+		
+		//Begin - Scripting 15 - Input validation
+		inProp 	= TheApplication().NewPropertySet();
+		outProp	= TheApplication().NewPropertySet();
+		BS		= TheApplication().GetService(&quot;VF TRK Utilities&quot;);
+		inProp.SetProperty(&quot;logType&quot;,logType);
+		BS.InvokeMethod(&quot;Input Validation&quot;,inProp, outProp); // Query Input Validation
+		//End - Scripting 15
+		
+		/*BCpreference.ClearToQuery();
+		BCpreference.SetViewMode(AllView);
+		BCpreference.ActivateField(&quot;Value&quot;);
+		BCpreference.SetSearchSpec(&quot;Name&quot;,&quot;EnableAuditing&quot;);
+		BCpreference.ExecuteQuery(ForwardOnly); //Vaibhav 29/03/2012: Added parameter as per oracle review
+		BCpreference.FirstRecord();
+
+		var enableLog = &quot;TRUE&quot;;*/ //RMENEZES: VFTRCBU-36373
+		
+		if (enableWebService == &quot;N&quot;) //RMENEZES: VFTRCBU-36373
+		{
+			enableLog = &quot;FALSE&quot;;
+		}
+		else if (userLoginName == &quot;SOEI_USER&quot;) //RMENEZES: VFTRCBU-36373
+		{
+			enableLog = &quot;FALSE&quot;;
+		}
+		// Se il Log è Attivo Continuo con le operazioni
+		else if (enableLog == &quot;TRUE&quot;) //RMENEZES: VFTRCBU-36373
+		{		
+			bsWeb 			 = TheApplication().GetService(&quot;Web Engine HTTP TXN&quot;);
+			psInput 		 = TheApplication().NewPropertySet();
+			psOutput 		 = TheApplication().NewPropertySet();
+			
+			bsWeb.InvokeMethod (&quot;GetAllServerVariables&quot;, psInput, psOutput);
+			
+			var strIP 			 = psOutput.GetProperty(&quot;REMOTE_HOST&quot;);
+			var strUsrLogIn		 = psOutput.GetProperty(&quot;AUTH_USER_ID&quot;);
+			var strIPConcat		 = &quot;RemoteHostIP : &quot; +strIP;
+			
+			bcReadAuditItem.NewRecord(NewAfter);
+			
+			//recupero immediato di alcuni parametri del record
+			var strDate = bcReadAuditItem.GetFieldValue(&quot;Created&quot;);
+			var strCreatedBy = bcReadAuditItem.GetFieldValue(&quot;Created By&quot;);	
+			
+			//settaggio dei parametri e prima scrittura del record
+			if (logType == &quot;IN&quot;)
+			{
+				bcReadAuditItem.SetFieldValue(&quot;Buscomp Name&quot;,&quot;IP LogOn&quot;);
+				bcReadAuditItem.SetFieldValue(&quot;Operation&quot;,&quot;UserLogIn&quot;);
+			}
+			else
+			{
+				bcReadAuditItem.SetFieldValue(&quot;Buscomp Name&quot;,&quot;IP LogOut&quot;);
+				bcReadAuditItem.SetFieldValue(&quot;Operation&quot;,&quot;UserLogOut&quot;);
+			}
+		
+			bcReadAuditItem.SetFieldValue(&quot;Date&quot;,strDate);
+			bcReadAuditItem.SetFieldValue(&quot;Employee Id&quot;,strCreatedBy);
+			bcReadAuditItem.SetFieldValue(&quot;Audit Log&quot;,strIPConcat);
+			bcReadAuditItem.WriteRecord();
+		}
+	}
+	finally
+	{
+		enableWebService = null; //RMENEZES: VFTRCBU-36373
+		userLoginName = null; //RMENEZES: VFTRCBU-36373
+		enableLog = null; //RMENEZES: VFTRCBU-36373
+		bcReadAuditItem	 = null;
+		BCpreference	 = null;
+		BOpreference	 = null;
+		BoReadAudit	 	 = null;
+		inProp	 	= null;
+		outProp	 	= null;
+		BS	 	 	= null;
+		bsWeb 	 	= null;
+		psInput	 	= null;
+		psOutput	= null;
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="02/03/2017 16:17:51"
+			   UPDATED_BY="RMENEZES"
+			   CREATED="06/04/2012 16:19:18"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{	
+	if (MethodName == &quot;LogIP&quot;)
+	{
+		LogIP(Inputs, Outputs);
+		return(CancelOperation);
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="06/04/2012 16:19:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/10/2010 13:35:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

@@ -1,0 +1,3078 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="04/28/2018 18:51:18"
+   UPDATED_BY="SADMIN"
+   CREATED="04/28/2018 10:52:36"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LANGUAGE_LOCKED="ENU"
+	   LOCKED="Y"
+	   LOCKED_DATE="05/03/2018 17:50:34"
+	   NAME="VFTRCBU MSISDN SIM Card Management"
+	   UI_FREEZE="N"
+	   LOCKED_BY_NAME="IBM_RCATITA"
+	   UPDATED="05/10/2018 09:41:18"
+	   UPDATED_BY="IBM_RCATITA"
+	   CREATED="11/25/2014 10:48:35"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<TASK
+		   ALLOW_PAUSE="N"
+		   BUSINESS_OBJECT="Asset Management - Asset Item"
+		   DISPLAY_NAME_-_STRING_REFERENCE="X_Change MSISDN"
+		   INACTIVE="N"
+		   INBOX_DISPOSITION="DO_NOT_CARE_FASTEST"
+		   IS_SUBTASK="N"
+		   NAME="VFTRCBU Change MSISDN Task: 25"
+		   OBJECT_LOCKED="N"
+		   ON_CONFLICT="Cancel Operation"
+		   STATUS="NOT_IN_USE"
+		   TASK_NAME="VFTRCBU Change MSISDN Task"
+		   TRANSACTIONAL="N"
+		   TRANSIENT_BC="VFTRCBU Swap SIM Card MSISDN TBC"
+		   VERSION="25"
+		   UPDATED="05/14/2018 09:30:23"
+		   UPDATED_BY="IBM_RCATITA"
+		   CREATED="07/28/2016 16:38:33"
+		   CREATED_BY="SADMIN">
+			<TASK_BRANCH
+			   EXPRESSION="(Result This Must Match (Ignore Case)(&apos;KO&apos;))"
+			   FROM_STEP_NAME="Port In/Out ?"
+			   INACTIVE="N"
+			   LABEL="Y"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*465 1594*NPts1*22*P07*426 1594*ToHS1*08*ArrowEnd1*1"
+			   NAME="A"
+			   TO_STEP_NAME="Get Error Message 2"
+			   TYPE="DECISION"
+			   UPDATED="07/28/2016 16:38:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:33"
+			   CREATED_BY="SADMIN">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="EQ_THIS_NC"
+				   PREFERRED_SEQUENCE="1"
+				   PROPERTY_NAME="Result"
+				   UPDATED="07/28/2016 16:38:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:33"
+				   CREATED_BY="SADMIN">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR1="KO"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="07/28/2016 16:38:33"
+					   UPDATED_BY="SADMIN"
+					   CREATED="07/28/2016 16:38:33"
+					   CREATED_BY="SADMIN">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Start"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*02*P17*102 1564*NPts1*22*P07*142 1564*ToHS1*28*ArrowEnd1*1"
+			   NAME="Connector 0"
+			   TO_STEP_NAME="Get Object Id"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/28/2016 16:38:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:33"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Get Asset Info"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*116 2404*FrHS1*22*P17*116 3274*NPts1*42*P07*102 3272*P37*130 2404*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 1"
+			   TO_STEP_NAME="Validate MSISDN Change"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/28/2016 16:38:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:33"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="( All Must Match (Ignore Case)(&apos;[&amp;Error Code] IS NULL OR [&amp;Error Code] = &quot;&quot; OR [&amp;Error Code] = &quot;0&quot;&apos;))"
+			   FROM_STEP_NAME="Valid?"
+			   INACTIVE="N"
+			   LABEL="Yes"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*279 3004*NPts1*22*P07*279 2674*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 10"
+			   TO_STEP_NAME="Validate Number of Orders"
+			   TYPE="DECISION"
+			   UPDATED="07/28/2016 16:38:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:34"
+			   CREATED_BY="SADMIN">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="EXPRESSION"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="EQ_ALL_NC"
+				   PREFERRED_SEQUENCE="1"
+				   UPDATED="07/28/2016 16:38:34"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:34"
+				   CREATED_BY="SADMIN">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR5="[&amp;Error Code] IS NULL OR [&amp;Error Code] = &quot;&quot; OR [&amp;Error Code] = &quot;0&quot;"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="07/28/2016 16:38:34"
+					   UPDATED_BY="SADMIN"
+					   CREATED="07/28/2016 16:38:34"
+					   CREATED_BY="SADMIN">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Valid?"
+			   INACTIVE="N"
+			   LABEL="No"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*12*P17*279 1834*NPts1*22*P07*279 2134*ToHS1*38*ArrowEnd1*1"
+			   NAME="Connector 11"
+			   TO_STEP_NAME="Error 0"
+			   TYPE="DEFAULT"
+			   UPDATED="07/28/2016 16:38:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:34"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Get Dealer/Shop Code"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*444 754*NPts1*22*P06*426 754*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 12"
+			   TO_STEP_NAME="Update TBC"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/28/2016 16:38:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:34"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Update TBC"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*540 754*NPts1*22*P06*522 754*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 13"
+			   TO_STEP_NAME="Set SubType Profile Attrib"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/28/2016 16:38:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:34"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Instantiate Asset Mgmt - Asset BC"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*63 3004*NPts1*22*P06*63 2674*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 14"
+			   TO_STEP_NAME="Get Asset Info"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/28/2016 16:38:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:34"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Get Object Id"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*63 2134*NPts1*22*P06*63 1834*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 16"
+			   TO_STEP_NAME="Instantiate Asset Mgmt - Asset BC"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/28/2016 16:38:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:34"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Validate Number of Orders"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*348 3274*NPts1*22*P07*318 3274*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 17"
+			   TO_STEP_NAME="Error ?"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/28/2016 16:38:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:34"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Error ?"
+			   INACTIVE="N"
+			   LABEL="No"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*12*P17*387 2684*NPts1*22*P07*387 3004*ToHS1*38*ArrowEnd1*1"
+			   NAME="Connector 18"
+			   TO_STEP_NAME="checkNumberXTransfer"
+			   TYPE="DEFAULT"
+			   UPDATED="07/28/2016 16:38:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:34"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="(Error Category Code Is Not Null)"
+			   FROM_STEP_NAME="Error ?"
+			   INACTIVE="N"
+			   LABEL="Yes"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*476 3274*NPts1*22*P07*426 3274*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 19"
+			   TO_STEP_NAME="Error 1"
+			   TYPE="DECISION"
+			   UPDATED="07/28/2016 16:38:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:34"
+			   CREATED_BY="SADMIN">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="IS_NOT_NULL"
+				   PREFERRED_SEQUENCE="1"
+				   PROPERTY_NAME="Error Category Code"
+				   UPDATED="07/28/2016 16:38:34"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:34"
+				   CREATED_BY="SADMIN">
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Task View 0"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P18*1054 1394*NPts1*22*P08*1054 1024*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 2"
+			   TO_STEP_NAME="checkNumberXTransfer 2"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/28/2016 16:38:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:34"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Clear NI PAs"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1584 1594*NPts1*22*P08*1554 1594*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 20"
+			   TO_STEP_NAME="End"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/28/2016 16:38:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:34"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Update ShopCode"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P26*999 754*FrHS1*22*P17*999 1354*NPts1*42*P07*990 1352*P37*1008 754*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 21"
+			   TO_STEP_NAME="Task View 0"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/28/2016 16:38:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:34"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="(isCOPSallowed This Must Match (Ignore Case)(&apos;OK&apos;))"
+			   FROM_STEP_NAME="Is Cops?"
+			   INACTIVE="N"
+			   LABEL="Y"
+			   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*780 1594*FrHS1*32*P17*759 1594*NPts1*32*P07*759 1024*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 22"
+			   TO_STEP_NAME="Get Dealer Data"
+			   TYPE="DECISION"
+			   UPDATED="07/28/2016 16:38:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:34"
+			   CREATED_BY="SADMIN">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="EQ_THIS_NC"
+				   PREFERRED_SEQUENCE="1"
+				   PROPERTY_NAME="isCOPSallowed"
+				   UPDATED="07/28/2016 16:38:34"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:34"
+				   CREATED_BY="SADMIN">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR1="OK"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="07/28/2016 16:38:34"
+					   UPDATED_BY="SADMIN"
+					   CREATED="07/28/2016 16:38:34"
+					   CREATED_BY="SADMIN">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Is Cops?"
+			   INACTIVE="N"
+			   LABEL="N"
+			   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*1054 244*FrHS1*12*P16*759 244*NPts1*42*P06*759 482*P37*1054 484*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 23"
+			   TO_STEP_NAME="Task View 0"
+			   TYPE="DEFAULT"
+			   UPDATED="07/28/2016 16:38:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:35"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Set SubType Profile Attrib"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*636 754*NPts1*22*P06*618 754*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 24"
+			   TO_STEP_NAME="Cops Position Validation"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/28/2016 16:38:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:35"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Port In/Out ?"
+			   INACTIVE="N"
+			   LABEL="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*12*P17*387 1024*NPts1*22*P07*387 1324*ToHS1*38*ArrowEnd1*1"
+			   NAME="Connector 25"
+			   TO_STEP_NAME="Get Dealer/Shop Code"
+			   TYPE="DEFAULT"
+			   UPDATED="07/28/2016 16:38:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:35"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="checkNumberXTransfer"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*12*P17*387 1864*NPts1*22*P07*387 2144*ToHS1*38*ArrowEnd1*1"
+			   NAME="Connector 26"
+			   TO_STEP_NAME="Port In/Out ?"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/28/2016 16:38:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:35"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Get Error Message 2"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*603 1594*NPts1*22*P07*543 1594*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 27"
+			   TO_STEP_NAME="Error 3"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/28/2016 16:38:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:35"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="checkNumberXTransfer 2"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P18*1054 2114*NPts1*22*P08*1054 1934*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 28"
+			   TO_STEP_NAME="Port  In/Out ?"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/28/2016 16:38:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:35"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Port  In/Out ?"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P28*1155 1864*FrHS1*22*P18*1155 2384*NPts1*32*P08*1093 2384*ToHS1*38*ArrowEnd1*1"
+			   NAME="Connector 29"
+			   TO_STEP_NAME="Missing Required Data?"
+			   TYPE="DEFAULT"
+			   UPDATED="07/28/2016 16:38:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:35"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Missing Required Data?"
+			   INACTIVE="N"
+			   LABEL="No"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1234 1594*NPts1*22*P08*1194 1594*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 3"
+			   TO_STEP_NAME="Validate Inputs &amp; Create Order"
+			   TYPE="DEFAULT"
+			   UPDATED="07/28/2016 16:38:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:35"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="(Result This Must Match (Ignore Case)(&apos;KO&apos;))"
+			   FROM_STEP_NAME="Port  In/Out ?"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*504 1864*FrHS1*02*P17*504 2384*NPts1*32*P08*1015 2384*ToHS1*38*ArrowEnd1*1"
+			   NAME="Connector 30"
+			   TO_STEP_NAME="Get Error Message 2"
+			   TYPE="DECISION"
+			   UPDATED="07/28/2016 16:38:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:35"
+			   CREATED_BY="SADMIN">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="EQ_THIS_NC"
+				   PREFERRED_SEQUENCE="1"
+				   PROPERTY_NAME="Result"
+				   UPDATED="07/28/2016 16:38:35"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:35"
+				   CREATED_BY="SADMIN">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR1="KO"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="07/28/2016 16:38:35"
+					   UPDATED_BY="SADMIN"
+					   CREATED="07/28/2016 16:38:35"
+					   CREATED_BY="SADMIN">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Cops Position Validation"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*720 754*NPts1*22*P06*714 754*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 31"
+			   TO_STEP_NAME="Is Cops?"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/28/2016 16:38:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:35"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Get Dealer Data"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*11*0*0*0*2*P56*828 879*LineWidth1*22*P27*867 1224*FrHS1*22*P17*867 1594*NPts1*62*P07*858 1592*P37*813 1224*ToHS1*02*P46*813 878*ArrowEnd1*1"
+			   NAME="Connector 32"
+			   TO_STEP_NAME="Update Dealer Code"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/28/2016 16:38:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:35"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="(MSISDN Is Null)"
+			   FROM_STEP_NAME="Missing Required Data?"
+			   INACTIVE="N"
+			   LABEL="Yes"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*12*P18*1155 1024*NPts1*22*P08*1155 1324*ToHS1*38*ArrowEnd1*1"
+			   NAME="Connector 4"
+			   TO_STEP_NAME="Get Error Message"
+			   TYPE="DECISION"
+			   UPDATED="07/28/2016 16:38:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:35"
+			   CREATED_BY="SADMIN">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="IS_NULL"
+				   PREFERRED_SEQUENCE="1"
+				   PROPERTY_NAME="MSISDN"
+				   UPDATED="07/28/2016 16:38:35"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:35"
+				   CREATED_BY="SADMIN">
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Validate Inputs &amp; Create Order"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1342 1594*NPts1*22*P08*1312 1594*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 5"
+			   TO_STEP_NAME="Error?"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/28/2016 16:38:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:35"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Error?"
+			   INACTIVE="N"
+			   LABEL="Yes"
+			   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*1295 754*FrHS1*12*P17*1381 754*NPts1*32*P08*1381 1324*ToHS1*28*ArrowEnd1*1"
+			   NAME="Connector 6"
+			   TO_STEP_NAME="Error 2"
+			   TYPE="DEFAULT"
+			   UPDATED="07/28/2016 16:38:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:35"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="( All Must Match (Ignore Case)(&apos;[&amp;Error Code] = &quot;&quot; OR [&amp;Error Code] = &quot;0&quot; OR [&amp;Error Code] IS NULL&apos;))"
+			   FROM_STEP_NAME="Error?"
+			   INACTIVE="N"
+			   LABEL="No"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1476 1594*NPts1*22*P08*1420 1594*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 7"
+			   TO_STEP_NAME="Clear NI PAs"
+			   TYPE="DECISION"
+			   UPDATED="07/28/2016 16:38:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:35"
+			   CREATED_BY="SADMIN">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="EXPRESSION"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="EQ_ALL_NC"
+				   PREFERRED_SEQUENCE="1"
+				   UPDATED="07/28/2016 16:38:36"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:35"
+				   CREATED_BY="SADMIN">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR5="[&amp;Error Code] = &quot;&quot; OR [&amp;Error Code] = &quot;0&quot; OR [&amp;Error Code] IS NULL"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="07/28/2016 16:38:36"
+					   UPDATED_BY="SADMIN"
+					   CREATED="07/28/2016 16:38:36"
+					   CREATED_BY="SADMIN">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Update Dealer Code"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*951 1084*FrHS1*22*P16*951 874*NPts1*32*P06*906 874*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 73"
+			   TO_STEP_NAME="Update ShopCode"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/28/2016 16:38:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:36"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Validate MSISDN Change"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*240 2404*NPts1*22*P07*208 2404*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 8"
+			   TO_STEP_NAME="Valid?"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/28/2016 16:38:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:36"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Get Error Message"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*1256 754*NPts1*22*P07*1194 754*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 9"
+			   TO_STEP_NAME="Error 2"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/28/2016 16:38:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:36"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_EVENT
+			   COMMENTS="VFTRCBU-9029 IMARTINS 24042015"
+			   INACTIVE="N"
+			   NAME="Post-Cancel"
+			   WORKFLOW_PROCESS="VFTRCBU Clear Task Profile Attributes WF"
+			   UPDATED="07/28/2016 16:38:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:36"
+			   CREATED_BY="SADMIN">
+			</TASK_EVENT>
+			<TASK_EVENT
+			   COMMENTS="HSOUSA - VFTRCBU-8128"
+			   INACTIVE="N"
+			   NAME="Pre-Cancel"
+			   WORKFLOW_PROCESS="VFTRCBU NI Unlock Actions WF"
+			   UPDATED="07/28/2016 16:38:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:36"
+			   CREATED_BY="SADMIN">
+			</TASK_EVENT>
+			<TASK_LOCALE
+			   APPLICATION_CODE="STD"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   REDO="N"
+			   TRANSLATE="Y"
+			   UPDATED="07/28/2016 16:38:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:36"
+			   CREATED_BY="SADMIN">
+			</TASK_LOCALE>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Account First Name"
+			   UPDATED="07/28/2016 16:38:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:36"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Account Name"
+			   UPDATED="07/28/2016 16:38:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:36"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Billing Account"
+			   UPDATED="07/28/2016 16:38:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:36"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Comments"
+			   UPDATED="07/28/2016 16:38:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:36"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="IN"
+			   INACTIVE="N"
+			   NAME="Context BC Id"
+			   UPDATED="07/28/2016 16:38:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:36"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Context BC Name"
+			   UPDATED="07/28/2016 16:38:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:36"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Context BO Name"
+			   UPDATED="07/28/2016 16:38:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:36"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Dealer Code"
+			   UPDATED="07/28/2016 16:38:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:36"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="DealerCodeId"
+			   UPDATED="07/28/2016 16:38:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:36"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Error Category Code"
+			   UPDATED="07/28/2016 16:38:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:36"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Error Code"
+			   UPDATED="07/28/2016 16:38:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:36"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Error Message"
+			   UPDATED="07/28/2016 16:38:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:36"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="GSM Type"
+			   UPDATED="07/28/2016 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:37"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Instance Identifier"
+			   UPDATED="07/28/2016 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:37"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Integration Id"
+			   UPDATED="07/28/2016 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:37"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="MSISDN"
+			   UPDATED="07/28/2016 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:37"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Message Category"
+			   UPDATED="07/28/2016 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:37"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Object Id"
+			   UPDATED="07/28/2016 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:37"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Order Id"
+			   UPDATED="07/28/2016 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:37"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Owner Account Id"
+			   UPDATED="07/28/2016 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:37"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Product Part Number"
+			   UPDATED="07/28/2016 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:37"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Result"
+			   UPDATED="07/28/2016 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:37"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Shop Code"
+			   UPDATED="07/28/2016 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:37"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="ShopCode"
+			   UPDATED="07/28/2016 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:37"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Siebel Operation Object Id"
+			   UPDATED="07/28/2016 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:37"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Username"
+			   UPDATED="07/28/2016 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:37"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="VF Donor Operator"
+			   UPDATED="07/28/2016 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:37"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="VF ICCID"
+			   UPDATED="07/28/2016 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:37"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="VF MSISDN"
+			   UPDATED="07/28/2016 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:37"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="VF SIM Type"
+			   UPDATED="07/28/2016 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:37"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="VF SIM Type LIC"
+			   UPDATED="07/28/2016 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:37"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="isCOPSallowed"
+			   UPDATED="07/28/2016 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:37"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="SetProfileAttributes"
+			   BUSINESS_SERVICE_NAME="TELCO OM Framework Utilities"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1476 132 1554 1869*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Clear NI PAs"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="07/28/2016 16:38:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:38"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Name 1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Name 1"
+				   TYPE="Literal"
+				   VALUE="VFTRCBU_MSISDN"
+				   UPDATED="07/28/2016 16:38:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:38"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Name 2"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Name 2"
+				   TYPE="Literal"
+				   VALUE="VFTRCBU_ICCID"
+				   UPDATED="07/28/2016 16:38:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:38"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Name 3"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Name 3"
+				   TYPE="Literal"
+				   VALUE="VFTRCBU_IntegrationID"
+				   UPDATED="07/28/2016 16:38:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:38"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Value 1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Value 1"
+				   TYPE="Literal"
+				   UPDATED="07/28/2016 16:38:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:38"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Value 2"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Value 2"
+				   TYPE="Literal"
+				   UPDATED="07/28/2016 16:38:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:38"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Value 3"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Value 3"
+				   TYPE="Literal"
+				   UPDATED="07/28/2016 16:38:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:38"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="RetrieveUsrData"
+			   BUSINESS_SERVICE_NAME="TELCO Order Management Utilities"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*636 48 714 1029*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Cops Position Validation"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="07/28/2016 16:38:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:38"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="LoginName"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:LoginName"
+				   TYPE="Expression"
+				   VALUE="LoginName()"
+				   UPDATED="07/28/2016 16:38:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:38"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="PositionName"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:PositionName"
+				   TYPE="Expression"
+				   VALUE="PositionName()"
+				   UPDATED="07/28/2016 16:38:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:38"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="DealerCode"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Dealer Code"
+				   PROPERTY_NAME="Dealer Code"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:38"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Result"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:isCOPSallowed"
+				   PROPERTY_NAME="isCOPSallowed"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:38"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1584 132 1662 1869*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="End"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="END"
+			   UPDATED="07/28/2016 16:38:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:38"
+			   CREATED_BY="SADMIN">
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   ERROR_CODE="WF_ERR_CUSTOM_1"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*240 129 318 1839*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="Error 0"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="ERROR"
+			   UPDATED="07/28/2016 16:38:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:38"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="%1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:%1"
+				   TYPE="Expression"
+				   VALUE="IfNull(GetProfileAttr(&quot;LastUserDefinedErrorMessage&quot;), [&amp;Error Message])"
+				   UPDATED="07/28/2016 16:38:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:38"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   ERROR_CODE="WF_ERR_CUSTOM_1"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*456 300 534 3549*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="Error 1"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="ERROR"
+			   UPDATED="07/28/2016 16:38:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:39"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="%1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:%1"
+				   TYPE="Expression"
+				   VALUE="LookupMessage([&amp;Message Category],[&amp;Error Category Code])"
+				   UPDATED="07/28/2016 16:38:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:39"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   ERROR_CODE="WF_ERR_CUSTOM_1"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r16*1236 48 1314 1029*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="Error 2"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="ERROR"
+			   UPDATED="07/28/2016 16:38:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:39"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="%1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:%1"
+				   TYPE="Expression"
+				   VALUE="IfNull(GetProfileAttr(&quot;LastUserDefinedErrorMessage&quot;), [&amp;Error Message])"
+				   UPDATED="07/28/2016 16:38:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:39"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   ERROR_CODE="WF_ERR_CUSTOM_1"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*583 132 661 1869*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="Error 3"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="ERROR"
+			   UPDATED="07/28/2016 16:38:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:39"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="%1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:%1"
+				   PROPERTY_NAME="Error Message"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:39"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*348 300 426 3549*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Error ?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="07/28/2016 16:38:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:39"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_LOCALE
+				   APPLICATION_CODE="STD"
+				   DISPLAY_NAME="Error?"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="07/28/2016 16:38:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:39"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_LOCALE>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1342 132 1420 1869*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Error?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="07/28/2016 16:38:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:39"
+			   CREATED_BY="SADMIN">
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="GetFieldsFromFirstRow"
+			   BUSINESS_SERVICE_NAME="TELCO BusComp Utils"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*24 300 102 3549*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Asset Info"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="07/28/2016 16:38:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:39"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Account First Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Account First Name"
+				   TYPE="Literal"
+				   UPDATED="07/28/2016 16:38:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:39"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Account Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Account Name"
+				   TYPE="Literal"
+				   UPDATED="07/28/2016 16:38:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:39"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Billing Account Code"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Billing Account Code"
+				   TYPE="Literal"
+				   UPDATED="07/28/2016 16:38:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:39"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="BusinessComponent"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:BusinessComponent"
+				   TYPE="Literal"
+				   VALUE="Asset Mgmt - Asset"
+				   UPDATED="07/28/2016 16:38:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:39"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="BusinessObject"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:BusinessObject"
+				   TYPE="Literal"
+				   VALUE="Asset Management - Asset Item"
+				   UPDATED="07/28/2016 16:38:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:39"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Integration Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Integration Id"
+				   TYPE="Literal"
+				   UPDATED="07/28/2016 16:38:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:39"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Owner Account Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Owner Account Id"
+				   TYPE="Literal"
+				   UPDATED="07/28/2016 16:38:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:40"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Product Part Number"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Product Part Number"
+				   TYPE="Literal"
+				   UPDATED="07/28/2016 16:38:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:40"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="SearchExpression"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:SearchExpression"
+				   TYPE="Expression"
+				   VALUE="&quot;[Id] = &apos;&quot;+[&amp;Object Id] +&quot;&apos;&quot;"
+				   UPDATED="07/28/2016 16:38:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:40"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VF Donor Operator"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:VF Donor Operator"
+				   TYPE="Literal"
+				   UPDATED="07/28/2016 16:38:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:40"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VF ICCID"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:VF ICCID"
+				   TYPE="Literal"
+				   UPDATED="07/28/2016 16:38:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:40"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VF MSISDN"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:VF MSISDN"
+				   TYPE="Literal"
+				   UPDATED="07/28/2016 16:38:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:40"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VF SIM Type"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:VF SIM Type"
+				   TYPE="Literal"
+				   UPDATED="07/28/2016 16:38:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:40"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Account First Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Account First Name"
+				   PROPERTY_NAME="Account First Name"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:40"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Account Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Account Name"
+				   PROPERTY_NAME="Account Name"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:40"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Billing Account Code"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Billing Account"
+				   PROPERTY_NAME="Billing Account"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:40"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Integration Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Integration Id"
+				   PROPERTY_NAME="Integration Id"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:40"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Owner Account Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Owner Account Id"
+				   PROPERTY_NAME="Owner Account Id"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:40"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Product Part Number"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Product Part Number"
+				   PROPERTY_NAME="Product Part Number"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:40"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VF Donor Operator"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:VF Donor Operator"
+				   PROPERTY_NAME="VF Donor Operator"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:40"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VF ICCID"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:VF ICCID"
+				   PROPERTY_NAME="VF ICCID"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:41"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VF MSISDN"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:VF MSISDN"
+				   PROPERTY_NAME="VF MSISDN"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:41"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VF SIM Type"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:VF SIM Type"
+				   PROPERTY_NAME="VF SIM Type"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:41"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="GetFieldsFromFirstRow"
+			   BUSINESS_SERVICE_NAME="TELCO BusComp Utils"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*780 132 858 1869*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Dealer Data"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="07/28/2016 16:38:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:41"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="BusinessComponent"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:BusinessComponent"
+				   TYPE="Literal"
+				   VALUE="Employee"
+				   UPDATED="07/28/2016 16:38:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:41"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="BusinessObject"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:BusinessObject"
+				   TYPE="Literal"
+				   VALUE="Employee"
+				   UPDATED="07/28/2016 16:38:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:41"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Id"
+				   TYPE="Literal"
+				   UPDATED="07/28/2016 16:38:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:41"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Query Field 1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Query Field 1"
+				   TYPE="Literal"
+				   VALUE="Id"
+				   UPDATED="07/28/2016 16:38:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:41"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Query Field 2"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Query Field 2"
+				   TYPE="Literal"
+				   VALUE="VF Shop Id"
+				   UPDATED="07/28/2016 16:38:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:41"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="SearchExpression"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:SearchExpression"
+				   TYPE="Expression"
+				   VALUE="&quot;[VF Dealer Code] = &apos;&quot; + [&amp;Dealer Code] + &quot;&apos;&quot;"
+				   UPDATED="07/28/2016 16:38:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:41"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VF Dealer Code"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:VF Dealer Code"
+				   TYPE="Literal"
+				   UPDATED="07/28/2016 16:38:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:41"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VF Shop Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:VF Shop Id"
+				   TYPE="Literal"
+				   UPDATED="07/28/2016 16:38:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:41"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:DealerCodeId"
+				   PROPERTY_NAME="DealerCodeId"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:41"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VF Shop Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:ShopCode"
+				   PROPERTY_NAME="ShopCode"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:41"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="GetFieldsFromFirstRow"
+			   BUSINESS_SERVICE_NAME="TELCO BusComp Utils"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*348 48 426 1029*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Dealer/Shop Code"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="07/28/2016 16:38:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:42"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="BusinessComponent"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:BusinessComponent"
+				   TYPE="Literal"
+				   VALUE="Employee"
+				   UPDATED="07/28/2016 16:38:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:42"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="BusinessObject"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:BusinessObject"
+				   TYPE="Literal"
+				   VALUE="Employee"
+				   UPDATED="07/28/2016 16:38:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:42"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Query Field 1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Query Field 1"
+				   TYPE="Literal"
+				   VALUE="VF Dealer Code"
+				   UPDATED="07/28/2016 16:38:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:42"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Query Field 2"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Query Field 2"
+				   TYPE="Literal"
+				   VALUE="VF Shop Id"
+				   UPDATED="07/28/2016 16:38:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:42"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="SearchExpression"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:SearchExpression"
+				   TYPE="Expression"
+				   VALUE="&quot;[Id] = &apos;&quot; + LoginId() + &quot;&apos;&quot;"
+				   UPDATED="07/28/2016 16:38:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:42"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VF Dealer Code"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:VF Dealer Code"
+				   TYPE="Literal"
+				   UPDATED="07/28/2016 16:38:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:42"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VF Shop Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:VF Shop Id"
+				   TYPE="Literal"
+				   UPDATED="07/28/2016 16:38:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:42"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VF Dealer Code"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Dealer Code"
+				   PROPERTY_NAME="Dealer Code"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:42"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VF Shop Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Shop Code"
+				   PROPERTY_NAME="Shop Code"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:42"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="GetErrorMessageText"
+			   BUSINESS_SERVICE_NAME="TELCO Message Utils"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r16*1116 48 1194 1029*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Error Message"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="07/28/2016 16:38:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:42"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Category"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Category"
+				   TYPE="Literal"
+				   VALUE="VF Message Category"
+				   UPDATED="07/28/2016 16:38:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:42"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Name"
+				   TYPE="Literal"
+				   VALUE="328"
+				   UPDATED="07/28/2016 16:38:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:42"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="ErrorMessage"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Error Message"
+				   PROPERTY_NAME="Error Message"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:42"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="GetErrorMessageText"
+			   BUSINESS_SERVICE_NAME="TELCO Message Utils"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*465 132 543 1869*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Error Message 2"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="07/28/2016 16:38:43"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:42"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Category"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Category"
+				   TYPE="Literal"
+				   VALUE="VF Message Category"
+				   UPDATED="07/28/2016 16:38:43"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:43"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Name"
+				   TYPE="Literal"
+				   VALUE="419"
+				   UPDATED="07/28/2016 16:38:43"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:43"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="ErrorMessage"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Error Message"
+				   PROPERTY_NAME="Error Message"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:43"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:43"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="GetFieldsFromFirstRow"
+			   BUSINESS_SERVICE_NAME="TELCO BusComp Utils"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*24 129 102 1839*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Object Id"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="07/28/2016 16:38:43"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:43"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="BusinessComponent"
+				   COMMENTS="VFTRCBU-5540"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:BusinessComponent"
+				   TYPE="Literal"
+				   VALUE="Asset Mgmt - Asset - Header"
+				   UPDATED="07/28/2016 16:38:43"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:43"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="BusinessObject"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:BusinessObject"
+				   TYPE="Literal"
+				   VALUE="Asset Management - Asset Item"
+				   UPDATED="07/28/2016 16:38:43"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:43"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Root Asset Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Root Asset Id"
+				   TYPE="Literal"
+				   UPDATED="07/28/2016 16:38:43"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:43"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="SearchExpression"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:SearchExpression"
+				   TYPE="Expression"
+				   VALUE="&quot;[Id] = &apos;&quot;+[&amp;Context BC Id] +&quot;&apos;&quot;"
+				   UPDATED="07/28/2016 16:38:43"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:43"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Root Asset Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Object Id"
+				   PROPERTY_NAME="Object Id"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:43"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:43"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_COMPONENT="Asset Mgmt - Asset"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*24 213 102 2679*FillBgClr8*134218238*ArrowEnd1*1"
+			   NAME="Instantiate Asset Mgmt - Asset BC"
+			   OPERATION="QUERY"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="SIEBEL_OPER"
+			   UPDATED="07/28/2016 16:38:43"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:43"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="Id"
+				   PROPERTY_NAME="Object Id"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:43"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:43"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*720 48 798 1029*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Is Cops?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="07/28/2016 16:38:43"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:43"
+			   CREATED_BY="SADMIN">
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1116 132 1194 1869*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Missing Required Data?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="07/28/2016 16:38:43"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:43"
+			   CREATED_BY="SADMIN">
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1015 211 1093 2659*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Port  In/Out ?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="07/28/2016 16:38:43"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:43"
+			   CREATED_BY="SADMIN">
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*348 132 426 1869*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Port In/Out ?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="07/28/2016 16:38:43"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:43"
+			   CREATED_BY="SADMIN">
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="Set Profile Attribute"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*540 48 618 1029*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Set SubType Profile Attrib"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="07/28/2016 16:38:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:43"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Profile Attribute Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Profile Attribute Name"
+				   TYPE="Literal"
+				   VALUE="VF ICCB SubType"
+				   UPDATED="07/28/2016 16:38:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:44"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Profile Attribute Value"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Profile Attribute Value"
+				   TYPE="Literal"
+				   VALUE="Modify MSISDN"
+				   UPDATED="07/28/2016 16:38:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:44"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*132 129 210 1839*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="Start"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="START"
+			   UPDATED="07/28/2016 16:38:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:44"
+			   CREATED_BY="SADMIN">
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_SEARCH_MSISDN"
+			   DISPLAY_NAME_TYPE="Normal"
+			   FORWARD_BUTTON_TYPE="Submit"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r16*1008 48 1086 1029*FillBgClr8*107355238*ArrowEnd1*1"
+			   NAME="Task View 0"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TASK_VIEW="VFTRCBU MSISDN Change Task View"
+			   TYPE="TASK_VIEW"
+			   UPDATED="07/28/2016 16:38:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:44"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Swap SIM Card MSISDN TBC"
+				   BUSINESS_COMPONENT_FIELD="Comments"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Comments"
+				   PROPERTY_NAME="Comments"
+				   TYPE="Business Component"
+				   UPDATED="07/28/2016 16:38:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:44"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Swap SIM Card MSISDN TBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU Originating Dealer Code"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Dealer Code"
+				   PROPERTY_NAME="Dealer Code"
+				   TYPE="Business Component"
+				   UPDATED="07/28/2016 16:38:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:44"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Swap SIM Card MSISDN TBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU New GSM Type"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:GSM Type"
+				   PROPERTY_NAME="GSM Type"
+				   TYPE="Business Component"
+				   UPDATED="07/28/2016 16:38:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:44"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Swap SIM Card MSISDN TBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU Coupled MSISDN"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:MSISDN"
+				   PROPERTY_NAME="MSISDN"
+				   TYPE="Business Component"
+				   UPDATED="07/28/2016 16:38:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:44"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Swap SIM Card MSISDN TBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU User Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Username"
+				   PROPERTY_NAME="Username"
+				   TYPE="Business Component"
+				   UPDATED="07/28/2016 16:38:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:44"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_COMPONENT="VFTRCBU Swap SIM Card MSISDN TBC"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*828 60 906 1149*FillBgClr8*134218238*ArrowEnd1*1"
+			   NAME="Update Dealer Code"
+			   OPERATION="UPDATE"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="SIEBEL_OPER"
+			   UPDATED="07/28/2016 16:38:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:44"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="VFTRCBU Originating Dealer Code Id"
+				   TYPE="Expression"
+				   VALUE="IIF([&amp;DealerCodeId] IS NULL, &apos;&apos;, [&amp;DealerCodeId])"
+				   UPDATED="07/28/2016 16:38:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:44"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_COMPONENT="VFTRCBU Swap SIM Card MSISDN TBC"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*912 108 990 1629*FillBgClr8*134218238*ArrowEnd1*1"
+			   NAME="Update ShopCode"
+			   OPERATION="UPDATE"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="SIEBEL_OPER"
+			   UPDATED="07/28/2016 16:38:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:44"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="VFTRCBU Originating Shop Code"
+				   TYPE="Expression"
+				   VALUE="IIF([&amp;ShopCode] IS NULL, &apos;&apos;, [&amp;ShopCode])"
+				   UPDATED="07/28/2016 16:38:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:44"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_COMPONENT="VFTRCBU Swap SIM Card MSISDN TBC"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*444 48 522 1029*FillBgClr8*134218238*ArrowEnd1*1"
+			   NAME="Update TBC"
+			   OPERATION="UPDATE"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="SIEBEL_OPER"
+			   UPDATED="07/28/2016 16:38:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:44"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="VFTRCBU Asset Integration Id"
+				   PROPERTY_NAME="Integration Id"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:44"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="VFTRCBU Billing Account"
+				   PROPERTY_NAME="Billing Account"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:44"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="VFTRCBU First Name"
+				   PROPERTY_NAME="Account First Name"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:45"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="VFTRCBU GSM"
+				   PROPERTY_NAME="VF MSISDN"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:45"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="VFTRCBU ICCID"
+				   PROPERTY_NAME="VF ICCID"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:45"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="VFTRCBU Last Name"
+				   PROPERTY_NAME="Account Name"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:45"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="VFTRCBU New GSM Type"
+				   TYPE="Expression"
+				   VALUE="LookupValue(&quot;VFTRCBU_MSISDN_TYPES&quot;,&quot;N&quot;)"
+				   UPDATED="07/28/2016 16:38:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:45"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="VFTRCBU Originating Dealer Code"
+				   TYPE="Literal"
+				   UPDATED="07/28/2016 16:38:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:45"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="VFTRCBU Originating Shop Code"
+				   PROPERTY_NAME="Shop Code"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:45"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="VFTRCBU SIM Type"
+				   TYPE="Expression"
+				   VALUE="LookupValue(&quot;VFTRCBU_SIM_TYPE_OPERATIONS&quot;,[&amp;VF SIM Type LIC])"
+				   UPDATED="07/28/2016 16:38:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:45"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*240 213 318 2679*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Valid?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="07/28/2016 16:38:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:45"
+			   CREATED_BY="SADMIN">
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="RunProcess"
+			   BUSINESS_SERVICE_NAME="Workflow Process Manager"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1234 132 1312 1869*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Validate Inputs &amp; Create Order"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="07/28/2016 16:38:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:45"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Asset Integration Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Asset Integration Id"
+				   PROPERTY_NAME="Integration Id"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:45"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Billing Account"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Billing Account"
+				   PROPERTY_NAME="Billing Account"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:45"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Comments"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Comments"
+				   PROPERTY_NAME="Comments"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:45"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Dealer Code"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Dealer Code"
+				   PROPERTY_NAME="Dealer Code"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:45"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="GSM Type"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:GSM Type"
+				   TYPE="Expression"
+				   VALUE="LookupName(&quot;VFTRCBU_MSISDN_TYPES&quot;,[&amp;GSM Type])"
+				   UPDATED="07/28/2016 16:38:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:46"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="PreviousMSISDN"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:PreviousMSISDN"
+				   PROPERTY_NAME="VF MSISDN"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:46"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Primary ICCID"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Primary ICCID"
+				   PROPERTY_NAME="VF ICCID"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:46"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Primary MSISDN"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Primary MSISDN"
+				   PROPERTY_NAME="MSISDN"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:46"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="ProcessName"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:ProcessName"
+				   TYPE="Literal"
+				   VALUE="VFTRCBU Create Change SIM Orders WF"
+				   UPDATED="07/28/2016 16:38:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:46"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Root Part Num"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Root Part Num"
+				   PROPERTY_NAME="Product Part Number"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:46"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Shop Code"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Shop Code"
+				   PROPERTY_NAME="Shop Code"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:46"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Template Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Template Name"
+				   TYPE="Literal"
+				   VALUE="Change MSISDN"
+				   UPDATED="07/28/2016 16:38:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:46"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Error Code"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Error Code"
+				   PROPERTY_NAME="Error Code"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:46"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Error Message"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Error Message"
+				   PROPERTY_NAME="Error Message"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:46"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Order Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Order Id"
+				   PROPERTY_NAME="Order Id"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:46"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="RunProcess"
+			   BUSINESS_SERVICE_NAME="Workflow Process Manager"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*130 213 208 2679*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Validate MSISDN Change"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="07/28/2016 16:38:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:46"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Action Type LIC"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Action Type LIC"
+				   TYPE="Literal"
+				   VALUE="102"
+				   UPDATED="07/28/2016 16:38:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:46"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Asset Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Asset Id"
+				   PROPERTY_NAME="Object Id"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:46"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Asset Integration Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Asset Integration Id"
+				   PROPERTY_NAME="Integration Id"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:47"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:47"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Asset Owner Account Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Asset Owner Account Id"
+				   PROPERTY_NAME="Owner Account Id"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:47"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:47"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="ProcessName"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:ProcessName"
+				   TYPE="Literal"
+				   VALUE="VFTRCBU Validate Change MSISDN Order WF"
+				   UPDATED="07/28/2016 16:38:47"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:47"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Error Code"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Error Code"
+				   PROPERTY_NAME="Error Code"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:47"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:47"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Error Message"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Error Message"
+				   PROPERTY_NAME="Error Message"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:47"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:47"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:VF SIM Type LIC"
+				   PROPERTY_NAME="VF SIM Type LIC"
+				   TYPE="Expression"
+				   VALUE="LookupName(&quot;VF_TWIN_SIM_TYPE&quot;,[&amp;VF SIM Type])"
+				   UPDATED="07/28/2016 16:38:47"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:47"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="RunProcess"
+			   BUSINESS_SERVICE_NAME="Workflow Process Manager"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*240 300 318 3549*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Validate Number of Orders"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="07/28/2016 16:38:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:47"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Asset Integration Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Asset Integration Id"
+				   PROPERTY_NAME="Integration Id"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:47"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:47"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Current Order Due Date"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Current Order Due Date"
+				   TYPE="Expression"
+				   VALUE="Today()"
+				   UPDATED="07/28/2016 16:38:47"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:47"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Customer Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Customer Id"
+				   PROPERTY_NAME="Owner Account Id"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:47"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:47"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="ProcessName"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:ProcessName"
+				   TYPE="Literal"
+				   VALUE="VFTRCBU Custom Count Validations WF"
+				   UPDATED="07/28/2016 16:38:47"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:47"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Type Scenario"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Type Scenario"
+				   TYPE="Literal"
+				   VALUE="Change MSISDN"
+				   UPDATED="07/28/2016 16:38:47"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:47"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Msg Category Code"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Error Category Code"
+				   PROPERTY_NAME="Error Category Code"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:47"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:47"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Message Category"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Message Category"
+				   PROPERTY_NAME="Message Category"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:47"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:47"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="checkNumberXTransfer"
+			   BUSINESS_SERVICE_NAME="VF Orders"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*348 214 426 2689*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="checkNumberXTransfer"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="07/28/2016 16:38:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:48"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="MSISDN"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:MSISDN"
+				   PROPERTY_NAME="VF MSISDN"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:48"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Result"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Result"
+				   PROPERTY_NAME="Result"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:48"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="checkNumberXTransfer"
+			   BUSINESS_SERVICE_NAME="VF Orders"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1015 139 1093 1939*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="checkNumberXTransfer 2"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="07/28/2016 16:38:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:38:48"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="MSISDN"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:MSISDN"
+				   PROPERTY_NAME="MSISDN"
+				   TYPE="Task Property"
+				   UPDATED="07/28/2016 16:38:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:48"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Result"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Result"
+				   PROPERTY_NAME="Result"
+				   TYPE="Output Argument"
+				   UPDATED="07/28/2016 16:38:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:38:48"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+		</TASK>
+	</PROJECT>
+</REPOSITORY>
+
+
+

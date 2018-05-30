@@ -1,0 +1,990 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VFTRCBU MSISDN SIM Card Management"
+	   UI_FREEZE="N"
+	   UPDATED="12/28/2017 15:57:02"
+	   UPDATED_BY="IBM_TFERREIRA"
+	   CREATED="11/25/2014 10:48:35"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="N"
+		   CLASS="CSSBCVExtern"
+		   COMMENTS="WA#14 23/10/2014 DG"
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MULTI_RECIPIENT_SELECT="N"
+		   NAME="VFTRCBU MSISDN VBC"
+		   NO_DELETE="Y"
+		   NO_INSERT="Y"
+		   NO_MERGE="Y"
+		   NO_UPDATE="Y"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="12/28/2017 01:29:58"
+		   OWNER_DELETE="N"
+		   POPUP_VISIBILITY_AUTO_ALL="N"
+		   SCRIPTED="Y"
+		   TYPE="Non-Transient"
+		   OBJECT_LOCKED_BY_NAME="IBM_TFERREIRA"
+		   UPDATED="12/28/2017 15:56:54"
+		   UPDATED_BY="IBM_TFERREIRA"
+		   CREATED="11/25/2014 11:02:02"
+		   CREATED_BY="SADMIN">
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="Y"
+			   NAME="BusComp_InvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_InvokeMethod (MethodName)
+{
+try{
+	TheApplication().TraceOn(&quot;/swstage/MSISDN_InvokeMethod.txt&quot;, &quot;Allocation&quot;, &quot;All&quot;);
+	TheApplication().Trace(&quot;InvokeMethod Start!&quot;);
+	var sMSISDN = this.GetFieldValue(&quot;VFTRCBU MSISDN&quot;);
+	var psInput	: PropertySet = TheApplication().NewPropertySet();
+	var psOutput: PropertySet = TheApplication().NewPropertySet();
+	var svcWF	: Service = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+	TheApplication().Trace(&quot;sMSISDN = &quot; + sMSISDN);
+
+	if (MethodName == &quot;VFTRCBUReserveMSISDN&quot;)
+	{
+		TheApplication().Trace(&quot;MethodName == VFTRCBUReserveMSISDN&quot;);
+		psInput.SetProperty(&quot;VFTRCBU Operation Type&quot;, &quot;Reserve&quot;);
+		psInput.SetProperty(&quot;VFTRCBU MSISDN&quot;, sMSISDN);
+		psInput.SetProperty(&quot;ProcessName&quot;, &quot;VFTRCBU MSISDN Reservation Management WF&quot;); 
+		svcWF.InvokeMethod(&quot;RunProcess&quot;, psInput, psOutput);
+		
+		
+	}
+		
+	if (MethodName == &quot;VFTRCBUUnReserveMSISDN&quot;)
+	{
+		TheApplication().Trace(&quot;MethodName == VFTRCBUUnReserveMSISDN&quot;);
+		psInput.SetProperty(&quot;VFTRCBU Operation Type&quot;, &quot;UnReserve&quot;);
+		psInput.SetProperty(&quot;VFTRCBU MSISDN&quot;, sMSISDN);
+		psInput.SetProperty(&quot;ProcessName&quot;, &quot;VFTRCBU MSISDN Reservation Management WF&quot;); 
+		svcWF.InvokeMethod(&quot;RunProcess&quot;, psInput, psOutput);
+
+	}
+}
+catch(e){
+	TheApplication().Trace(&quot;catch = &quot; + e.errText);
+}
+finally{
+	psInput = null;
+	psOutput = null;
+	svcWF = null;
+}
+}"
+			   SEQUENCE="4"
+			   UPDATED="12/28/2017 15:56:30"
+			   UPDATED_BY="IBM_TFERREIRA"
+			   CREATED="11/25/2014 11:02:02"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreInvokeMethod (MethodName)
+{
+	return (ContinueOperation);
+}"
+			   SEQUENCE="5"
+			   UPDATED="10/10/2017 13:45:28"
+			   UPDATED_BY="IBM_BAKIG"
+			   CREATED="11/25/2014 11:02:02"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreQuery"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreQuery ()
+{
+try{
+	TheApplication().TraceOn(&quot;/swstage/MSISDN_PreQuery.txt&quot;, &quot;Allocation&quot;, &quot;All&quot;);
+	TheApplication().Trace(&quot;PreQuery Start!&quot;);
+	TheApplication().Trace(&quot;VFSkipQueryWF = &quot; + TheApplication().GetProfileAttr(&quot;VFSkipQueryWF&quot;));
+	if(TheApplication().GetProfileAttr(&quot;VFSkipQueryWF&quot;) != &quot;Y&quot;)
+	{
+		TheApplication().Trace(&quot;TheApplication().GetProfileAttr(VFSkipQueryWF) != Y&quot;);
+		var sMSISDN = GetSearchSpec(&quot;VFTRCBU MSISDN&quot;);
+	    var sGSMType = GetSearchSpec(&quot;VFTRCBU GSM Type&quot;);
+	    //++WA#18 Gaps - RPIRES
+		var sDocType = GetSearchSpec(&quot;VFTRCBU Document Type&quot;);
+	    var sDocId = GetSearchSpec(&quot;VFTRCBU Document Id&quot;);
+	    var sCustId = &quot;&quot;; 
+	    var sReason = &quot;&quot;;
+		var iInputs  : PropertySet = TheApplication().NewPropertySet();
+		var iOutputs : PropertySet = TheApplication().NewPropertySet();
+		var BO : BusObject = TheApplication().ActiveBusObject();
+			
+		TheApplication().Trace(&quot;BO = &quot; + BO.Name());	
+		if(BO != null &amp;&amp; BO != &quot;&quot;)
+		{
+			TheApplication().Trace(&quot;BO != null&quot;);
+			TheApplication().Trace(&quot;BO = &quot; + BO.Name());
+			if(BO.Name() == &quot;VFTRCBU Account BO&quot;) //if in activation task and opened pick applet
+			{
+				TheApplication().Trace(&quot;BO.Name() == VFTRCBU Account BO&quot;);
+				sCustId = BO.GetBusComp(&quot;VFTRCBU Activate New Line TBC&quot;).GetFieldValue(&quot;VFTRCBU Customer Id&quot;);
+				sReason = BO.GetBusComp(&quot;VFTRCBU Activate New Line TBC&quot;).GetFieldValue(&quot;VFTRCBU Reason&quot;);
+				TheApplication().Trace(&quot;sCustId = &quot; + sCustId);
+				TheApplication().Trace(&quot;sReason = &quot; + sReason);
+
+				if(sReason == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACS_ORDER_REASON&quot;,&quot;224&quot;))
+				{
+					TheApplication().Trace(&quot;sReason == Activate Received Number&quot;);
+					TheApplication().SetProfileAttr(&quot;GetMSISDNListProcess&quot;,&quot;MNP&quot;);
+					iInputs.SetProperty(&quot;CustId&quot;,sCustId);
+					GetCustomerInfo(iInputs,iOutputs);
+					this.SetSearchSpec(&quot;VFTRCBU Document Type&quot;,iOutputs.GetProperty(&quot;DocType&quot;));
+					this.SetSearchSpec(&quot;VFTRCBU Document Id&quot;,iOutputs.GetProperty(&quot;DocId&quot;));
+					TheApplication().Trace(&quot;VFTRCBU Document Type = &quot; + iOutputs.GetProperty(&quot;DocType&quot;));
+					TheApplication().Trace(&quot;VFTRCBU Document Id = &quot; + iOutputs.GetProperty(&quot;DocId&quot;));
+					sDocType = GetSearchSpec(&quot;VFTRCBU Document Type&quot;);
+		    		sDocId = GetSearchSpec(&quot;VFTRCBU Document Id&quot;);
+		    		TheApplication().Trace(&quot;sDocType = &quot; + sDocType);
+		    		TheApplication().Trace(&quot;sDocId = &quot; + sDocId);
+		    	}
+			}
+			else if(BO.Name() == &quot;Order Entry (Sales)&quot;) //if in activation order and opened pick applet
+			{
+				TheApplication().Trace(&quot;BO.Name() == Order Entry (Sales)&quot;);
+				sCustId = BO.GetBusComp(&quot;Order Entry - Line Items&quot;).GetFieldValue(&quot;Account Id&quot;);
+				sReason = BO.GetBusComp(&quot;Order Entry - Line Items&quot;).GetFieldValue(&quot;TELCO Action Reason&quot;);
+				TheApplication().Trace(&quot;sCustId = &quot; + sCustId);
+				TheApplication().Trace(&quot;sReason = &quot; + sReason);
+				if(sReason == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACS_ORDER_REASON&quot;,&quot;224&quot;))
+				{
+					TheApplication().Trace(&quot;sReason == Activate Received Number&quot;);
+					TheApplication().SetProfileAttr(&quot;GetMSISDNListProcess&quot;,&quot;MNP&quot;);
+					iInputs.SetProperty(&quot;CustId&quot;,sCustId);
+					GetCustomerInfo(iInputs,iOutputs);
+					this.SetSearchSpec(&quot;VFTRCBU Document Type&quot;,iOutputs.GetProperty(&quot;DocType&quot;));
+					this.SetSearchSpec(&quot;VFTRCBU Document Id&quot;,iOutputs.GetProperty(&quot;DocId&quot;));
+					TheApplication().Trace(&quot;VFTRCBU Document Type = &quot; + iOutputs.GetProperty(&quot;DocType&quot;));
+					TheApplication().Trace(&quot;VFTRCBU Document Id = &quot; + iOutputs.GetProperty(&quot;DocId&quot;));
+					sDocType = GetSearchSpec(&quot;VFTRCBU Document Type&quot;);
+		    		sDocId = GetSearchSpec(&quot;VFTRCBU Document Id&quot;);
+		    		TheApplication().Trace(&quot;sDocType = &quot; + sDocType);
+		    		TheApplication().Trace(&quot;sDocId = &quot; + sDocId);
+		    	}
+			}
+		}
+		//--WA#18 Gaps - RPIRES
+						
+		if(sGSMType == &quot;&quot;)
+		{
+			TheApplication().Trace(&quot;sGSMType == empty&quot;);
+			sGSMType = TheApplication().GetProfileAttr(&quot;VFTRCBU GSM Type&quot;);
+			TheApplication().Trace(&quot;sGSMType = &quot; + sGSMType);
+			if(sReason != TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACS_ORDER_REASON&quot;,&quot;224&quot;))//WA#18 Gaps - RPIRES
+			{
+				TheApplication().Trace(&quot;sReason &lt;&gt; Activate Received Number&quot;);
+				this.SetSearchSpec(&quot;VFTRCBU GSM Type&quot;,sGSMType);	
+			}
+		}
+		//Activate Received Number -ITSL 4620 BG
+		TheApplication().Trace(&quot;sMSISDN = &quot; + sMSISDN);
+		checkMSISDN(sMSISDN);
+		
+	    
+	    var psInputs  : PropertySet = TheApplication().NewPropertySet();
+		var psOutputs : PropertySet = TheApplication().NewPropertySet();
+		var sLenMSISDN = sMSISDN.length;
+		var sLenGSMType = sGSMType.length;
+		var sNewSearchSpecGSMType = &quot;&quot;;
+		var sNewSearchSpecMSISDN = &quot;&quot;;
+		
+	    var sError1	= TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0090&quot;);	//Please insert a valid number (only digits)
+		var sError2 = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0093&quot;);	//GSM must be at least 8 characters
+		var sError3 = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0096&quot;);	//Please insert a valid querying format
+		
+		if(sMSISDN == &quot;&quot; || (sGSMType == &quot;&quot; &amp;&amp; (sDocType == &quot;&quot; || sDocId == &quot;&quot;))) //WA#18 Gaps - RPIRES
+	    {
+	    	TheApplication().Trace(&quot;sMSISDN == null || (sGSMType == null &amp;&amp; (sDocType == null || sDocId == null))&quot;);
+	    	TheApplication().Trace(&quot;sError3 = &quot; + sError3);
+			TheApplication().RaiseErrorText(sError3);
+		}
+		
+		//WA#18 Gaps - RPIRES
+		if(sDocType != &quot;&quot; &amp;&amp; sDocType != null &amp;&amp; sDocId != &quot;&quot; &amp;&amp; sDocId != null)
+		{
+			TheApplication().Trace(&quot;sDocType != null &amp;&amp; sDocId != null&quot;);
+			TheApplication().SetProfileAttr(&quot;GetMSISDNListProcess&quot;,&quot;MNP&quot;);
+		}
+		
+		//MSISDN Validation 
+		
+		if (sMSISDN != &quot;&quot; &amp;&amp; sMSISDN != null )
+		{
+			TheApplication().Trace(&quot;sMSISDN != null&quot;);
+			TheApplication().Trace(&quot;sMSISDN = &quot; + sMSISDN);
+			psInputs.SetProperty(&quot;Value&quot;, sMSISDN);
+			psInputs.SetProperty(&quot;Prefix&quot;, &quot;&quot;);
+			psInputs.SetProperty(&quot;Lenght&quot;, &quot;10&quot;);
+			Cleaner(psInputs,psOutputs);
+			sMSISDN = psOutputs.GetProperty(&quot;TreatedValue&quot;);
+			TheApplication().Trace(&quot;sMSISDN = &quot; + sMSISDN);
+		}
+		
+		if (sMSISDN != &quot;&quot;) 
+		{
+			TheApplication().Trace(&quot;sMSISDN != null&quot;);
+			TheApplication().Trace(&quot;sLenMSISDN = &quot; + sLenMSISDN);
+			
+			//ACAMBAS: VFTRCBU-21215 - Start
+			if(sReason == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACS_ORDER_REASON&quot;,&quot;224&quot;) &amp;&amp; sLenMSISDN != 13) // Reason = Activate Received Number
+			{
+				TheApplication().Trace(&quot;sReason == Activate Received Number &amp;&amp; sLenMSISDN != 13&quot;);
+				TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;VF Message Category&quot;, &quot;R245_2&quot;)); //Invalid MSISDN. Please enter a valid format (10 numbers)
+			}
+			//ACAMBAS: VFTRCBU-21215 - End
+			TheApplication().Trace(&quot;sNewSearchSpecMSISDN = &quot; + sNewSearchSpecMSISDN);
+			TheApplication().Trace(&quot;sMSISDN = &quot; + sMSISDN);
+			sNewSearchSpecMSISDN = sMSISDN;
+			TheApplication().Trace(&quot;sNewSearchSpecMSISDN = &quot; + sNewSearchSpecMSISDN);
+			TheApplication().Trace(&quot;sMSISDN = &quot; + sMSISDN);
+
+			TheApplication().Trace(&quot;sLenMSISDN = &quot; + sLenMSISDN);
+			if (sLenMSISDN &lt; 13)  //&quot; = &quot; + 10 digits = 13 digits
+			{
+				TheApplication().Trace(&quot;sLenMSISDN &lt; 13&quot;);
+				if (sLenMSISDN &lt; 11) 
+				{  //&quot; = &quot; + 8 digits = 11 digits
+					TheApplication().Trace(&quot;sLenMSISDN &lt; 11&quot;);
+					TheApplication().Trace(&quot;sError2 = &quot; + sError2);
+					TheApplication().RaiseErrorText(sError2);
+				}
+				TheApplication().Trace(&quot;sNewSearchSpecMSISDN = &quot; + sNewSearchSpecMSISDN);
+				sNewSearchSpecMSISDN = sNewSearchSpecMSISDN;
+				TheApplication().Trace(&quot;sNewSearchSpecMSISDN = &quot; + sNewSearchSpecMSISDN);
+					 
+				SetSearchSpec(&quot;VFTRCBU MSISDN&quot;,sNewSearchSpecMSISDN);
+			}
+		}
+
+	}
+	return (ContinueOperation);
+}
+catch(e){
+	TheApplication().Trace(&quot;catch = &quot; + e.errText);
+}
+finally{
+}
+}"
+			   SEQUENCE="6"
+			   UPDATED="12/28/2017 15:56:40"
+			   UPDATED_BY="IBM_TFERREIRA"
+			   CREATED="11/25/2014 11:02:02"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Cleaner"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Cleaner(Inputs,Outputs)
+{
+	try
+	{
+			TheApplication().TraceOn(&quot;/swstage/MSISDN_Cleaner.txt&quot;, &quot;Allocation&quot;, &quot;All&quot;);
+			TheApplication().Trace(&quot;Cleaner Start!&quot;);
+			var sError1 = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0090&quot;);
+			var sError2 = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0309&quot;);
+			var svalue = Inputs.GetProperty(&quot;Value&quot;);
+			var sprefix = Inputs.GetProperty(&quot;Prefix&quot;);
+			var lenght = Inputs.GetProperty(&quot;Lenght&quot;);
+			svalue.toUpperCase(); 
+			var vSentenceClean = &quot;&quot;; 
+			var i; 
+			var chsent = &quot;&quot;; 
+			var msgText = &quot;&quot;;
+			
+			TheApplication().Trace(&quot;svalue = &quot; + svalue);
+			TheApplication().Trace(&quot;svalue.length = &quot; + svalue.length);
+			for(i = 0; i &lt;= svalue.length - 1; i++) 
+			{ 
+			chsent = svalue.charAt(i); 
+			TheApplication().Trace(&quot;chsent = &quot; + chsent);
+				if(chsent != &quot; &quot; &amp;&amp; chsent != &quot;(&quot; &amp;&amp; chsent != &quot;)&quot; &amp;&amp; chsent != &quot;=&quot;) 
+				{
+				TheApplication().Trace(&quot;chsent != space &amp;&amp; chsent != ( &amp;&amp; chsent != ) &amp;&amp; chsent != =&quot;); 
+				TheApplication().Trace(&quot;chsent = &quot; + chsent);
+				TheApplication().Trace(&quot;vSentenceClean = &quot; + vSentenceClean);
+				vSentenceClean += chsent; 
+				TheApplication().Trace(&quot;vSentenceClean = &quot; + vSentenceClean);
+				} 
+			}
+			
+			TheApplication().Trace(&quot;svalue = &quot; + svalue);
+			TheApplication().Trace(&quot;vSentenceClean = &quot; + vSentenceClean);
+			svalue = vSentenceClean;
+			
+			var cmdArray = svalue.split(&quot;OR&quot;);
+			var aux =  cmdArray.length;
+			
+			TheApplication().Trace(&quot;cmdArray = &quot; + cmdArray);
+			TheApplication().Trace(&quot;aux = &quot; + aux);
+			
+			if ( cmdArray.length == 1 )
+			{
+				TheApplication().Trace(&quot;cmdArray.length == 1&quot;);
+				msgText = &quot;&quot;;
+				if (isNaN(svalue))
+				{
+				TheApplication().Trace(&quot;isNaN(svalue)&quot;);
+				TheApplication().Trace(&quot;sError1&quot;);
+				TheApplication().RaiseErrorText(sError1);
+				}
+			}
+			if ( cmdArray.length &gt; 100 )
+			{
+				TheApplication().Trace(&quot;cmdArray.length &gt; 100&quot;);
+				msgText = &quot;&quot;;
+				TheApplication().Trace(&quot;sError2&quot;);
+				TheApplication().RaiseErrorText(sError2); // VFTRCBU-9005 
+			}
+			
+			else
+			{
+				TheApplication().Trace(&quot;else&quot;);
+				msgText = &quot;(&quot;;
+			}
+			if ( cmdArray.length &gt; 1 )
+			{
+				TheApplication().Trace(&quot;cmdArray.length &gt; 1&quot;);
+				TheApplication().Trace(&quot;cmdArray.length = &quot; + cmdArray.length);
+  				for (i = 0; i &lt; cmdArray.length; i++)
+  				{
+					var tamanho = cmdArray[i].length;
+					var numero = isNaN(cmdArray[i]);
+  					TheApplication().Trace(&quot;tamanho = &quot; + tamanho);
+  					TheApplication().Trace(&quot;numero = &quot; + numero);
+  					TheApplication().Trace(&quot;lenght = &quot; + lenght);
+  					
+					if ( cmdArray[i].length != lenght || isNaN(cmdArray[i]))
+					{
+					TheApplication().Trace(&quot;cmdArray[i].length != lenght || isNaN(cmdArray[i])&quot;);
+					TheApplication().Trace(&quot;sError1 = &quot; + sError1);
+					TheApplication().RaiseErrorText(sError1);  
+					}
+  					if( i == 0 ) 
+  					{
+  						TheApplication().Trace(&quot;i == 0&quot;);
+						msgText = msgText + &quot; = &quot; + sprefix + cmdArray[i];
+						TheApplication().Trace(&quot;msgText = &quot; + msgText);
+					}
+					else 			
+					{
+						TheApplication().Trace(&quot;i &lt;&gt; 0&quot;);
+						msgText = msgText + &quot; OR = &quot; + sprefix + cmdArray[i];
+						TheApplication().Trace(&quot;msgText = &quot; + msgText);
+					}
+   				}
+   				msgText = msgText + &quot;)&quot;;
+   				TheApplication().Trace(&quot;msgText = &quot; + msgText);
+   			}
+			else
+			{
+				TheApplication().Trace(&quot;else&quot;);
+   				msgText = &quot; = &quot; + sprefix + svalue;
+   				TheApplication().Trace(&quot;msgText = &quot; + msgText);
+   			}
+			
+			svalue = msgText;
+			TheApplication().Trace(&quot;svalue = &quot; + svalue);
+			
+			Outputs.SetProperty(&quot;TreatedValue&quot;, svalue);
+	}
+	catch(e){
+		TheApplication().Trace(&quot;catch = &quot; + e.errText);
+	}
+	finally
+	{
+	
+	}	
+			
+}"
+			   SEQUENCE="2"
+			   UPDATED="12/28/2017 15:56:50"
+			   UPDATED_BY="IBM_TFERREIRA"
+			   CREATED="03/23/2015 23:59:17"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GetCustomerInfo"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GetCustomerInfo(Inputs,Outputs)
+{
+	try
+	{
+		TheApplication().TraceOn(&quot;/swstage/MSISDN_GetCustomerInfo.txt&quot;, &quot;Allocation&quot;, &quot;All&quot;);
+		TheApplication().Trace(&quot;GetCustomerInfo Start!&quot;);
+		var boCust : BusObject = TheApplication().GetBusObject(&quot;VFTRCBU Account BO&quot;);
+		var bcCust : BusComp   = boCust.GetBusComp(&quot;VFTRCBU Account BC&quot;);
+		var sCustId = Inputs.GetProperty(&quot;CustId&quot;); //RLOURENCO - VFTRCBU-21212 - corrected input from DocId to CustId
+		var custClass = &quot;&quot;;
+		var DocuType =bcCust.GetFieldValue(&quot;VF Document Type&quot;);
+		
+		Outputs.SetProperty(&quot;DocType&quot;,&quot;&quot;);
+		Outputs.SetProperty(&quot;DocId&quot;,&quot;&quot;);
+		
+		TheApplication().Trace(&quot;sCustId = &quot; + sCustId);
+		if (sCustId == null || sCustId == &quot;&quot;)
+		{
+			TheApplication().Trace(&quot;sCustId == null&quot;);
+			Outputs.SetProperty(&quot;DocType&quot;,&quot;&quot;);
+			Outputs.SetProperty(&quot;DocId&quot;,&quot;&quot;);
+		}
+
+		bcCust.SetViewMode(AllView);
+		bcCust.ClearToQuery();
+		bcCust.ActivateField(&quot;VF Document Type&quot;);
+		bcCust.ActivateField(&quot;VF Document Number&quot;);
+		bcCust.ActivateField(&quot;Market Class&quot;);
+		bcCust.ActivateField(&quot;VFTRCBU Customer Type Calc&quot;); //RLOURENCO - VFTRCBU-21699
+		bcCust.ActivateField(&quot;VF Tax Number&quot;);
+		bcCust.SetSearchSpec(&quot;Id&quot;,sCustId);
+		bcCust.ExecuteQuery(ForwardOnly);
+ 
+		if (bcCust.FirstRecord())
+		{
+			TheApplication().Trace(&quot;bcCust.FirstRecord()&quot;);
+			custClass = bcCust.GetFieldValue(&quot;VFTRCBU Customer Type Calc&quot;); //RLOURENCO - VFTRCBU-21699
+			TheApplication().Trace(&quot;custClass = &quot; + custClass);
+			if(custClass == &quot;102&quot;)
+			{
+				TheApplication().Trace(&quot;custClass == 102&quot;);
+				Outputs.SetProperty(&quot;DocType&quot;,bcCust.GetFieldValue(&quot;VF Document Type&quot;));
+				TheApplication().Trace(&quot;DocType = &quot; + bcCust.GetFieldValue(&quot;VF Document Type&quot;));
+				TheApplication().Trace(&quot;DocuType = &quot; + DocuType);
+				if(DocuType == &quot;TC ID Document&quot;)
+				{
+					TheApplication().Trace(&quot;DocuType == TC ID Document&quot;);
+					Outputs.SetProperty(&quot;DocId&quot;,bcCust.GetFieldValue(&quot;VFTRCBU Customer Identification&quot;));
+					TheApplication().Trace(&quot;DocId = &quot; + bcCust.GetFieldValue(&quot;VFTRCBU Customer Identification&quot;));
+				}
+				else
+				{
+					TheApplication().Trace(&quot;DocuType &lt;&gt; TC ID Document&quot;);
+					Outputs.SetProperty(&quot;DocId&quot;,bcCust.GetFieldValue(&quot;VF Document Number&quot;));
+					TheApplication().Trace(&quot;DocId = &quot; + bcCust.GetFieldValue(&quot;VF Document Number&quot;));
+				}
+			}
+			else
+			{
+				TheApplication().Trace(&quot;custClass &lt;&gt; 102&quot;);
+				Outputs.SetProperty(&quot;DocType&quot;,&quot;Tax Number&quot;);
+				Outputs.SetProperty(&quot;DocId&quot;,bcCust.GetFieldValue(&quot;VF Tax Number&quot;));
+				TheApplication().Trace(&quot;DocId = &quot; + bcCust.GetFieldValue(&quot;VF Tax Number&quot;));
+			}
+		}
+	}
+	catch(e){
+		TheApplication().Trace(&quot;catch = &quot; + e.errText);
+	}
+	finally
+	{
+		bcCust = null;
+		boCust = null;
+	}
+}"
+			   SEQUENCE="3"
+			   UPDATED="12/28/2017 15:56:45"
+			   UPDATED_BY="IBM_TFERREIRA"
+			   CREATED="06/21/2015 23:18:15"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="checkMSISDN"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function checkMSISDN(vMSISDN)
+{
+try{
+	TheApplication().TraceOn(&quot;/swstage/MSISDN_checkMSISDN.txt&quot;, &quot;Allocation&quot;, &quot;All&quot;);
+	TheApplication().Trace(&quot;checkMSISDN Start!&quot;);
+	TheApplication().Trace(&quot;vMSISDN = &quot; + vMSISDN);
+	var param = false;
+	var errMsisdn = null;
+	var boAs : BusObject;
+	var bcAs : BusComp;
+	var recordExists = null;
+	var stat = null;
+	var orderLineItemReason = null;
+	var reason = TheApplication().GetProfileAttr(&quot;VFTRCBUReason_ActTask&quot;);
+	var active = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;IMPL_PHASE&quot;,&quot;Active&quot;);
+	var suspended = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;IMPL_PHASE&quot;,&quot;Suspended&quot;);
+	var reasonVal = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACS_ORDER_REASON&quot;,&quot;224&quot;);
+	
+	var thisBO  : BusObject = TheApplication().ActiveBusObject();
+	
+	if(thisBO == &quot;BusObject [Order Entry (Sales)]&quot;){  
+		TheApplication().Trace(&quot;thisBO == BusObject [Order Entry (Sales)]&quot;);	
+		var lineItemBC  : BusComp = thisBO.GetBusComp(&quot;Order Entry - Line Items&quot;);
+		orderLineItemReason = lineItemBC.GetFieldValue(&quot;TELCO Action Reason&quot;);
+		TheApplication().Trace(&quot;orderLineItemReason = &quot; + orderLineItemReason);
+	}
+	if (reason == reasonVal || orderLineItemReason == reasonVal)
+	{
+		TheApplication().Trace(&quot;reason == reasonVal || orderLineItemReason == reasonVal&quot;);
+		boAs = TheApplication().GetBusObject(&quot;Asset Management - Asset Item&quot;);
+		bcAs = boAs.GetBusComp(&quot;Asset Mgmt - Asset&quot;);
+		
+		with(bcAs)
+		{
+			ClearToQuery();
+			SetViewMode(AllView);
+			ActivateField(&quot;VF MSISDN&quot;);
+			ActivateField(&quot;Status&quot;);
+			SetSearchSpec(&quot;VF MSISDN&quot;,vMSISDN);
+			ExecuteQuery(ForwardOnly);
+			recordExists = FirstRecord();
+		
+			while(recordExists){
+				TheApplication().Trace(&quot;bcAs.recordExists&quot;);
+				stat = GetFieldValue(&quot;Status&quot;);
+				TheApplication().Trace(&quot;stat = &quot; + stat);
+				if(stat == active || stat == suspended){
+					TheApplication().Trace(&quot;stat == active || stat == suspended&quot;);
+					param = true;
+				}
+				recordExists = NextRecord();
+			}			
+			TheApplication().Trace(&quot;param = &quot; + param);
+			if(param){
+				TheApplication().Trace(&quot;param&quot;);
+				TheApplication().Trace(&quot;vMSISDN = &quot; + vMSISDN);
+				errMsisdn = TheApplication().LookupMessage(&quot;VFTRAD Message Category&quot;, &quot;VFTRAD_59&quot;,vMSISDN);
+				TheApplication().Trace(&quot;errMsisdn = &quot; + errMsisdn);
+				TheApplication().RaiseErrorText(errMsisdn);
+			}
+		}			
+	}
+}
+catch(e){
+	TheApplication().Trace(&quot;catch = &quot; + e.errText);
+}
+finally{
+	reason = null;
+	param = null;	
+	errMsisdn = null;
+	boAs = null;
+	bcAs = null;
+	active = null;
+	suspended = null;
+	reasonVal = null;
+}
+}"
+			   SEQUENCE="1"
+			   UPDATED="12/28/2017 15:56:54"
+			   UPDATED_BY="IBM_TFERREIRA"
+			   CREATED="10/10/2017 13:45:28"
+			   CREATED_BY="IBM_BAKIG">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSINESS_COMPONENT_USER_PROP
+			   COMMENTS="RLOURENCO VFTRCBU-21212"
+			   INACTIVE="N"
+			   NAME="Disable Automatic Trailing Wildcard Field List"
+			   VALUE="VFTRCBU Document Id, VFTRCBU Document Type"
+			   UPDATED="11/30/2015 10:16:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/30/2015 10:16:39"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Service Name"
+			   VALUE="VF VBC Integration BS"
+			   UPDATED="11/25/2014 11:02:02"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/25/2014 11:02:02"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Service Parameters"
+			   VALUE="IOName=VFTRCBU MSISDN VBC IO;DataMapName=VFTRCBU MSISDN Data Map;RequireContext=Y"
+			   UPDATED="11/25/2014 11:02:02"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/25/2014 11:02:02"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="WA#18 Gaps - RPIRES"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Document Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/27/2016 09:48:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/21/2015 23:18:15"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="WA#18 Gaps - RPIRES"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Document Type"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU Document Type Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/21/2015 23:18:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/21/2015 23:18:15"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VFTRCBU Document Type"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Document Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="06/21/2015 23:18:15"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/21/2015 23:18:15"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU GSM Type"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU GSM Type PickList"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/14/2015 20:05:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/25/2014 11:02:02"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VFTRCBU GSM Type"
+				   INACTIVE="N"
+				   NAME="VFTRCBU GSM Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VFTRCBU Value"
+				   UPDATED="12/04/2014 16:12:13"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/25/2014 11:02:02"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupName(&quot;VFTRCBU_MSISDN_TYPES&quot;,[VFTRCBU GSM Type])"
+			   COMMENTS="PSANTOS - VFTRCBU-10152"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU GSM Type LIC"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/14/2015 20:05:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/14/2015 20:05:23"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Last Used Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/25/2014 11:02:02"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/25/2014 11:02:02"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU MSISDN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/25/2014 11:02:02"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/25/2014 11:02:02"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="WA#18 Gaps - RPIRES"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Received Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/21/2015 23:18:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/21/2015 23:18:15"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VFTRCBU Reservation Status] = &quot;E&quot; , &quot;Y&quot;, &quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Reser Calc 1"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/09/2015 23:33:09"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/25/2014 11:02:02"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VFTRCBU Reservation Status] = &quot;R&quot; , &quot;Y&quot;, &quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Reser Calc 2"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/09/2015 23:33:09"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/25/2014 11:02:02"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Reservation Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/25/2014 11:02:02"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/25/2014 11:02:02"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VFTRCBU Reservation Type] = &quot;A&quot; OR [VFTRCBU Reservation Type] = &quot;N&quot;, &quot;Y&quot;, &quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Reservation Status"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/27/2016 09:48:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/25/2014 11:02:02"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Reservation Type"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/27/2016 09:48:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/09/2015 23:33:09"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Shop Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/25/2014 11:02:02"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/25/2014 11:02:02"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Used Before"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/25/2014 11:02:02"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/25/2014 11:02:02"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

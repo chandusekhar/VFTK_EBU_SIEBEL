@@ -1,0 +1,231 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   LOCKED_DATE="08/11/2017 16:04:07"
+	   NAME="XProPolInt"
+	   UI_FREEZE="N"
+	   UPDATED="09/20/2017 09:39:30"
+	   UPDATED_BY="VF_SCALISKAN"
+	   CREATED="01/31/2009 12:28:57"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<WORKFLOW_PROCESS
+		   CACHE_LOCALE="N"
+		   EDIT="N"
+		   GROUP="Application Deployment Manager"
+		   INACTIVE="N"
+		   NAME="UDA Batch Import: 4"
+		   OBJECT_LOCKED="N"
+		   PASS_BY_REF_HIERARCHY_ARGUMENT="N"
+		   PERSISTENT_FREQUENCY="N"
+		   PROCESS_NAME="UDA Batch Import"
+		   REPLICATION_LEVEL="None"
+		   RUNNABLE="Y"
+		   STATE_MANAGEMENT_TYPE="STATEFUL"
+		   STATUS="NOT_IN_USE"
+		   VERSION="4"
+		   WEB_SERVICE_ENABLED="N"
+		   WORKFLOW_MODE="70FLOW"
+		   UPDATED="09/20/2017 09:54:34"
+		   UPDATED_BY="VF_SCALISKAN"
+		   CREATED="01/31/2009 12:29:06"
+		   CREATED_BY="SADMIN">
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Error Code"
+			   INOUT="INOUT"
+			   NAME="Error Code"
+			   UPDATED="01/31/2009 12:30:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/31/2009 12:30:11"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Error Message"
+			   INOUT="INOUT"
+			   NAME="Error Message"
+			   UPDATED="01/31/2009 12:30:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/31/2009 12:30:11"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   COMMENTS="The file system in which the files are stored. Need to modified this every time the files are stored in to a different location."
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="\\&lt;machine name&gt;\fs"
+			   DISPLAY_NAME="Import File Directory"
+			   INOUT="INOUT"
+			   NAME="Import File Directory"
+			   UPDATED="01/31/2009 12:30:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/31/2009 12:30:11"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   COMMENTS="Row Id of the UDA session"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Object Id"
+			   INOUT="INOUT"
+			   NAME="Object Id"
+			   UPDATED="01/31/2009 12:30:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/31/2009 12:30:11"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Process Instance Id"
+			   INOUT="INOUT"
+			   NAME="Process Instance Id"
+			   UPDATED="01/31/2009 12:30:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/31/2009 12:30:12"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Siebel Operation Object Id"
+			   INOUT="INOUT"
+			   NAME="Siebel Operation Object Id"
+			   UPDATED="01/31/2009 12:30:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/31/2009 12:30:12"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*2*0*0*0*1*r15*600 168 696 2169*FillBgClr8*13421772"
+			   NAME="End"
+			   TYPE="END"
+			   UPDATED="01/31/2009 12:31:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/31/2009 12:31:29"
+			   CREATED_BY="SADMIN">
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Import File"
+			   BUSINESS_SERVICE_NAME="UDA Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*2*0*0*0*1*r15*336 168 432 2169*FillBgClr8*16764159"
+			   NAME="Import File"
+			   TYPE="TASK"
+			   UPDATED="01/31/2009 12:39:31"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/31/2009 12:31:29"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*24*FrHS1*22*P17*600 1924*NPts1*22*P07*432 1924*ToID8*42-4LTQB6*FromID8*42-4LTSE4*ToHS1*0"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="End"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="01/31/2009 12:39:31"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/31/2009 12:37:17"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Import File"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*24*FrHS1*22*P17*600 1924*NPts1*22*P07*432 1924*ToID8*42-4LTQB6*FromID8*42-4LTSE4*ToHS1*0"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="End"
+					   UPDATED="01/31/2009 12:39:31"
+					   UPDATED_BY="SADMIN"
+					   CREATED="01/31/2009 12:39:31"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Import File Path"
+				   PROPERTY_NAME="Import File Directory"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="01/31/2009 12:34:54"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/31/2009 12:34:54"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Session Id"
+				   PROPERTY_NAME="Object Id"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="01/31/2009 12:34:54"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/31/2009 12:34:54"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*2*0*0*0*1*r14*96 168 192 2169*FillBgClr8*11724210"
+			   NAME="Start"
+			   TYPE="START"
+			   UPDATED="01/31/2009 12:39:31"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/31/2009 12:31:29"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*24*FrHS1*22*P17*336 1924*NPts1*22*P07*180 1924*ToID8*42-4LTSE6*FromID8*42-4LTQD4*ToHS1*0"
+				   NAME="Start.DECISION"
+				   TO_STEP_NAME="Import File"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="01/31/2009 12:39:31"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/31/2009 12:37:17"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Start"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*24*FrHS1*22*P17*336 1924*NPts1*22*P07*180 1924*ToID8*42-4LTSE6*FromID8*42-4LTQD4*ToHS1*0"
+					   NAME="Start.DECISION"
+					   TO_STEP_NAME="Import File"
+					   UPDATED="01/31/2009 12:39:31"
+					   UPDATED_BY="SADMIN"
+					   CREATED="01/31/2009 12:39:31"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+		</WORKFLOW_PROCESS>
+	</PROJECT>
+</REPOSITORY>
+
+
+

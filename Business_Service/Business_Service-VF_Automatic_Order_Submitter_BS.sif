@@ -1,0 +1,448 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="- PLW Account (PLW) 2"
+	   UI_FREEZE="N"
+	   UPDATED="11/10/2017 10:50:21"
+	   UPDATED_BY="IBM_FIGENB"
+	   CREATED="01/31/2009 12:28:34"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   COMMENTS="cr 192"
+		   EXTERNAL_USE="N"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VF Automatic Order Submitter BS"
+		   OBJECT_LOCKED="N"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   UPDATED="11/10/2017 10:54:41"
+		   UPDATED_BY="IBM_FIGENB"
+		   CREATED="04/12/2011 18:10:54"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="DisconnectionSVB"
+			   UPDATED="04/12/2011 18:10:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/12/2011 18:10:54"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="DisconnectionSVB"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function DisconnectionSVB(Inputs, Outputs)
+{
+/******************************************************************************
+ * VF RG:31-March-11 : Created                                          	  *
+ * Description     : This is a method created for the purpose of automatic    *
+ *                   Disconnection Order created for SVB Groups for which     *
+ *     				 their Number of Lines are decreased to 0.				  *	
+ * Owner           : U. Akin Eren                    						  *
+ ******************************************************************************/
+	try
+	{
+		var boAutoOrder : BusObject = TheApplication().GetBusObject(&quot;ACS NI Parameter&quot;);
+		var bcAutoOrder : BusComp = boAutoOrder.GetBusComp(&quot;VF Automatic Order&quot;);
+		var psFunctionIn : PropertySet = TheApplication().NewPropertySet();
+		var psFunctionOut : PropertySet = TheApplication().NewPropertySet();
+		var boAsset : BusObject = TheApplication().GetBusObject(&quot;Asset Management&quot;);
+		var bcAsset : BusComp = boAsset.GetBusComp(&quot;HP Asset Mgmt - Asset&quot;);
+		var boOrder : BusObject = TheApplication().GetBusObject(&quot;Order Entry (Simple)&quot;);
+		var bcItem : BusComp = boOrder.GetBusComp(&quot;Order Entry - Line Items (Simple)&quot;);
+		var bsManager : Service = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		var psManagerIn : PropertySet = TheApplication().NewPropertySet();
+		var psManagerOut : PropertySet = TheApplication().NewPropertySet();
+		var boAccount : BusObject = TheApplication().GetBusObject(&quot;Billing Account&quot;);
+		var bcAccount : BusComp = boAccount.GetBusComp(&quot;Billing Account&quot;);
+
+		var bDisconnect = false;
+		var sIntegrationId = &quot;&quot;;
+		var sPartNumber = &quot;&quot;;
+		var sBillAccountId = &quot;&quot;;
+		var sAssetId = &quot;&quot;;
+		var sCheckOrderResult = &quot;&quot;;
+		var sDisconnectOrderId = &quot;&quot;;
+		var sDiscRootAssetIntegId = &quot;&quot;;
+
+		var sStatusActive = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;IMPL_PHASE&quot;, &quot;Active&quot;);
+		var sReasonError = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;ACS_ORDER_REASON&quot;, &quot;1017&quot;);
+		var sBillBulkSMS = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;BILLING_ACCOUNT_DEDICATED&quot;, &quot;M2M - bundle activation&quot;);
+
+    	bcAutoOrder.SetViewMode(AllView);
+		bcAutoOrder.ClearToQuery();
+		bcAutoOrder.ActivateField(&quot;Asset Id&quot;);
+		bcAutoOrder.ActivateField(&quot;Integration Id&quot;);
+		bcAutoOrder.ActivateField(&quot;Order Reason&quot;);
+		bcAutoOrder.ActivateField(&quot;Order Sub Type&quot;);
+		bcAutoOrder.ActivateField(&quot;Order Type&quot;);
+		bcAutoOrder.ActivateField(&quot;Status&quot;);
+		bcAutoOrder.ActivateField(&quot;Part Number&quot;);
+		bcAutoOrder.ActivateField(&quot;Billing Account Id&quot;);
+		bcAutoOrder.SetSearchSpec(&quot;Status&quot;, &quot;New&quot;);
+		bcAutoOrder.ExecuteQuery(ForwardOnly);//Diva 27/03/2012: Added parameter for oracle review
+		//Scripting 31: No child query present 15may2012 Udbhav IDC VFTK
+
+		if (!bcAutoOrder.FirstRecord())
+		{
+			return;
+		}
+
+		do
+		{
+			try
+			{
+				bDisconnect = true;
+				sIntegrationId = bcAutoOrder.GetFieldValue(&quot;Integration Id&quot;);
+				sPartNumber = bcAutoOrder.GetFieldValue(&quot;Part Number&quot;);
+				sBillAccountId = bcAutoOrder.GetFieldValue(&quot;Billing Account Id&quot;);
+				sAssetId = bcAutoOrder.GetFieldValue(&quot;Asset Id&quot;);
+
+				psFunctionIn.Reset();
+				psFunctionOut.Reset();
+				psFunctionIn.SetProperty(&quot;Integration Id&quot;, sIntegrationId);
+				checkOrderStatus(psFunctionIn, psFunctionOut);
+				sCheckOrderResult = psFunctionOut.GetProperty(&quot;result&quot;);
+
+				if (sCheckOrderResult == &quot;true&quot;)
+				{
+					// Delete row_id so that it is not processed anymore
+					bcAutoOrder.SetFieldValue(&quot;Status&quot;, &quot;Processed&quot;);
+					bcAutoOrder.WriteRecord();
+					bDisconnect = false;
+				}
+
+				if (bDisconnect &amp;&amp; sPartNumber == &quot;5005&quot;)
+				{
+					if (sBillAccountId == null || sBillAccountId == &quot;&quot;)
+					{
+						bDisconnect = false;
+					}
+					else
+					{
+						bcAsset.SetViewMode(AllView);
+						bcAsset.ClearToQuery();
+						bcAsset.ActivateField(&quot;Billing Account Id&quot;);
+						bcAsset.ActivateField(&quot;Product Part Number&quot;);
+						bcAsset.ActivateField(&quot;Status&quot;);
+						bcAsset.SetSearchSpec(&quot;Product Part Number&quot;, &quot;4000&quot;);
+						bcAsset.SetSearchSpec(&quot;Billing Account Id&quot;, sBillAccountId);
+						bcAsset.SetSearchSpec(&quot;Status&quot;, sStatusActive);
+						//Scripting 31: No child query present 15may2012 Udbhav IDC VFTK
+						bcAsset.ExecuteQuery(ForwardOnly);//Diva 27/03/2012: Added parameter for oracle review
+
+						if (bcAsset.FirstRecord())
+						{
+							bDisconnect = false;
+						}
+					}
+				}
+
+				if (bDisconnect)
+				{
+					psFunctionIn.Reset();
+					psFunctionOut.Reset();
+					psFunctionIn.SetProperty(&quot;SVBAssetId&quot;, sAssetId);
+					SVBOrderCreate(psFunctionIn, psFunctionOut);
+					sDisconnectOrderId = psFunctionOut.GetProperty(&quot;sOrderId&quot;);
+					sDiscRootAssetIntegId = psFunctionOut.GetProperty(&quot;RootAssetIntegId&quot;);
+					var sResult = psFunctionOut.GetProperty(&quot;result&quot;);
+					//DEF-21153 IBMFIGENB start
+					if(sResult==&quot;closed&quot;)
+					{
+						bcAutoOrder.SetFieldValue(&quot;Status&quot;, &quot;Processed&quot;);
+						bcAutoOrder.WriteRecord();
+						bDisconnect = false;
+					}//DEF-21153 IBMFIGENB finish
+
+					if (sDisconnectOrderId == null || sDisconnectOrderId == &quot;&quot;)
+					{
+						bDisconnect = false;
+					}
+				}
+
+				if (bDisconnect)
+				{
+					bcItem.SetViewMode(AllView);
+					bcItem.ClearToQuery();
+					bcItem.ActivateField(&quot;TELCO Action Reason&quot;);
+					bcItem.ActivateField(&quot;VF Logical Reason&quot;);
+					bcItem.SetSearchSpec(&quot;Order Header Id&quot;, sDisconnectOrderId);
+					bcItem.SetSearchSpec(&quot;Asset Integration Id&quot;, sDiscRootAssetIntegId);
+					bcItem.ExecuteQuery(ForwardOnly);
+
+					if (!bcItem.FirstRecord())
+					{
+						bDisconnect = false;
+					}
+					else
+					{
+						bcItem.SetFieldValue(&quot;TELCO Action Reason&quot;, sReasonError);
+						bcItem.SetFieldValue(&quot;VF Logical Reason&quot;, &quot;1017&quot;);
+						bcItem.WriteRecord();
+					}
+				}
+
+				if (bDisconnect)
+				{
+					// Submit the order
+					psManagerIn.SetProperty(&quot;ProcessName&quot;, &quot;TELCO Async Submit Order Interface WF&quot;);
+					psManagerIn.SetProperty(&quot;Order Id&quot;, sDisconnectOrderId);
+					psManagerIn.SetProperty(&quot;Cancel On Error&quot;, &quot;N&quot;);
+
+					bsManager.InvokeMethod(&quot;RunProcess&quot;, psManagerIn, psManagerOut);
+
+					bcAutoOrder.SetFieldValue(&quot;Status&quot;,&quot;Processed&quot;);
+					bcAutoOrder.WriteRecord();
+
+					if (sPartNumber == &quot;40000&quot; &amp;&amp; sBillAccountId != null &amp;&amp; sBillAccountId != &quot;&quot;)
+					{
+						bcAccount.SetViewMode(AllView);
+						bcAccount.ClearToQuery();
+						bcAccount.ActivateField(&quot;VF Bulk SMS&quot;);
+						bcAccount.SetSearchSpec(&quot;Id&quot;, sBillAccountId);//null check done above
+						bcAccount.ExecuteQuery(ForwardOnly);//Scripting 31: No child query present 15may2012 Udbhav IDC VFTK
+
+						if (bcAccount.FirstRecord())
+						{
+							bcAccount.SetFieldValue(&quot;VF Bulk SMS&quot;, sBillBulkSMS);
+							bcAccount.WriteRecord();
+						}
+					}
+				}
+			}
+			catch(e)
+			{
+				TheApplication().RaiseErrorText(e.errCode + &quot; . &quot; + e.errText);//DEF-21153 IBMFIGENB
+			}
+		}
+		while (bcAutoOrder.NextRecord());
+	}
+	catch(e)
+	{
+		TheApplication().RaiseErrorText(e.errCode + &quot; . &quot; + e.errText);//DEF-21153 IBMFIGENB finish
+	}
+	finally
+	{
+		bcAccount = null;
+		boAccount = null;
+		psManagerOut = null;
+		psManagerIn = null;
+		bsManager = null;
+		bcItem = null;
+		boOrder = null;
+		bcAsset = null;
+		boAsset = null;
+		psFunctionOut = null;
+		psFunctionIn = null;
+		bcAutoOrder = null;
+		boAutoOrder = null;
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="11/10/2017 10:50:21"
+			   UPDATED_BY="IBM_FIGENB"
+			   CREATED="04/12/2011 18:10:54"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SVBOrderCreate"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SVBOrderCreate(Inputs, Outputs:PropertySet)
+{
+ /******************************************************************************
+ * VF RG:24-March-11 : Created                                          	  *
+ * Description     : This is a method created for the purpose of automatic    *
+ *                   Disconnection Order created for SVB Groups for which     *
+ *     				 their Number of Lines are decreased to 0.				  *	
+ * Owner           : U. Akin Eren                    						  *
+ ******************************************************************************/
+	try
+	{
+		var boAsset : BusObject = TheApplication().GetBusObject (&quot;VF TK Suspend Resume NoLink BO&quot;);
+		var bcAsset : BusComp = boAsset.GetBusComp(&quot;VF TK SMCF Asset Mgmt - Asset  Light BC&quot;);
+		var bsManager : Service = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		var psManagerIn : PropertySet = TheApplication().NewPropertySet();
+		var psManagerOut : PropertySet = TheApplication().NewPropertySet();
+
+		var sSVBAssetId = Inputs.GetProperty(&quot;SVBAssetId&quot;);
+		var sAccountId = &quot;&quot;;
+		var sRootAssetIntegId = &quot;&quot;;
+		var sOrderId = &quot;&quot;;
+
+ 		var sTypeDisconnectVoluntary = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ORDER_SUB_TYPE&quot;,&quot;123&quot;);
+
+ 		if (sSVBAssetId == null || sSVBAssetId == &quot;&quot;)
+ 		{
+ 			return;
+ 		}
+
+		bcAsset.ClearToQuery();
+		bcAsset.SetViewMode(AllView);
+		bcAsset.ActivateField(&quot;Owner Account Id&quot;);
+		bcAsset.ActivateField(&quot;Root Integration Id&quot;);
+		bcAsset.SetSearchSpec(&quot;Id&quot;, &quot;&apos;&quot; + sSVBAssetId + &quot;&apos;&quot;);
+		bcAsset.ExecuteQuery(ForwardOnly);
+
+		if (!bcAsset.FirstRecord())
+		{
+			return;
+		}
+
+		sAccountId = bcAsset.GetFieldValue(&quot;Owner Account Id&quot;);
+		sRootAssetIntegId = bcAsset.GetFieldValue(&quot;Root Integration Id&quot;);
+
+		psManagerIn.SetProperty(&quot;ProcessName&quot;, &quot;TELCO Process Account Root Asset Action&quot;);
+		psManagerIn.SetProperty(&quot;RowId&quot;, sAccountId);
+		psManagerIn.SetProperty(&quot;Asset Integration Id&quot;, sRootAssetIntegId);
+		psManagerIn.SetProperty(&quot;Asset Method&quot;, &quot;DisconnectProdSvc&quot;);
+		psManagerIn.SetProperty(&quot;Asset Action Type&quot;, sTypeDisconnectVoluntary);
+		psManagerIn.SetProperty(&quot;Reuse Active Order&quot;, &quot;N&quot;);
+		psManagerIn.SetProperty(&quot;SkipGUINavigation&quot;, &quot;Y&quot;);
+
+		bsManager.InvokeMethod(&quot;RunProcess&quot;, psManagerIn, psManagerOut);
+
+		sOrderId = psManagerOut.GetProperty(&quot;Order Id&quot;);
+
+		Outputs.SetProperty(&quot;sOrderId&quot;, sOrderId);
+		Outputs.SetProperty(&quot;RootAssetIntegId&quot;, sRootAssetIntegId);
+	}
+	catch(e)//DEF-21153 IBMFIGENB start
+	{
+		var sError:String = e.errText;
+		var sPos1 = sError.indexOf(&quot;No update is allowed, the subscriber status is not &apos;Active&apos;&quot;);
+		var sPos2 = sError.indexOf(&quot;The Order can&apos;t be submitted. Please remove all the SIM associated with the SVB Product.&quot;);
+		
+		if(sPos1 &gt;= 0 || sPos2 &gt;= 0)
+			Outputs.SetProperty(&quot;result&quot;,&quot;closed&quot;);
+	
+		//TheApplication().RaiseErrorText(e.errCode + &quot; . &quot; + e.errText);//DEF-21153 IBMFIGENB finish
+	}
+	finally
+	{
+		psManagerOut = null;
+		psManagerIn = null;
+		bsManager = null;
+		bcAsset = null;
+		boAsset = null;
+	}
+}"
+			   SEQUENCE="3"
+			   UPDATED="11/10/2017 10:50:21"
+			   UPDATED_BY="IBM_FIGENB"
+			   CREATED="04/12/2011 18:10:54"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	if (MethodName == &quot;DisconnectionSVB&quot;)
+	{
+		DisconnectionSVB(Inputs, Outputs);
+		return (CancelOperation);
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="4"
+			   UPDATED="04/12/2011 18:10:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/12/2011 18:10:54"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="checkOrderStatus"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function checkOrderStatus(Inputs,Outputs)
+{
+ /******************************************************************************
+ * VF RG:31-March-11 : Created                                          	   *
+ * Description     : For the automatic disconnection order created, this       *
+ *                   method checks  if the SVB Group  to be deactivated        *
+ *                   has any orders rather than completed and pending		   *
+ * Owner           : U. Akin Eren                                              *
+ ******************************************************************************/
+	try
+	{
+		// Use High Performance Business Component
+		var boOrder : BusObject = TheApplication().GetBusObject(&quot;HP Order Entry&quot;);
+		var bcItem : BusComp = boOrder.GetBusComp(&quot;HP Order Entry - Line Items&quot;);
+
+		var sAssetIntegId = Inputs.GetProperty(&quot;Integration Id&quot;);
+		var sItemStatus   = &quot;&quot;;
+
+		var sStatusComplete  = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;FS_ORDER_STATUS&quot;,&quot;Complete&quot;);
+		var sStatusCancelled = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;FS_ORDER_STATUS&quot;,&quot;Cancelled&quot;);
+
+		if (sAssetIntegId == null || sAssetIntegId == &quot;&quot;)
+		{
+			Outputs.SetProperty(&quot;result&quot;, &quot;false&quot;);
+			return;
+		}
+
+		bcItem.SetViewMode(AllView);
+		bcItem.ClearToQuery();
+		bcItem.SetSearchSpec(&quot;Asset Integration Id&quot;,sAssetIntegId);
+		bcItem.ExecuteQuery(ForwardOnly);//Diva 27/03/2012: Added parameter for oracle review
+
+		if (!bcItem.FirstRecord())
+		{
+			Outputs.SetProperty(&quot;result&quot;, &quot;false&quot;);
+			return;
+		}
+
+		do
+		{
+			sItemStatus = bcItem.GetFieldValue(&quot;Status&quot;);
+
+			if (sItemStatus != sStatusComplete &amp;&amp; sItemStatus != sStatusCancelled)
+			{
+				Outputs.SetProperty(&quot;result&quot;, &quot;true&quot;);
+				return;
+			}
+		}
+		while (bcItem.NextRecord());
+
+		Outputs.SetProperty(&quot;result&quot;, &quot;false&quot;);
+	}
+	catch(e)
+	{
+		return;
+	}
+	finally
+	{
+		bcItem  = null;
+		boOrder = null;	
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="11/10/2017 10:50:21"
+			   UPDATED_BY="IBM_FIGENB"
+			   CREATED="04/12/2011 18:10:54"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

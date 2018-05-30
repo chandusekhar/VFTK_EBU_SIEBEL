@@ -1,0 +1,1900 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="R142-WP15: Created by Parasuram on 04/May/2011."
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VF WP 15 Billing Inquiry"
+	   UI_FREEZE="N"
+	   UPDATED="12/02/2016 20:15:54"
+	   UPDATED_BY="MLUIS"
+	   CREATED="05/06/2011 10:54:52"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="N"
+		   CLASS="CSSBCVExtern"
+		   COMMENTS="WA#06 - D2 - CJANEIRO"
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MULTI_RECIPIENT_SELECT="N"
+		   NAME="VFTRCBU Subscriber CDR VBC"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="12/02/2016 10:03:11"
+		   OWNER_DELETE="N"
+		   POPUP_VISIBILITY_AUTO_ALL="N"
+		   SCRIPTED="Y"
+		   TYPE="Non-Transient"
+		   OBJECT_LOCKED_BY_NAME="MLUIS"
+		   UPDATED="12/02/2016 20:15:51"
+		   UPDATED_BY="MLUIS"
+		   CREATED="05/04/2015 12:53:08"
+		   CREATED_BY="CJANEIRO">
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="(declarations)"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="var sFinalSS = &quot;&quot;;"
+			   SEQUENCE="1"
+			   UPDATED="05/15/2015 16:36:14"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/15/2015 16:36:14"
+			   CREATED_BY="CJANEIRO">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="AuditTrailLog"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function AuditTrailLog(sExpr)
+{
+//*****************************************************
+//** Function: AuditTrailLog
+//** Purpose:  Logs the CDR Query/Export
+//** Inputs :  Expr.
+//** Outputs:  None.
+//** Returns:  None.
+//*****************************************************
+//** Revision History:
+//** 01 - 07/14/2011 - Parasuram Mainam
+//**    VFTK Project R142-WP15 Release - Created New.
+//*****************************************************
+ try
+ {
+ 	var boCDR : BusObject =TheApplication().GetBusObject(&quot;VF Audit Trail CDR&quot;);
+ 	var bcCDR : BusComp =boCDR.GetBusComp(&quot;VF Audit Trail CDR&quot;);
+ 	with(bcCDR)
+ 	{
+ 		var sOp=&quot;&quot;;
+		if(TheApplication().GetProfileAttr(&quot;CDR_UnbilledCDR&quot;)==&quot;Y&quot;)
+		{
+			sOp=&quot;UnbilledCDR&quot;;
+		}
+		else if(TheApplication().GetProfileAttr(&quot;CDR_QueryCDR&quot;)==&quot;Y&quot;)
+		{
+			sOp=&quot;QueryCDR&quot;;
+		} 		
+		NewRecord(NewAfter);
+		SetFieldValue(&quot;Operation Type&quot;, sOp);
+		SetFieldValue(&quot;Search Criteria Info&quot;, sExpr);
+		WriteRecord();
+ 	}
+ }
+ finally
+ {
+ 	TheApplication().SetProfileAttr(&quot;CDR_SearchExpr&quot;, &quot;&quot;);
+ 	bcCDR = null;
+ 	boCDR = null;
+ }
+}"
+			   SEQUENCE="2"
+			   UPDATED="05/15/2015 16:36:14"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:08"
+			   CREATED_BY="CJANEIRO">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreInvokeMethod (MethodName)
+{
+	switch(MethodName)
+	{
+		case &quot;UnbilledCDR&quot;:
+		case &quot;BilledCDR&quot;:
+		case &quot;ExecuteQuery&quot;:
+		case &quot;ExportQuery&quot;:
+		
+			if(MethodName == &quot;BilledCDR&quot; || MethodName == &quot;UnbilledCDR&quot;)
+			{
+			
+				var AssetBC : BusComp;
+				var InterimBC : BusComp;
+				
+				AssetBC = this.ParentBusComp().ParentBusComp();
+				InterimBC = this.ParentBusComp();
+				
+				var MSISDN = AssetBC.GetFieldValue(&quot;VF MSISDN&quot;);
+				var INVOICE_ID = InterimBC.GetFieldValue(&quot;INVOICE_NUMBER&quot;);
+			
+				var CALLED_NUMBER_IN = this.GetFieldValue(&quot;CALLED_NUMBER_IN&quot;);
+				var CALLING_NUMBER_IN = this.GetFieldValue(&quot;CALLING_NUMBER_IN&quot;);
+				var CDR_SOURCE_CODE_IN = this.GetFieldValue(&quot;CDR_SOURCE_CODE_IN&quot;);
+				var CALLED_OPERATOR_IN = this.GetFieldValue(&quot;CALLED_OPERATOR_IN&quot;);				
+				var MAX_AMOUNT_IN = this.GetFieldValue(&quot;MAX_AMOUNT_IN&quot;);				
+				var MAX_DISCOUNT_AMOUNT_IN = this.GetFieldValue(&quot;MAX_DISCOUNT_AMOUNT_IN&quot;);
+				var MAX_DURATION_IN = this.GetFieldValue(&quot;MAX_DURATION_IN&quot;);
+				var MIN_AMOUNT_IN = this.GetFieldValue(&quot;MIN_AMOUNT_IN&quot;);
+				var MIN_DISCOUNT_AMOUNT_IN = this.GetFieldValue(&quot;MIN_DISCOUNT_AMOUNT_IN&quot;);
+				var MIN_DURATION_IN = this.GetFieldValue(&quot;MIN_DURATION_IN&quot;);
+				var PERIOD_END_DATE_IN = this.GetFieldValue(&quot;PERIOD_END_DATE_IN&quot;);
+				var PERIOD_START_DATE_IN = this.GetFieldValue(&quot;PERIOD_START_DATE_IN&quot;);
+				var ROW_RANGE_FROM = this.GetFieldValue(&quot;ROW_RANGE_FROM&quot;);
+				var ROW_RANGE_TO = this.GetFieldValue(&quot;ROW_RANGE_TO&quot;);
+				var CALL_TYPE_IN = this.GetFieldValue(&quot;CALL_TYPE_IN&quot;); //RCRISPIM: VFTRCBU-11697 
+				var HIDE_ZERO_IN = this.GetFieldValue(&quot;HIDE_ZERO_IN&quot;);
+			
+				if(INVOICE_ID != &quot;&quot; &amp;&amp; MethodName == &quot;BilledCDR&quot;)
+				{
+					sFinalSS = &quot;[INVOICE_ID] = &apos;&quot; + INVOICE_ID + &quot;&apos;&quot;
+				}
+				
+				if(MSISDN != &quot;&quot; &amp;&amp; MethodName == &quot;UnbilledCDR&quot;)
+				{
+					sFinalSS = &quot;[MSISDN] = &apos;&quot; + MSISDN + &quot;&apos;&quot;
+				}
+				if(ROW_RANGE_FROM != &quot;&quot;)
+				{
+					sFinalSS = sFinalSS + &quot; AND [ROW_RANGE_FROM] = &apos;&quot; + ROW_RANGE_FROM + &quot;&apos;&quot;
+				}
+				if(ROW_RANGE_TO != &quot;&quot;)
+				{
+					sFinalSS = sFinalSS + &quot; AND [ROW_RANGE_TO] = &apos;&quot; + ROW_RANGE_TO + &quot;&apos;&quot;
+				}
+				if(CALLED_NUMBER_IN != &quot;&quot;)
+				{
+					sFinalSS = sFinalSS + &quot; AND [CALLED_NUMBER] = &apos;&quot; + CALLED_NUMBER_IN + &quot;&apos;&quot;
+				}
+				if(CALLING_NUMBER_IN != &quot;&quot;)
+				{
+					sFinalSS = sFinalSS + &quot; AND [CALLING_NUMBER] = &apos;&quot; + CALLING_NUMBER_IN + &quot;&apos;&quot;
+				}
+				if(CDR_SOURCE_CODE_IN != &quot;&quot;)
+				{
+					sFinalSS = sFinalSS + &quot; AND [CDR_SOURCE_CODE] = &apos;&quot; + CDR_SOURCE_CODE_IN + &quot;&apos;&quot;
+				}
+				if(CALLED_OPERATOR_IN != &quot;&quot;)
+				{
+					sFinalSS = sFinalSS + &quot; AND [CALLED_OPERATOR] = &apos;&quot; + CALLED_OPERATOR_IN + &quot;&apos;&quot;
+				}				
+				if(MAX_AMOUNT_IN != &quot;&quot;)
+				{
+					sFinalSS = sFinalSS + &quot; AND [MAX_AMOUNT] = &apos;&quot; + MAX_AMOUNT_IN + &quot;&apos;&quot;
+				}
+				if(MAX_DISCOUNT_AMOUNT_IN != &quot;&quot;)
+				{
+					sFinalSS = sFinalSS + &quot; AND [MAX_DISCOUNT_AMOUNT] = &apos;&quot; + MAX_DISCOUNT_AMOUNT_IN + &quot;&apos;&quot;
+				}
+				if(MAX_DURATION_IN != &quot;&quot;)
+				{
+					sFinalSS = sFinalSS + &quot; AND [MAX_DURATION] = &apos;&quot; + MAX_DURATION_IN + &quot;&apos;&quot;
+				}
+				if(MIN_AMOUNT_IN != &quot;&quot;)
+				{
+					sFinalSS = sFinalSS + &quot; AND [MIN_AMOUNT] = &apos;&quot; + MIN_AMOUNT_IN + &quot;&apos;&quot;	
+				}
+				if(MIN_DISCOUNT_AMOUNT_IN != &quot;&quot;)
+				{
+					sFinalSS = sFinalSS + &quot; AND [MIN_DISCOUNT_AMOUNT] = &apos;&quot; + MIN_DISCOUNT_AMOUNT_IN + &quot;&apos;&quot;				
+				}
+				if(MIN_DURATION_IN != &quot;&quot;)
+				{
+					sFinalSS = sFinalSS + &quot; AND [MIN_DURATION] = &apos;&quot; + MIN_DURATION_IN + &quot;&apos;&quot;
+				}
+				if(PERIOD_END_DATE_IN != &quot;&quot;)
+				{
+					sFinalSS = sFinalSS + &quot; AND [PERIOD_END_DATE] = &apos;&quot; + PERIOD_END_DATE_IN + &quot;&apos;&quot;				
+				}
+				if(PERIOD_START_DATE_IN != &quot;&quot;)
+				{
+					sFinalSS = sFinalSS + &quot; AND [PERIOD_START_DATE] = &apos;&quot; + PERIOD_START_DATE_IN + &quot;&apos;&quot;
+				}
+				
+				//RCRISPIM: VFTRCBU-11697 - START
+				if(CALL_TYPE_IN.length != 0)
+				{
+					sFinalSS = sFinalSS + &quot; AND [CALL_TYPE] = &apos;&quot; + CALL_TYPE_IN + &quot;&apos;&quot;
+				}
+				//RCRISPIM: VFTRCBU-11697 - END
+					
+				if(HIDE_ZERO_IN.length != 0)
+				{
+					sFinalSS = sFinalSS + &quot; AND [HIDE_ZERO] = &apos;&quot; + HIDE_ZERO_IN + &quot;&apos;&quot;
+				}
+				this.ClearToQuery();
+				this.SetSearchExpr(sFinalSS);
+				this.ExecuteQuery(ForwardBackward);
+
+			}
+			
+			if(MethodName==&quot;ExecuteQuery&quot;||MethodName==&quot;ExportQuery&quot;)
+				return(ContinueOperation);
+	}
+	return(CancelOperation);
+}"
+			   SEQUENCE="4"
+			   UPDATED="12/02/2016 20:15:51"
+			   UPDATED_BY="MLUIS"
+			   CREATED="05/04/2015 12:53:08"
+			   CREATED_BY="CJANEIRO">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreQuery"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreQuery ()
+{
+	var sExpr = this.GetSearchExpr();
+	AuditTrailLog(sExpr);
+	return (ContinueOperation);
+}"
+			   SEQUENCE="5"
+			   UPDATED="05/19/2015 20:13:02"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/05/2015 13:23:48"
+			   CREATED_BY="CJANEIRO">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="LogInsert"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function LogInsert(FieldInfo,FieldValue)
+{
+	try
+	{
+		var LogBO : BusObject= TheApplication ().GetBusObject(&quot;ACS NI Parameter&quot;);
+		var LogBC : BusComp = LogBO.GetBusComp (&quot;VF LOG EVENTS&quot;);
+		var View = TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;);
+		var Login = TheApplication().LoginName();
+		var Process = &quot;Sorgu&quot;;
+		with(LogBC)
+		{
+			NewRecord(NewAfter);
+			SetFieldValue(&quot;Field Info&quot;,FieldInfo);
+			SetFieldValue(&quot;Process Info&quot;,Process);
+			SetFieldValue(&quot;User Name&quot;,Login);
+	    	SetFieldValue(&quot;View&quot;,View);
+	    	SetFieldValue(&quot;Field Value&quot;,FieldValue);
+			WriteRecord();  
+		} 
+	}
+	finally
+	{
+	LogBC = null;
+	LogBO = null;
+	}
+}"
+			   SEQUENCE="3"
+			   UPDATED="05/15/2015 16:36:14"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:08"
+			   CREATED_BY="CJANEIRO">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSINESS_COMPONENT_USER_PROP
+			   COMMENTS="WA#06: AROSA 24-11-2014 created"
+			   INACTIVE="N"
+			   NAME="Service Name"
+			   VALUE="VF VBC Integration BS"
+			   UPDATED="05/04/2015 12:54:03"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:54:03"
+			   CREATED_BY="CJANEIRO">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   COMMENTS="WA#06: AROSA 24-11-2014 created"
+			   INACTIVE="N"
+			   NAME="Service Parameters"
+			   VALUE="IOName=VFTRCBU Subscriber CDR Inquiry VBC IO;DataMapName=VFTRCBU CDR List Request;RequireContext=Y"
+			   UPDATED="05/12/2015 15:13:04"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:54:06"
+			   CREATED_BY="CJANEIRO">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="ParentFieldValue(&quot;BILLING_ACCOUNT_NUM&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="BILLING_ACCOUNT_NO"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/15/2015 20:11:47"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:09"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="BILLING_ACCOUNT_NUM"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 19:36:52"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:09"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="BUNDLE_DESCRIPTION"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:09"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:09"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="BUNDLE_ID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:09"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:09"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CALLED_NUMBER"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:10"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:10"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([CALLED_NUMBER] IS NULL, &quot;&quot;, IIf(Len([CALLED_NUMBER])&lt;10, [CALLED_NUMBER], IIF(isPrimaryPositionTypeInRolesList, [CALLED_NUMBER], Left([CALLED_NUMBER],Len([CALLED_NUMBER])-4)+&quot;x&quot;+&quot;x&quot;+&quot;x&quot;+&quot;x&quot;)))"
+			   COMMENTS="Added by Parasuram on 24/Aug/2011."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CALLED_NUMBER_Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/23/2015 15:09:59"
+			   UPDATED_BY="RLOURENCO"
+			   CREATED="05/04/2015 12:53:10"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CALLED_NUMBER_IN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:10"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:10"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CALLED_OPERATOR"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:10"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:10"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CALLED_OPERATOR_IN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:11"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:11"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CALLING_NUMBER"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:11"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:11"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CALLING_NUMBER_IN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:11"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:11"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CALL_DATE"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:11"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:11"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CALL_TYPE"
+			   NO_COPY="N"
+			   PICKLIST="VF CDR Call Type"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:11"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:11"
+			   CREATED_BY="CJANEIRO">
+				<PICK_MAP
+				   FIELD="CALL_TYPE"
+				   INACTIVE="N"
+				   NAME="CALL_TYPE"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="05/04/2015 12:53:11"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/04/2015 12:53:11"
+				   CREATED_BY="CJANEIRO">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CALL_TYPE_IN"
+			   NO_COPY="N"
+			   PICKLIST="VF CDR Call Type"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/13/2015 18:23:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/04/2015 12:53:11"
+			   CREATED_BY="CJANEIRO">
+				<PICK_MAP
+				   FIELD="CALL_TYPE_IN"
+				   INACTIVE="N"
+				   NAME="CALL_TYPE_IN"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="05/04/2015 12:53:11"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/04/2015 12:53:11"
+				   CREATED_BY="CJANEIRO">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VFTRCBU Customer Type"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Customer Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Parent Name"
+				   UPDATED="08/13/2015 18:23:12"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/13/2015 18:23:12"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VFTRCBU Lang Id"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Lang Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Language"
+				   UPDATED="08/13/2015 18:23:12"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/13/2015 18:23:12"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="The charged amount of CDR excluding tax"
+			   COMPOSITE="N"
+			   CURRENCY_CODE_FIELD="Currency Code"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CDR_AMOUNT_EXC_TAX"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:11"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:11"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[CDR_AMOUNT_EXC_TAX] / 100"
+			   COMMENTS="The charged amount of CDR excluding tax"
+			   COMPOSITE="N"
+			   CURRENCY_CODE_FIELD="Currency Code"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CDR_AMOUNT_EXC_TAXCalc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/03/2016 15:55:51"
+			   UPDATED_BY="FCARRIL"
+			   CREATED="05/04/2015 12:53:11"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CDR_ID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:11"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:11"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CDR_SOURCE_CODE"
+			   NO_COPY="N"
+			   PICKLIST="VF CDR Source Code Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:11"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:11"
+			   CREATED_BY="CJANEIRO">
+				<PICK_MAP
+				   FIELD="CDR_SOURCE_CODE"
+				   INACTIVE="N"
+				   NAME="CDR_SOURCE_CODE"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="05/04/2015 12:53:11"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/04/2015 12:53:11"
+				   CREATED_BY="CJANEIRO">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CDR_SOURCE_CODE_IN"
+			   NO_COPY="N"
+			   PICKLIST="VF CDR Source Code Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:11"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:11"
+			   CREATED_BY="CJANEIRO">
+				<PICK_MAP
+				   FIELD="CDR_SOURCE_CODE_IN"
+				   INACTIVE="N"
+				   NAME="CDR_SOURCE_CODE_IN"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="05/04/2015 12:53:12"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="05/04/2015 12:53:12"
+				   CREATED_BY="CJANEIRO">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CELL_ID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:12"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:12"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CONNECTION_TYPE"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/22/2016 15:43:03"
+			   UPDATED_BY="IMARTINS"
+			   CREATED="02/22/2016 15:41:29"
+			   CREATED_BY="IMARTINS">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Currency Code"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:12"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:12"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   CURRENCY_CODE_FIELD="Currency Code"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="DISCOUNTED_AMOUNT"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:12"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:12"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[DISCOUNTED_AMOUNT] / 1000000"
+			   COMMENTS="Added by Parasuram on 24/Aug/2011."
+			   COMPOSITE="N"
+			   CURRENCY_CODE_FIELD="Currency Code"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="DISCOUNTED_AMOUNTCalc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/03/2016 15:36:08"
+			   UPDATED_BY="FGUEDES"
+			   CREATED="05/04/2015 12:53:12"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="DURATION_VOLUME"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:12"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:12"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HIDE_ZERO"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:12"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:12"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="HIDE_ZERO_IN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:12"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:12"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="INVOICE_ID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/20/2015 14:20:19"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:12"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="ParentFieldValue(&quot;INVOICE_NUMBER&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="INVOICE_NUMBER"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:12"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:12"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="Call Amount(Max)"
+			   COMPOSITE="N"
+			   CURRENCY_CODE_FIELD="Currency Code"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MAX_AMOUNT"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/09/2015 20:02:50"
+			   UPDATED_BY="RCRISPIM"
+			   CREATED="05/04/2015 12:53:12"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="Call Amount(Max)"
+			   COMPOSITE="N"
+			   CURRENCY_CODE_FIELD="Currency Code"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MAX_AMOUNT_IN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:12"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:12"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="RCRISPIM: VFTRCBU-11697 - Changed DTYPE, from Number To Text"
+			   COMPOSITE="N"
+			   CURRENCY_CODE_FIELD="Currency Code"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MAX_DISCOUNT_AMOUNT"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/11/2015 10:52:19"
+			   UPDATED_BY="RCRISPIM"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   CURRENCY_CODE_FIELD="Currency Code"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MAX_DISCOUNT_AMOUNT_IN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="Maxmimum Duration value; RCRISPIM: VFTRCBU-11697 - Changed DTYPE, from Number To Text"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MAX_DURATION"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/11/2015 10:52:19"
+			   UPDATED_BY="RCRISPIM"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="Maxmimum Duration value"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MAX_DURATION_IN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="Call Amount(Min)"
+			   COMPOSITE="N"
+			   CURRENCY_CODE_FIELD="Currency Code"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MIN_AMOUNT"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/09/2015 20:02:51"
+			   UPDATED_BY="RCRISPIM"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="Call Amount(Min)"
+			   COMPOSITE="N"
+			   CURRENCY_CODE_FIELD="Currency Code"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MIN_AMOUNT_IN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="RCRISPIM: VFTRCBU-11697 - Changed DTYPE, from Number To Text"
+			   COMPOSITE="N"
+			   CURRENCY_CODE_FIELD="Currency Code"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MIN_DISCOUNT_AMOUNT"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/11/2015 10:52:19"
+			   UPDATED_BY="RCRISPIM"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   CURRENCY_CODE_FIELD="Currency Code"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MIN_DISCOUNT_AMOUNT_IN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="Minumum Duration value; RCRISPIM: VFTRCBU-11697 - Changed DTYPE, from Number To Text"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MIN_DURATION"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/11/2015 10:52:19"
+			   UPDATED_BY="RCRISPIM"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="Minumum Duration value"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MIN_DURATION_IN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MSISDN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/20/2015 13:02:04"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="WA#18, MNP Funcionality 03"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="OperatorCode"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/18/2015 19:32:11"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/18/2015 19:32:11"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="WA#18, MNP Funcionality 03"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="OperatorName"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/18/2015 19:32:15"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/18/2015 19:32:15"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="End Date of the inquiried period."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="PERIOD_END_DATE"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="End Date of the inquiried period."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="PERIOD_END_DATE_IN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="Start Date of the inquiried period."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="PERIOD_START_DATE"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="Start Date of the inquiried period."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="PERIOD_START_DATE_IN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="GetProfileAttr(&quot;TELCO.PositionProfile:Role.AvailableRoles&quot;)"
+			   COMMENTS="Added by Parasuram on 24/Aug/2011."
+			   COMPOSITE="N"
+			   CURRENCY_CODE_FIELD="Currency Code"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="POS_Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;CDR_ROW_RANGE_FROM&quot;, &quot;CdrRowRangeFrom&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="ROW_RANGE_FROM"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/15/2015 17:13:33"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;CDR_ROW_RANGE_TO&quot;, &quot;CdrRowRangeTo&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="ROW_RANGE_TO"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/15/2015 17:13:35"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="TOTAL_NUMBER_OF_CDRs"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="TRAFFIC_TYPE"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([CALLED_NUMBER] IS NOT NULL, ( IIF( InList(&quot;Corporate Back Office Agent&quot;,[VF CurResp]),[CALLED_NUMBER],Mid([CALLED_NUMBER], 0, 20) + &apos;xxxx&apos;)), &quot;&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Called Number Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF( InList(&quot;COPS Manager&quot;,[VF CurResp]),&quot;Y&quot;,&quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Cell Id Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="GetProfileAttrAsList(&quot;User Responsibilities&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF CurResp"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VFTRCBU Visible To User Roles Calc] = &apos;Y&apos;,[CALLED_NUMBER],Left([CALLED_NUMBER],Len([CALLED_NUMBER])-4)+&quot;xxxx&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU CALLED NUMBER"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="GetProfileAttr(&quot;CDR_CustomerType&quot;)"
+			   COMMENTS="JMARQUES - VFTRCBU-14369"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Customer Type"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/13/2015 18:23:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/13/2015 18:23:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="Language()"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Lang Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/13/2015 18:23:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/13/2015 18:23:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="InvokeServiceMethod(&quot;ACS NI General Operations&quot;,&quot;GetParameter&quot;,&quot;Function=VF_ROLE_LIST,Name=Roles&quot;,&quot;Cons123&quot;)"
+			   COMMENTS="VFTRCBU-7941 2015.08.24 - TFERNANDES - created to revert role logic to Condition1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Roles List"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/22/2015 15:52:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:52:16"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF(InvokeServiceMethod(&quot;VF TRK Utilities&quot;,&quot;HasRolesLOV&quot;,&quot;Type=VFTRCBU_CDRS_ROLES,Name=CDRS_ROLES,Value=CDRS_ROLES&quot;,&quot;hasRole&quot;)=&quot;True&quot;,&quot;Y&quot;,&quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Visible To User Roles Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/18/2015 19:29:34"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF_EMAIL_TARGET_ADDRESS"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/04/2015 12:53:13"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf((InvokeServiceMethod(&quot;TELCO Order Management Utilities&quot;, &quot;UserHasRole&quot;, &quot;roles=eval([VFTRCBU Roles List])&quot;, &quot;hasRole&quot;)=&quot;Y&quot;),&quot;N&quot;,&quot;Y&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="isPrimaryPositionTypeInRolesList"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/23/2015 15:09:52"
+			   UPDATED_BY="RLOURENCO"
+			   CREATED="05/04/2015 12:53:13"
+			   CREATED_BY="CJANEIRO">
+			</FIELD>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

@@ -1,0 +1,296 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="11/24/2016 17:14:00"
+   UPDATED_BY="SADMIN"
+   CREATED="11/24/2016 14:49:11"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="LOCKED BY VTAO UI UPGRADE (Control Alignment)"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="Account"
+	   UI_FREEZE="N"
+	   UPDATED="05/31/2017 10:57:10"
+	   UPDATED_BY="ESANTOS"
+	   CREATED="01/01/1980 00:00:00"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   EXTERNAL_USE="N"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VF MOF Update"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="05/31/2017 10:46:27"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   OBJECT_LOCKED_BY_NAME="ESANTOS"
+		   UPDATED="05/31/2017 10:57:10"
+		   UPDATED_BY="ESANTOS"
+		   CREATED="04/12/2015 23:25:24"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="UpdateMOF"
+			   UPDATED="04/12/2015 23:25:24"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/12/2015 23:25:24"
+			   CREATED_BY="SADMIN">
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="Bill Contact GSMs"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Output"
+				   UPDATED="04/12/2015 23:25:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/12/2015 23:25:24"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="ErrorCode"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Output"
+				   UPDATED="04/12/2015 23:25:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/12/2015 23:25:24"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="ErrorDescription"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Output"
+				   UPDATED="04/12/2015 23:25:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/12/2015 23:25:24"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="MOF Status"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="04/12/2015 23:25:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/12/2015 23:25:24"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="StatusCode"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Output"
+				   UPDATED="04/12/2015 23:25:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/12/2015 23:25:24"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="TaxId"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="04/12/2015 23:25:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/12/2015 23:25:24"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	switch (MethodName)
+	{ 
+		case &quot;UpdateMOF&quot;:
+			UpdateMOF(Inputs,Outputs);
+			return (CancelOperation);
+		default:
+			return (ContinueOperation);
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="04/12/2015 23:25:24"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/12/2015 23:25:24"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="UpdateMOF"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function UpdateMOF(Inputs,Outputs)
+{
+	//TC-5996 - E-Archive - VF_VKARACA - 2014-09-15
+	try
+	{				
+		var boAccount = TheApplication().GetBusObject(&quot;Account&quot;);
+		var bcAccount = boAccount.GetBusComp(&quot;Account&quot;);
+		var boComInvPro = TheApplication().GetBusObject(&quot;Com Invoice Profile&quot;);
+		var boBillingAccount = TheApplication().GetBusObject(&quot;Billing Account&quot;);
+		var bcComInvPro = boBillingAccount.GetBusComp(&quot;Com Invoice Profile&quot;);
+		var bcBillingAccount = boBillingAccount.GetBusComp(&quot;Billing Account - E-Archieve&quot;);
+		var strTaxId = Inputs.GetProperty(&quot;TaxId&quot;);
+		var strMOFStatus = Inputs.GetProperty(&quot;MOF Status&quot;);  // MOF OR NORMAL
+		var strAccountId = &quot;&quot;;
+		var Expr = &quot;&quot;;
+		//var ExprBA = &quot;&quot;;
+		var isRecord = &quot;&quot;;
+		var isRecordBA = &quot;&quot;;
+		var strContactGSM =&quot;&quot;;
+		var strContactGSMs = new Array();
+		var strMediaType=&quot;&quot;;
+		var strMediaType2=&quot;&quot;;
+		var isExist=&quot;&quot;;
+		var strBAId=&quot;&quot;;
+		var isRecordComInvPro=&quot;&quot;;
+		//var strOMDAddress= &quot;&quot;;
+		
+		
+		with(bcAccount)
+		{
+			SetViewMode(AllView);
+			ClearToQuery();
+			//bcAccount.ActivateField(&quot;VF Sale Rep Email&quot;);   
+			Expr = &quot;([VF Tax Number]=&apos;&quot;+strTaxId+&quot;&apos;)&quot;;
+			SetSearchExpr(Expr);
+			ExecuteQuery(ForwardOnly);		 
+			isRecord = FirstRecord();
+
+			while (isRecord)
+			{
+				strAccountId  = bcAccount.GetFieldValue(&quot;Id&quot;);
+				//strOMDAddress = bcAccount.GetFieldValue(&quot;VF Sale Rep Email&quot;);
+				
+				if(strAccountId != &quot;&quot; || strAccountId != null)
+				{
+					with(bcBillingAccount)  
+					{
+						SetViewMode(AllView);
+						ClearToQuery(); 
+						bcBillingAccount.ActivateField(&quot;VF Bill Type&quot;);
+						//ExprBA = &quot;([Parent Account Id]=&apos;&quot;+strAccountId+&quot;&apos;)&quot;;
+						//SetSearchExpr(ExprBA);
+						SetSearchExpr(&quot;[Parent Account Id]=&apos;&quot;+strAccountId+&quot;&apos; AND [Account Status Code] = &apos;100&apos;&quot;);
+						ExecuteQuery(ForwardOnly);
+						var count = CountRecords();
+						isRecordBA = FirstRecord();
+						//ITSL - 4112 - if changed to while
+						while (isRecordBA)
+						{
+							strContactGSM = bcBillingAccount.GetFieldValue(&quot;Bill To Contact Cellular Number&quot;);
+							strMediaType= bcBillingAccount.GetFieldValue(&quot;VF Media Type&quot;);
+							//strMediaType2= bcBillingAccount.GetFieldValue(&quot;Media Type&quot;);
+							strBAId= bcBillingAccount.GetFieldValue(&quot;Id&quot;);
+							
+							with(bcComInvPro)  
+							{
+								SetViewMode(AllView);
+								ClearToQuery(); 
+								ActivateField(&quot;Media Type&quot;);
+								SetSearchExpr(&quot;[Account Id]=&apos;&quot;+strBAId+&quot;&apos;&quot;);
+								ExecuteQuery(ForwardOnly);
+								isRecordComInvPro = FirstRecord();
+								
+								if (isRecordComInvPro)
+								{
+									if (strMOFStatus == &quot;MOF&quot; &amp;&amp; (strMediaType!= &quot;Ministry of Finance&quot; &amp;&amp; strMediaType!=&quot;Ministry of Finance – With Rep&quot;))
+									{		
+										bcComInvPro.SetFieldValue(&quot;Media Type&quot;, TheApplication ().InvokeMethod (&quot;LookupValue&quot;,&quot;BILL_MEDIA_TYPE&quot;,&quot;105&quot;)); //105=Maliye Bakanlığı/ Ministry of Finance
+										bcComInvPro.SetFieldValue(&quot;Bill Type&quot;, TheApplication ().InvokeMethod (&quot;LookupValue&quot;,&quot;BILL_TYPE&quot;,&quot;101&quot;));
+										bcComInvPro.WriteRecord();
+										
+									}
+									
+									if (strMOFStatus == &quot;NORMAL&quot; &amp;&amp; (strMediaType== &quot;Ministry of Finance&quot; || strMediaType==&quot;Ministry of Finance – With Rep&quot;) )
+									{					
+										bcComInvPro.SetFieldValue(&quot;Media Type&quot;, TheApplication ().InvokeMethod (&quot;LookupValue&quot;,&quot;BILL_MEDIA_TYPE&quot;,&quot;104&quot;)); //104= Mail /Posta
+										bcComInvPro.WriteRecord();	
+									}
+									
+									if (strContactGSM != null || strContactGSM != &quot;&quot;)
+									{
+										for(var i=-1;i&lt;strContactGSMs.length;i++ )
+										{
+											if(strContactGSM==strContactGSMs[i])
+											{isExist=&quot;Y&quot;}
+										}
+										if(isExist!=&quot;Y&quot;)
+										{
+											strContactGSMs.push(strContactGSM);
+										}
+										strContactGSM=&quot;&quot;;
+									}
+							
+								}
+							}
+							isRecordBA = bcBillingAccount.NextRecord();	
+						}
+					}
+				}
+				isRecord = bcAccount.NextRecord();//ITSL - 4112
+			}
+		}
+		
+		Outputs.SetProperty(&quot;StatusCode&quot;,&quot;0&quot;);
+		Outputs.SetProperty(&quot;Bill Contact GSMs&quot;,strContactGSMs);
+		//Outputs.SetProperty(&quot;OMDAddress&quot;,strOMDAddress); 
+		//Outputs.SetProperty(&quot;BAId&quot;,strAccountId);
+	}
+	
+	catch(e)
+	{  	
+		Outputs.SetProperty(&quot;StatusCode&quot;,&quot;1&quot;);
+		Outputs.SetProperty(&quot;ErrorDescription&quot;,  e.errText);
+		Outputs.SetProperty(&quot;ErrorCode&quot;, e.errCode);
+	}
+
+	finally
+	{
+		boAccount = null;
+		bcAccount = null;
+		boBillingAccount = null;
+		bcBillingAccount = null;
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="05/31/2017 10:57:10"
+			   UPDATED_BY="ESANTOS"
+			   CREATED="04/12/2015 23:25:24"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

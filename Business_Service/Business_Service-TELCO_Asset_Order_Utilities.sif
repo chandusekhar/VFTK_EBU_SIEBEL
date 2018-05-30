@@ -1,0 +1,1246 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="WA#39  DG - 3/7/14"
+	   INACTIVE="N"
+	   LANGUAGE_LOCKED="ENU"
+	   LOCKED="Y"
+	   LOCKED_DATE="12/19/2017 23:32:54"
+	   NAME="TELCO Order Management"
+	   UI_FREEZE="N"
+	   LOCKED_BY_NAME="IBM_RCATITA"
+	   UPDATED="01/08/2018 14:52:41"
+	   UPDATED_BY="IBM_RCATITA"
+	   CREATED="08/14/2014 20:13:30"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   EXTERNAL_USE="Y"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="TELCO Asset Order Utilities"
+		   OBJECT_LOCKED="N"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   UPDATED="01/08/2018 15:44:39"
+		   UPDATED_BY="IBM_RCATITA"
+		   CREATED="05/24/2015 17:39:51"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="PostUngroupCampaignUpdate"
+			   UPDATED="01/08/2018 14:52:27"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="01/08/2018 14:52:27"
+			   CREATED_BY="IBM_RCATITA">
+				<BUSINESS_SERVICE_METHOD_LOCALE
+				   APPLICATION_CODE="STD"
+				   DISPLAY_NAME="PostUngroupCampaignUpdate"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/08/2018 14:52:41"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="01/08/2018 14:52:41"
+				   CREATED_BY="IBM_RCATITA">
+				</BUSINESS_SERVICE_METHOD_LOCALE>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="(declarations)"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="var gIsCosbySharing = false;
+var sCampPromo = false;
+var gActionReason = &quot;&quot;;
+var gProdPromotionId = &quot;&quot;;"
+			   SEQUENCE="1"
+			   UPDATED="01/08/2018 14:37:52"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="01/08/2018 14:37:52"
+			   CREATED_BY="IBM_RCATITA">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="AddChildAsset"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function AddChildAsset(psChildAssetValues : PropertySet, psSiebelMessage : PropertySet)
+{
+	try
+	{
+		var psMasterAssetList : PropertySet = null;
+		var psMasterAsset     : PropertySet = null;
+		var psRootAssetList   : PropertySet = null;
+		var psRootAsset       : PropertySet = null;
+		var psChildAssetList  : PropertySet = null;
+		var psChildAsset      : PropertySet = null;
+
+		var iChild            = 0;
+		var sMasterAssetId    = &quot;&quot;;
+		var sRootAssetId      = &quot;&quot;;
+		var sRootAssetIntegId = &quot;&quot;;
+		var sPropertyName     = &quot;&quot;;
+		var sPropertyValue    = &quot;&quot;;
+
+		if (psSiebelMessage.GetChildCount() == 0)
+		{
+			return;
+		}
+
+		for (iChild=0; iChild&lt;psSiebelMessage.GetChildCount(); iChild++)
+		{
+			psMasterAssetList = psSiebelMessage.GetChild(iChild);
+
+			if (psMasterAssetList.GetType() == &quot;ListOfTELCO Asset Order&quot;)
+			{
+				break;
+			}
+
+			psMasterAssetList = null;
+		}
+
+		if (psMasterAssetList == null || psMasterAssetList.GetChildCount() == 0)
+		{
+			return;
+		}
+
+		for (iChild=0; iChild&lt;psMasterAssetList.GetChildCount(); iChild++)
+		{
+			psMasterAsset = psMasterAssetList.GetChild(iChild);
+
+			if (psMasterAsset.GetType() == &quot;Master Asset&quot;)
+			{
+				break;
+			}
+
+			psMasterAsset = null;
+
+		}
+
+		if (psMasterAsset == null || psMasterAsset.GetChildCount() == 0)
+		{
+			return;
+		}
+
+		sMasterAssetId = psMasterAsset.GetProperty(&quot;Id&quot;);
+
+		if (sMasterAssetId == null || sMasterAssetId == &quot;&quot;)
+		{
+			return;
+		}
+
+		for (iChild=0; iChild&lt;psMasterAsset.GetChildCount(); iChild++)
+		{
+			psRootAssetList = psMasterAsset.GetChild(iChild);
+
+			if (psRootAssetList.GetType() == &quot;ListOfRoot Asset&quot;)
+			{
+				break;
+			}
+
+			psRootAssetList = null;
+		}
+
+		if (psRootAssetList == null || psRootAssetList.GetChildCount() == 0)
+		{
+			return;
+		}
+
+		for (iChild=0; iChild&lt;psRootAssetList.GetChildCount(); iChild++)
+		{
+			psRootAsset = psRootAssetList.GetChild(iChild);
+
+			if (psRootAsset.GetType() == &quot;Root Asset&quot;)
+			{
+				sRootAssetId      = psRootAsset.GetProperty(&quot;Id&quot;);
+				sRootAssetIntegId = psRootAsset.GetProperty(&quot;Integration Id&quot;);
+
+				if (sRootAssetId == sMasterAssetId)
+				{
+					break;
+				}
+			}
+
+			psRootAsset = null;
+		}
+
+		if (psRootAsset == null || psRootAsset == &quot;&quot;)
+		{
+			return;
+		}
+
+		for (iChild=0; iChild&lt;psRootAsset.GetChildCount(); iChild++)
+		{
+			psChildAssetList = psRootAsset.GetChild(iChild);
+
+			if (psChildAssetList.GetType() == &quot;ListOfChild Asset&quot;)
+			{
+				break;
+			}
+
+			psChildAssetList = null;
+		}
+
+		if (psChildAssetList == null || psChildAssetList == &quot;&quot;)
+		{
+			return;
+		}
+
+		psChildAsset = TheApplication().NewPropertySet();
+		psChildAsset.SetType(&quot;Child Asset&quot;);
+
+		sPropertyName = psRootAsset.GetFirstProperty();
+
+		while (sPropertyName != null &amp;&amp; sPropertyName != &quot;&quot;)
+		{
+			sPropertyValue = psRootAsset.GetProperty(sPropertyName);
+
+			psChildAsset.SetProperty(sPropertyName, sPropertyValue);
+
+			sPropertyName = psRootAsset.GetNextProperty();
+		}
+
+		psChildAsset.SetProperty(&quot;Parent Asset Id&quot;,       sRootAssetId);
+		psChildAsset.SetProperty(&quot;Parent Integration Id&quot;, sRootAssetIntegId);
+		psChildAsset.SetProperty(&quot;Action Code&quot;,           &quot;New&quot;);
+
+		sPropertyName = psChildAssetValues.GetFirstProperty();
+
+		while (sPropertyName != null &amp;&amp; sPropertyName != &quot;&quot;)
+		{
+			sPropertyValue = psChildAssetValues.GetProperty(sPropertyName);
+
+			psChildAsset.SetProperty(sPropertyName, sPropertyValue);
+
+			sPropertyName = psChildAssetValues.GetNextProperty();
+		}
+
+		psChildAssetList.AddChild(psChildAsset);
+	}
+	finally
+	{
+		psChildAsset      = null;
+		psChildAssetList  = null;
+		psRootAsset       = null;
+		psRootAssetList   = null;
+		psMasterAsset     = null;
+		psMasterAssetList = null;
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="01/08/2018 14:37:52"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="05/24/2015 17:39:51"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="AddChildPropertySet"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function AddChildPropertySet(psInputs : PropertySet, psOutputs : PropertySet)
+{
+	try
+	{
+		var psParent   : PropertySet = null;
+		var psChild    : PropertySet = null;
+		var psAddChild : PropertySet = null;
+
+		var sParentType    = psInputs.GetProperty(&quot;Parent Type&quot;);
+		var sChildType     = psInputs.GetProperty(&quot;Child Type&quot;);
+		var iChild         = 0;
+		var sPropertyName  = &quot;&quot;;
+		var sPropertyValue = &quot;&quot;;
+
+		if (psInputs.GetChildCount() &lt; 2)
+		{
+			return;
+		}
+
+		if (sParentType == null || sParentType == &quot;&quot; || sChildType == null || sChildType == &quot;&quot;)
+		{
+			return;
+		}
+
+		for (iChild=0; iChild&lt;psInputs.GetChildCount(); iChild++)
+		{
+			psParent = psInputs.GetChild(iChild);
+
+			if (psParent.GetType() == sParentType)
+			{
+				break;
+			}
+
+			psParent = null;
+		}
+
+		if (psParent == null)
+		{
+			return;
+		}
+
+		psParent.SetType(sParentType);
+		psOutputs.AddChild(psParent);
+
+		for (iChild=0; iChild&lt;psInputs.GetChildCount(); iChild++)
+		{
+			psChild = psInputs.GetChild(iChild);
+
+			if (psChild.GetType() == sChildType)
+			{
+				break;
+			}
+
+			psChild = null;
+		}
+
+		if (psChild == null)
+		{
+			return;
+		}
+
+		sPropertyName = psChild.GetFirstProperty();
+
+		if (sPropertyName == null || sPropertyName == &quot;&quot;)
+		{
+			return;
+		}
+
+		psAddChild = TheApplication().NewPropertySet();
+
+		while (sPropertyName != null &amp;&amp; sPropertyName != &quot;&quot;)
+		{
+			sPropertyValue = psChild.GetProperty(sPropertyName);
+
+			psAddChild.SetProperty(sPropertyName, sPropertyValue);
+
+			sPropertyName = psChild.GetNextProperty();
+		}
+
+		psParent.AddChild(psAddChild);
+	}
+	finally
+	{
+		psAddChild = null;
+		psChild    = null;
+		psParent   = null;
+	}
+}"
+			   SEQUENCE="3"
+			   UPDATED="01/08/2018 14:37:52"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="05/24/2015 17:39:51"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="AddChildPropertySet2"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function AddChildPropertySet2(psInputs : PropertySet, psOutputs : PropertySet)
+{
+	try
+	{
+		var psParent   : PropertySet = null;
+		var psChild    : PropertySet = null;
+		var psAddChild : PropertySet = null;
+
+		var sParentType    = psInputs.GetProperty(&quot;Parent Type&quot;);
+		var sChildType     = psInputs.GetProperty(&quot;Child Type&quot;);
+		var iChild         = 0;
+		var sPropertyName  = &quot;&quot;;
+		var sPropertyValue = &quot;&quot;;
+
+		if (psInputs.GetChildCount() &lt; 2)
+		{
+			return;
+		}
+
+		if (sParentType == null || sParentType == &quot;&quot; || sChildType == null || sChildType == &quot;&quot;)
+		{
+			return;
+		}
+
+		for (iChild=0; iChild&lt;psInputs.GetChildCount(); iChild++)
+		{
+			psParent = psInputs.GetChild(iChild);
+
+			if (psParent.GetType() == sParentType)
+			{
+				break;
+			}
+
+			psParent = null;
+		}
+
+		if (psParent == null)
+		{
+			return;
+		}
+
+		psOutputs.AddChild(psParent);
+
+		for (iChild=0; iChild&lt;psInputs.GetChildCount(); iChild++)
+		{
+			psChild = psInputs.GetChild(iChild);
+
+			if (psChild.GetType() == sChildType)
+			{
+				break;
+			}
+
+			psChild = null;
+		}
+
+		if (psChild == null)
+		{
+			return;
+		}
+
+		//sPropertyName = psChild.GetFirstProperty();
+
+		//if (sPropertyName == null || sPropertyName == &quot;&quot;)
+		//{
+		//	return;
+		//}
+
+		//psAddChild = TheApplication().NewPropertySet();
+
+		//while (sPropertyName != null &amp;&amp; sPropertyName != &quot;&quot;)
+		//{
+		//	sPropertyValue = psChild.GetProperty(sPropertyName);
+        //
+		//	psAddChild.SetProperty(sPropertyName, sPropertyValue);
+        //
+		//	sPropertyName = psChild.GetNextProperty();
+		//}
+
+		psChild.SetType(sChildType);
+		psParent.AddChild(psChild);
+	}
+	finally
+	{
+		psAddChild = null;
+		psChild    = null;
+		psParent   = null;
+	}
+}"
+			   SEQUENCE="4"
+			   UPDATED="01/08/2018 14:37:52"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="07/19/2015 23:33:55"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="AddResumeFee"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function AddResumeFee(psInputs : PropertySet, psOutputs : PropertySet)
+{
+	try
+	{
+		var psSiebelMessage  : PropertySet = null;
+		var psFeeAssetValues : PropertySet = TheApplication().NewPropertySet();
+
+		var sMasterAssetId          = psInputs.GetProperty(&quot;Master Asset Id&quot;);
+		var sMasterAssetMarket      = psInputs.GetProperty(&quot;Master Asset Market&quot;);
+		var sMasterAssetPartNumber  = psInputs.GetProperty(&quot;Master Asset Part Number&quot;);
+		var sMasterAssetPriceListId = psInputs.GetProperty(&quot;Master Asset Price List Id&quot;);
+		var sActionCode             = psInputs.GetProperty(&quot;Action Code&quot;);
+		var sActionType             = psInputs.GetProperty(&quot;Action Type&quot;);
+		var sActionReason           = psInputs.GetProperty(&quot;Action Reason&quot;);
+
+		if (psInputs.GetChildCount() == 0)
+		{
+			return;
+		}
+
+		psSiebelMessage = psInputs.GetChild(0);
+
+		psOutputs.AddChild(psSiebelMessage);
+
+		if (sMasterAssetId == null || sMasterAssetId == &quot;&quot;)
+		{
+			return;
+		}
+
+		if (sActionCode == null || sActionCode == &quot;&quot; || sActionCode != &quot;Resume&quot;)
+		{
+			return;
+		}
+
+		if (psSiebelMessage.GetChildCount() == 0)
+		{
+			return;
+		}
+
+		if (GetFeeAssetValues(psInputs, psFeeAssetValues))
+		{
+			AddChildAsset(psFeeAssetValues, psSiebelMessage);
+		}
+	}
+	finally
+	{
+		psFeeAssetValues  = null;
+		psSiebelMessage   = null;
+	}
+}"
+			   SEQUENCE="5"
+			   UPDATED="01/08/2018 14:37:52"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="05/24/2015 17:39:51"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CheckAssetConditions"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CheckAssetConditions(psAsset : PropertySet, psConditionList : PropertySet)
+{
+	try
+	{
+		var psCondition : PropertySet = null;
+
+		var iCondition      = 0;
+		var bCondition      = false;
+		var sConditionName  = &quot;&quot;;
+		var sConditionValue = &quot;&quot;;
+		var sAssetValue     = &quot;&quot;;
+		
+		var condOne = false;
+		var condTwo = false;
+		var condThree = false;
+		var condFour = false;
+
+		for (iCondition=0; iCondition&lt;psConditionList.GetChildCount(); iCondition++)
+		{
+			bCondition     = true;
+			psCondition    = psConditionList.GetChild(iCondition);
+			sConditionName = psCondition.GetFirstProperty();
+		
+			while (sConditionName != null &amp;&amp; sConditionName != &quot;&quot;)
+			{
+				sConditionValue = psCondition.GetProperty(sConditionName);
+				sAssetValue     = psAsset.GetProperty(sConditionName);
+		
+				if (sAssetValue == null || sAssetValue == &quot;&quot; || sAssetValue != sConditionValue)
+				{
+					bCondition = false;
+					break;
+				}
+				
+				if(sConditionName == &quot;VF Product Group&quot; &amp;&amp; sConditionValue == &quot;SRV&quot;)
+					condOne = true;
+					
+				if(sConditionName == &quot;VF Product Type&quot; &amp;&amp; sConditionValue == &quot;SHARING&quot;)
+					condTwo = true;
+
+				//++WA#15 - FTOSCANO
+				if(sConditionName == &quot;VF Product Group&quot; &amp;&amp; sConditionValue == &quot;CAMP PROMO&quot;)
+					condThree = true;
+					
+				if(sConditionName == &quot;VF Product Type&quot; &amp;&amp; (sConditionValue == &quot;HANDSET PROMO&quot; || sConditionValue == &quot;DISCOUNT&quot;))
+					condFour = true;				
+				//--WA#15 - FTOSCANO
+		
+				sConditionName = psCondition.GetNextProperty();
+			}
+		
+			if (bCondition)
+			{		
+				if(condOne &amp;&amp; condTwo)
+					gIsCosbySharing = true;		
+				break;
+				
+				if(condThree &amp;&amp; condFour)
+					gProdPromotionId = psAsset.GetProperty(&quot;Product Id&quot;);
+					sCampPromo = true;		
+				break;
+			}
+		}
+
+		return (bCondition);
+	}
+	finally
+	{
+		psCondition = null;
+	}
+}"
+			   SEQUENCE="6"
+			   UPDATED="01/08/2018 14:37:52"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="05/24/2015 17:39:51"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CheckCosbySharing"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CheckCosbySharing(sMasterAssetId) {
+	try {
+
+		var sRootId = sMasterAssetId;
+		var sAssetStatusInactive = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;IMPL_PHASE&quot;, &quot;Inactive&quot;);
+
+		var psInputs = TheApplication().NewPropertySet();
+		var psOutputs = TheApplication().NewPropertySet();
+		var BS = TheApplication().GetService(&quot;TELCO BusComp Utils&quot;);
+
+		psInputs.SetProperty(&quot;BusinessObject&quot;, &quot;TELCO Asset - Simple&quot;);
+		psInputs.SetProperty(&quot;BusinessComponent&quot;, &quot;TELCO Asset - Simple&quot;);
+		psInputs.SetProperty(&quot;SearchExpression&quot;, &quot;[Root Asset Id] = &apos;&quot; + sRootId + &quot;&apos; AND [VF Product Type] = &apos;SHARING&apos; AND [Status] &lt;&gt; &apos;&quot; + sAssetStatusInactive + &quot;&apos;&quot;);
+		psInputs.SetProperty(&quot;ReturnRecordCount&quot;, &quot;Y&quot;);
+
+		BS.InvokeMethod(&quot;GetFieldsFromFirstRow&quot;, psInputs, psOutputs);
+
+		var RecordExists = psOutputs.GetProperty(&quot;TotalNumberOfRows&quot;);
+		if (RecordExists &gt; 0) {
+			gIsCosbySharing = true;
+		}
+	}
+	finally {
+		BS = null;
+		psInputs = null;
+		psOutputs = null;
+	}
+}"
+			   SEQUENCE="7"
+			   UPDATED="01/08/2018 14:37:52"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="06/07/2016 10:39:11"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GetFeeAssetValues"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GetFeeAssetValues(psInputs : PropertySet, psFeeAssetValues : PropertySet)
+{
+	try
+	{
+		var bsManager    : Service     = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		var psManagerIn  : PropertySet = TheApplication().NewPropertySet();
+		var psManagerOut : PropertySet = TheApplication().NewPropertySet();
+
+		var sMasterAssetId          = psInputs.GetProperty(&quot;Master Asset Id&quot;);
+		var sMasterAssetMarket      = psInputs.GetProperty(&quot;Master Asset Market&quot;);
+		var sMasterAssetPartNumber  = psInputs.GetProperty(&quot;Master Asset Part Number&quot;);
+		var sMasterAssetPriceListId = psInputs.GetProperty(&quot;Master Asset Price List Id&quot;);
+		var sActionCode             = psInputs.GetProperty(&quot;Action Code&quot;);
+		var sActionType             = psInputs.GetProperty(&quot;Action Type&quot;);
+		var sActionReason           = psInputs.GetProperty(&quot;Action Reason&quot;);
+		var sAddFee                 = &quot;&quot;;
+		var sFeeAssetId             = &quot;&quot;;
+		var sFeeProductId           = &quot;&quot;;
+		var sFeeProductPartNumber   = &quot;&quot;;
+		var sFeeProductGroup        = &quot;&quot;;
+		var sFeeProductType         = &quot;&quot;;
+		var sFeeProductSubType      = &quot;&quot;;
+		var sFeeProductServiceType  = &quot;&quot;;
+		var sFeeProductActivation   = &quot;&quot;;
+		var sFeeProductBilling      = &quot;&quot;;
+		var sFeeProductNameTRK      = &quot;&quot;;
+		var sFeeUnitPrice           = &quot;&quot;;
+
+		psManagerIn.SetProperty(&quot;ProcessName&quot;,   &quot;TELCO Get Asset Order Fee&quot;);
+		psManagerIn.SetProperty(&quot;Asset Id&quot;,      sMasterAssetId);
+		psManagerIn.SetProperty(&quot;Market&quot;,        sMasterAssetMarket);
+		psManagerIn.SetProperty(&quot;Part Number&quot;,   sMasterAssetPartNumber);
+		psManagerIn.SetProperty(&quot;Price List Id&quot;, sMasterAssetPriceListId);
+		psManagerIn.SetProperty(&quot;Action Code&quot;,   sActionCode);
+		psManagerIn.SetProperty(&quot;Action Type&quot;,   sActionType);
+		psManagerIn.SetProperty(&quot;Action Reason&quot;, sActionReason);
+		
+		bsManager.InvokeMethod(&quot;RunProcess&quot;, psManagerIn, psManagerOut);
+		
+		sAddFee                = psManagerOut.GetProperty(&quot;Add Fee&quot;);
+		sFeeAssetId            = psManagerOut.GetProperty(&quot;Fee Asset Id&quot;);
+		sFeeProductId          = psManagerOut.GetProperty(&quot;Fee Product Id&quot;);
+		sFeeProductPartNumber  = psManagerOut.GetProperty(&quot;Fee Product Part Number&quot;);
+		sFeeProductGroup       = psManagerOut.GetProperty(&quot;Fee Product Group&quot;);
+		sFeeProductType        = psManagerOut.GetProperty(&quot;Fee Product Type&quot;);
+		sFeeProductSubType     = psManagerOut.GetProperty(&quot;Fee Product Sub Type&quot;);
+		sFeeProductServiceType = psManagerOut.GetProperty(&quot;Fee Product Service Type&quot;);
+		sFeeProductActivation  = psManagerOut.GetProperty(&quot;Fee Product Activation&quot;);
+		sFeeProductBilling     = psManagerOut.GetProperty(&quot;Fee Product Billing&quot;);
+		sFeeProductNameTRK     = psManagerOut.GetProperty(&quot;Fee Product Name TRK&quot;);
+		sFeeUnitPrice          = psManagerOut.GetProperty(&quot;Fee Unit Price&quot;);
+
+		psFeeAssetValues.SetProperty(&quot;Id&quot;,                     sFeeAssetId);
+		psFeeAssetValues.SetProperty(&quot;Integration Id&quot;,         sFeeAssetId);
+		psFeeAssetValues.SetProperty(&quot;Product Id&quot;,             sFeeProductId);
+		psFeeAssetValues.SetProperty(&quot;Product Part Number&quot;,    sFeeProductPartNumber);
+		psFeeAssetValues.SetProperty(&quot;VF Product Group&quot;,       sFeeProductGroup);
+		psFeeAssetValues.SetProperty(&quot;VF Product Type&quot;,        sFeeProductType);
+		psFeeAssetValues.SetProperty(&quot;VF Product Sub Type&quot;,    sFeeProductSubType);
+		psFeeAssetValues.SetProperty(&quot;X Service Type LIC&quot;,     sFeeProductServiceType);
+		psFeeAssetValues.SetProperty(&quot;XActivation_Flg&quot;,        sFeeProductActivation);
+		psFeeAssetValues.SetProperty(&quot;XBilling_Flg&quot;,           sFeeProductBilling);
+		psFeeAssetValues.SetProperty(&quot;Product Translated TRK&quot;, sFeeProductNameTRK);
+		psFeeAssetValues.SetProperty(&quot;Unit Price&quot;,             sFeeUnitPrice);
+
+		return (sAddFee == &quot;Y&quot;);
+	}
+	finally
+	{
+		psManagerOut = null;
+		psManagerIn  = null;
+		bsManager    = null;
+	}
+}"
+			   SEQUENCE="8"
+			   UPDATED="01/08/2018 14:37:52"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="05/24/2015 17:39:51"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GetNewTariffInfo"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GetNewTariffInfo(psInputs : PropertySet, psOutputs : PropertySet)
+{
+	try
+	{
+		var PartNum = psInputs.GetProperty(&quot;PartNumber&quot;);
+		var AdminProdDefBO	:BusObject= TheApplication().GetBusObject(&quot;Admin ISS Product Definition&quot;);
+		var IntProdBC		:BusComp= AdminProdDefBO.GetBusComp(&quot;Internal Product - ISS Admin&quot;);
+
+		var ProductId 	= &quot;&quot;;
+		var ProductName	= &quot;&quot;;
+
+		//Get Product Information
+		IntProdBC.ActivateField(&quot;Product Translated&quot;);
+		IntProdBC.ActivateField(&quot;VF Product Group&quot;);
+		IntProdBC.ActivateField(&quot;VF Product Type&quot;);
+		IntProdBC.ActivateField(&quot;VF Product Sub Type&quot;);
+		IntProdBC.SetSearchSpec(&quot;Part #&quot;,PartNum);
+		IntProdBC.ExecuteQuery (ForwardOnly);
+		var RecordExists = IntProdBC.FirstRecord();
+		if (RecordExists)
+		{
+			psOutputs.SetProperty(&quot;ProdId&quot;,IntProdBC.GetFieldValue(&quot;Id&quot;));
+			psOutputs.SetProperty(&quot;ProdTranslated&quot;,IntProdBC.GetFieldValue(&quot;Product Translated&quot;));
+			psOutputs.SetProperty(&quot;ProdGroup&quot;,IntProdBC.GetFieldValue(&quot;VF Product Group&quot;));
+			psOutputs.SetProperty(&quot;ProdType&quot;,IntProdBC.GetFieldValue(&quot;VF Product Type&quot;));
+			psOutputs.SetProperty(&quot;ProdSubType&quot;,IntProdBC.GetFieldValue(&quot;VF Product Sub Type&quot;));
+		}				
+	}
+	finally
+	{
+		IntProdBC		= null;
+		AdminProdDefBO 	= null;
+	}
+}"
+			   SEQUENCE="9"
+			   UPDATED="01/08/2018 14:37:52"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="07/19/2015 23:33:55"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GetSuspendToDeletedConditions"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GetSuspendToDeletedConditions(psInputs : PropertySet, psDeleteProducts : PropertySet, psKeepProducts : PropertySet)
+{
+	try
+	{
+		var bsManager       : Service     = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		var psManagerIn     : PropertySet = TheApplication().NewPropertySet();
+		var psManagerOut    : PropertySet = TheApplication().NewPropertySet();
+		var psConditionList : PropertySet = null;
+		var psCondition     : PropertySet = null;
+
+		var sMasterAssetId         = psInputs.GetProperty(&quot;Master Asset Id&quot;);
+		var sMasterAssetMarket     = psInputs.GetProperty(&quot;Master Asset Market&quot;);
+		var sMasterAssetPartNumber = psInputs.GetProperty(&quot;Master Asset Part Number&quot;);
+		var sActionCode            = psInputs.GetProperty(&quot;Action Code&quot;);
+		var sActionType            = psInputs.GetProperty(&quot;Action Type&quot;);
+		var sActionReason          = psInputs.GetProperty(&quot;Action Reason&quot;);
+		var sDeleteProductsType    = &quot;&quot;;
+		var sKeepProductsType      = &quot;&quot;;
+		var iChild                 = 0;
+		var iCondition             = 0;
+
+		psManagerIn.SetProperty(&quot;ProcessName&quot;,   &quot;TELCO Get Suspend to Deleted Conditions&quot;);
+		psManagerIn.SetProperty(&quot;Asset Id&quot;,      sMasterAssetId);
+		psManagerIn.SetProperty(&quot;Market&quot;,        sMasterAssetMarket);
+		psManagerIn.SetProperty(&quot;Part Number&quot;,   sMasterAssetPartNumber);
+		psManagerIn.SetProperty(&quot;Action Code&quot;,   sActionCode);
+		psManagerIn.SetProperty(&quot;Action Type&quot;,   sActionType);
+		psManagerIn.SetProperty(&quot;Action Reason&quot;, sActionReason);
+		
+		bsManager.InvokeMethod(&quot;RunProcess&quot;, psManagerIn, psManagerOut);
+		
+		sDeleteProductsType = psManagerOut.GetProperty(&quot;Delete Products Type&quot;);
+		sKeepProductsType   = psManagerOut.GetProperty(&quot;Keep Products Type&quot;);
+
+		if (sDeleteProductsType != null &amp;&amp; sDeleteProductsType != &quot;&quot; &amp;&amp;
+			sKeepProductsType != null &amp;&amp; sKeepProductsType != &quot;&quot;)
+		{
+			for (iChild=0; iChild&lt;psManagerOut.GetChildCount(); iChild++)
+			{
+				psConditionList = psManagerOut.GetChild(iChild);
+
+				if (psConditionList.GetType() == sDeleteProductsType)
+				{
+					for (iCondition=0; iCondition&lt;psConditionList.GetChildCount(); iCondition++)
+					{
+						psCondition = psConditionList.GetChild(iCondition);
+						psDeleteProducts.AddChild(psCondition);
+					}
+				}
+
+				if (psConditionList.GetType() == sKeepProductsType)
+				{
+					for (iCondition=0; iCondition&lt;psConditionList.GetChildCount(); iCondition++)
+					{
+						psCondition = psConditionList.GetChild(iCondition);
+						psKeepProducts.AddChild(psCondition);
+					}
+				}
+			}
+		}
+	}
+	finally
+	{
+		psConditionList = null;
+		psCondition     = null;
+		psManagerOut    = null;
+		psManagerIn     = null;
+		bsManager       = null;
+	}
+}"
+			   SEQUENCE="10"
+			   UPDATED="01/08/2018 14:37:52"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="05/24/2015 17:39:51"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="PostUngroupCampaignUpdate"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function PostUngroupCampaignUpdate(Inputs:PropertySet, Outputs:PropertySet)
+{
+	try
+	{
+		var sNew:String 		= TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;DELTA_ACTION_CODE&quot;,&quot;New&quot;); 
+		var sOrderId:String 	= Inputs.GetProperty(&quot;OrderId&quot;);
+		
+		var oBOName:BusObject 	= TheApplication().GetBusObject(&quot;Order Entry (Sales)&quot;);
+		var oBCName:BusComp		= oBOName.GetBusComp(&quot;Order Entry - Line Items&quot;);
+
+		with(oBCName)
+		{
+			ClearToQuery();
+			SetSearchExpr(&quot;[Order Header Id]=&apos;&quot;+sOrderId+&quot;&apos; AND [VF Product Type]=&apos;MAIN&apos; AND [Action Code]=&apos;&quot;+sNew+&quot;&apos;&quot;);
+			SetSortSpec(&quot;Line Number(ASCENDING)&quot;);
+			ExecuteQuery(ForwardBackward);
+			
+			var iAux:Boolean = FirstRecord(); //don&apos;t clear first records Promotion
+			
+			while(NextRecord())
+			{
+				SetFieldValue(&quot;Prod Prom Id&quot;,&quot;&quot;); //field is force active
+				WriteRecord();
+			}
+		}
+	}
+	catch(e)
+	{
+		TheApplication().RaiseErrorText(e.errText);
+	}
+	finally
+	{
+		oBCName = null;
+		oBOName = null;
+	}
+}"
+			   SEQUENCE="11"
+			   UPDATED="01/08/2018 14:51:09"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="01/08/2018 14:37:01"
+			   CREATED_BY="IBM_RCATITA">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs : PropertySet, Outputs : PropertySet)
+{
+	try
+	{
+		switch (MethodName)
+		{
+			case &quot;SetAssetOrderActionCode&quot;:
+				SetAssetOrderActionCode(Inputs, Outputs);
+				break;
+
+			case &quot;AddResumeFee&quot;:
+				AddResumeFee(Inputs, Outputs);
+				break;
+
+			case &quot;AddChildPropertySet&quot;:
+				AddChildPropertySet(Inputs, Outputs);
+				break;
+				
+			case &quot;PostUngroupCampaignUpdate&quot;:
+				PostUngroupCampaignUpdate(Inputs, Outputs);
+				break;
+		}
+
+		return (CancelOperation);
+	}
+	finally
+	{
+	}
+}"
+			   SEQUENCE="15"
+			   UPDATED="01/08/2018 14:52:03"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="05/24/2015 17:39:51"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SetAssetListActionCode"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SetAssetListActionCode(sSetActionCode, psDeleteProducts : PropertySet, psKeepProducts : PropertySet, psAssetList : PropertySet, sMasterAssetId)
+{
+	try
+	{
+		var psAsset : PropertySet = null;
+		var psChild : PropertySet = null;
+		var psAssetAux : PropertySet = null;
+
+		var iAsset         = 0;
+		var sActionCode    = &quot;&quot;;
+		var iChild         = 0;
+		var bDeleteProduct = false;
+		var bKeepProduct   = false;
+		
+		var sTariffProdGroup = &quot;&quot;;
+		var sTariffProdSubType = &quot;&quot;;
+		
+		var sProductId = &quot;&quot;;
+		
+		var BOPromotion : BusObject;
+		var BCPromotion : BusComp;
+		
+		var addTariff = false;
+		var prodInputs : PropertySet = TheApplication().NewPropertySet();
+		var prodOutputs : PropertySet = TheApplication().NewPropertySet();
+		
+		var sRootAssetId = sMasterAssetId; //VFTRCBU-29859 - HRODRIGUES
+
+		if (sSetActionCode == null || sSetActionCode == &quot;&quot;)
+		{
+			return;
+		}
+
+		if (psAssetList == null || psAssetList.GetChildCount() == 0)
+		{
+			return;
+		}
+		
+		//VFTRCBU-29859 - HRODRIGUES - Added validation to check if it has Sharing products
+		CheckCosbySharing(sRootAssetId);
+
+		for (iAsset=0; iAsset&lt;psAssetList.GetChildCount(); iAsset++)
+		{
+			psAsset = psAssetList.GetChild(iAsset);
+
+			if (psAsset.GetType() == &quot;Root Asset&quot; || psAsset.GetType() == &quot;Child Asset&quot;)
+			{
+				sActionCode = psAsset.GetProperty(&quot;Action Code&quot;);
+
+				if (sActionCode == &quot;Existing&quot;)
+				{
+					sActionCode = sSetActionCode;
+
+					if (sActionCode == &quot;Suspend&quot;)
+					{
+						bDeleteProduct = CheckAssetConditions(psAsset, psDeleteProducts);
+						bKeepProduct   = CheckAssetConditions(psAsset, psKeepProducts);
+
+						if (bDeleteProduct &amp;&amp; (!bKeepProduct))
+						{
+							sActionCode = &quot;Deleted&quot;;
+						}				
+						//++CA08 Cosby - RPIRES
+						if(gIsCosbySharing &amp;&amp; (gActionReason == &quot;209&quot; || gActionReason == &quot;211&quot;))
+						{
+							sTariffProdGroup = psAsset.GetProperty(&quot;VF Product Group&quot;);
+							sTariffProdSubType = psAsset.GetProperty(&quot;VF Product Sub Type&quot;);	
+							if(sTariffProdGroup == &quot;TARIFF&quot; &amp;&amp; sTariffProdSubType == &quot;REDSUBLINE&quot;)
+							{
+								addTariff = true;
+								sActionCode = &quot;Deleted&quot;;
+								gIsCosbySharing = false;
+							}
+						}
+						//--CA08 Cosby - RPIRES
+						
+						//++WA#15 - FTOSCANO 
+						if(sCampPromo &amp;&amp; (gActionReason == &quot;209&quot; || gActionReason == &quot;211&quot;))
+						{
+							BOPromotion = TheApplication().GetBusObject(&quot;ISS Promotion Pricing Components&quot;);
+							BCPromotion = BOPromotion.GetBusComp(&quot;ISS Promotion Pricing Components&quot;);
+							
+							sProductId = psAsset.GetProperty(&quot;Product Id&quot;);
+							
+							with (BCPromotion)				
+							{
+								SetViewMode(AllView);
+								ActivateField(&quot;Promotion Id&quot;);
+								ActivateField(&quot;Product Id&quot;);
+								ClearToQuery();
+								SetSearchExpr(&quot;[Promotion Id] = &apos;&quot; + gProdPromotionId + &quot;&apos; AND [Product Id] = &apos;&quot; + sProductId + &quot;&apos;&quot;);
+								ExecuteQuery(ForwardOnly);
+							
+								if(FirstRecord())
+								{
+									sActionCode = &quot;Deleted&quot;;
+									sCampPromo = false;
+								}
+							}
+						}
+						//--WA#15 - FTOSCANO
+					}
+
+					psAsset.SetProperty(&quot;Action Code&quot;, sActionCode);
+					
+					//++CA08 Cosby - RPIRES
+					if(addTariff)
+					{
+						prodInputs.SetProperty(&quot;PartNumber&quot;,&quot;79119&quot;);
+						GetNewTariffInfo(prodInputs,prodOutputs);
+						psAssetAux = psAsset.Copy();
+						psAssetAux.SetProperty(&quot;Action Code&quot;,&quot;New&quot;);
+						psAssetAux.SetProperty(&quot;Product Id&quot;,prodOutputs.GetProperty(&quot;ProdId&quot;));
+						psAssetAux.SetProperty(&quot;Product Translated TRK&quot;,prodOutputs.GetProperty(&quot;ProdTranslated&quot;));
+						psAssetAux.SetProperty(&quot;Product Part Number&quot;,&quot;79119&quot;);
+						psAssetAux.SetProperty(&quot;VF Product Group&quot;,prodOutputs.GetProperty(&quot;ProdGroup&quot;));
+						psAssetAux.SetProperty(&quot;VF Product Type&quot;,prodOutputs.GetProperty(&quot;ProdType&quot;));
+						psAssetAux.SetProperty(&quot;VF Product Sub Type&quot;,prodOutputs.GetProperty(&quot;ProdSubType&quot;));
+						psAssetList.AddChild(psAssetAux);
+						addTariff = false;
+					}
+					//--CA08 Cosby - RPIRES
+
+					for (iChild=0; iChild&lt;psAsset.GetChildCount(); iChild++)
+					{
+						psChild = psAsset.GetChild(iChild);
+
+						if (psChild.GetType() == &quot;ListOfChild Asset&quot;)
+						{
+							SetAssetListActionCode(sActionCode, psDeleteProducts, psKeepProducts, psChild,sRootAssetId);
+						}
+					
+						if (sActionCode == &quot;Deleted&quot; &amp;&amp;
+							(psChild.GetType() == &quot;ListOfRoot Asset Attribute&quot; ||
+							 psChild.GetType() == &quot;ListOfChild Asset Attribute&quot;))
+						{
+							SetAttribListActionCode(sActionCode, psChild);
+						}
+					}
+				}
+			}
+		}
+	}
+	finally
+	{
+		psChild = null;
+		psAsset = null;
+	}
+}"
+			   SEQUENCE="12"
+			   UPDATED="01/08/2018 14:37:52"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="05/24/2015 17:39:51"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SetAssetOrderActionCode"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SetAssetOrderActionCode(psInputs : PropertySet, psOutputs : PropertySet)
+{
+	try
+	{
+		var psSiebelMessage   : PropertySet = null;
+		var psMasterAssetList : PropertySet = null;
+		var psMasterAsset     : PropertySet = null;
+		var psRootAssetList   : PropertySet = null;
+		var psDeleteProducts  : PropertySet = null;
+		var psKeepProducts    : PropertySet = null;
+
+		var sMasterAssetId         = psInputs.GetProperty(&quot;Master Asset Id&quot;);
+		var sMasterAssetMarket     = psInputs.GetProperty(&quot;Master Asset Market&quot;);
+		var sMasterAssetPartNumber = psInputs.GetProperty(&quot;Master Asset Part Number&quot;);
+		var sActionCode            = psInputs.GetProperty(&quot;Action Code&quot;);
+		var sActionType            = psInputs.GetProperty(&quot;Action Type&quot;);
+		var sActionReason          = psInputs.GetProperty(&quot;Action Reason&quot;);
+		gActionReason = sActionReason; //CA08 Cosby - RPIRES
+		var iChild                 = 0;
+
+		if (psInputs.GetChildCount() == 0)
+		{
+			return;
+		}
+
+		psSiebelMessage = psInputs.GetChild(0);
+
+		psOutputs.AddChild(psSiebelMessage);
+
+		if (psSiebelMessage.GetChildCount() == 0)
+		{
+			return;
+		}
+
+		for (iChild=0; iChild&lt;psSiebelMessage.GetChildCount(); iChild++)
+		{
+			psMasterAssetList = psSiebelMessage.GetChild(iChild);
+
+			if (psMasterAssetList.GetType() == &quot;ListOfTELCO Asset Order&quot;)
+			{
+				break;
+			}
+
+			psMasterAssetList = null;
+		}
+
+		if (psMasterAssetList == null || psMasterAssetList.GetChildCount() == 0)
+		{
+			return;
+		}
+
+		for (iChild=0; iChild&lt;psMasterAssetList.GetChildCount(); iChild++)
+		{
+			psMasterAsset = psMasterAssetList.GetChild(iChild);
+
+			if (psMasterAsset.GetType() == &quot;Master Asset&quot;)
+			{
+				break;
+			}
+
+			psMasterAsset = null;
+
+		}
+
+		if (psMasterAsset == null || psMasterAsset.GetChildCount() == 0)
+		{
+			return;
+		}
+
+		for (iChild=0; iChild&lt;psMasterAsset.GetChildCount(); iChild++)
+		{
+			psRootAssetList = psMasterAsset.GetChild(iChild);
+
+			if (psRootAssetList.GetType() == &quot;ListOfRoot Asset&quot;)
+			{
+				break;
+			}
+
+			psRootAssetList = null;
+		}
+
+		if (psRootAssetList == null || psRootAssetList.GetChildCount() == 0)
+		{
+			return;
+		}
+
+		if (sActionCode == &quot;Suspend&quot;)
+		{
+			psDeleteProducts = TheApplication().NewPropertySet();
+			psKeepProducts   = TheApplication().NewPropertySet();
+			
+			//Call &quot;TELCO Get Suspend to Deleted Conditions&quot;
+			GetSuspendToDeletedConditions(psInputs, psDeleteProducts, psKeepProducts);
+		}
+		//VFTRCBU-29859 - HRODRIGUES - Added sMasterAssetId as input
+		SetAssetListActionCode(sActionCode, psDeleteProducts, psKeepProducts, psRootAssetList,sMasterAssetId);
+	}
+	finally
+	{
+		psKeepProducts    = null;
+		psDeleteProducts  = null;
+		psRootAssetList   = null;
+		psMasterAsset     = null;
+		psMasterAssetList = null;
+		psSiebelMessage   = null;
+	}
+}"
+			   SEQUENCE="13"
+			   UPDATED="01/08/2018 14:37:52"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="05/24/2015 17:39:51"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SetAttribListActionCode"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SetAttribListActionCode(sSetActionCode, psAttribList : PropertySet)
+{
+	try
+	{
+		var psAttrib : PropertySet = null;
+
+		var iAttrib     = 0;
+		var sActionCode = &quot;&quot;;
+
+		if (sSetActionCode == null || sSetActionCode == &quot;&quot;)
+		{
+			return;
+		}
+
+		if (psAttribList == null || psAttribList.GetChildCount() == 0)
+		{
+			return;
+		}
+
+		for (iAttrib=0; iAttrib&lt;psAttribList.GetChildCount(); iAttrib++)
+		{
+			psAttrib = psAttribList.GetChild(iAttrib);
+
+			if (psAttrib.GetType() == &quot;Root Asset Attribute&quot; ||
+				psAttrib.GetType() == &quot;Child Asset Attribute&quot;)
+			{
+				sActionCode = psAttrib.GetProperty(&quot;TELCO Asset Attribute Action&quot;);
+
+				if (sActionCode == &quot;Existing&quot;)
+				{
+					psAttrib.SetProperty(&quot;TELCO Asset Attribute Action&quot;, sSetActionCode);
+				}
+			}
+		}
+	}
+	finally
+	{
+		psAttrib = null;
+	}
+}"
+			   SEQUENCE="14"
+			   UPDATED="01/08/2018 14:37:52"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="05/24/2015 17:39:51"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

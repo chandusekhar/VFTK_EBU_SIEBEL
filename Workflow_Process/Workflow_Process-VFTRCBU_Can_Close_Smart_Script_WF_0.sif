@@ -1,0 +1,412 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="LOCKED BY VTAO UI UPGRADE"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="eSmartScript"
+	   UI_FREEZE="N"
+	   UPDATED="02/22/2017 18:02:06"
+	   UPDATED_BY="SNOIVO"
+	   CREATED="11/15/1999 17:24:22"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<WORKFLOW_PROCESS
+		   EDIT="N"
+		   INACTIVE="N"
+		   NAME="VFTRCBU Can Close Smart Script WF: 0"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="02/22/2017 10:27:26"
+		   PASS_BY_REF_HIERARCHY_ARGUMENT="N"
+		   PROCESS_NAME="VFTRCBU Can Close Smart Script WF"
+		   REPLICATION_LEVEL="None"
+		   RUNNABLE="N"
+		   STATE_MANAGEMENT_TYPE="STATEFUL"
+		   STATUS="COMPLETED"
+		   VERSION="0"
+		   WEB_SERVICE_ENABLED="N"
+		   WORKFLOW_MODE="Service Flow"
+		   OBJECT_LOCKED_BY_NAME="SNOIVO"
+		   UPDATED="02/22/2017 18:02:06"
+		   UPDATED_BY="SNOIVO"
+		   CREATED="02/22/2017 10:26:49"
+		   CREATED_BY="SNOIVO">
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Error Code"
+			   UPDATED="02/22/2017 10:26:51"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="02/22/2017 10:26:51"
+			   CREATED_BY="SNOIVO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Error Message"
+			   UPDATED="02/22/2017 10:26:51"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="02/22/2017 10:26:51"
+			   CREATED_BY="SNOIVO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Object Id"
+			   UPDATED="02/22/2017 10:26:51"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="02/22/2017 10:26:51"
+			   CREATED_BY="SNOIVO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Process Instance Id"
+			   UPDATED="02/22/2017 10:26:51"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="02/22/2017 10:26:51"
+			   CREATED_BY="SNOIVO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="NONE"
+			   NAME="Profile Attr Value"
+			   UPDATED="02/22/2017 10:30:11"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="02/22/2017 10:30:11"
+			   CREATED_BY="SNOIVO">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Siebel Operation Object Id"
+			   UPDATED="02/22/2017 10:26:51"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="02/22/2017 10:26:51"
+			   CREATED_BY="SNOIVO">
+			</WF_PROCESS_PROP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*516 108 612 1569*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Decision Point 0"
+			   TYPE="DECISION_POINT"
+			   UPDATED="02/22/2017 15:23:01"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="02/22/2017 10:31:31"
+			   CREATED_BY="SNOIVO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="( All Must Match (Ignore Case)(&apos;[&amp;Profile Attr Value] IS NULL OR [&amp;Profile Attr Value] = &apos;Y&apos;&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*708 1324*NPts1*22*P07*612 1324*ToHS1*08*ArrowEnd1*4"
+				   NAME="C: Y"
+				   TO_STEP_NAME="Reset Profile Attr"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/22/2017 14:32:00"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="02/22/2017 10:33:12"
+				   CREATED_BY="SNOIVO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Decision Point 0"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*708 1324*NPts1*22*P07*612 1324*ToHS1*08*ArrowEnd1*4"
+					   NAME="C: Y"
+					   TO_STEP_NAME="Reset Profile Attr"
+					   UPDATED="02/22/2017 10:37:44"
+					   UPDATED_BY="SNOIVO"
+					   CREATED="02/22/2017 10:33:12"
+					   CREATED_BY="SNOIVO">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="EXPRESSION"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="C: Y9"
+					   OPERATION="EQ_ALL_NC"
+					   SEQUENCE="9"
+					   UPDATED="02/22/2017 14:32:00"
+					   UPDATED_BY="SNOIVO"
+					   CREATED="02/22/2017 14:32:00"
+					   CREATED_BY="SNOIVO">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR5="[&amp;Profile Attr Value] IS NULL OR [&amp;Profile Attr Value] = &apos;Y&apos;"
+						   NAME="C: Y91"
+						   SEQUENCE="1"
+						   UPDATED="02/22/2017 14:32:00"
+						   UPDATED_BY="SNOIVO"
+						   CREATED="02/22/2017 14:32:00"
+						   CREATED_BY="SNOIVO">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*564 2164*NPts1*22*P07*564 1564*ToHS1*18*ArrowEnd1*4"
+				   NAME="D: N"
+				   TO_STEP_NAME="Stop 0"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/22/2017 10:37:44"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="02/22/2017 10:36:00"
+				   CREATED_BY="SNOIVO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Decision Point 0"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*564 2164*NPts1*22*P07*564 1564*ToHS1*18*ArrowEnd1*4"
+					   NAME="D: N"
+					   TO_STEP_NAME="Stop 0"
+					   UPDATED="02/22/2017 10:37:44"
+					   UPDATED_BY="SNOIVO"
+					   CREATED="02/22/2017 10:36:00"
+					   CREATED_BY="SNOIVO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*888 108 984 1569*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="End 0"
+			   TYPE="END"
+			   UPDATED="02/22/2017 10:37:44"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="02/22/2017 10:27:37"
+			   CREATED_BY="SNOIVO">
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Get Profile Attribute"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*348 108 444 1569*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Profile Attr"
+			   TYPE="TASK"
+			   UPDATED="02/22/2017 10:33:09"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="02/22/2017 10:27:41"
+			   CREATED_BY="SNOIVO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*516 1324*NPts1*22*P07*444 1324*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 1"
+				   TO_STEP_NAME="Decision Point 0"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/22/2017 10:33:09"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="02/22/2017 10:31:46"
+				   CREATED_BY="SNOIVO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Get Profile Attr"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*516 1324*NPts1*22*P07*444 1324*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 1"
+					   TO_STEP_NAME="Decision Point 0"
+					   UPDATED="02/22/2017 10:33:09"
+					   UPDATED_BY="SNOIVO"
+					   CREATED="02/22/2017 10:31:46"
+					   CREATED_BY="SNOIVO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Get Profile Attr20"
+				   OUTPUT_ARG="Profile Attribute Value"
+				   PROPERTY_NAME="Profile Attr Value"
+				   SEQUENCE="2"
+				   TYPE="ARGUMENT"
+				   UPDATED="02/22/2017 10:30:35"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="02/22/2017 10:30:35"
+				   CREATED_BY="SNOIVO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Profile Attribute Name"
+				   SEQUENCE="1"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="CanCloseSmartScript"
+				   UPDATED="02/22/2017 10:30:08"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="02/22/2017 10:29:17"
+				   CREATED_BY="SNOIVO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Profile Attribute"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*708 108 804 1569*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Reset Profile Attr"
+			   TYPE="TASK"
+			   UPDATED="02/22/2017 14:34:56"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="02/22/2017 10:33:48"
+			   CREATED_BY="SNOIVO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*888 1324*NPts1*22*P07*804 1324*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 3"
+				   TO_STEP_NAME="End 0"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/22/2017 10:37:44"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="02/22/2017 10:35:50"
+				   CREATED_BY="SNOIVO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Reset Profile Attr"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*888 1324*NPts1*22*P07*804 1324*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 3"
+					   TO_STEP_NAME="End 0"
+					   UPDATED="02/22/2017 10:37:44"
+					   UPDATED_BY="SNOIVO"
+					   CREATED="02/22/2017 10:35:50"
+					   CREATED_BY="SNOIVO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Profile Attribute Name"
+				   SEQUENCE="3"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="CanCloseSmartScript"
+				   UPDATED="02/22/2017 10:35:38"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="02/22/2017 10:35:17"
+				   CREATED_BY="SNOIVO">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Profile Attribute Value"
+				   SEQUENCE="4"
+				   TYPE="LITERAL"
+				   UPDATED="02/22/2017 15:23:01"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="02/22/2017 10:35:38"
+				   CREATED_BY="SNOIVO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*168 108 264 1569*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="Start"
+			   TYPE="START"
+			   UPDATED="02/22/2017 10:36:45"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="02/22/2017 10:27:33"
+			   CREATED_BY="SNOIVO">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*348 1324*NPts1*22*P07*252 1324*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 0"
+				   TO_STEP_NAME="Get Profile Attr"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/22/2017 10:33:09"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="02/22/2017 10:31:39"
+				   CREATED_BY="SNOIVO">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Start"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*348 1324*NPts1*22*P07*252 1324*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 0"
+					   TO_STEP_NAME="Get Profile Attr"
+					   UPDATED="02/22/2017 10:33:09"
+					   UPDATED_BY="SNOIVO"
+					   CREATED="02/22/2017 10:31:39"
+					   CREATED_BY="SNOIVO">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   ERROR_CODE="WF_ERR_CUSTOM_1"
+			   ERROR_MESSAGE="%1"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*4*0*0*0*1*r15*516 216 612 2649*FillBgClr8*100794369*LineColor3*2558*ArrowEnd1*1"
+			   NAME="Stop 0"
+			   TYPE="ABORT"
+			   UPDATED="02/22/2017 14:34:48"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="02/22/2017 10:36:05"
+			   CREATED_BY="SNOIVO">
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="%1"
+				   SEQUENCE="5"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="LookupMessage(&quot;VF Message Category&quot;,&quot;X_VF_SR_SAVE&quot;)"
+				   UPDATED="02/22/2017 14:34:48"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="02/22/2017 10:37:16"
+				   CREATED_BY="SNOIVO">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+		</WORKFLOW_PROCESS>
+	</PROJECT>
+</REPOSITORY>
+
+
+

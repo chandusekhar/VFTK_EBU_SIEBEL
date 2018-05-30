@@ -1,0 +1,1187 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LANGUAGE_LOCKED="ENU"
+	   LOCKED="Y"
+	   LOCKED_DATE="02/09/2018 12:57:29"
+	   NAME="VF Carbon Copy"
+	   UI_FREEZE="N"
+	   LOCKED_BY_NAME="IBM_RCATITA"
+	   UPDATED="02/09/2018 13:02:33"
+	   UPDATED_BY="IBM_RCATITA"
+	   CREATED="03/04/2014 08:01:21"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<WORKFLOW_PROCESS
+		   BUSINESS_OBJECT="VF Carbon Copy BO"
+		   EDIT="N"
+		   INACTIVE="N"
+		   NAME="VF Carbon Copy Operation Workflow: 5"
+		   OBJECT_LOCKED="N"
+		   PASS_BY_REF_HIERARCHY_ARGUMENT="N"
+		   PROCESS_NAME="VF Carbon Copy Operation Workflow"
+		   REPLICATION_LEVEL="None"
+		   RUNNABLE="N"
+		   STATE_MANAGEMENT_TYPE="STATEFUL"
+		   STATUS="COMPLETED"
+		   VERSION="5"
+		   WEB_SERVICE_ENABLED="N"
+		   WORKFLOW_MODE="Service Flow"
+		   UPDATED="02/09/2018 10:40:22"
+		   UPDATED_BY="IBM_RCATITA"
+		   CREATED="02/09/2018 12:57:15"
+		   CREATED_BY="IBM_RCATITA">
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Error Code"
+			   UPDATED="02/09/2018 12:57:18"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:18"
+			   CREATED_BY="IBM_RCATITA">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Error Message"
+			   UPDATED="02/09/2018 12:57:18"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:18"
+			   CREATED_BY="IBM_RCATITA">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Object Id"
+			   UPDATED="02/09/2018 12:57:18"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:18"
+			   CREATED_BY="IBM_RCATITA">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="OprFlag"
+			   UPDATED="02/09/2018 12:57:18"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:18"
+			   CREATED_BY="IBM_RCATITA">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Process Instance Id"
+			   UPDATED="02/09/2018 12:57:18"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:18"
+			   CREATED_BY="IBM_RCATITA">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Siebel Operation Object Id"
+			   UPDATED="02/09/2018 12:57:18"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:18"
+			   CREATED_BY="IBM_RCATITA">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DEFAULT_STRING="0"
+			   INOUT="INOUT"
+			   NAME="unprocessedLineItems"
+			   UPDATED="02/09/2018 12:57:19"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:19"
+			   CREATED_BY="IBM_RCATITA">
+			</WF_PROCESS_PROP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*804 252 900 3009*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Any unprocessed line items?"
+			   TYPE="DECISION_POINT"
+			   UPDATED="02/09/2018 12:57:15"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:15"
+			   CREATED_BY="IBM_RCATITA">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*948 2764*NPts1*22*P07*900 2764*ToHS1*08*ArrowEnd1*4"
+				   NAME="No"
+				   TO_STEP_NAME="Business Service 0"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/09/2018 12:57:16"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:16"
+				   CREATED_BY="IBM_RCATITA">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Any unprocessed line items?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*948 2764*NPts1*22*P07*900 2764*ToHS1*08*ArrowEnd1*4"
+					   NAME="No"
+					   TO_STEP_NAME="Business Service 0"
+					   UPDATED="02/09/2018 12:57:16"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:16"
+					   CREATED_BY="IBM_RCATITA">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(unprocessedLineItems Greater Than(&apos;0&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*10*0*0*0*9*LineWidth1*22*P26*305 844*FrHS1*12*P16*852 844*NPts1*52*P07*852 2522*P37*305 2764*ToHS1*02*P47*330 2768*ArrowEnd1*4"
+				   NAME="Yes"
+				   TO_STEP_NAME="Decision Point"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/09/2018 12:57:16"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:16"
+				   CREATED_BY="IBM_RCATITA">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Any unprocessed line items?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*10*0*0*0*9*LineWidth1*22*P26*305 844*FrHS1*12*P16*852 844*NPts1*52*P07*852 2522*P37*305 2764*ToHS1*02*P47*330 2768*ArrowEnd1*4"
+					   NAME="Yes"
+					   TO_STEP_NAME="Decision Point"
+					   UPDATED="02/09/2018 12:57:16"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:16"
+					   CREATED_BY="IBM_RCATITA">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="PROPERTY"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="Yes3"
+					   OPERATION="GREATER_THAN"
+					   PROPERTY_NAME="unprocessedLineItems"
+					   SEQUENCE="3"
+					   UPDATED="02/09/2018 12:57:16"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:16"
+					   CREATED_BY="IBM_RCATITA">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR1="0"
+						   NAME="Yes31"
+						   SEQUENCE="1"
+						   UPDATED="02/09/2018 12:57:16"
+						   UPDATED_BY="IBM_RCATITA"
+						   CREATED="02/09/2018 12:57:16"
+						   CREATED_BY="IBM_RCATITA">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Profile Attribute"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r16*948 252 1044 3009*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Business Service 0"
+			   TYPE="TASK"
+			   UPDATED="02/09/2018 12:57:16"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:16"
+			   CREATED_BY="IBM_RCATITA">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1063 2764*NPts1*22*P08*1044 2764*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 2"
+				   TO_STEP_NAME="Update Opr Flag"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/09/2018 12:57:16"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:16"
+				   CREATED_BY="IBM_RCATITA">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Business Service 0"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1063 2764*NPts1*22*P08*1044 2764*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 2"
+					   TO_STEP_NAME="Update Opr Flag"
+					   UPDATED="02/09/2018 12:57:16"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:16"
+					   CREATED_BY="IBM_RCATITA">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Profile Attribute Name"
+				   SEQUENCE="1"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="CarbonCopyInProgress"
+				   UPDATED="02/09/2018 12:57:16"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:16"
+				   CREATED_BY="IBM_RCATITA">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Profile Attribute Value"
+				   SEQUENCE="2"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Y"
+				   UPDATED="02/09/2018 12:57:16"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:16"
+				   CREATED_BY="IBM_RCATITA">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_COMPONENT="VF Carbon Copy Bulk Header"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*179 252 275 3009*FillBgClr8*134218238*ArrowEnd1*1"
+			   NAME="Carbon Header"
+			   OPERATION="QUERY"
+			   TYPE="SIEBEL_OPER"
+			   UPDATED="02/09/2018 12:57:16"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:16"
+			   CREATED_BY="IBM_RCATITA">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*330 2764*NPts1*22*P07*275 2764*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 0"
+				   TO_STEP_NAME="Decision Point"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/09/2018 12:57:16"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:16"
+				   CREATED_BY="IBM_RCATITA">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Carbon Header"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*330 2764*NPts1*22*P07*275 2764*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 0"
+					   TO_STEP_NAME="Decision Point"
+					   UPDATED="02/09/2018 12:57:16"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:16"
+					   CREATED_BY="IBM_RCATITA">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   BUSINESS_COMPONENT="VF Carbon Copy Bulk Header"
+				   BUSINESS_COMPONENT_FIELD="Operation Flag"
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Carbon Header10"
+				   PROPERTY_NAME="OprFlag"
+				   SEQUENCE="1"
+				   TYPE="BUSCOMP"
+				   UPDATED="02/09/2018 12:57:16"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:16"
+				   CREATED_BY="IBM_RCATITA">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_COMPONENT="VF Carbon Copy Bulk List Items"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*672 108 768 1569*FillBgClr8*134218238*ArrowEnd1*1"
+			   NAME="Check unprocessed line items 1"
+			   OPERATION="QUERY"
+			   TYPE="SIEBEL_OPER"
+			   UPDATED="02/09/2018 13:00:28"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:16"
+			   CREATED_BY="IBM_RCATITA">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*786 2764*FrHS1*22*P17*786 1324*NPts1*42*P07*768 1322*P37*804 2764*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 4"
+				   TO_STEP_NAME="Any unprocessed line items?"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/09/2018 12:57:16"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:16"
+				   CREATED_BY="IBM_RCATITA">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Check unprocessed line items 1"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*786 2764*FrHS1*22*P17*786 1324*NPts1*42*P07*768 1322*P37*804 2764*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 4"
+					   TO_STEP_NAME="Any unprocessed line items?"
+					   UPDATED="02/09/2018 12:57:16"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:16"
+					   CREATED_BY="IBM_RCATITA">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Check unprocessed line items 12"
+				   OUTPUT_ARG="NumAffRows"
+				   PROPERTY_NAME="unprocessedLineItems"
+				   SEQUENCE="2"
+				   TYPE="ARGUMENT"
+				   UPDATED="02/09/2018 12:57:17"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:17"
+				   CREATED_BY="IBM_RCATITA">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   BUSINESS_COMPONENT="VF Carbon Copy Bulk List Items"
+				   INACTIVE="N"
+				   INPUT_FLAG="S"
+				   NAME="S:Check unprocessed line items 11"
+				   OUTPUT_ARG="VF Carbon Copy Bulk List Items"
+				   SEQUENCE="1"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="&quot;[Carbon Header Id] = &apos;&quot;+[&amp;Object Id]+&quot;&apos; AND [Status] = &apos;New&apos; AND [Created Order Id] IS NULL&quot;"
+				   UPDATED="02/09/2018 13:00:28"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:16"
+				   CREATED_BY="IBM_RCATITA">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_COMPONENT="VF Carbon Copy Bulk List Items"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*672 180 768 2289*FillBgClr8*134218238*ArrowEnd1*1"
+			   NAME="Check unprocessed line items 2"
+			   OPERATION="QUERY"
+			   TYPE="SIEBEL_OPER"
+			   UPDATED="02/09/2018 12:57:17"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:17"
+			   CREATED_BY="IBM_RCATITA">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*786 2764*FrHS1*22*P17*786 2044*NPts1*42*P07*768 2042*P37*804 2764*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 9"
+				   TO_STEP_NAME="Any unprocessed line items?"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/09/2018 12:57:17"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:17"
+				   CREATED_BY="IBM_RCATITA">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Check unprocessed line items 2"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*786 2764*FrHS1*22*P17*786 2044*NPts1*42*P07*768 2042*P37*804 2764*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 9"
+					   TO_STEP_NAME="Any unprocessed line items?"
+					   UPDATED="02/09/2018 12:57:17"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:17"
+					   CREATED_BY="IBM_RCATITA">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Check unprocessed line items1"
+				   OUTPUT_ARG="NumAffRows"
+				   PROPERTY_NAME="unprocessedLineItems"
+				   SEQUENCE="1"
+				   TYPE="ARGUMENT"
+				   UPDATED="02/09/2018 12:57:17"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:17"
+				   CREATED_BY="IBM_RCATITA">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="S"
+				   NAME="S:Check unprocessed line items2"
+				   OUTPUT_ARG="VF Carbon Copy Bulk List Items"
+				   SEQUENCE="2"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="&quot;[Carbon Header Id] = &apos;&quot;+[&amp;Object Id]+&quot;&apos; AND ([Status] &lt;&gt; &apos;Validated&apos; AND [Status] &lt;&gt; &apos;Error&apos; AND [Status] &lt;&gt; &apos;Completed&apos;)&quot;"
+				   UPDATED="02/09/2018 12:57:17"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:17"
+				   CREATED_BY="IBM_RCATITA">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_COMPONENT="VF Carbon Copy Bulk List Items"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*672 331 768 3799*FillBgClr8*134218238*ArrowEnd1*1"
+			   NAME="Check unprocessed line items 3"
+			   OPERATION="QUERY"
+			   TYPE="SIEBEL_OPER"
+			   UPDATED="02/09/2018 12:57:17"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:17"
+			   CREATED_BY="IBM_RCATITA">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*786 2764*FrHS1*22*P17*786 3554*NPts1*42*P07*768 3552*P37*804 2764*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 10"
+				   TO_STEP_NAME="Any unprocessed line items?"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/09/2018 12:57:17"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:17"
+				   CREATED_BY="IBM_RCATITA">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Check unprocessed line items 3"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*786 2764*FrHS1*22*P17*786 3554*NPts1*42*P07*768 3552*P37*804 2764*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 10"
+					   TO_STEP_NAME="Any unprocessed line items?"
+					   UPDATED="02/09/2018 12:57:17"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:17"
+					   CREATED_BY="IBM_RCATITA">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Check unprocessed line items3"
+				   OUTPUT_ARG="NumAffRows"
+				   PROPERTY_NAME="unprocessedLineItems"
+				   SEQUENCE="3"
+				   TYPE="ARGUMENT"
+				   UPDATED="02/09/2018 12:57:17"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:17"
+				   CREATED_BY="IBM_RCATITA">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="S"
+				   NAME="S:Check unprocessed line items4"
+				   OUTPUT_ARG="VF Carbon Copy Bulk List Items"
+				   SEQUENCE="4"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="&quot;[Carbon Header Id] = &apos;&quot;+[&amp;Object Id]+&quot;&apos; AND ([Status] &lt;&gt; &apos;Completed&apos; AND [Status] &lt;&gt; &apos;Error&apos;)&quot;"
+				   UPDATED="02/09/2018 12:57:17"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:17"
+				   CREATED_BY="IBM_RCATITA">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Profile Attribute"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1190 252 1286 3009*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Copy of Business Service 0"
+			   TYPE="TASK"
+			   UPDATED="02/09/2018 12:57:17"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:17"
+			   CREATED_BY="IBM_RCATITA">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1332 2764*NPts1*22*P08*1286 2764*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 3"
+				   TO_STEP_NAME="End 0"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/09/2018 12:57:17"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:17"
+				   CREATED_BY="IBM_RCATITA">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Copy of Business Service 0"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1332 2764*NPts1*22*P08*1286 2764*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 3"
+					   TO_STEP_NAME="End 0"
+					   UPDATED="02/09/2018 12:57:17"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:17"
+					   CREATED_BY="IBM_RCATITA">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Profile Attribute Name"
+				   SEQUENCE="4"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="CarbonCopyInProgress"
+				   UPDATED="02/09/2018 12:57:17"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:17"
+				   CREATED_BY="IBM_RCATITA">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Profile Attribute Value"
+				   SEQUENCE="3"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="N"
+				   UPDATED="02/09/2018 12:57:17"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:17"
+				   CREATED_BY="IBM_RCATITA">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="LaunchCarbonCopy"
+			   BUSINESS_SERVICE_NAME="VF Carbon Copy Operation"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*522 108 618 1569*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="CreateOrder"
+			   TYPE="TASK"
+			   UPDATED="02/09/2018 12:57:17"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:17"
+			   CREATED_BY="IBM_RCATITA">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*672 1324*NPts1*22*P07*618 1324*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 5"
+				   TO_STEP_NAME="Check unprocessed line items 1"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/09/2018 12:57:17"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:17"
+				   CREATED_BY="IBM_RCATITA">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="CreateOrder"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*672 1324*NPts1*22*P07*618 1324*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 5"
+					   TO_STEP_NAME="Check unprocessed line items 1"
+					   UPDATED="02/09/2018 12:57:17"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:17"
+					   CREATED_BY="IBM_RCATITA">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="CC Header Id"
+				   PROPERTY_NAME="Object Id"
+				   SEQUENCE="1"
+				   TYPE="PROPERTY"
+				   UPDATED="02/09/2018 12:57:17"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:17"
+				   CREATED_BY="IBM_RCATITA">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*330 252 426 3009*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Decision Point"
+			   TYPE="DECISION_POINT"
+			   UPDATED="02/09/2018 12:57:17"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:17"
+			   CREATED_BY="IBM_RCATITA">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(OprFlag All Must Match (Ignore Case)(&apos;1&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*522 1324*FrHS1*12*P17*378 1324*NPts1*32*P07*378 2524*ToHS1*08*ArrowEnd1*4"
+				   NAME="1"
+				   TO_STEP_NAME="CreateOrder"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/09/2018 12:57:17"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:17"
+				   CREATED_BY="IBM_RCATITA">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Decision Point"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*522 1324*FrHS1*12*P17*378 1324*NPts1*32*P07*378 2524*ToHS1*08*ArrowEnd1*4"
+					   NAME="1"
+					   TO_STEP_NAME="CreateOrder"
+					   UPDATED="02/09/2018 12:57:17"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:17"
+					   CREATED_BY="IBM_RCATITA">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="PROPERTY"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="Connector 15"
+					   OPERATION="EQ_ALL_NC"
+					   PROPERTY_NAME="OprFlag"
+					   SEQUENCE="5"
+					   UPDATED="02/09/2018 12:57:17"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:17"
+					   CREATED_BY="IBM_RCATITA">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR1="1"
+						   NAME="Connector 151"
+						   SEQUENCE="1"
+						   UPDATED="02/09/2018 12:57:17"
+						   UPDATED_BY="IBM_RCATITA"
+						   CREATED="02/09/2018 12:57:17"
+						   CREATED_BY="IBM_RCATITA">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(OprFlag All Must Match (Ignore Case)(&apos;2&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*451 2044*FrHS1*22*P17*451 2764*NPts1*42*P07*426 2762*P37*522 2044*ToHS1*08*ArrowEnd1*4"
+				   NAME="2"
+				   TO_STEP_NAME="ValidateOrder"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/09/2018 12:57:17"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:17"
+				   CREATED_BY="IBM_RCATITA">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Decision Point"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*451 2044*FrHS1*22*P17*451 2764*NPts1*42*P07*426 2762*P37*522 2044*ToHS1*08*ArrowEnd1*4"
+					   NAME="2"
+					   TO_STEP_NAME="ValidateOrder"
+					   UPDATED="02/09/2018 12:57:17"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:17"
+					   CREATED_BY="IBM_RCATITA">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="PROPERTY"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="Connector 38"
+					   OPERATION="EQ_ALL_NC"
+					   PROPERTY_NAME="OprFlag"
+					   SEQUENCE="8"
+					   UPDATED="02/09/2018 12:57:17"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:17"
+					   CREATED_BY="IBM_RCATITA">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR1="2"
+						   NAME="Connector 382"
+						   SEQUENCE="2"
+						   UPDATED="02/09/2018 12:57:17"
+						   UPDATED_BY="IBM_RCATITA"
+						   CREATED="02/09/2018 12:57:17"
+						   CREATED_BY="IBM_RCATITA">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(OprFlag All Must Match (Ignore Case)(&apos;3&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*451 3554*FrHS1*22*P17*451 2764*NPts1*42*P07*426 2762*P37*522 3554*ToHS1*08*ArrowEnd1*4"
+				   NAME="3"
+				   TO_STEP_NAME="SubmitOrder"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/09/2018 12:57:17"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:17"
+				   CREATED_BY="IBM_RCATITA">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Decision Point"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*451 3554*FrHS1*22*P17*451 2764*NPts1*42*P07*426 2762*P37*522 3554*ToHS1*08*ArrowEnd1*4"
+					   NAME="3"
+					   TO_STEP_NAME="SubmitOrder"
+					   UPDATED="02/09/2018 12:57:18"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:18"
+					   CREATED_BY="IBM_RCATITA">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="PROPERTY"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="Connector 411"
+					   OPERATION="EQ_ALL_NC"
+					   PROPERTY_NAME="OprFlag"
+					   SEQUENCE="11"
+					   UPDATED="02/09/2018 12:57:17"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:17"
+					   CREATED_BY="IBM_RCATITA">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR1="3"
+						   NAME="Connector 4113"
+						   SEQUENCE="3"
+						   UPDATED="02/09/2018 12:57:17"
+						   UPDATED_BY="IBM_RCATITA"
+						   CREATED="02/09/2018 12:57:17"
+						   CREATED_BY="IBM_RCATITA">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="(OprFlag All Must Match (Ignore Case)(&apos;4&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*522 4154*FrHS1*32*P17*378 4154*NPts1*32*P07*378 3004*ToHS1*08*ArrowEnd1*4"
+				   NAME="4"
+				   TO_STEP_NAME="DeleteErrorLines"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/09/2018 12:57:18"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:18"
+				   CREATED_BY="IBM_RCATITA">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Decision Point"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*522 4154*FrHS1*32*P17*378 4154*NPts1*32*P07*378 3004*ToHS1*08*ArrowEnd1*4"
+					   NAME="4"
+					   TO_STEP_NAME="DeleteErrorLines"
+					   UPDATED="02/09/2018 12:57:18"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:18"
+					   CREATED_BY="IBM_RCATITA">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="PROPERTY"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="45"
+					   OPERATION="EQ_ALL_NC"
+					   PROPERTY_NAME="OprFlag"
+					   SEQUENCE="5"
+					   UPDATED="02/09/2018 12:57:18"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:18"
+					   CREATED_BY="IBM_RCATITA">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR1="4"
+						   NAME="451"
+						   SEQUENCE="1"
+						   UPDATED="02/09/2018 12:57:18"
+						   UPDATED_BY="IBM_RCATITA"
+						   CREATED="02/09/2018 12:57:18"
+						   CREATED_BY="IBM_RCATITA">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*804 2764*NPts1*22*P07*426 2764*ToHS1*08*ArrowEnd1*4"
+				   NAME="Default"
+				   TO_STEP_NAME="Any unprocessed line items?"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/09/2018 12:57:18"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:18"
+				   CREATED_BY="IBM_RCATITA">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Decision Point"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*804 2764*NPts1*22*P07*426 2764*ToHS1*08*ArrowEnd1*4"
+					   NAME="Default"
+					   TO_STEP_NAME="Any unprocessed line items?"
+					   UPDATED="02/09/2018 12:57:18"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:18"
+					   CREATED_BY="IBM_RCATITA">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="DeleteErrorLines"
+			   BUSINESS_SERVICE_NAME="VF Carbon Copy Operation"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*522 391 618 4399*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="DeleteErrorLines"
+			   TYPE="TASK"
+			   UPDATED="02/09/2018 12:57:18"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:18"
+			   CREATED_BY="IBM_RCATITA">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*996 3004*FrHS1*22*P17*996 4154*NPts1*32*P07*618 4154*ToHS1*38*ArrowEnd1*4"
+				   NAME="Connector 8"
+				   TO_STEP_NAME="Business Service 0"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/09/2018 12:57:18"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:18"
+				   CREATED_BY="IBM_RCATITA">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="DeleteErrorLines"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*996 3004*FrHS1*22*P17*996 4154*NPts1*32*P07*618 4154*ToHS1*38*ArrowEnd1*4"
+					   NAME="Connector 8"
+					   TO_STEP_NAME="Business Service 0"
+					   UPDATED="02/09/2018 12:57:18"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:18"
+					   CREATED_BY="IBM_RCATITA">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="CC Header Id"
+				   PROPERTY_NAME="Object Id"
+				   SEQUENCE="4"
+				   TYPE="PROPERTY"
+				   UPDATED="02/09/2018 12:57:18"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:18"
+				   CREATED_BY="IBM_RCATITA">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1332 252 1428 3009*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="End 0"
+			   TYPE="END"
+			   UPDATED="02/09/2018 12:57:18"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:18"
+			   CREATED_BY="IBM_RCATITA">
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*179 108 275 1569*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="Start"
+			   TYPE="START"
+			   UPDATED="02/09/2018 12:57:18"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:18"
+			   CREATED_BY="IBM_RCATITA">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*227 2524*NPts1*22*P07*227 1564*ToHS1*18*ArrowEnd1*4"
+				   NAME="Default"
+				   TO_STEP_NAME="Carbon Header"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/09/2018 12:57:18"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:18"
+				   CREATED_BY="IBM_RCATITA">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Start"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*227 2524*NPts1*22*P07*227 1564*ToHS1*18*ArrowEnd1*4"
+					   NAME="Default"
+					   TO_STEP_NAME="Carbon Header"
+					   UPDATED="02/09/2018 12:57:18"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:18"
+					   CREATED_BY="IBM_RCATITA">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="SubmitOrder"
+			   BUSINESS_SERVICE_NAME="VF Carbon Copy Operation"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*522 331 618 3799*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="SubmitOrder"
+			   TYPE="TASK"
+			   UPDATED="02/09/2018 12:57:18"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:18"
+			   CREATED_BY="IBM_RCATITA">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*672 3554*NPts1*22*P07*618 3554*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 7"
+				   TO_STEP_NAME="Check unprocessed line items 3"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/09/2018 12:57:18"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:18"
+				   CREATED_BY="IBM_RCATITA">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="SubmitOrder"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*672 3554*NPts1*22*P07*618 3554*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 7"
+					   TO_STEP_NAME="Check unprocessed line items 3"
+					   UPDATED="02/09/2018 12:57:18"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:18"
+					   CREATED_BY="IBM_RCATITA">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="CC Header Id"
+				   PROPERTY_NAME="Object Id"
+				   SEQUENCE="3"
+				   TYPE="PROPERTY"
+				   UPDATED="02/09/2018 12:57:18"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:18"
+				   CREATED_BY="IBM_RCATITA">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_COMPONENT="VF Carbon Copy Bulk Header"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1063 252 1159 3009*FillBgClr8*134218238*ArrowEnd1*1"
+			   NAME="Update Opr Flag"
+			   OPERATION="UPDATE"
+			   TYPE="SIEBEL_OPER"
+			   UPDATED="02/09/2018 12:57:18"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:18"
+			   CREATED_BY="IBM_RCATITA">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1190 2764*NPts1*22*P08*1159 2764*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 1"
+				   TO_STEP_NAME="Copy of Business Service 0"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/09/2018 12:57:18"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:18"
+				   CREATED_BY="IBM_RCATITA">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Update Opr Flag"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1190 2764*NPts1*22*P08*1159 2764*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 1"
+					   TO_STEP_NAME="Copy of Business Service 0"
+					   UPDATED="02/09/2018 12:57:18"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:18"
+					   CREATED_BY="IBM_RCATITA">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Operation Flag"
+				   SEQUENCE="1"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="0"
+				   UPDATED="02/09/2018 12:57:18"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:18"
+				   CREATED_BY="IBM_RCATITA">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   BUSINESS_COMPONENT="VF Carbon Copy Bulk Header"
+				   INACTIVE="N"
+				   INPUT_FLAG="S"
+				   NAME="S:Update Opr Flag50"
+				   OUTPUT_ARG="VF Carbon Copy Bulk Header"
+				   SEQUENCE="5"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="&quot;[Id] = &apos;&quot;+[&amp;Object Id]+&quot;&apos;&quot;"
+				   UPDATED="02/09/2018 12:57:18"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:18"
+				   CREATED_BY="IBM_RCATITA">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Serv Comp Num"
+				   SEQUENCE="6"
+				   TYPE="LITERAL"
+				   UPDATED="02/09/2018 12:57:18"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:18"
+				   CREATED_BY="IBM_RCATITA">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="LaunchOrderItemValidation"
+			   BUSINESS_SERVICE_NAME="VF Carbon Copy Operation"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*522 180 618 2289*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="ValidateOrder"
+			   TYPE="TASK"
+			   UPDATED="02/09/2018 12:57:18"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/09/2018 12:57:18"
+			   CREATED_BY="IBM_RCATITA">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*672 2044*NPts1*22*P07*618 2044*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 6"
+				   TO_STEP_NAME="Check unprocessed line items 2"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="02/09/2018 12:57:18"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:18"
+				   CREATED_BY="IBM_RCATITA">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="ValidateOrder"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*672 2044*NPts1*22*P07*618 2044*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 6"
+					   TO_STEP_NAME="Check unprocessed line items 2"
+					   UPDATED="02/09/2018 12:57:18"
+					   UPDATED_BY="IBM_RCATITA"
+					   CREATED="02/09/2018 12:57:18"
+					   CREATED_BY="IBM_RCATITA">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="CC Header Id"
+				   PROPERTY_NAME="Object Id"
+				   SEQUENCE="2"
+				   TYPE="PROPERTY"
+				   UPDATED="02/09/2018 12:57:18"
+				   UPDATED_BY="IBM_RCATITA"
+				   CREATED="02/09/2018 12:57:18"
+				   CREATED_BY="IBM_RCATITA">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+		</WORKFLOW_PROCESS>
+	</PROJECT>
+</REPOSITORY>
+
+
+

@@ -1,0 +1,3700 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="20140703 - VFTRCBU Project for WP#01 objects"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VFTRCBU Customer_Account_Subscriber Management"
+	   UI_FREEZE="N"
+	   UPDATED="03/27/2018 10:43:42"
+	   UPDATED_BY="IBM_BKOCABAS"
+	   CREATED="08/14/2014 20:13:39"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="N"
+		   CLASS="CSSBCTaskTransient"
+		   COMMENTS="CARRILF:WA#01"
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MULTI_RECIPIENT_SELECT="N"
+		   NAME="VFTRCBU Address Creation TBC"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LOCKED="N"
+		   OWNER_DELETE="N"
+		   POPUP_VISIBILITY_AUTO_ALL="N"
+		   SCRIPTED="Y"
+		   TABLE="S_TU_LOG"
+		   TYPE="Transient"
+		   UPDATED="03/27/2018 10:48:15"
+		   UPDATED_BY="IBM_BKOCABAS"
+		   CREATED="10/17/2014 10:12:56"
+		   CREATED_BY="SADMIN">
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_ChangeRecord"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_ChangeRecord ()
+{
+try{
+		var App = TheApplication();
+		var curAddr = this;
+		App.SetProfileAttr(&quot;StreetNumber&quot;,this.GetFieldValue(&quot;Street Address&quot;));
+		App.SetProfileAttr(&quot;Avenue&quot;,this.GetFieldValue(&quot;VF Avenue Boulevar&quot;)); 
+		App.SetProfileAttr(&quot;ApartmentNumber&quot;,this.GetFieldValue(&quot;Apartment Number&quot;));
+		App.SetProfileAttr(&quot;Site&quot;,this.GetFieldValue(&quot;VF Site&quot;));
+
+	  if(curAddr.GetFieldValue(&quot;VF MAHALLE ID&quot;) == &quot;&quot; || curAddr.GetFieldValue(&quot;VF MAHALLE ID&quot;)== null)
+	    App.SetProfileAttr(&quot;VF_NeighId&quot;,&quot;x&quot;);
+	    else App.SetProfileAttr(&quot;VF_NeighId&quot;,curAddr.GetFieldValue(&quot;VF MAHALLE ID&quot;));
+	 }
+finally{
+	 App = null;
+}
+}"
+			   SEQUENCE="3"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreSetFieldValue"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreSetFieldValue (FieldName, FieldValue)
+{
+try{
+	var curAddr = this;
+	var App = TheApplication();
+	if (FieldName == &quot;VF Postal Code Cyprus&quot;){
+	         Validate_Postal_Code_Cyprus(FieldValue);
+           }
+  /*Does not permit Postal Code to get a value = 0. Postal COde must not be bounded since Cyprus field it is not*/
+	if(FieldName == &quot;Postal Code&quot;){
+	  if(FieldValue == &quot;0&quot;)
+	   return(CancelOperation);
+	   }
+  /*Blanck District only if Neighborhood is blancked, not if it is just updated*/	   
+	 if(FieldName == &quot;VF Neighborhood/Village&quot;){
+	  if(FieldValue == &quot;&quot; || FieldValue == null)
+	   this.SetFieldValue(&quot;District&quot;,&quot;&quot;);
+	   }
+  /*Important logic for dynamic picklist of Distrct. When Neigh is selected, one more constraint is added on PickMap District*/	   
+	if(FieldName == &quot;VF Neighborhood/Village&quot;){
+	 if(curAddr.GetFieldValue(&quot;VF MAHALLE ID&quot;) == &quot;&quot; || curAddr.GetFieldValue(&quot;VF MAHALLE ID&quot;)== null)
+	    App.SetProfileAttr(&quot;VF_NeighId&quot;,&quot;x&quot;);
+	    else App.SetProfileAttr(&quot;VF_NeighId&quot;,curAddr.GetFieldValue(&quot;VF MAHALLE ID&quot;));
+	  }
+	    
+	ValidateAddress(FieldName,FieldValue);
+	
+	return (ContinueOperation);
+}
+finally{
+App = null;
+}
+
+}"
+			   SEQUENCE="4"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreWriteRecord"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreWriteRecord ()
+{
+	//VFTRCBU-3587 - added missing validation
+	var Diger = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;VF_ADDR_OTHER_VALUE&quot;, &quot;Other&quot;);
+	
+	var sAvenue = this.GetFieldValue(&quot;VF Calc Avenue Boulevard&quot;); //VFTRCBU-4066
+	var sStreet = this.GetFieldValue(&quot;VF Calc Street Addr&quot;); //VFTRCBU-4066
+	var sVillageFilled = this.GetFieldValue(&quot;VF Village Filled&quot;);
+	
+	var strSkip = TheApplication ().GetProfileAttr (&quot;VFTRCBUSkipAddress&quot;);
+	if (strSkip == &quot;Y&quot;)
+	{
+	return (ContinueOperation);
+	}
+	else{	
+	if(sAvenue == &quot;&quot; &amp;&amp; sStreet == &quot;&quot; &amp;&amp; sVillageFilled == &quot;N&quot;) //VFTRCBU-4066
+	{
+		var strMessageCategory = &quot;VF Message Category&quot;;
+		var strCode = &quot;NM_001&quot;;
+		var sMsg = TheApplication().LookupMessage(strMessageCategory, strCode);
+		TheApplication().RaiseErrorText(sMsg);
+		return (CancelOperation);
+	}
+	}
+	return (ContinueOperation);
+
+}"
+			   SEQUENCE="5"
+			   UPDATED="07/12/2015 12:23:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/13/2014 12:20:00"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_SetFieldValue"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_SetFieldValue (FieldName)
+{
+try{
+var strVerFlag = &quot;&quot;;
+	
+	//RLOURENCO WA#01 - to replace On Field Update Set user props not working in TBC
+	//if (FieldName == &quot;VF Street Address Picklist&quot; &amp;&amp; this.GetFieldValue(&quot;VF Street Address Picklist&quot;) != &quot;&apos;? -- Diger -- ?&apos;&quot;)
+	if (FieldName == &quot;VF Street Address Picklist&quot;)
+		this.SetFieldValue(&quot;VF Street Picked&quot;, &quot;Y&quot;);
+		
+	else if (FieldName == &quot;Street Address No Pick&quot;) {
+		this.SetFieldValue(&quot;VF Street Picked&quot;, &quot;N&quot;);
+		this.SetFieldValue(&quot;Street Address&quot;, this.GetFieldValue(&quot;Street Address No Pick&quot;));
+	}
+
+	else if (FieldName == &quot;VF Avenue Boulevard Picklist&quot;)
+		this.SetFieldValue(&quot;VF Aven Picked&quot;, &quot;Y&quot;);
+	
+	else if (FieldName == &quot;Avenue Free Text&quot;) {
+		this.SetFieldValue(&quot;VF Aven Picked&quot;, &quot;N&quot;);	
+		this.SetFieldValue(&quot;VF Avenue Boulevar&quot;, this.GetFieldValue(&quot;Avenue Free Text&quot;));
+	}
+	
+	else if (FieldName == &quot;VF Apartment Number Picklist&quot;)
+		this.SetFieldValue(&quot;VF Apart Picked&quot;, &quot;Y&quot;);
+		
+	else if (FieldName == &quot;VF Apartment Number FreeText&quot;) {
+		this.SetFieldValue(&quot;VF Apart Picked&quot;, &quot;N&quot;);	
+		this.SetFieldValue(&quot;Apartment Number&quot;, this.GetFieldValue(&quot;VF Apartment Number FreeText&quot;));
+	}
+		
+	else if (FieldName == &quot;VF Site Picklist&quot;)
+		this.SetFieldValue(&quot;VF Site Picked&quot;, &quot;Y&quot;);
+		
+	else if (FieldName == &quot;VF Site FreeText&quot;) {
+		this.SetFieldValue(&quot;VF Site Picked&quot;, &quot;N&quot;);
+		this.SetFieldValue(&quot;VF Site&quot;, this.GetFieldValue(&quot;VF Site FreeText&quot;));
+	}
+		
+	else if (FieldName == &quot;VF Village&quot;) {
+		this.SetFieldValue(&quot;VF Zip Code Mnl Picked&quot;, &quot;N&quot;);
+	}
+		
+	else if (FieldName == &quot;VF Neighborhood/Village&quot;) {
+		this.SetFieldValue(&quot;VF Zip Code Mnl Picked&quot;, &quot;N&quot;);
+	}
+		
+	else if (FieldName == &quot;District&quot;) {
+		this.SetFieldValue(&quot;VF Zip Code Mnl Picked&quot;, &quot;N&quot;);
+	}
+		
+	else if (FieldName == &quot;Postal Code Province&quot;)
+		this.SetFieldValue(&quot;VF Zip Code Mnl Picked&quot;, &quot;Y&quot;);
+				
+	//Anshita:20/09/06:Added to put validation on Postal Code field
+	var curAddr = this;
+	if (FieldName == &quot;Postal Code&quot;)
+	{
+		// Tomas Kvasnica 2006/11/30 Added for Check Address purposes
+		strVerFlag = curAddr.GetFieldValue(&quot;Verified Flag&quot;);
+		if (strVerFlag == &apos;Y&apos;) {
+			curAddr.SetFieldValue(&quot;Verified Flag&quot;, &quot;N&quot;); //Oracle Review October 2011 - SetFieldValue in this BC
+		}
+	}
+	// Tomas Kvasnica 2006/11/30 Added for Check Address purposes
+	else if ((FieldName == &quot;City&quot;) || (FieldName == &quot;Street Address&quot;) || (FieldName == &quot;Address Num&quot;) || (FieldName == &quot;Address Type&quot;) || (FieldName == &quot;Province&quot;) || (FieldName == &quot;Local Operating Company&quot;)) {
+		strVerFlag = curAddr.GetFieldValue(&quot;Verified Flag&quot;);
+		if (strVerFlag == &apos;Y&apos;) {
+			curAddr.SetFieldValue(&quot;Verified Flag&quot;, &quot;N&quot;); //Oracle Review October 2011 - SetFieldValue in this BC
+		}
+	}
+	else if (FieldName == &quot;VF MAHALLE ID&quot;){
+	  var MahId = curAddr.GetFieldValue(&quot;VF MAHALLE ID&quot;);
+	    		if(curAddr.GetFieldValue(&quot;VF Village Filled&quot;)== &quot;N&quot; &amp;&amp; MahId != null &amp;&amp; MahId != &quot;&quot;){
+					var NeighBusComp : BusComp;
+					var DistBusComp : BusComp;
+					DistBusComp = curAddr.GetPicklistBusComp(&quot;VF District mah Pick&quot;);
+					DistBusComp.ExecuteQuery(ForwardOnly);
+					if(DistBusComp.FirstRecord()) {
+					   DistBusComp.Pick();
+					   }
+					else curAddr.SetFieldValue(&quot;District&quot;,&quot;&quot;);
+					NeighBusComp = curAddr.GetPicklistBusComp(&quot;VF Neighborhood/Village mah Pick&quot;);
+					NeighBusComp.ExecuteQuery(ForwardOnly);
+					if(NeighBusComp.FirstRecord()) {
+					   NeighBusComp.Pick();
+					   }
+					}
+					
+			} 
+			TheApplication().Trace(&quot;End&quot;)
+		TheApplication().TraceOff();
+
+	}
+	finally{
+	NeighBusComp = null;
+	DistBusComp = null;
+	}
+	
+}"
+			   SEQUENCE="6"
+			   UPDATED="09/15/2015 15:28:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="ValidateAddress"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function ValidateAddress(FieldName,FieldValue)
+{
+	if (FieldName == &quot;Parent Address&quot; || FieldName == &quot;Address Num&quot; || 
+	  	FieldName == &quot;Apartment Number&quot; || FieldName == &quot;Escalera&quot; ||
+		FieldName == &quot;Street Address&quot; )
+	{
+		if(FieldValue.match(/([;])/g) != null)
+    	{ 
+    		var strMessageCategory = &quot;VF Message Category&quot;;
+        	var strCode = &quot;R21_220&quot;;
+        	var sMsg = TheApplication().LookupMessage(strMessageCategory, strCode);
+        	TheApplication().RaiseErrorText(sMsg);              
+        	return (CancelOperation);
+		}
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Validate_Postal_Code_Cyprus"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Validate_Postal_Code_Cyprus(FieldValue)
+{
+
+var strMessageCategory = &quot;VF Message Category&quot;;
+var strCode = &quot;&quot;;
+var sMsg = &quot;&quot;;
+
+			if(FieldValue == &quot;&quot; || FieldValue == null) return;
+			
+ 			if(FieldValue.match(/([a-zA-Z])/g) != null)
+	    	{ 
+                               strCode = &quot;NM_002&quot;;
+                               sMsg = TheApplication().LookupMessage(strMessageCategory, strCode);
+                               TheApplication().RaiseErrorText(sMsg);              
+                               return (CancelOperation);
+             }
+             if(FieldValue.match(/([çğıİöşüÇĞİÖŞÜ])/g) != null)
+                { 
+                               strCode = &quot;NM_002&quot;;
+                               sMsg = TheApplication().LookupMessage(strMessageCategory, strCode);
+                               TheApplication().RaiseErrorText(sMsg);              
+                               return (CancelOperation);
+                }
+            if(FieldValue.indexOf(&quot;98&quot;) != 0)
+            { 
+                               strCode = &quot;NM_003&quot;;
+                               sMsg = TheApplication().LookupMessage(strMessageCategory, strCode);
+                               TheApplication().RaiseErrorText(sMsg);              
+                               return (CancelOperation);
+             }
+               if(FieldValue.length != 6)
+            { 
+                               strCode = &quot;NM_004&quot;;
+                               sMsg = TheApplication().LookupMessage(strMessageCategory, strCode);
+                               TheApplication().RaiseErrorText(sMsg);              
+                               return (CancelOperation);
+             }
+             
+  return;
+}"
+			   SEQUENCE="1"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: Address Num"
+			   VALUE="VF Place RO"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: Avenue Free Text"
+			   VALUE="VF Avenue Filled"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: District"
+			   VALUE="VF Village Filled"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: Postal Code Province"
+			   VALUE="VF Zipcode Province Read Only"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: Street Address No Pick"
+			   VALUE="Street Address Filled"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: VF Apartment Number FreeText"
+			   VALUE="VF Apartment Number Filled"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: VF Apartment Number Picklist"
+			   VALUE="VF Apartment Number Free Filled"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: VF Avenue Boulevard Picklist"
+			   VALUE="VF Aven Boul Free Filled"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: VF Neighborhood/Village"
+			   VALUE="VF Village Filled"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: VF Place"
+			   VALUE="VF Place RO"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="Field Read Only Field: VF Postal Code Cyprus"
+			   VALUE="VF Full Address Cyprus Read Only"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: VF Site FreeText"
+			   VALUE="VF Site Filled"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: VF Site Picklist"
+			   VALUE="VF Site Free Filled"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: VF Street Address Picklist"
+			   VALUE="Street Address Free Filled"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: VF Village"
+			   VALUE="VF Village Read Only"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field:VF Full Address Cyprus"
+			   VALUE="VF Full Address Cyprus Read Only"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="On Field Update Set 1"
+			   VALUE="&quot;City&quot;, &quot;Address Name&quot;,  &quot;IIF( [Address Name Locked Flag] = &quot;&quot;N&quot;&quot;, [Calculated Address Name], [Address Name])&quot;"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="On Field Update Set 14"
+			   VALUE="&quot;Postal Code&quot;, &quot;Geo Code Valid Flag&quot;, &quot;N&quot;"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 15"
+			   VALUE="&quot;City&quot;, &quot;District&quot;, &quot;&quot;"
+			   UPDATED="11/07/2014 13:29:53"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 16"
+			   VALUE="&quot;District&quot;, &quot;Postal Code&quot;, &quot;&quot;"
+			   UPDATED="11/07/2014 13:29:53"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 17"
+			   VALUE="&quot;VF Avenue Boulevard Picklist&quot;, &quot;VF Aven Picked&quot;, &quot;&apos;Y&apos;&quot;"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 18"
+			   VALUE="&quot;Avenue Free Text&quot;, &quot;VF Aven Picked&quot;, &quot;&apos;N&apos;&quot;"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 19"
+			   VALUE="&quot;Province&quot;, &quot;City&quot;, &quot;&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 21"
+			   VALUE="&quot;Avenue Free Text&quot;, &quot;VF Avenue Boulevar&quot;, &quot;[Avenue Free Text]&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 22"
+			   VALUE="&quot;VF Street Address Picklist&quot;, &quot;VF Street Picked&quot;, &quot;&apos;Y&apos;&quot;"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 23"
+			   VALUE="&quot;Street Address No Pick&quot;, &quot;VF Street Picked&quot;, &quot;&apos;N&apos;&quot;"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="On Field Update Set 24"
+			   VALUE="&quot;Street Address No Pick&quot;, &quot;Street Address&quot;, &quot;[Street Address No Pick]&quot;"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 25"
+			   VALUE="&quot;VF Apartment Number FreeText&quot;, &quot;Apartment Number&quot;, &quot;[VF Apartment Number FreeText]&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 26"
+			   VALUE="&quot;VF Apartment Number Picklist&quot;, &quot;VF Apart Picked&quot;, &quot;&apos;Y&apos;&quot;"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 27"
+			   VALUE="&quot;VF Apartment Number FreeText&quot;, &quot;VF Apart Picked&quot;, &quot;&apos;N&apos;&quot;"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 28"
+			   VALUE="&quot;VF Site FreeText&quot;, &quot;VF Site Picked&quot;, &quot;&apos;N&apos;&quot;"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 29"
+			   VALUE="&quot;VF Site Picklist&quot;, &quot;VF Site Picked&quot;, &quot;&apos;Y&apos;&quot;"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="On Field Update Set 3"
+			   VALUE="&quot;Street Address&quot;, &quot;Address Name&quot;,  &quot;IIF( [Address Name Locked Flag] = &quot;&quot;N&quot;&quot;, [Calculated Address Name], [Address Name])&quot;"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 30"
+			   VALUE="&quot;VF Site FreeText&quot;, &quot;VF Site&quot;, &quot;[VF Site FreeText]&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 31"
+			   VALUE="&quot;Street Name&quot;, &quot;Street Address&quot;, &quot;[Street Name]&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 32"
+			   VALUE="&quot;VF Village&quot;, &quot;VF Zip Code Mnl Picked&quot;, &quot;&apos;N&apos;&quot;"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 33"
+			   VALUE="&quot;VF Neighborhood/Village&quot;, &quot;VF Zip Code Mnl Picked&quot;, &quot;&apos;N&apos;&quot;"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 34"
+			   VALUE="&quot;District&quot;, &quot;VF Zip Code Mnl Picked&quot;, &quot;&apos;N&apos;&quot;"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 35"
+			   VALUE="&quot;Postal Code Province&quot;, &quot;VF Zip Code Mnl Picked&quot;, &quot;&apos;Y&apos;&quot;"
+			   UPDATED="10/17/2014 10:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 36"
+			   VALUE="&quot;VF Neighborhood/Village&quot;, &quot;Street Address&quot;, &quot;&apos;&apos;&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 37"
+			   VALUE="&quot;VF Neighborhood/Village&quot;, &quot;VF Avenue Boulevar&quot;, &quot;&apos;&apos;&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 38"
+			   VALUE="&quot;VF Neighborhood/Village&quot;, &quot;Postal Code Province&quot;, &quot;&apos;&apos;&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 39"
+			   VALUE="&quot;VF Neighborhood/Village&quot;, &quot;Postal Code&quot;, &quot;&apos;&apos;&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 40"
+			   VALUE="&quot;City&quot;, &quot;VF Neighborhood/Village&quot;, &quot;&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 41"
+			   VALUE="&quot;VF Neighborhood/Village&quot;, &quot;VF Site&quot;, &quot;&apos;&apos;&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 42"
+			   VALUE="&quot;VF Neighborhood/Village&quot;, &quot;Apartment Number&quot;, &quot;&apos;&apos;&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 44"
+			   VALUE="&quot;City&quot;, &quot;VF Village&quot;, &quot;&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 45"
+			   VALUE="&quot;VF Village&quot;, &quot;Postal Code&quot;, &quot;&apos;&apos;&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 46"
+			   VALUE="&quot;VF Village&quot;, &quot;Postal Code Province&quot;, &quot;&apos;&apos;&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 47"
+			   VALUE="&quot;VF Village&quot;, &quot;VF Avenue Boulevar&quot;, &quot;&apos;&apos;&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 48"
+			   VALUE="&quot;VF Village&quot;, &quot;Street Address&quot;, &quot;&apos;&apos;&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="On Field Update Set 50"
+			   VALUE="&quot;Street Address&quot;, &quot;VF YOL ID&quot;, &quot;&apos;&apos;&quot;"
+			   UPDATED="10/17/2014 10:12:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 51"
+			   VALUE="&quot;City&quot;, &quot;VF MAHALLE ID&quot;, &quot;&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 52"
+			   VALUE="&quot;Province&quot;, &quot;VF MAHALLE ID&quot;, &quot;&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 54"
+			   VALUE="&quot;Province&quot;, &quot;VF Postal Code Cyprus&quot;, &quot;&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 55"
+			   VALUE="&quot;City&quot;, &quot;VF Full Address Cyprus&quot;, &quot;&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 56"
+			   VALUE="&quot;Province&quot;, &quot;VF Place&quot;, &quot;&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 57"
+			   VALUE="&quot;Province&quot;, &quot;Address Num&quot;, &quot;&quot;"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="On Field Update Set 58"
+			   VALUE="&quot;Province&quot;, &quot;Street Address&quot;, &quot;&apos;ſ -- Diğer -- ſ&apos;&quot;, &quot;[Province]=&apos;KIBRIS&apos;&quot;"
+			   UPDATED="03/27/2018 10:42:07"
+			   UPDATED_BY="IBM_BKOCABAS"
+			   CREATED="03/27/2018 10:42:07"
+			   CREATED_BY="IBM_BKOCABAS">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="On Field Update Set 59"
+			   VALUE="&quot;Province&quot;, &quot;VF Avenue Boulevar&quot;, &quot;&apos;ſ -- Diğer -- ſ&apos;&quot;, &quot;[Province]=&apos;KIBRIS&apos;&quot;"
+			   UPDATED="03/27/2018 10:43:00"
+			   UPDATED_BY="IBM_BKOCABAS"
+			   CREATED="03/27/2018 10:43:00"
+			   CREATED_BY="IBM_BKOCABAS">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="On Field Update Set 60"
+			   VALUE="&quot;Province&quot;, &quot;Apartment Number&quot;, &quot;&apos;ſ -- Diğer -- ſ&apos;&quot;, &quot;[Province]=&apos;KIBRIS&apos;&quot;"
+			   UPDATED="03/27/2018 10:43:15"
+			   UPDATED_BY="IBM_BKOCABAS"
+			   CREATED="03/27/2018 10:43:15"
+			   CREATED_BY="IBM_BKOCABAS">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="On Field Update Set 61"
+			   VALUE="&quot;Province&quot;, &quot;VF Site&quot;, &quot;&apos;ſ -- Diğer -- ſ&apos;&quot;, &quot;[Province]=&apos;KIBRIS&apos;&quot;"
+			   UPDATED="03/27/2018 10:43:35"
+			   UPDATED_BY="IBM_BKOCABAS"
+			   CREATED="03/27/2018 10:43:35"
+			   CREATED_BY="IBM_BKOCABAS">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Address Num"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:21:50"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Address Type"
+			   NO_COPY="N"
+			   PICKLIST="VF Address Type Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:21:50"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Address Type"
+				   INACTIVE="N"
+				   NAME="Address Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   SEQUENCE="1"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_04"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Apartment Number"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:21:50"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+				<FIELD_USER_PROP
+				   INACTIVE="Y"
+				   NAME="Text Length Override"
+				   VALUE="15"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</FIELD_USER_PROP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMMENTS="IIF(([VF Aven Picked] &lt;&gt; &apos;Y&apos; OR [VF Aven Picked] is null)  AND [VF Avenue Boulevar] &lt;&gt; &apos;ſ -- Diğer -- ſ&apos;,[VF Avenue Boulevar],&apos;&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_04"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Avenue Free Text"
+			   NO_COPY="N"
+			   PICKLIST="VF Avenue PickList Unbounded"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+				<FIELD_USER_PROP
+				   INACTIVE="N"
+				   NAME="Required"
+				   VALUE="[VF Avenue Free Text Required]"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</FIELD_USER_PROP>
+				<PICK_MAP
+				   FIELD="Avenue Free Text"
+				   INACTIVE="N"
+				   NAME="Avenue Free Text"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Il Adi"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_05"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="City"
+			   NO_COPY="Y"
+			   PICKLIST="VF ILCE Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/13/2014 12:20:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+				<FIELD_USER_PROP
+				   INACTIVE="N"
+				   NAME="Required"
+				   VALUE="[VF Required field Calc]"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</FIELD_USER_PROP>
+				<PICK_MAP
+				   FIELD="Avenue Free Text"
+				   INACTIVE="N"
+				   NAME="Avenue Free Text"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Blank Field"
+				   SEQUENCE="7"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="City"
+				   INACTIVE="N"
+				   NAME="City"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Ilce Adi"
+				   SEQUENCE="3"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="City Id"
+				   INACTIVE="N"
+				   NAME="City Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Ilce Id"
+				   SEQUENCE="2"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Street Address No Pick"
+				   INACTIVE="N"
+				   NAME="Street Address No Pick"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Blank Field"
+				   SEQUENCE="9"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Apartment Number FreeText"
+				   INACTIVE="N"
+				   NAME="VF Apartment Number FreeText"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Blank Field"
+				   SEQUENCE="5"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Apartment Number Picklist"
+				   INACTIVE="N"
+				   NAME="VF Apartment Number Picklist"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Blank Field"
+				   SEQUENCE="6"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Avenue Boulevard Picklist"
+				   INACTIVE="N"
+				   NAME="VF Avenue Boulevard Picklist"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Blank Field"
+				   SEQUENCE="8"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Neighborhood/Village"
+				   INACTIVE="N"
+				   NAME="VF Neighborhood/Village"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Blank Field"
+				   SEQUENCE="4"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VF Province Id"
+				   INACTIVE="N"
+				   NAME="VF Province Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Il Id"
+				   SEQUENCE="1"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Site FreeText"
+				   INACTIVE="N"
+				   NAME="VF Site FreeText"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Blank Field"
+				   SEQUENCE="11"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Site Picklist"
+				   INACTIVE="N"
+				   NAME="VF Site Picklist"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Blank Field"
+				   SEQUENCE="12"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Street Address Picklist"
+				   INACTIVE="N"
+				   NAME="VF Street Address Picklist"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Blank Field"
+				   SEQUENCE="10"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_05"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="City Id"
+			   NO_COPY="Y"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_06"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="District"
+			   NO_COPY="N"
+			   PICKLIST="VF POI District Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+				<FIELD_USER_PROP
+				   INACTIVE="Y"
+				   NAME="Text Length Override"
+				   VALUE="15"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</FIELD_USER_PROP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="City Id"
+				   INACTIVE="N"
+				   NAME="City Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="X Vf Ilce Id"
+				   SEQUENCE="1"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="District"
+				   INACTIVE="N"
+				   NAME="District"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="X Vf Standard Name"
+				   SEQUENCE="4"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Postal Code"
+				   INACTIVE="N"
+				   NAME="Postal Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="X Vf Postal Code"
+				   SEQUENCE="3"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF MAHALLE ID"
+				   INACTIVE="N"
+				   NAME="VF MAHALLE ID"
+				   NO_CLEAR="Y"
+				   PICK_LIST_FIELD="X Vf Mahalle Id"
+				   SEQUENCE="5"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VF Province Id"
+				   INACTIVE="N"
+				   NAME="VF Province Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="X Vf Il Id"
+				   SEQUENCE="2"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_06"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Postal Code"
+			   NO_COPY="Y"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+				<FIELD_USER_PROP
+				   INACTIVE="N"
+				   NAME="Required"
+				   VALUE="[VF Full Address Cyprus Read Only]"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</FIELD_USER_PROP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_07"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Postal Code Province"
+			   NO_COPY="N"
+			   PICKLIST="VF Postal Code Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="City Id"
+				   INACTIVE="N"
+				   NAME="City Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Ilce Id"
+				   SEQUENCE="1"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Postal Code"
+				   INACTIVE="N"
+				   NAME="Postal Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Posta Kodu"
+				   SEQUENCE="2"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Postal Code Province"
+				   INACTIVE="N"
+				   NAME="Postal Code Province"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Posta Kodu"
+				   SEQUENCE="3"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_07"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Province"
+			   NO_COPY="N"
+			   PICKLIST="VF IL Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/13/2014 12:20:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+				<FIELD_USER_PROP
+				   INACTIVE="N"
+				   NAME="Required"
+				   VALUE="[VF Required field Calc]"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</FIELD_USER_PROP>
+				<PICK_MAP
+				   FIELD="Avenue Free Text"
+				   INACTIVE="N"
+				   NAME="Avenue Free Text"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Blank Field"
+				   SEQUENCE="5"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="City"
+				   INACTIVE="N"
+				   NAME="City"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Blank Field"
+				   SEQUENCE="3"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Province"
+				   INACTIVE="N"
+				   NAME="Province"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Il Adi"
+				   SEQUENCE="2"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Street Address No Pick"
+				   INACTIVE="N"
+				   NAME="Street Address No Pick"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Blank Field"
+				   SEQUENCE="7"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Apartment Number FreeText"
+				   INACTIVE="N"
+				   NAME="VF Apartment Number FreeText"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Blank Field"
+				   SEQUENCE="11"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Apartment Number Picklist"
+				   INACTIVE="N"
+				   NAME="VF Apartment Number Picklist"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Blank Field"
+				   SEQUENCE="12"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Avenue Boulevard Picklist"
+				   INACTIVE="N"
+				   NAME="VF Avenue Boulevard Picklist"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Blank Field"
+				   SEQUENCE="6"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Neighborhood/Village"
+				   INACTIVE="N"
+				   NAME="VF Neighborhood/Village"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Blank Field"
+				   SEQUENCE="4"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Province Id"
+				   INACTIVE="N"
+				   NAME="VF Province Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Il Id"
+				   SEQUENCE="1"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Site FreeText"
+				   INACTIVE="N"
+				   NAME="VF Site FreeText"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Blank Field"
+				   SEQUENCE="9"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Site Picklist"
+				   INACTIVE="N"
+				   NAME="VF Site Picklist"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Blank Field"
+				   SEQUENCE="10"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Street Address Picklist"
+				   INACTIVE="N"
+				   NAME="VF Street Address Picklist"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Blank Field"
+				   SEQUENCE="8"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_08"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Street Address"
+			   NO_COPY="Y"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+				<FIELD_USER_PROP
+				   INACTIVE="Y"
+				   NAME="Text Length Override"
+				   VALUE="30"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</FIELD_USER_PROP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VF Street Address Picklist] is null OR [VF Street Address Picklist] &lt;&gt; &apos;ſ -- Diğer -- ſ&apos;, &apos;Y&apos;, &apos;N&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Street Address Filled"
+			   NO_COPY="Y"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/27/2018 10:19:10"
+			   UPDATED_BY="IBM_BKOCABAS"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([Street Address No Pick] is not null OR [VF Full Address Cyprus Read Only] = &apos;N&apos;, &apos;Y&apos;, &apos;N&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Street Address Free Filled"
+			   NO_COPY="Y"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:12:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMMENTS="IIF(([VF Street Picked] &lt;&gt; &apos;Y&apos; OR [VF Street Picked] is null) AND [Street Address] &lt;&gt; &apos;ſ -- Diğer -- ſ&apos;,[Street Address],&apos;&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_08"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Street Address No Pick"
+			   NO_COPY="N"
+			   PICKLIST="VF IDARI_SINIR Picklist Unbound"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+				<FIELD_USER_PROP
+				   INACTIVE="N"
+				   NAME="Required"
+				   VALUE="[VFTRCBU Street Free Required]"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</FIELD_USER_PROP>
+				<PICK_MAP
+				   FIELD="Street Address No Pick"
+				   INACTIVE="N"
+				   NAME="Street Address No Pick"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Il Adi"
+				   UPDATED="10/17/2014 10:12:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:58"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VF Village Filled] = &apos;Y&apos; OR [VF Avenue Boulevar] is not null,&apos;N&apos;,&apos;Y&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Account Status Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:12:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="Y"
+			   COMMENTS="VFTRCBU-3587 - field is not mandatory according to WA#05 FD, for consumer customers"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Account Status Calc Apart"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/13/2014 12:20:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_09"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Add Type"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([Apartment Number] = &apos;ſ -- Diğer -- ſ&apos;, &quot;Y&quot;, &quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Apart Free Required"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:12:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_09"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Apart Picked"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VF Full Address Cyprus Read Only] = &apos;N&apos; OR [VF Apartment Number Picklist] is not null, &apos;N&apos;, [VF Account Status Calc Apart])"
+			   COMMENTS="VFTRCBU-3587 - field is not mandatory according to WA#05 FD, for consumer customers"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Apart Required"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/13/2014 12:20:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VF Apartment Number Picklist] IS NULL OR [VF Apartment Number Picklist] &lt;&gt; &apos;ſ -- Diğer -- ſ&apos;, &apos;Y&apos;, &apos;N&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Apartment Number Filled"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/27/2018 10:19:52"
+			   UPDATED_BY="IBM_BKOCABAS"
+			   CREATED="10/17/2014 10:12:58"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf ([VF Apartment Number FreeText] IS  NOT  NULL OR [VF Full Address Cyprus Read Only] = &apos;N&apos;, &apos;Y&apos;, &apos;N&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Apartment Number Free Filled"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:12:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMMENTS="IIF(([VF Apart Picked] &lt;&gt; &apos;Y&apos; OR [VF Apart Picked] is null) AND  [Apartment Number] &lt;&gt; &apos;ſ -- Diğer -- ſ&apos; ,[Apartment Number],&apos;&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_10"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Apartment Number FreeText"
+			   NO_COPY="N"
+			   PICKLIST="VF Apartment Number Picklist No Pick"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+				<FIELD_USER_PROP
+				   INACTIVE="N"
+				   NAME="Required"
+				   VALUE="[VF Apart Free Required]"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</FIELD_USER_PROP>
+				<PICK_MAP
+				   FIELD="VF Apartment Number FreeText"
+				   INACTIVE="N"
+				   NAME="VF Apartment Number FreeText"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Kapi Adi"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VF Apart Picked] = &apos;Y&apos;,[Apartment Number],IIF([VF Apartment Number Free Filled] = &apos;Y&apos;,&apos;ſ -- Diğer -- ſ&apos;,&apos;&apos;))"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Apartment Number Picklist"
+			   NO_COPY="N"
+			   PICKLIST="VF Apartment Number Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/12/2015 12:23:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+				<FIELD_USER_PROP
+				   COMMENTS="VFTRCBU-3587 - field is not mandatory according to WA#05 FD, for consumer customers"
+				   INACTIVE="Y"
+				   NAME="Required"
+				   VALUE="[VF Apart Required]"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</FIELD_USER_PROP>
+				<PICK_MAP
+				   FIELD="Apartment Number"
+				   INACTIVE="N"
+				   NAME="Apartment Number"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Kapi No"
+				   SEQUENCE="3"
+				   UPDATED="07/12/2015 12:23:13"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Apartment Number Picklist"
+				   INACTIVE="N"
+				   NAME="VF Apartment Number Picklist"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Kapi No"
+				   SEQUENCE="2"
+				   UPDATED="07/12/2015 12:23:13"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Kapi Id"
+				   INACTIVE="N"
+				   NAME="VF Kapi Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Kapi Id"
+				   SEQUENCE="4"
+				   UPDATED="07/12/2015 12:23:13"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VF YOL ID"
+				   INACTIVE="N"
+				   NAME="VF YOL ID"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Yol Id"
+				   SEQUENCE="1"
+				   UPDATED="07/12/2015 12:23:13"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf ([Avenue Free Text] is not null OR [VF Full Address Cyprus Read Only]=&apos;N&apos;, &apos;Y&apos;, &apos;N&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Aven Boul Free Filled"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:12:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_10"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Aven Picked"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V500_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Avenue Boulevar"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf (([District] IS NOT NULL   OR [VF Neighborhood/Village] IS  NOT NULL)  AND [Street Address] IS  NULL , &apos;Y&apos; ,&apos;N&apos; )"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Avenue Boulevard Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:12:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V500_2"
+			   COMMENTS="IIF([VF Aven Picked] = &apos;Y&apos;,[VF Avenue Boulevar],IIF([VF Aven Boul Free Filled] = &apos;Y&apos;,&apos;ſ -- Diğer -- ſ&apos;,&apos;&apos;))"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Avenue Boulevard Picklist"
+			   NO_COPY="N"
+			   PICKLIST="VF Avenue PickList"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/12/2015 12:23:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Avenue Boulevar"
+				   INACTIVE="N"
+				   NAME="VF Avenue Boulevar"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Yol Adi"
+				   SEQUENCE="3"
+				   UPDATED="07/12/2015 12:23:13"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Avenue Boulevard Picklist"
+				   INACTIVE="N"
+				   NAME="VF Avenue Boulevard Picklist"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Yol Adi"
+				   SEQUENCE="2"
+				   UPDATED="07/12/2015 12:23:13"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VF MAHALLE ID"
+				   INACTIVE="N"
+				   NAME="VF MAHALLE ID"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Mahalle Id"
+				   SEQUENCE="1"
+				   UPDATED="07/12/2015 12:23:13"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF YOL ID"
+				   INACTIVE="N"
+				   NAME="VF YOL ID"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Yol Id"
+				   SEQUENCE="4"
+				   UPDATED="07/12/2015 12:23:13"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VF Avenue Boulevard Picklist] is null OR [VF Avenue Boulevard Picklist] &lt;&gt; &apos;ſ -- Diğer -- ſ&apos;, &apos;Y&apos;, &apos;N&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Avenue Filled"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/27/2018 10:20:46"
+			   UPDATED_BY="IBM_BKOCABAS"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VF Avenue Boulevar] = &apos;ſ -- Diğer -- ſ&apos;, &apos;Y&apos;, &apos;N&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Avenue Free Text Required"
+			   NO_COPY="N"
+			   PICKLIST="VF Avenue PickList Unbounded"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:12:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Avenue Free Text"
+				   INACTIVE="N"
+				   NAME="Avenue Free Text"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Il Adi"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF(([VF Apartment Number Picklist] IS NULL OR [VF Apartment Number Picklist] = &apos;ſ -- Diğer -- ſ&apos;), [VF Apartment Number FreeText], [VF Apartment Number Picklist])"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Calc Apartment Number"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:12:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF(([VF Avenue Boulevard Picklist] IS NULL OR [VF Avenue Boulevard Picklist] = &apos;ſ -- Diğer -- ſ&apos;), [Avenue Free Text], [VF Avenue Boulevard Picklist])"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Calc Avenue Boulevard"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:12:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF(([VF Site Picklist] IS NULL OR [VF Site Picklist] = &apos;ſ -- Diğer -- ſ&apos;), [VF Site FreeText], [VF Site Picklist])"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Calc Site"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:12:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF(([VF Street Address Picklist] IS NULL OR [VF Street Address Picklist] = &apos;ſ -- Diğer -- ſ&apos;), [Street Address No Pick], [VF Street Address Picklist])"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Calc Street Addr"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:12:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF District mah Pick"
+			   NO_COPY="N"
+			   PICKLIST="VF POI District Mah Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:12:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+				<FIELD_USER_PROP
+				   INACTIVE="Y"
+				   NAME="Text Length Override"
+				   VALUE="15"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</FIELD_USER_PROP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="City Id"
+				   INACTIVE="N"
+				   NAME="City Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="X Vf Ilce Id"
+				   SEQUENCE="1"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="District"
+				   INACTIVE="N"
+				   NAME="District"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="X Vf Standard Name"
+				   SEQUENCE="4"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Postal Code"
+				   INACTIVE="N"
+				   NAME="Postal Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="X Vf Postal Code"
+				   SEQUENCE="3"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VF MAHALLE ID"
+				   INACTIVE="N"
+				   NAME="VF MAHALLE ID"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="X Vf Mahalle Id"
+				   SEQUENCE="5"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VF Province Id"
+				   INACTIVE="N"
+				   NAME="VF Province Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="X Vf Il Id"
+				   SEQUENCE="2"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf ([Province] = &quot;KIBRIS&quot;, &apos;N&apos;, &apos;Y&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Full Address Cyprus Read Only"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:12:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V500_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_07"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Kapi Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V500_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_08"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF MAHALLE ID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V500_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_09"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Neighborhood/Village"
+			   NO_COPY="Y"
+			   PICKLIST="VF MAHALLE Neighbourhood Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/13/2014 12:20:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+				<FIELD_USER_PROP
+				   INACTIVE="Y"
+				   NAME="Text Length Override"
+				   VALUE="24"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</FIELD_USER_PROP>
+				<PICK_MAP
+				   FIELD="Avenue Free Text"
+				   INACTIVE="N"
+				   NAME="Avenue Free Text"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Blank Field"
+				   SEQUENCE="8"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="City Id"
+				   INACTIVE="N"
+				   NAME="City Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Ilce Id"
+				   SEQUENCE="1"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Postal Code"
+				   INACTIVE="N"
+				   NAME="Postal Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Posta Kodu"
+				   SEQUENCE="7"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Street Address No Pick"
+				   INACTIVE="N"
+				   NAME="Street Address No Pick"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Blank Field"
+				   SEQUENCE="12"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Add Type"
+				   INACTIVE="N"
+				   NAME="VF Add Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Type"
+				   SEQUENCE="5"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Apartment Number FreeText"
+				   INACTIVE="N"
+				   NAME="VF Apartment Number FreeText"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Blank Field"
+				   SEQUENCE="10"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Apartment Number Picklist"
+				   INACTIVE="N"
+				   NAME="VF Apartment Number Picklist"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Blank Field"
+				   SEQUENCE="11"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Avenue Boulevard Picklist"
+				   INACTIVE="N"
+				   NAME="VF Avenue Boulevard Picklist"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Blank Field"
+				   SEQUENCE="9"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF MAHALLE ID"
+				   INACTIVE="N"
+				   NAME="VF MAHALLE ID"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Mahalle Id"
+				   SEQUENCE="3"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Neighborhood/Village"
+				   INACTIVE="N"
+				   NAME="VF Neighborhood/Village"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Mahalle Adi"
+				   SEQUENCE="4"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VF Province Id"
+				   INACTIVE="N"
+				   NAME="VF Province Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Il Id"
+				   SEQUENCE="2"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Site FreeText"
+				   INACTIVE="N"
+				   NAME="VF Site FreeText"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Blank Field"
+				   SEQUENCE="14"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Site Picklist"
+				   INACTIVE="N"
+				   NAME="VF Site Picklist"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Blank Field"
+				   SEQUENCE="15"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Street Address Picklist"
+				   INACTIVE="N"
+				   NAME="VF Street Address Picklist"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Blank Field"
+				   SEQUENCE="13"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Neighborhood/Village mah Pick"
+			   NO_COPY="Y"
+			   PICKLIST="VF MAHALLE Neighbourhood Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:12:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+				<FIELD_USER_PROP
+				   INACTIVE="Y"
+				   NAME="Text Length Override"
+				   VALUE="24"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</FIELD_USER_PROP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="City Id"
+				   INACTIVE="N"
+				   NAME="City Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Ilce Id"
+				   SEQUENCE="1"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Postal Code"
+				   INACTIVE="N"
+				   NAME="Postal Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Posta Kodu"
+				   SEQUENCE="7"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Add Type"
+				   INACTIVE="N"
+				   NAME="VF Add Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Type"
+				   SEQUENCE="5"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VF MAHALLE ID"
+				   INACTIVE="N"
+				   NAME="VF MAHALLE ID"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Mahalle Id"
+				   SEQUENCE="3"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Neighborhood/Village"
+				   INACTIVE="N"
+				   NAME="VF Neighborhood/Village"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Mahalle Adi"
+				   SEQUENCE="4"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VF Province Id"
+				   INACTIVE="N"
+				   NAME="VF Province Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Il Id"
+				   SEQUENCE="2"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V500_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_10"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Place"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VF Full Address Cyprus Read Only]=&apos;N&apos;,&apos;Y&apos;,&apos;N&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Place RO"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:12:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([Address Type] = LookupValue(&quot;ADDRESS_TYPE&quot;,&quot;Primary Address&quot;), &quot;Y&quot;, &quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Primary Address Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:12:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1024_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Province Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf(([VF Account Status Calc] = &apos;N&apos;),&apos;N&apos;,IIf(([VF Primary Address Calc]=&apos;N&apos;),&apos;N&apos;,&apos;Y&apos;))"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Required field Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:12:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1024_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_05"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Site"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+				<FIELD_USER_PROP
+				   INACTIVE="Y"
+				   NAME="Text Length Override"
+				   VALUE="20"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</FIELD_USER_PROP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf ([VF Site Picklist] IS NULL OR [VF Site Picklist] &lt;&gt; &apos;ſ -- Diğer -- ſ&apos;, &apos;Y&apos;, &apos;N&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Site Filled"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/27/2018 10:21:23"
+			   UPDATED_BY="IBM_BKOCABAS"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf ([VF Site FreeText] IS  NOT  NULL OR [VF Full Address Cyprus Read Only]=&apos;N&apos;, &apos;Y&apos;, &apos;N&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Site Free Filled"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:12:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1024_1"
+			   COMMENTS="IIF(([VF Site Picked] &lt;&gt; &apos;Y&apos; OR [VF Site Picked] is null)  AND [VF Site] &lt;&gt; &apos;ſ -- Diğer -- ſ&apos;,[VF Site],&apos;&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_06"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Site FreeText"
+			   NO_COPY="N"
+			   PICKLIST="VF POI Site Picklist Unbound"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+				<FIELD_USER_PROP
+				   INACTIVE="N"
+				   NAME="Required"
+				   VALUE="[VFTRCBU Site Freetext Required]"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</FIELD_USER_PROP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="City Id"
+				   INACTIVE="N"
+				   NAME="City Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="X Vf Ilce Id"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VF MAHALLE ID"
+				   INACTIVE="N"
+				   NAME="VF MAHALLE ID"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="X Vf Mahalle Id"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Site"
+				   INACTIVE="N"
+				   NAME="VF Site"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="X Vf Standard Name"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Site Picklist"
+				   INACTIVE="N"
+				   NAME="VF Site Picklist"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="X Vf Standard Name"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1024_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_07"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Site Picked"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VF Site Picked] = &apos;Y&apos;,[VF Site],IIF([VF Site Free Filled] = &apos;Y&apos;,&apos;ſ -- Diğer -- ſ&apos;,&apos;&apos;))"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Site Picklist"
+			   NO_COPY="N"
+			   PICKLIST="VF POI Site Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/12/2015 12:23:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="City Id"
+				   INACTIVE="N"
+				   NAME="City Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="X Vf Ilce Id"
+				   SEQUENCE="1"
+				   UPDATED="07/12/2015 12:23:13"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VF MAHALLE ID"
+				   INACTIVE="N"
+				   NAME="VF MAHALLE ID"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="X Vf Mahalle Id"
+				   SEQUENCE="2"
+				   UPDATED="07/12/2015 12:23:13"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Site"
+				   INACTIVE="N"
+				   NAME="VF Site"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="X Vf Standard Name"
+				   SEQUENCE="4"
+				   UPDATED="07/12/2015 12:23:13"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Site Picklist"
+				   INACTIVE="N"
+				   NAME="VF Site Picklist"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="X Vf Standard Name"
+				   SEQUENCE="3"
+				   UPDATED="07/12/2015 12:23:13"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VF Street Picked] = &apos;Y&apos;,[Street Address],IIF([Street Address Free Filled] = &apos;Y&apos;,&apos;ſ -- Diğer -- ſ&apos;,&apos;&apos;))"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Street Address Picklist"
+			   NO_COPY="N"
+			   PICKLIST="VF IDARI_SINIR Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/12/2015 12:23:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Street Address"
+				   INACTIVE="N"
+				   NAME="Street Address"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Yol Adi"
+				   SEQUENCE="3"
+				   UPDATED="07/12/2015 12:23:13"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VF MAHALLE ID"
+				   INACTIVE="N"
+				   NAME="VF MAHALLE ID"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Mahalle Id"
+				   SEQUENCE="1"
+				   UPDATED="07/12/2015 12:23:13"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Street Address Picklist"
+				   INACTIVE="N"
+				   NAME="VF Street Address Picklist"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Yol Adi"
+				   SEQUENCE="2"
+				   UPDATED="07/12/2015 12:23:13"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF YOL ID"
+				   INACTIVE="N"
+				   NAME="VF YOL ID"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Yol Id"
+				   SEQUENCE="4"
+				   UPDATED="07/12/2015 12:23:14"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1500_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_06"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Street Picked"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1500_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_07"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Village"
+			   NO_COPY="N"
+			   PICKLIST="VF MAHALLE Village Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/13/2014 12:20:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:12:59"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="City Id"
+				   INACTIVE="N"
+				   NAME="City Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Ilce Id"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="District"
+				   INACTIVE="N"
+				   NAME="District"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Blank Field"
+				   UPDATED="11/13/2014 12:20:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/13/2014 12:20:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Postal Code"
+				   INACTIVE="N"
+				   NAME="Postal Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Posta Kodu"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Postal Code Province"
+				   INACTIVE="N"
+				   NAME="Postal Code Province"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Blank Field"
+				   UPDATED="10/17/2014 10:12:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:12:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Add Type"
+				   INACTIVE="N"
+				   NAME="VF Add Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Type"
+				   UPDATED="10/17/2014 10:13:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:13:00"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF MAHALLE ID"
+				   INACTIVE="N"
+				   NAME="VF MAHALLE ID"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Mahalle Id"
+				   UPDATED="10/17/2014 10:13:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:13:00"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VF Province Id"
+				   INACTIVE="N"
+				   NAME="VF Province Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Il Id"
+				   UPDATED="10/17/2014 10:13:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:13:00"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Village"
+				   INACTIVE="N"
+				   NAME="VF Village"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Mahalle Adi"
+				   UPDATED="10/17/2014 10:13:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:13:00"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf ([VF Village] IS  NOT  NULL OR [VF Full Address Cyprus Read Only] = &apos;N&apos;,&apos;Y&apos;, &apos;N&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Village Filled"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:13:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:13:00"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf ([VF Neighborhood/Village] IS  NOT  NULL OR [District] IS  NOT  NULL OR [VF Full Address Cyprus Read Only]=&apos;N&apos;, &apos;Y&apos;, &apos;N&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Village Read Only"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:13:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:13:00"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_DN_04"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF YOL ID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_INTEGER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:21:51"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:13:00"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1999_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_06"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Zip Code Mnl Picked"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/07/2014 13:29:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:13:00"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf (([VF Neighborhood/Village] IS  NOT  NULL OR [District] IS  NOT  NULL OR [VF Village] IS  NOT  NULL) AND ([VF Zip Code Mnl Picked] = &apos;Y&apos; OR [VF Zip Code Mnl Picked] is null OR [Postal Code] is null), &apos;N&apos;, &apos;Y&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Zipcode Province Read Only"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:13:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:13:00"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VF Site] = &apos;ſ -- Diğer -- ſ&apos;, &apos;Y&apos;, &apos;N&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Site Freetext Required"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:13:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:13:00"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([Street Address] = &apos;ſ -- Diğer -- ſ&apos;, &apos;Y&apos;, &apos;N&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Street Free Required"
+			   NO_COPY="N"
+			   PICKLIST="VF IDARI_SINIR Picklist Unbound"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:13:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:13:00"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Street Address No Pick"
+				   INACTIVE="N"
+				   NAME="Street Address No Pick"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Il Adi"
+				   UPDATED="10/17/2014 10:13:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/17/2014 10:13:00"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_C1_03"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Verified Flag"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/17/2014 10:21:51"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/17/2014 10:13:00"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

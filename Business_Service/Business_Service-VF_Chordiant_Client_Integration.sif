@@ -1,0 +1,720 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="11/24/2016 17:14:00"
+   UPDATED_BY="SADMIN"
+   CREATED="11/24/2016 14:49:11"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VF P2P Interfaces"
+	   UI_FREEZE="N"
+	   UPDATED="03/27/2017 18:04:51"
+	   UPDATED_BY="ESANTOS"
+	   CREATED="10/06/2009 10:41:44"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="Y"
+		   CLASS="CSSService"
+		   EXTERNAL_USE="N"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VF Chordiant Client Integration"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="03/27/2017 17:09:24"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   OBJECT_LOCKED_BY_NAME="ESANTOS"
+		   UPDATED="03/27/2017 18:04:51"
+		   UPDATED_BY="ESANTOS"
+		   CREATED="02/20/2013 10:36:29"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="ResponseOffer"
+			   UPDATED="02/20/2013 10:36:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/20/2013 10:36:29"
+			   CREATED_BY="SADMIN">
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="MSISDN"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="02/20/2013 10:36:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/20/2013 10:36:29"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="S_OFFER_ID"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="02/20/2013 10:36:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/20/2013 10:36:29"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="responseValue"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="02/20/2013 10:36:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/20/2013 10:36:29"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_LOCALE
+				   APPLICATION_CODE="STD"
+				   DISPLAY_NAME="ResponseOffer"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="02/20/2013 10:36:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/20/2013 10:36:29"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_LOCALE>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CreateOrder"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CreateOrder(penInput, penOutputs)
+{
+	try{
+
+		var strDescription = penInput.GetProperty(&quot;Description&quot;);
+		var MSISDN = penInput.GetProperty(&quot;MSISDN&quot;);
+		var sTECHNICAL_NAME = penInput.GetProperty(&quot;TECHNICAL_NAME&quot;);	
+		var sTECHNICAL_NAME2 = penInput.GetProperty(&quot;TECHNICAL_NAME2&quot;);
+		var PartNum = penInput.GetProperty(&quot;Part Number&quot;);	
+		var PartNum2 = penInput.GetProperty(&quot;Part Number2&quot;);
+		var straction		=&quot;&quot;;
+		straction = &quot;ADD&quot;;		
+		var ErrorDescription = &quot;&quot;;	
+		var ErrorCode = &quot;&quot;;
+		
+	    var inpSet = TheApplication().NewPropertySet();
+		var outSet = TheApplication().NewPropertySet();
+		var psInputHeader = TheApplication().NewPropertySet();
+		var sSiebelMessage = TheApplication().NewPropertySet();
+		var intChildCount1 = TheApplication().NewPropertySet();
+		var sService = TheApplication().GetService(&quot;PRM ANI Utility Service&quot;);
+		var headerType;
+		var sSiebelMessageRequest = TheApplication().NewPropertySet();
+		var psInputWS  = TheApplication().NewPropertySet();
+		var psOutputWS = TheApplication().NewPropertySet();
+		var intChildCount = 0;
+		var psChild;
+		var found = false;
+		var svcWebService: Service = TheApplication().GetService(&quot;SiebelAdapterSiebelServices&quot;); 
+		var svcWFProcessManager: Service = TheApplication().GetService(&quot;Workflow Process Manager&quot;); 
+		var StatusCode = &quot;-1&quot;;
+		//Generate Header - JMARQUES
+		inpSet.SetProperty(&quot;ProcessName&quot;, &quot;VFTRCBU Generate Header IO WF&quot;);
+		inpSet.SetProperty(&quot;SourceSystem&quot;, &quot;NBA&quot;); //jmarques
+		inpSet.SetProperty(&quot;OriginalSourceSystem&quot;, &quot;NBASiebel&quot;); //jmarques
+		svcWFProcessManager.InvokeMethod(&quot;RunProcess&quot;, inpSet, psInputHeader);
+		psInputHeader = psInputHeader.GetChild(0);
+		
+		
+		inpSet.SetProperty(&quot;Hierarchy Name&quot;, &quot;CreateModifyOrderRequest&quot;);
+		sService.InvokeMethod(&quot;CreateEmptyPropSet&quot;, inpSet, outSet);
+
+		//Generate Body Request - JMARQUES - 14052015
+		sSiebelMessage = outSet.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
+
+		sSiebelMessage.SetProperty(&quot;LoggedMSISDN&quot;, MSISDN);
+		sSiebelMessage.SetProperty(&quot;MSISDN&quot;, MSISDN);
+		sSiebelMessage.SetProperty(&quot;Description&quot;, strDescription);
+		sSiebelMessage.GetChild(0).GetChild(0).GetChild(0).GetChild(0).SetProperty(&quot;TechnicalName&quot;,sTECHNICAL_NAME);
+		sSiebelMessage.GetChild(0).GetChild(0).GetChild(0).GetChild(0).SetProperty(&quot;Action&quot;,straction);
+		sSiebelMessage.GetChild(0).GetChild(0).GetChild(0).GetChild(0).SetProperty(&quot;ProductCatalogueID&quot;,PartNum);
+		
+		if(PartNum2 !=&quot;&quot; &amp;&amp; PartNum2 != null){
+		
+			var temp1  :PropertySet 		= TheApplication().NewPropertySet();
+			temp1.SetType(&quot;Product&quot;);
+			temp1.SetProperty(&quot;TechnicalName&quot;,sTECHNICAL_NAME2);
+			temp1.SetProperty(&quot;Action&quot;,straction);
+			temp1.SetProperty(&quot;ProductCatalogueID&quot;,PartNum2);
+				
+			sSiebelMessage.GetChild(0).GetChild(0).GetChild(0).AddChild(temp1);
+			
+
+		}
+		//Prepare WebService Input - JMARQUES - 14052015
+		sSiebelMessageRequest = outSet.GetChild(0).Copy();
+		sSiebelMessageRequest.SetType(&quot;CreateModifyOrderRequest_v1:Body&quot;);
+		psInputHeader.SetType(&quot;CreateModifyOrderRequest_v1:Header&quot;);
+
+		psInputWS.AddChild(sSiebelMessageRequest.Copy());
+		psInputWS.AddChild(psInputHeader.Copy());
+		psInputWS.SetProperty(&quot;siebel_ws_param:RemoveEmptyTags&quot;, &quot;Y&quot;);
+
+		//Call Web Service - JMARQUES - 14052015
+		svcWebService.InvokeMethod(&quot;CreateModifyOrder_v1&quot;, psInputWS, psOutputWS);	
+		
+		intChildCount = psOutputWS.GetChildCount();
+		if (intChildCount &gt; 0) {
+				for (var i = 0; i &lt; psOutputWS.GetChildCount(); i++) {
+					headerType = psOutputWS.GetChild(i).GetType();
+					if (headerType == &quot;CreateModifyOrderResponse_v1:Header&quot;) {
+						psChild = psOutputWS.GetChild(i);
+						found = true;
+						break;
+					}
+				}
+		}
+		if (found) {
+				StatusCode = psChild.GetChild(0).GetChild(0).GetProperty(&quot;ResponseCode&quot;);
+				ErrorDescription = psChild.GetChild(0).GetChild(0).GetProperty(&quot;ErrorDescription&quot;);
+				ErrorCode = psChild.GetChild(0).GetChild(0).GetProperty(&quot;ErrorCode&quot;);
+		}
+		
+		if (StatusCode!=&quot;0&quot;)
+		{	
+		
+			var strMesCate = &quot;VF Message Category&quot;;
+			var strCode = &quot;X_Pusula_Error&quot;;
+			var sMsg = TheApplication().LookupMessage(strMesCate,strCode);
+			var msgtext = &quot;%1&quot; + &quot;\r&quot;+ sMsg + ErrorDescription ;
+			TheApplication().RaiseErrorText(msgtext, ErrorCode);
+		}		
+		
+		
+		if (StatusCode==&quot;0&quot;)
+		{
+				var strMessageCat = &quot;VF Message Category&quot;;
+				var strCd = &quot;X_VF_NBA_ORDER&quot;;
+				var sMsg2 = TheApplication().LookupMessage(strMessageCat, strCd);
+				TheApplication().RaiseErrorText(sMsg2)		
+		}
+						
+	}
+	catch(e)
+	{
+		throw(e);
+	}
+	finally
+	{	
+		temp1			= null;
+		inpSet          = null;
+		outSet  = null;
+		psInputHeader  = null;
+		sSiebelMessage = null;
+		intChildCount1  = null;
+		sService = null;
+		headerType = null;
+		intChildCount = null
+		psChild = null;
+		found = null;
+		svcWebService = null;
+
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="02/15/2017 14:47:07"
+			   UPDATED_BY="JMARQUES"
+			   CREATED="04/12/2015 23:22:58"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GotoView"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GotoView(Inputs,Outputs)
+{
+	var oBO : BusObject;
+	var oBC : BusComp;
+	try
+	{
+		var sId = Inputs.GetProperty(&quot;Id&quot;);
+		var sBusObject = Inputs.GetProperty(&quot;BusObject&quot;);
+		
+		oBO = TheApplication().GetBusObject(sBusObject);
+		
+		var sBucComp = Inputs.GetProperty(&quot;BusComp&quot;);
+		
+		var oBC = oBO.GetBusComp(sBucComp);
+		
+		oBC.ClearToQuery();
+		oBC.SetSearchSpec(&quot;Id&quot;,sId);
+		oBC.SetViewMode(AllView);
+		oBC.ExecuteQuery(ForwardBackward);
+		if(oBC.FirstRecord())
+		{
+			TheApplication().GotoView(&quot;VF Subscriber Portal Summary View&quot;, oBO);
+		}
+	}
+	finally
+	{
+		oBC = null;
+		oBO = null;
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="04/12/2015 23:22:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/10/2013 01:44:47"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Refresh"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Refresh(sBusObj,sBusComp)
+{
+	var oSisOMPMTServiceBS	=	null;
+	var oInputPS			=	null;
+	var oOutputPS			=	null;
+	
+	try{
+		oSisOMPMTServiceBS	=	TheApplication().GetService(&quot;SIS OM PMT Service&quot;);
+	    oInputPS			=	TheApplication().NewPropertySet();
+	    oOutputPS			=	TheApplication().NewPropertySet();
+	    
+	    oInputPS.SetProperty(&quot;Business Object Name&quot;, sBusObj);
+	    oInputPS.SetProperty(&quot;Business Component Name&quot;, sBusComp);
+	    
+	    oSisOMPMTServiceBS.InvokeMethod(&quot;Refresh Business Component&quot;, oInputPS, oOutputPS);
+	}
+	/*catch (e){
+		throw(e.errText);
+	}*/
+	finally{
+		oInputPS 			=	null;
+		oOutputPS			=	null;
+		oSisOMPMTServiceBS	=	null;
+	}  
+}"
+			   SEQUENCE="3"
+			   UPDATED="04/12/2015 23:22:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/20/2013 10:36:29"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="RefreshBO"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function RefreshBO(Inputs,Outputs)
+{
+	var oBO = TheApplication().ActiveBusObject();
+	
+	var sBusComp = Inputs.GetProperty(&quot;BusComp&quot;);
+	
+	var oBC = oBO.GetBusComp(sBusComp);
+	
+	var sId = Inputs.GetProperty(&quot;Id&quot;);
+	
+	if(sId != &quot;&quot;)
+	{
+		oBC.ClearToQuery();
+		oBC.SetSearchSpec(&quot;Id&quot;,sId);
+		oBC.ExecuteQuery(ForwardBackward);
+		oBC.FirstRecord();
+	}
+}"
+			   SEQUENCE="4"
+			   UPDATED="04/12/2015 23:22:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/10/2013 01:44:47"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="ResponseOffer"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function ResponseOffer (Inputs, Outputs)
+{
+
+	try
+	{
+		var responseValue = Inputs.GetProperty (&quot;responseValue&quot;);
+		var strMSISDN =  Inputs.GetProperty (&quot;MSISDN&quot;);
+		var strOffer =  Inputs.GetProperty (&quot;S_OFFER_ID&quot;);
+		var sAssetId = Inputs.GetProperty (&quot;Asset Id&quot;);
+		var sBillingAccountId = Inputs.GetProperty(&quot;Billing Account Id&quot;);
+		var sType	 = Inputs.GetProperty (&quot;SIEBEL_FULFILLMENTTYPE&quot;); 
+		var sTechName = Inputs.GetProperty (&quot;TECHNICAL_NAME&quot;); 
+		var strsrId	=&quot;&quot;;
+		var psCreateIn :PropertySet;
+		var psCreateOut :PropertySet;
+		var Ins :PropertySet;
+		var Outs :PropertySet;
+		var psBS :Service;
+		var sBusObj : BusObject;
+		var sBusComp : BusComp;
+		var prod1=&quot;&quot;;
+		var prod2=&quot;&quot;;
+		var name1=&quot;&quot;;
+		var name2=&quot;&quot;;
+		var str1 = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_NBA_RESP_VAL&quot;,&quot;maybelater&quot;);
+		var str2 = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_NBA_RESP_VAL&quot;,&quot;accepted&quot;);
+		var str3 = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_NBA_RESP_VAL&quot;,&quot;declined&quot;);
+	//	var str4 = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_NBA_RESP_VAL&quot;,&quot;presented&quot;);
+	//	var str5 = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_NBA_RESP_VAL&quot;,&quot;not-presented&quot;);
+		//var str6 = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_NBA_RESP_VAL&quot;,&quot;okNeutralbutton&quot;);
+		var str7 = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_NBA_RESP_VAL&quot;,&quot;accepted-later&quot;);
+		var sModifyOpt = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ORDER_SUB_TYPE&quot;,&quot;111&quot;);
+		var sModifyReason = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACS_ORDER_REASON&quot;,&quot;232&quot;);
+		var sManualType = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_NBA_FULFILLMENTTYPE&quot;,&quot;SCREEN&quot;);
+		var sAutoType = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_NBA_FULFILLMENTTYPE&quot;,&quot;SERVICE&quot;);
+		/*             NBA_ENHANCEMENT    ********************/
+		var sPriDataY	= TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;USEPRIVATEDATA&quot;,&quot;Y&quot;);
+		var sPriDataNo	= TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;USEPRIVATEDATA&quot;,&quot;N&quot;);
+		var AccountBO 			: BusObject= TheApplication().GetBusObject(&quot;Account&quot;);
+		var BillingBO 			: BusObject= TheApplication().GetBusObject(&quot;Billing Account&quot;);
+		var AccountBC 			: BusComp= AccountBO.GetBusComp(&quot;Account&quot;);	
+		var BillingBC 			: BusComp= BillingBO.GetBusComp(&quot;Billing Account&quot;);
+		var sProdBO				: BusObject= TheApplication().GetBusObject(&quot;Admin ISS Product Definition&quot;);
+		var sProdBC				: BusComp= sProdBO.GetBusComp(&quot;Internal Product - ISS Admin&quot;);
+		var sAccountId=&quot;&quot;;	
+		var sPrivateOptData	=&quot;&quot;;
+		var	sUsePriData=&quot;&quot;;
+		var Expr = &quot;&quot;;
+		var Expr1 = &quot;&quot;;
+		var sDate =&quot;&quot;;
+		Clib.strftime(sDate, &apos;%m/%d/%Y %H:%M:%S&apos;, Clib.localtime(Clib.time()));
+		var sProdTrans1 =&quot;&quot;;
+		var sProdTrans2 =&quot;&quot;;
+		
+		
+		var sNA = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_NBA_FULFILLMENTTYPE&quot;,&quot;NA&quot;);
+	//	TheApplication().MSISDNPusula.Reset();
+	//	TheApplication().MSISDNPusula = TheApplication().NewPropertySet();
+		if (responseValue != &quot;&quot; || responseValue != null)
+			{
+				TheApplication().SetProfileAttr(&quot;responseVal&quot;, &apos;responded&apos;);
+			
+			}
+		
+			var ArTechName= sTechName .split(&quot;+&quot;);
+			for (var i = 0; i &lt; ArTechName.length; i++)
+			{
+					if (i==0)
+					{
+					name1 = ArTechName[i] ;
+					}
+					else
+					{
+					name2 = ArTechName[i] ;
+					}
+			}	
+		var partnumArray = strOffer.split(&quot;+&quot;);
+		for (var i = 0; i &lt; partnumArray.length; i++)
+			{
+					if (i==0)
+					{
+					prod1 = partnumArray[i];
+						//ESANTOS VFTRAD-1639 -if/else added to avoid sProdTrans1 empty
+						if(prod1 == &quot;NA&quot;)
+							sProdTrans1 = prod1
+						else
+						{	
+						//CR165 ALINO START 31-01-2017
+							with(sProdBC)
+							{							
+								SetViewMode(AllView);
+								ActivateField(&quot;Product Translated&quot;);
+								ClearToQuery();
+								SetSearchSpec(&quot;Part #&quot; , prod1);							
+								ExecuteQuery(ForwardOnly);					
+								if(FirstRecord())
+								{
+									sProdTrans1=GetFieldValue(&quot;Product Translated&quot;);
+								}
+							
+							}
+						}
+						//CR165 ALINO END 31-01-2017	
+
+					}
+					else
+					{
+						prod2 = partnumArray[i] ;
+						//ESANTOS VFTRAD-1639 -if/else added to avoid sProdTrans2 empty
+						if(prod2 == &quot;NA&quot;)
+							sProdTrans2 = prod2
+						else
+						{
+						//CR165 ALINO START 31-01-2017
+							with(sProdBC)
+							{
+								SetViewMode(AllView);
+								ActivateField(&quot;Product Translated&quot;);
+								ClearToQuery();
+								SetSearchSpec(&quot;Part #&quot;, prod2);
+								ExecuteQuery(ForwardOnly);	
+							
+								if(FirstRecord())
+								{
+									sProdTrans2=GetFieldValue(&quot;Product Translated&quot;);
+								}
+						//CR165 ALINO END 31-01-2017
+							}
+						}	
+					}
+			}	
+				
+		//var oBS : Service;
+		//var oInputs : PropertySet;
+		//var oOutputs : PropertySet;
+		var oBO : BusObject;
+		var oAssetBC : BusComp;
+		
+		//oInputs = TheApplication().NewPropertySet();
+		//oOutputs = TheApplication().NewPropertySet();
+		
+		//oInputs.SetProperty(&quot;LOV&quot;, &quot;VF_NBA_RESP_MAP&quot;);
+		//oInputs.SetProperty(&quot;Val&quot;, responseReceived);
+		
+		//oBS = TheApplication().GetService(&quot;ACS General Operations&quot;);
+		
+		//oBS.InvokeMethod(&quot;LookupName&quot;, oInputs, oOutputs);
+		
+		//var responseValue = oOutputs.GetProperty(&quot;Name&quot;);
+		
+		
+		
+		//If (responseValue is (Accepted Later))
+		/*if (responseValue != &quot;later&quot;)
+		{ */
+			/*var strassesNo = TheApplication().GetProfileAttr(&quot;AssesNo&quot;);
+			var strassesNoUpdated = strassesNo + 1;
+			TheApplication().SetProfileAttr(&quot;AssesNo&quot;, strassesNoUpdated);*/
+			TheApplication().SetProfileAttr(&quot;prmReload&quot;,&quot;true&quot;);
+			var stractiontranslated = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_NBA_RESP_VAL&quot;, responseValue); 
+			psCreateIn = TheApplication().NewPropertySet();
+			psCreateOut = TheApplication().NewPropertySet();
+			/*Call ‘CreateSR’ method of ‘ACS General Operations’ BS to create SR with following input:
+			Triplet: &quot;Islem- Aboneye Geri Dönüs - Inbound Alternatif Ürün Satisi&quot; 
+			Status: ‘Closed’ 
+			Description Ürün Adi: (strOffer) , Seçilen Islem: (stractiontranslated)*/
+			
+			/*oBO = TheApplication().ActiveBusObject();
+			
+			oAssetBC = oBO.GetBusComp(&quot;Asset Mgmt - Asset - Header&quot;);
+			
+			var sAccountId = oAssetBC.GetFieldValue(&quot;Owner Account Id&quot;);*/
+			
+			psCreateIn.SetProperty(&quot;Account Id&quot;, Inputs.GetProperty(&quot;Account Id&quot;));
+			
+			var sClosed = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;SR_STATUS&quot;, &quot;Closed&quot;);
+			
+			psCreateIn.SetProperty(&quot;Status&quot;, sClosed);
+			psCreateIn.SetProperty(&quot;Area&quot;,&quot;ABONEYE GERI DÖNÜS&quot;);
+			psCreateIn.SetProperty(&quot;Sub Area&quot;, &quot;INBOUND ALTERNATIF ÜRÜN SATISI&quot;);
+			psCreateIn.SetProperty(&quot;Type&quot;, &quot;ISLEM&quot;);
+		// psCreateIn.SetProperty(&quot;Description&quot;,&quot;Ürün Adi: &quot;+prod1+&quot;  &quot;+prod2+&quot;, Seçilen Islem: &quot;+stractiontranslated);
+			psCreateIn.SetProperty(&quot;Description&quot;,&quot;Ürün Adi: &quot;+sProdTrans1+&quot;  &quot;+sProdTrans2+&quot;, Seçilen Islem: &quot;+stractiontranslated); //CR165 ALINO 31-01-2017
+			psCreateIn.SetProperty(&quot;Asset Id&quot;, sAssetId);
+			psCreateIn.SetProperty(&quot;Billing Account Id&quot;, sBillingAccountId);
+			psCreateIn.SetProperty(&quot;VF Customer GSM Id&quot;, sAssetId);
+			psCreateIn.SetProperty(&quot;InformalType&quot;, &quot;Pusula&quot;);
+			psBS = TheApplication().GetService(&quot;ACS General Operations&quot;);
+			psBS.InvokeMethod(&quot;CreateSR&quot;,psCreateIn, psCreateOut);
+			//Refresh subscriber portal
+			//sBusObj = this.BusObject().Name();//TheApplication().ActiveBusObject().Name();
+			//sBusComp = this.BusComp().Name();//TheApplication().ActiveBusObject().GetBusComp().Name();
+			//Refresh(sBusObj,sBusComp);	
+		//}
+		//	strSRid =Outputs.GetProperty (&quot;Service Request Id&quot;);
+		
+				/*NBA_ENHANCEMENT********************************************/	
+			if ((stractiontranslated == str2 || stractiontranslated == str3) &amp;&amp; sType == sAutoType &amp;&amp; strOffer == &quot;OZEL+OZLRED&quot;)
+				{
+					BillingBC.ClearToQuery();
+					BillingBC.SetViewMode(AllView);
+					BillingBC.ActivateField(&quot;Parent Account Id&quot;);
+					Expr  = &quot;[Id] = &apos;&quot;+sBillingAccountId+&quot;&apos;&quot;;
+					BillingBC.SetSearchExpr(Expr);
+					BillingBC.ExecuteQuery(ForwardOnly);
+					
+					if(BillingBC.FirstRecord())
+						{
+							sAccountId =BillingBC.GetFieldValue(&quot;Parent Account Id&quot;);
+							
+								AccountBC.ClearToQuery();
+								AccountBC.SetViewMode(AllView);
+								AccountBC.ActivateField(&quot;Parent Account Id&quot;);
+								AccountBC.ActivateField(&quot;VF Use Private Data&quot;);
+								AccountBC.ActivateField(&quot;PrivateOptDate&quot;);
+								Expr1  = &quot;[Id] = &apos;&quot;+sAccountId+&quot;&apos;&quot;;
+								AccountBC.SetSearchExpr(Expr1);
+								AccountBC.ExecuteQuery(ForwardOnly);
+								
+								if(AccountBC.FirstRecord())
+								{
+										if(stractiontranslated == str2)
+										{						
+									
+											sPrivateOptData	= AccountBC.SetFieldValue(&quot;PrivateOptDate&quot;, sDate);
+											sUsePriData		= AccountBC.SetFieldValue(&quot;VF Use Private Data&quot;,sPriDataY);
+											TheApplication().SetProfileAttr(&quot;OutBalUpdate&quot;,&quot;Y&quot;);
+											AccountBC.WriteRecord();
+										}
+										
+										if(stractiontranslated == str3)
+										{						
+									
+											sPrivateOptData	= AccountBC.SetFieldValue(&quot;PrivateOptDate&quot;, sDate);
+											sUsePriData		= AccountBC.SetFieldValue(&quot;VF Use Private Data&quot;,sPriDataNo);
+											TheApplication().SetProfileAttr(&quot;OutBalUpdate&quot;,&quot;Y&quot;);
+											AccountBC.WriteRecord();
+										}
+								}
+								
+							}	
+						}									
+								
+			if ( stractiontranslated == str2 &amp;&amp; sType == sAutoType &amp;&amp; strOffer != &quot;OZEL+OZLRED&quot; )
+			{
+			
+				Ins = TheApplication().NewPropertySet();
+				Outs = TheApplication().NewPropertySet();
+				
+			//Ins.SetProperty(&quot;Description&quot;,&quot;Ürün Adi: &quot;+prod1+&quot;  &quot;+prod2+&quot;, Seçilen Islem: &quot;+stractiontranslated);
+				Ins.SetProperty(&quot;Description&quot;,&quot;Ürün Adi: &quot;+sProdTrans1+&quot;  &quot;+sProdTrans2+&quot;, Seçilen Islem: &quot;+stractiontranslated); //CR165 ALINO 31-01-2017
+				Ins.SetProperty(&quot;TECHNICAL_NAME&quot;, name1);
+				Ins.SetProperty(&quot;MSISDN&quot;,strMSISDN );
+				Ins.SetProperty(&quot;Part Number&quot;, prod1);
+				
+				if(name2 !=&quot;&quot; &amp;&amp; name2 != null){
+					Ins.SetProperty(&quot;TECHNICAL_NAME2&quot;, name2);
+					}
+				else
+				{
+				Ins.SetProperty(&quot;TECHNICAL_NAME2&quot;, &quot;&quot;);
+				}
+				
+				if(prod2 !=&quot;&quot; &amp;&amp; prod2 != null){
+				Ins.SetProperty(&quot;Part Number2&quot;, prod2);
+					}
+				else
+				{
+				Ins.SetProperty(&quot;Part Number2&quot;, &quot;&quot;);
+				}
+				
+				CreateOrder(Ins, Outs);
+			}		
+			else if ( stractiontranslated == str2 &amp;&amp; sType == sManualType )
+				{
+				
+				var strMessageCategory = &quot;VF Message Category&quot;;
+				var strCode3 = &quot;X_VF_NBA_MANUAL_ORDER&quot;;
+				var sMsgManualOrder = TheApplication().LookupMessage(strMessageCategory, strCode3);
+				TheApplication().RaiseErrorText(sMsgManualOrder)
+				
+				}
+			else if ( stractiontranslated == str1 || stractiontranslated == str3 )
+			{
+				return (ContinueOperation);
+			}
+			
+			else if ( sType == sNA )
+			{
+				return (ContinueOperation);
+			}
+						
+			
+		//	else if( stractiontranslated == str7)
+			else
+				{
+			
+				var strMessageCategory = &quot;VF Message Category&quot;;
+				var strCode2 = &quot;R142_052&quot;;
+				var sMsgFutureDate = TheApplication().LookupMessage(strMessageCategory, strCode2);
+				TheApplication().RaiseErrorText(sMsgFutureDate)
+				}	
+			
+	}	
+	catch (e)
+ 	{
+ 		throw(e);
+    }
+		
+	finally
+	{
+		psCreateIn = null;
+		psCreateOut = null;
+		psBS = null;
+		sBusObj = null;
+		sBusComp = null;
+		//oBS = null;
+		Ins = null;
+		Outs = null;
+		sProdBO = null;
+		sProdBC = null;
+	}
+
+}"
+			   SEQUENCE="5"
+			   UPDATED="03/27/2017 18:04:51"
+			   UPDATED_BY="ESANTOS"
+			   CREATED="02/20/2013 10:36:29"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	switch (MethodName)
+	{
+		case &quot;RefreshBO&quot;:
+			RefreshBO(Inputs,Outputs);
+			return(CancelOperation);
+		case &quot;GotoView&quot;:
+			GotoView(Inputs,Outputs);
+			return(CancelOperation);
+		case &quot;ResponseOffer&quot;:
+			ResponseOffer (Inputs, Outputs);
+			return (CancelOperation);
+		case &quot;ResponseOffer&quot;:
+			CreateOrder (Inputs, Outputs);
+			return (CancelOperation);
+			break;
+		case &quot;CreateOrder&quot;:
+			CreateOrder (Inputs, Outputs);
+			return (CancelOperation);
+			break;
+			
+		
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="6"
+			   UPDATED="11/08/2016 14:36:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/20/2013 10:36:29"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

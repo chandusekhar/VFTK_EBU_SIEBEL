@@ -1,0 +1,1622 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VF Account Management"
+	   UI_FREEZE="N"
+	   UPDATED="11/30/2016 15:08:27"
+	   UPDATED_BY="DGUERREIRO"
+	   CREATED="11/02/2009 12:09:53"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="N"
+		   CLASS="CSSBCBase"
+		   COMMENTS="VF MC R1.3 20100716 - Made Changes as per defect PROD00021491."
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MULTI_RECIPIENT_SELECT="N"
+		   NAME="VF Bill Cycle Change"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="11/30/2016 15:01:54"
+		   OWNER_DELETE="N"
+		   SCRIPTED="Y"
+		   SEARCH_SPECIFICATION="[Statement Flag] = &apos;N&apos; AND [Type]=&apos;Bill Cycle&apos;"
+		   TABLE="CX_INV_PROF_XM"
+		   TYPE="Non-Transient"
+		   OBJECT_LOCKED_BY_NAME="DGUERREIRO"
+		   UPDATED="11/30/2016 15:06:47"
+		   UPDATED_BY="DGUERREIRO"
+		   CREATED="06/23/2010 13:18:24"
+		   CREATED_BY="SADMIN">
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_ChangeRecord"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_ChangeRecord ()
+{
+	//CF_GMARQUES - CR722.2 - EBU VF Advantage Data Sharing Phase
+	if (TheApplication().ActiveViewName() == &quot;VF Billing Account Payment Profile View&quot;)
+	{
+		var sAccountCode = this.ParentBusComp().GetFieldValue(&quot;Billing Account Code&quot;);
+		
+		//Set Account Code to be used for Bill Cycle change validation process
+		TheApplication().SetProfileAttr(&quot;AccountCode&quot;, sAccountCode);
+	}
+	//CF_GMARQUES - CR722.2 - EBU VF Advantage Data Sharing Phase
+}"
+			   SEQUENCE="5"
+			   UPDATED="10/01/2013 14:41:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/05/2013 14:06:49"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_NewRecord"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_NewRecord ()
+{
+    MeropolisControl(); // WP1 Metropolis 07/06/2011
+    VodamoneyControl(); // CR370 09.02.2012
+	return (ContinueOperation);       
+}"
+			   SEQUENCE="6"
+			   UPDATED="09/05/2013 14:06:49"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/04/2011 12:24:15"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreInvokeMethod (MethodName)
+{
+	if (MethodName == &quot;Confirm&quot;)
+	{	
+		Confirm();
+		return(CancelOperation);
+	}
+	if (MethodName == &quot;CancelRequest&quot;)
+	{
+		CancelRequest();
+		return (CancelOperation);
+	}
+}"
+			   SEQUENCE="7"
+			   UPDATED="09/05/2013 14:06:50"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/23/2010 13:28:24"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreNewRecord"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreNewRecord() {
+	try {
+		if (FirstRecord()) {
+			var LstBillCycleChange = this.GetFieldValue(&quot;VF Com Inv Date&quot;);
+			var Interval = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;VF_BC_CHANGE_INTERVAL&quot;, &quot;Interval&quot;);
+			var boQuery = TheApplication().GetBusObject(&quot;VFTRCBU SIM Card BO&quot;);
+			var bcQuery = boQuery.GetBusComp(&quot;VFTRCBU Role PickList Generic&quot;);
+
+			if (LstBillCycleChange != &quot;&quot;) {
+				//Operations with Dates in order to prevent a Bill Cycle Change Request before a determined Interval of days:
+				//Get Date value from field
+				var VFInterval = this.GetFieldValue(&quot;VF Interval&quot;);
+				//Assign it to Date Object
+				var sDate1 = new Date(VFInterval);
+				//Convert date object to integer equivalent
+				var sInterval = sDate1.toSystem();
+				//find time difference between current time and date opened in seconds
+				var sTimeDiff = Clib.difftime(sInterval, Clib.time());
+
+				if (sTimeDiff &gt; 0) {
+				
+					//VFTRCBU-27821 - ACAMBAS - Start
+					/*var strMessageCategory = &quot;VF Message Category&quot;;
+					var strCode = &quot;136&quot;;
+					var sMsg = TheApplication().LookupMessage(strMessageCategory, strCode);
+					var strCode1 = &quot;164&quot;;
+					var sMsg1 = TheApplication().LookupMessage(strMessageCategory, strCode1);*/
+					var sMsg = TheApplication().LookupMessage(&quot;VF Message Category&quot;, &quot;BC_CHANGE_ERROR_1&quot;, Interval);
+					//VFTRCBU-27821 - ACAMBAS - End
+
+					//VFTRCBU-27393 - HRODRIGUES
+					var strSearchExpressionBypass = &quot;[VFTRCBU Type] = &apos;BILL_CYCLE_NEW_BUTTON_BYPASS&apos; &quot;;
+					bcQuery.SetViewMode(AllView);
+					bcQuery.ActivateField(&quot;VFTRCBU Type&quot;);
+					bcQuery.ClearToQuery();
+					bcQuery.SetSearchExpr(strSearchExpressionBypass);
+					bcQuery.ExecuteQuery(ForwardOnly);
+					var existsRecordBypass = bcQuery.FirstRecord();
+
+					if (!existsRecordBypass) {
+						//VFTRCBU-27821 - ACAMBAS - Start
+						//TheApplication().RaiseErrorText(sMsg + &quot; &quot; + Interval + &quot; &quot; + sMsg1);
+						TheApplication().RaiseErrorText(sMsg);
+						//VFTRCBU-27821 - ACAMBAS - End
+					}
+				}
+			}
+		}
+		return (ContinueOperation);
+	} catch (e) {
+		throw e;
+	}
+	finally {
+		bcQuery = null;
+		boQuery = null;
+	}
+}"
+			   SEQUENCE="8"
+			   UPDATED="04/11/2016 11:39:39"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="09/14/2010 15:38:52"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreSetFieldValue"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreSetFieldValue (FieldName, FieldValue)
+{	
+  if((FieldName == &quot;VF New Bill Cycle Displayed&quot;)||(FieldName == &quot;VF Bill Cycle Change Date&quot;))
+  {    
+	var CurBillCycle = this.GetFieldValue(&quot;Bill Cycle&quot;);
+	var strNewValue = TheApplication().InvokeMethod (&quot;LookupValue&quot;, &quot;VF_BC_DISPLAY&quot;, CurBillCycle);
+    if(strNewValue == FieldValue)
+  		{
+  		var strMessageCategory = &quot;VF Message Category&quot;;	
+      	var strCode = &quot;135&quot;;
+  		var sMsg = TheApplication().LookupMessage(strMessageCategory, strCode);
+   		TheApplication().RaiseErrorText(sMsg);
+  		}	
+  }
+  return (ContinueOperation);
+}"
+			   SEQUENCE="9"
+			   UPDATED="09/05/2013 14:06:50"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/13/2011 17:52:37"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_SetFieldValue"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_SetFieldValue (FieldName)
+{
+	if(FieldName==&quot;VF New Bill Cycle Displayed&quot; )
+	{
+		this.SetFieldValue(&quot;VF New Bill Cycle Value&quot;,this.GetFieldValue(&quot;VF New Bill Cycle Displayed Lic&quot;));
+	}
+	
+	if(FieldName==&quot;VF New Bill Cycle Value&quot; )
+	{
+		var CurBillCycle = this.GetFieldValue(FieldName);
+		var strNewValue = TheApplication().InvokeMethod (&quot;LookupValue&quot;, &quot;VF_BC_DISPLAY&quot;, CurBillCycle);
+		this.SetFieldValue(&quot;VF New Bill Cycle Displayed&quot;,strNewValue);
+	}
+}"
+			   SEQUENCE="10"
+			   UPDATED="09/05/2013 14:06:50"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/15/2012 08:44:06"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CancelRequest"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CancelRequest()
+{
+//Oracle Review October 2011 - Call from PreInvokeMethod
+
+	//Added VFTRCBU WA#04 - JFONSECA 12.02.2015
+	var bssvcWFProcMgr :Service = TheApplication().GetService(&quot;Workflow Process Manager&quot;); 
+	var ps_inputsBillCycleChange :PropertySet = TheApplication().NewPropertySet();
+	var ps_outputsBillCycleChange :PropertySet = TheApplication().NewPropertySet();
+		
+	var strId = this.GetFieldValue(&quot;Id&quot;);
+	
+	this.ActivateField(&quot;VFTRCBU Order Id&quot;);
+	var strCancelledStatus = TheApplication().InvokeMethod (&quot;LookupValue&quot;, &quot;VF_REQ_STATUS&quot;, &quot;Cancelled&quot;);
+	var strOrderID = this.GetFieldValue(&quot;VFTRCBU Order Id&quot;); //VFTRCBU WA#04 - JFONSECA 12.02.2015
+	if (strOrderID == &quot;&quot;)
+	{
+		this.SetFieldValue(&quot;VF Request Status&quot;,strCancelledStatus);
+		return (CancelOperation);
+	}
+	this.ActivateField(&quot;VF Billing Account Code&quot;);
+	var strBillingAccountID = this.GetFieldValue(&quot;VF Billing Account Code&quot;); //VFTRCBU WA#04 - JFONSECA 19.02.2015
+	var strReqStatus = this.GetFieldValue(&quot;VF Request Status&quot;);
+	if(strReqStatus != TheApplication().InvokeMethod (&quot;LookupValue&quot;, &quot;VF_REQ_STATUS&quot;, &quot;Completed&quot;)&amp;&amp;
+		strReqStatus != strCancelledStatus)
+ 	{
+ 		ps_inputsBillCycleChange.SetProperty(&quot;Order Id&quot;,strOrderID);
+ 		ps_inputsBillCycleChange.SetProperty(&quot;Request Id&quot;,strId);
+ 		ps_inputsBillCycleChange.SetProperty(&quot;Billing Account Id&quot;,strBillingAccountID);
+		ps_inputsBillCycleChange.SetProperty(&quot;ProcessName&quot;,&quot;VFTRCBU Cancel Bill Cycle Change Request WF&quot;);
+		bssvcWFProcMgr.InvokeMethod(&quot;RunProcess&quot;,ps_inputsBillCycleChange,ps_outputsBillCycleChange);
+ 		//Commented VFTRCBU WA#04 - JFONSECA 12.02.2015
+		//this.SetFieldValue(&quot;VF Request Status&quot;, strCancelledStatus);
+		//this.WriteRecord();
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="09/30/2015 09:41:10"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/01/2010 10:13:32"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Confirm"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Confirm()
+{
+	try
+	{
+		var app					= TheApplication();
+		var bsCheckOrder		: Service = app.GetService(&quot;VF Check Order&quot;);
+		var ACSNI 				: Service = app.GetService(&quot;ACS NI General Operations&quot;); //Added WA#04 - JFONSECA - 31.03.2015
+		var bsInputs			:PropertySet = app.NewPropertySet();
+		var bsOutputs			:PropertySet = app.NewPropertySet();
+		//var wSSh = COMCreateObject(&quot;WScript.Shell&quot;); VFTRCBU-10525 | TiagoRocha
+		var strAccId			= &quot;&quot;;
+		var strCheck			= &quot;&quot;;
+		var strMessageCategory;
+		var strCode;
+		var sMsg;
+		var aux = &quot;&quot;;
+		var strChangeBillCycleID = &quot;&quot;; //Added WA#04 - JFONSECA - 02.03.2015
+		var strAccountID = &quot;&quot;; //Added WA#04 - JFONSECA - 02.03.2015
+		var strBillingFrequency = &quot;&quot;; //Added WA#04 - JFONSECA - 02.03.2015
+		var strNow = &quot;&quot;;
+		var psIn  : PropertySet = TheApplication().NewPropertySet(); //Added WA#04 - JFONSECA - 31.03.2015
+        var psOut : PropertySet = TheApplication().NewPropertySet(); //Added WA#04 - JFONSECA - 31.03.2015
+        		
+		var bssvcWFProcMgr :Service = TheApplication().GetService(&quot;Workflow Process Manager&quot;);  //Added WA#04 - JFONSECA - 02.03.2015
+		var ps_inputsBillCycleChange :PropertySet = TheApplication().NewPropertySet(); //Added WA#04 - JFONSECA - 02.03.2015
+		var ps_outputsBillCycleChange :PropertySet = TheApplication().NewPropertySet(); //Added WA#04 - JFONSECA - 02.03.2015
+		
+		//Added WA#04 - JFONSECA - 27.03.2015 - From Here
+		var strToday = new Date;
+		var strYear = strToday.getFullYear();
+		var strMonth = strToday.getMonth() + 1;		
+		if (strMonth == &quot;12&quot;)
+		{
+			var strNextYear = strToday.getFullYear() + 1;
+			var strNextMonth = &quot;01&quot;;
+		}
+		else
+		{
+			var strNextMonth = strToday.getMonth() + 2;	//VFTRCBU-35208
+			if (strNextMonth &lt; 10) {strNextMonth = &quot;0&quot; + strNextMonth;}
+		}
+		
+		if (strMonth &lt; 10) {strMonth = &quot;0&quot; + strMonth;}
+		var strDate = strToday.getDate();
+		if (strDate &lt; 10) {strDate = &quot;0&quot; + strDate;}
+		var strHour = strToday.getHours();
+		if (strHour &lt; 10) {strHour = &quot;0&quot; + strHour;}
+		var strMinute = strToday.getMinutes();
+		if (strMinute &lt; 10) {strMinute = &quot;0&quot; + strMinute;}
+		var strSecond = strToday.getSeconds();
+		if (strSecond &lt; 10) {strSecond = &quot;0&quot; + strSecond;}
+		
+		strNow = strMonth + &quot;/&quot; + strDate + &quot;/&quot; + strYear + &quot; &quot; + strHour + &quot;:&quot; + strMinute + &quot;:&quot; + strSecond;
+		var CurBillCycle = this.ParentBusComp().GetFieldValue(&quot;Bill Cycle&quot;); //VFTRCBU-13148
+		var strCustType = this.ParentBusComp().GetFieldValue(&quot;VFTRCBU Owner Account Type&quot;);
+		var strCustCBU = TheApplication().InvokeMethod (&quot;LookupValue&quot;, &quot;ACCOUNT_TYPE&quot;, &quot;102&quot;);
+		var strCustEBU = TheApplication().InvokeMethod (&quot;LookupValue&quot;, &quot;ACCOUNT_TYPE&quot;, &quot;101&quot;);	
+		
+		//BillCycle = 1, is a special Bill Cycle, should be calculated differently. //START
+		var aux = 0;
+		if(CurBillCycle == 1)
+		{
+			var retDate = new Date(strNow);
+				if(strMonth == &quot;11&quot;)
+				{
+					strMonth = (retDate.getMonth() + 2);
+					strNextMonth = &quot;01&quot;;
+					strYear = (retDate.getFullYear());
+					strNextYear = (retDate.getFullYear() + 1);
+				}
+				else if(strMonth == &quot;12&quot;)
+				{
+					strMonth = &quot;01&quot;;
+					strNextMonth = &quot;02&quot;;
+					strYear = (retDate.getFullYear());
+					strNextYear = (retDate.getFullYear() + 1);
+					var aux = 1;
+				}
+				else{
+				strMonth = (retDate.getMonth() + 2);
+				strNextMonth = (retDate.getMonth() + 3);
+				strYear = strYear;
+				}
+		}
+		//END
+		
+		//Calculate Day Before CurBillCycle -&gt; 24 Special Hours
+		
+		var strCurBillCycleAUX = strMonth + &quot;/&quot; + CurBillCycle + &quot;/&quot; + strYear + &quot; &quot; + &quot;00:00:00&quot;;
+		var retDate = new Date(strCurBillCycleAUX);
+		retDate.setDate(retDate.getDate() - 1);
+		var strCurBillCycleAUX = (retDate.getMonth() + 1) + &quot;/&quot; + (retDate.getDate()) + &quot;/&quot; + (retDate.getFullYear()) + &quot; &quot; + &quot;00:00:00&quot;; 
+		var CurBillCycleLess1 = (retDate.getDate());
+		var strCheckDate2 = strDate - CurBillCycleLess1;
+			
+		if(strDate &gt;= CurBillCycleLess1)
+		{
+			if(strMonth == &quot;12&quot;)
+			{
+				strNextMonth = &quot;01&quot;;
+				var strCurBillCycle = strNextMonth + &quot;/&quot; + CurBillCycle + &quot;/&quot; + strNextYear + &quot; &quot; + &quot;00:00:00&quot;; //VFTRCBU-13148
+			}
+			else
+			{
+				var strCurBillCycle = strNextMonth + &quot;/&quot; + CurBillCycle + &quot;/&quot; + strYear + &quot; &quot; + &quot;00:00:00&quot;; //VFTRCBU-13148
+			}
+		}
+
+		else
+		{
+			if(aux == &quot;1&quot;)
+			{
+			var strCurBillCycle = strMonth + &quot;/&quot; + CurBillCycle + &quot;/&quot; + strNextYear + &quot; &quot; + &quot;00:00:00&quot;; //VFTRCBU-13148
+			}
+			else{
+			var strCurBillCycle = strMonth + &quot;/&quot; + CurBillCycle + &quot;/&quot; + strYear + &quot; &quot; + &quot;00:00:00&quot;; //VFTRCBU-13148
+			}
+		}	
+		
+		
+		//if ((strCheckDate1 == &quot;0&quot;) || (strCheckDate2 == &quot;0&quot;)) //JFONSECA
+		if (strCheckDate2 == &quot;0&quot;)
+		{
+			if(strCustType == strCustCBU)
+			{
+				
+				//var strDayBefore = strNextMonth + &quot;/&quot; + (CurBillCycle - 1) + &quot;/&quot; + strYear + &quot; &quot; + 00 + &quot;:&quot; + 00 + &quot;:&quot; + 00;
+				
+				var retDate = new Date(strCurBillCycle);
+				retDate.setDate(retDate.getDate() - 1);
+				var strDayBefore = (retDate.getMonth() + 1) + &quot;/&quot; + (retDate.getDate()) + &quot;/&quot; + (retDate.getFullYear()) + &quot; &quot; + &quot;00:00:00&quot;; //VFTRCBU-13148
+				
+				ps_inputsBillCycleChange.SetProperty(&quot;OrderDueDate&quot;, strDayBefore); 
+				ps_inputsBillCycleChange.SetProperty(&quot;BillCycleDueDate&quot;, strCurBillCycle); 
+			}
+			
+			else if(strCustType == strCustEBU)
+			{
+				ps_inputsBillCycleChange.SetProperty(&quot;OrderDueDate&quot;, strCurBillCycle); 
+				ps_inputsBillCycleChange.SetProperty(&quot;BillCycleDueDate&quot;, strCurBillCycle); 
+			}
+			
+			TheApplication().SetProfileAttr(&quot;VFTRCBU CheckDate&quot;, &quot;Y&quot;);
+			/* VFTRCBU-10525 - Script Depricated due to Unix Server incapability to complete this process
+			strMessageCategory = &quot;VFTRCBU User Defined Errors&quot;;
+	 		strCode = &quot;0286&quot;;
+			sMsg = app.LookupMessage(strMessageCategory, strCode);
+	 		wSSh.Popup(sMsg);*/
+		}
+		
+		else
+		{
+			if(strCustType == strCustCBU)
+			{
+				ps_inputsBillCycleChange.SetProperty(&quot;OrderDueDate&quot;, strNow); 
+				ps_inputsBillCycleChange.SetProperty(&quot;BillCycleDueDate&quot;, strCurBillCycle); 
+			}
+			else if(strCustType == strCustEBU)
+			{
+				ps_inputsBillCycleChange.SetProperty(&quot;OrderDueDate&quot;, strCurBillCycle); 
+				ps_inputsBillCycleChange.SetProperty(&quot;BillCycleDueDate&quot;, strCurBillCycle); 
+			}
+		}
+		
+		//Added WA#04 - JFONSECA - 27.03.2015 - To Here
+		this.InvokeMethod(&quot;RefreshBusComp&quot;);
+	 	strAccId	= this.GetFieldValue(&quot;Billing Account Id&quot;);
+		bsInputs.SetProperty(&quot;Billing Account Id&quot;,strAccId);
+		bsCheckOrder.InvokeMethod(&quot;checkBillingAccountStatus&quot;,bsInputs,bsOutputs);
+		strCheck = bsOutputs.GetProperty(&quot;Result&quot;);		
+		if (strCheck==&quot;KO&quot;)
+		{
+			strMessageCategory = &quot;VF Message Category&quot;;
+	 		strCode = &quot;137&quot;;
+			sMsg = app.LookupMessage(strMessageCategory, strCode);
+	 		app.RaiseErrorText(sMsg);
+		}
+		var NewBillCycle=this.GetFieldValue(&quot;VF New Bill Cycle Value&quot;);
+		//var CurBillCycle=this.GetFieldValue(&quot;Bill Cycle&quot;);
+		var strOldValue = app.InvokeMethod (&quot;LookupValue&quot;, &quot;VF_BC_DISPLAY&quot;, CurBillCycle);
+		var strNewValueDisplayed = this.GetFieldValue(&quot;VF New Bill Cycle Displayed&quot;);
+		var strNewBillCycle = this.GetFieldValue(&quot;VF New Bill Cycle Value&quot;); //Added WA#04 - JFONSECA - 31.03.2015
+		var strChangeBillCycleID = this.GetFieldValue(&quot;Id&quot;); //Added WA#04 - JFONSECA - 02.03.2015
+		var strAccountID = this.GetFieldValue(&quot;VF Billing Account Code&quot;); //Added WA#04 - JFONSECA - 02.03.2015
+		var strBillingFrequency = this.ParentBusComp().GetFieldValue(&quot;Bill Frequency&quot;); //Added WA#04 - JFONSECA - 02.03.2015
+		
+		psIn.SetProperty(&quot;LOV&quot;,&quot;BILL_FREQUENCY&quot;); //Added WA#04 - JFONSECA - 16.07.2015
+		psIn.SetProperty(&quot;Val&quot;,strBillingFrequency); //Added WA#04 - JFONSECA - 16.07.2015
+		var strAux2 = ACSNI.InvokeMethod (&quot;LookupName&quot;, psIn, psOut); //Added WA#04 - JFONSECA - 16.07.2015
+		var strBillingFrequencyLOV = psOut.GetProperty(&quot;Name&quot;); //Added WA#04 - JFONSECA - 16.07.2015
+		
+		var strBillTypeInvoice = this.ParentBusComp().GetFieldValue(&quot;Bill Type&quot;); //Added WA#04 - JFONSECA - 17.07.2015
+		
+		psIn.SetProperty(&quot;LOV&quot;,&quot;BILL_TYPE&quot;); //Added WA#04 - JFONSECA - 17.07.2015
+		psIn.SetProperty(&quot;Val&quot;,strBillTypeInvoice); //Added WA#04 - JFONSECA - 17.07.2015
+		var strAux3 = ACSNI.InvokeMethod (&quot;LookupName&quot;, psIn, psOut); //Added WA#04 - JFONSECA - 17.07.2015
+		var strBillTypeInvoiceLOV = psOut.GetProperty(&quot;Name&quot;); //Added WA#04 - JFONSECA - 17.07.2015
+		
+		var strBillType = this.ParentBusComp().GetFieldValue(&quot;TeXCo Account Type&quot;); //Added WA#04 - JFONSECA - 31.03.2015
+		psIn.SetProperty(&quot;LOV&quot;,&quot;X_PAYMENT_MODALITY&quot;); //Added WA#04 - JFONSECA - 17.07.2015
+		psIn.SetProperty(&quot;Val&quot;,strBillType); //Added WA#04 - JFONSECA - 17.07.2015
+		var strAux4 = ACSNI.InvokeMethod (&quot;LookupName&quot;, psIn, psOut); //Added WA#04 - JFONSECA - 17.07.2015
+		strBillType = psOut.GetProperty(&quot;Name&quot;); //Added WA#04 - JFONSECA - 17.07.2015
+		
+		this.ParentBusComp().ActivateField(&quot;Customer Account Number&quot;);
+		var strCustomerId = this.ParentBusComp().GetFieldValue(&quot;Customer Account Number&quot;); //Added WA#04 - JFONSECA - 10.04.2015
+		var strObjectId = this.ParentBusComp().GetFieldValue(&quot;Id&quot;); //Added WA#04 - JFONSECA - 15.04.2015
+		
+		psIn.SetProperty(&quot;LOV&quot;,&quot;BILL_CYCLE&quot;); //Added WA#04 - JFONSECA - 31.03.2015
+		psIn.SetProperty(&quot;Val&quot;,strNewBillCycle); //Added WA#04 - JFONSECA - 31.03.2015
+		var strAux = ACSNI.InvokeMethod (&quot;LookupName&quot;, psIn, psOut); //Added WA#04 - JFONSECA - 31.03.2015
+		var strCurBillCycleLOV = psOut.GetProperty(&quot;Name&quot;); //Added WA#04 - JFONSECA - 31.03.2015
+		if( strOldValue == strNewValueDisplayed || NewBillCycle==CurBillCycle)			
+	  	{
+			strMessageCategory = &quot;VF Message Category&quot;;
+		 	strCode = &quot;135&quot;;
+			sMsg = app.LookupMessage(strMessageCategory, strCode);
+	 		app.RaiseErrorText(sMsg);
+	  	}
+	  	//var strParked =  app.InvokeMethod(&quot;LookupValue&quot;,&quot;VF_REQ_STATUS&quot;, &quot;Parked&quot;);
+	  	//this.SetFieldValue(&quot;VF Request Status&quot;, strParked);
+	  	//this.WriteRecord();
+	  	ps_inputsBillCycleChange.SetProperty(&quot;ChangeBillCycleID&quot;, strChangeBillCycleID); //Added WA#04 - JFONSECA - 02.03.2015
+	  	ps_inputsBillCycleChange.SetProperty(&quot;AccountID&quot;, strAccountID); //Added WA#04 - JFONSECA - 02.03.2015
+	  	ps_inputsBillCycleChange.SetProperty(&quot;BillPeriod&quot;, strCurBillCycleLOV); //Added WA#04 - JFONSECA - 02.03.2015
+	  	ps_inputsBillCycleChange.SetProperty(&quot;BillingFrequency&quot;, strBillingFrequencyLOV); //Added WA#04 - JFONSECA - 02.03.2015
+	  	ps_inputsBillCycleChange.SetProperty(&quot;CurBillCycle&quot;, CurBillCycle); //Added WA#04 - JFONSECA - 25.03.2015
+	  	ps_inputsBillCycleChange.SetProperty(&quot;BillAccountType&quot;, strBillType); //Added WA#04 - JFONSECA - 31.03.2015
+		ps_inputsBillCycleChange.SetProperty(&quot;BillType&quot;, strBillTypeInvoiceLOV); //Added WA#04 - JFONSECA - 17.07.2015
+	  	ps_inputsBillCycleChange.SetProperty(&quot;CustomerId&quot;, strCustomerId); //Added WA#04 - JFONSECA - 10.04.2015
+	  	ps_inputsBillCycleChange.SetProperty(&quot;Object Id&quot;, strObjectId); //Added WA#04 - JFONSECA - 15.04.2015
+		ps_inputsBillCycleChange.SetProperty(&quot;ProcessName&quot;,&quot;VFTRCBU Submit Bill Cycle Change Request WF&quot;); //Added WA#04 - JFONSECA - 02.03.2015
+		bssvcWFProcMgr.InvokeMethod(&quot;RunProcess&quot;,ps_inputsBillCycleChange,ps_outputsBillCycleChange); //Added WA#04 - JFONSECA - 02.03.2015	  
+  	}
+  	finally
+  	{
+	  	bsCheckOrder		= null;
+		bsInputs			= null;
+		bsOutputs			= null;
+  	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="11/30/2016 15:06:47"
+			   UPDATED_BY="DGUERREIRO"
+			   CREATED="05/23/2012 08:33:03"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="MeropolisControl"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function 	MeropolisControl() // WP1 YGhazi 07/06/2011
+{
+	try
+	{
+		var AssetBO	: BusObject	= TheApplication().GetBusObject(&quot;X Order Entry&quot;);
+		var AssetBC	: BusComp	= AssetBO.GetBusComp(&quot;HP Submit - Asset Mgmt - Asset - Header&quot;);
+		var BcOrderEntry : BusComp		= AssetBO.GetBusComp(&quot;HP Submit - Order Entry - Orders&quot;);
+		var BcOrderEntryLI : BusComp 		= AssetBO.GetBusComp(&quot;HP Submit - Order Entry - Line Items&quot;);
+		var AccountBO : BusObject = TheApplication().GetBusObject(&quot;Account&quot;);
+		var InvProfileBC : BusComp =  AccountBO.GetBusComp(&quot;Billing Account&quot;);
+		var strAdd 			= TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;DELTA_ACTION_CODE&quot;,&quot;New&quot;);
+		var strPending = TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;FS_ORDER_STATUS&quot;, &quot;Pending&quot;);
+		var strComplete = TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;FS_ORDER_STATUS&quot;, &quot;Complete&quot;);
+		var strStatus = &quot;[Status] &lt;&gt; &apos;&quot; + strPending + &quot;&apos; AND  [Status] &lt;&gt; &apos;&quot; + strComplete + &quot;&apos;&quot;;
+		var strOrderId = &quot;&quot;;
+		var strBilAccountId = null;//this.GetFieldValue(&quot;Billing Account Id&quot;);
+		var strActive = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;IMPL_PHASE&quot;, &quot;Active&quot;);
+		var profileID = this.GetFieldValue(&quot;Com Invoice Profile Id&quot;);
+		
+		with(InvProfileBC){
+			ClearToQuery();
+			SetViewMode(AllView);
+			SetSearchSpec(&quot;Billing Profile Id&quot;,profileID);
+			ExecuteQuery(ForwardOnly);
+			if (FirstRecord()){
+				strBilAccountId = InvProfileBC.GetFieldValue(&quot;Id&quot;);
+				TheApplication().SetProfileAttr(&quot;billAcc&quot;,strBilAccountId);
+			}
+		}
+
+		with(BcOrderEntryLI)
+		{
+			ClearToQuery();
+			SetViewMode(AllView);
+			SetSearchSpec(&quot;Billing Account Id&quot;,strBilAccountId);
+			SetSearchSpec (&quot;Part Number&quot;, &quot;14100&quot;); 
+			SetSearchSpec(&quot;Action Code&quot;, strAdd);
+			ExecuteQuery(ForwardOnly);	
+			if (FirstRecord())
+				TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;VF Message Category&quot;, &quot;R142_010&quot;));
+		}
+	
+		with(AssetBC)
+		{
+			ClearToQuery();
+			SetViewMode(AllView);
+			SetSearchSpec(&quot;Billing Account Id&quot;,strBilAccountId)
+	 		SetSearchSpec (&quot;Product Part Number&quot;, &quot;14100&quot;); 
+	 		SetSearchSpec(&quot;Status&quot;, strActive);
+			ExecuteQuery(ForwardOnly);	
+	 		if (FirstRecord())
+	 			TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;VF Message Category&quot;, &quot;R142_010&quot;));
+		}
+	}
+	finally
+	{
+		InvProfileBC = null;
+		AssetBC		= null;
+		BcOrderEntry = null;
+		BcOrderEntryLI  = null;
+		AssetBO		= null;
+		AccountBO = null;
+	}
+
+}"
+			   SEQUENCE="3"
+			   UPDATED="11/28/2012 12:49:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/04/2011 12:24:15"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="VodamoneyControl"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function 	VodamoneyControl() // CR370 dakcicek 09.02.2012
+{
+	try
+	{
+		var AssetBO	: BusObject	= TheApplication().GetBusObject(&quot;X Order Entry&quot;);
+		var AssetBC	: BusComp	= AssetBO.GetBusComp(&quot;HP Submit - Asset Mgmt - Asset - Header&quot;);
+		var BcOrderEntry : BusComp		= AssetBO.GetBusComp(&quot;HP Submit - Order Entry - Orders&quot;);
+		var BcOrderEntryLI : BusComp	= AssetBO.GetBusComp(&quot;HP Submit - Order Entry - Line Items&quot;);
+		var strAdd 			= TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;DELTA_ACTION_CODE&quot;,&quot;New&quot;);
+		var strPending = TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;FS_ORDER_STATUS&quot;, &quot;Pending&quot;);
+		var strComplete = TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;FS_ORDER_STATUS&quot;, &quot;Complete&quot;);
+		var strStatus = &quot;[Status] &lt;&gt; &apos;&quot; + strPending + &quot;&apos; AND  [Status] &lt;&gt; &apos;&quot; + strComplete + &quot;&apos;&quot;;
+		var strOrderId = &quot;&quot;;
+		var strBilAccountId = TheApplication().GetProfileAttr(&quot;billAcc&quot;);  //this.GetFieldValue(&quot;Billing Account Id&quot;);
+		var strActive = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;IMPL_PHASE&quot;, &quot;Active&quot;);
+		
+		/*with(BcOrderEntryLI)
+		{
+			ClearToQuery();
+			SetViewMode(AllView);
+			SetSearchSpec(&quot;Billing Account Id&quot;,strBilAccountId);
+			SetSearchSpec (&quot;Part Number&quot;, &quot;5000&quot;); 
+			SetSearchSpec(&quot;Action Code&quot;, strAdd);
+			ExecuteQuery(ForwardOnly);	
+			if (FirstRecord())
+				TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;VF Message Category&quot;, &quot;AD10002&quot;));
+		}*/
+	
+		with(AssetBC)
+		{
+			ClearToQuery();
+			SetViewMode(AllView);
+			SetSearchSpec(&quot;Billing Account Id&quot;,strBilAccountId)
+	 		SetSearchSpec (&quot;Product Part Number&quot;, &quot;5000&quot;); 
+	 		SetSearchSpec(&quot;Status&quot;, strActive);
+			ExecuteQuery(ForwardOnly);	
+	 		if (FirstRecord())
+	 			TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;VF Message Category&quot;, &quot;AD10002&quot;));
+		}
+	}
+	finally
+	{
+		AssetBC		= null;
+		BcOrderEntry = null;
+		BcOrderEntryLI  = null;
+		AssetBO		= null;
+	}
+}"
+			   SEQUENCE="4"
+			   UPDATED="07/23/2013 20:40:56"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2012 15:42:55"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: VF New Bill Cycle Displayed"
+			   VALUE="VF New BC Calc"
+			   UPDATED="09/14/2010 15:38:52"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/14/2010 15:38:52"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="BILL_CYCLE"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="Com Invoice Profile"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Bill Cycle"
+			   NO_COPY="N"
+			   PICKLIST="Com Bill Cycle PickList"
+			   PRE_DEFAULT_VALUE="Parent: &apos;Com Invoice Profile.Bill Cycle&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_INTEGER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/14/2012 11:43:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/23/2010 13:18:24"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Bill Cycle"
+				   INACTIVE="N"
+				   NAME="Bill Cycle"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="06/23/2010 13:18:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/23/2010 13:18:24"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_BILL_CYCLE_DISPL"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="Com Invoice Profile"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Bill Cycle Displayed"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/10/2012 12:30:08"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/08/2010 17:10:30"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="ACCNT_ID"
+			   COMMENTS="VFTK MC 20100629 R1.3 - Added Predefault for B3 Requirement.Parent: &apos;Account.Id&apos;"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="Com Invoice Profile"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Billing Account Id"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Parent: &apos;Com Invoice Profile.Account Id&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/10/2012 12:29:53"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/23/2010 13:18:24"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_CUST_STAT_CD"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="Billing Account"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Billing Account Status"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/24/2010 06:52:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/24/2010 06:52:54"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([Billing Account Status]&lt;&gt;LookupValue(&quot;BILLING_ACCOUNT_STATUS&quot;,&quot;70&quot;) AND [Billing Account Status]&lt;&gt;LookupValue(&quot;BILLING_ACCOUNT_STATUS&quot;,&quot;90&quot;) ,&apos;Y&apos;,&apos;N&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="BillingAccountStatusReadOnly"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/29/2010 18:28:52"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/29/2010 18:28:52"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="PAR_ROW_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Com Invoice Profile Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/16/2010 13:50:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/23/2010 13:18:24"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VF_BC_CHANGE_INTERVAL&quot;, &quot;Interval&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Interval"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/23/2010 21:58:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/23/2010 21:58:19"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Name Code"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Field: &apos;Id&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/23/2010 14:50:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/23/2010 14:38:03"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="STMT_FLAG"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="Com Invoice Profile"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Statement Flag"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/23/2010 13:18:24"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/23/2010 13:18:24"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="TYPE"
+			   COMMENTS="Created per ORA review comments on Mar 07-11 by Parasuram"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Type"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Bill Cycle"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/17/2011 12:34:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/17/2011 12:34:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_BC_CHANGE_FLG"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF BC Change Flag"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/10/2012 12:29:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/30/2010 09:15:06"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_BILL_CYCLE_CHANGE"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Bill Cycle Change Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/23/2010 21:58:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/23/2010 13:18:24"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="Billing Account"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Billing Account Code"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/29/2013 12:18:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/29/2013 12:18:21"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_LST_BILL_CYCLE_CHANGE"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="Com Invoice Profile"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Com Inv Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/04/2010 17:01:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/04/2010 17:00:33"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_CURR_BILL_CYCLE"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Current Bill Cycle Value"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Parent: &apos;Com Invoice Profile.Bill Cycle&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_INTEGER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/29/2010 12:52:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/28/2010 15:33:22"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="Today() - [VF Com Inv Date]"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Delta BC Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/10/2012 12:29:50"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/23/2010 13:18:24"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_ERR_CODE"
+			   COMMENTS="GEN_REQ_310 : IDC-SB :19/12/2012: Created new"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Error Code"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/04/2013 12:29:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/04/2013 12:29:16"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_ERR_DESC"
+			   COMMENTS="GEN_REQ_310 : IDC-SB :19/12/2012: Created new"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Error Description"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/29/2013 12:18:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/04/2013 12:29:16"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[VF Com Inv Date] + [Interval]"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Interval"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/23/2010 21:58:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/23/2010 21:58:19"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_LST_BILL_CYCLE_CHANGE"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Last Bill Cycle Change Date"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Parent: &apos;Com Invoice Profile.VF Last BC Change Date&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/23/2010 21:58:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/23/2010 13:18:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VF Request Status]=LookupValue(&quot;VF_REQ_STATUS&quot;,&quot;Pending&quot;),&apos;N&apos;,&apos;Y&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF New BC Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/21/2010 13:37:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/21/2010 13:37:45"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_NEW_BC_DISPLAY"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF New Bill Cycle Displayed"
+			   NO_COPY="N"
+			   PICKLIST="VF Bill Cycle Display Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/08/2010 17:10:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/08/2010 17:10:30"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF New Bill Cycle Displayed"
+				   INACTIVE="N"
+				   NAME="VF New Bill Cycle Displayed"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="09/08/2010 17:10:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/08/2010 17:10:30"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF New Bill Cycle Value"
+				   INACTIVE="N"
+				   NAME="VF New Bill Cycle Value"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="09/08/2010 17:10:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/08/2010 17:10:30"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupName(&quot;VF_BC_DISPLAY&quot;,[VF New Bill Cycle Displayed])"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF New Bill Cycle Displayed Lic"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/23/2012 08:33:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/15/2012 08:44:06"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_NEW_BILL_CYCLE"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF New Bill Cycle Value"
+			   NO_COPY="N"
+			   PICKLIST="Com Bill Cycle PickList"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_INTEGER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/23/2012 08:33:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/23/2010 13:18:25"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="VF New Bill Cycle Value"
+				   INACTIVE="N"
+				   NAME="VF New Bill Cycle Value"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="06/23/2010 13:18:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/23/2010 13:18:25"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_OLD_BC_DISPLAY"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Old Bill Cycle Displayed"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/08/2010 17:10:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/08/2010 17:10:30"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_OLD_BILL_CYCLE"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Old Bill Cycle Value"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_INTEGER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/16/2010 13:50:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/23/2010 13:18:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_REQ_STATUS"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Request Status"
+			   NO_COPY="N"
+			   PICKLIST="VF Picklist Bill Cycle Request Status"
+			   PRE_DEFAULT_VALUE="Expr: &apos;LookupValue(&quot;VF_REQ_STATUS&quot;, &quot;Pending&quot;)&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/04/2010 22:01:49"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/23/2010 13:18:25"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Request Status"
+				   INACTIVE="N"
+				   NAME="VF Request Status"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="06/28/2010 16:21:56"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/28/2010 16:21:56"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="Today()"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Today"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/23/2010 21:58:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/23/2010 13:18:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VF Last Bill Cycle Change Date] is null, Y, N)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF new BC Value Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/23/2010 13:18:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/23/2010 13:18:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[VFTRCBU Cancel Request Button Calc1] AND [VFTRCBU Customer Account Type]=LookupValue(&quot;ACCOUNT_TYPE&quot;, &quot;101&quot;)"
+			   COMMENTS="ACAMBAS: VFTRCBU-29573"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Cancel Request Button Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/02/2016 17:47:31"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="05/30/2016 17:58:54"
+			   CREATED_BY="ACAMBAS">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[VF Request Status]&lt;&gt;LookupValue(&quot;VF_REQ_STATUS&quot;, &quot;Completed&quot;) AND ([VF Request Status]&lt;&gt;LookupValue(&quot;VF_REQ_STATUS&quot;, &quot;Cancelled&quot;) AND [VF Request Status]&lt;&gt;LookupValue(&quot;VF_REQ_STATUS&quot;, &quot;Partially Completed&quot;))"
+			   COMMENTS="ACAMBAS: VFTRCBU-29573"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Cancel Request Button Calc1"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/02/2016 17:47:33"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="05/30/2016 17:56:57"
+			   CREATED_BY="ACAMBAS">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="ParentFieldValue(&quot;VFTRCBU Owner Account Type&quot;)"
+			   COMMENTS="ACAMBAS: VFTRCBU-29573"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Customer Account Type"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/02/2016 17:47:39"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="05/30/2016 17:16:18"
+			   CREATED_BY="ACAMBAS">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_ORDER_ID"
+			   COMMENTS="WA#04 - JFONSECA - 2015.02.11"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Order Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="22"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/18/2015 18:41:32"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="02/11/2015 17:33:18"
+			   CREATED_BY="JFONSECA">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_SUBMIT_DATE"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Submit Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/15/2015 10:24:49"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/14/2015 18:39:26"
+			   CREATED_BY="JFONSECA">
+			</FIELD>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="Billing Account"
+			   OUTER_JOIN_FLAG="N"
+			   TABLE="S_ORG_EXT"
+			   UPDATED="09/03/2012 17:42:49"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/24/2010 06:51:51"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Billing Account"
+				   SOURCE_FIELD="Billing Account Id"
+				   UPDATED="09/03/2012 17:42:49"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/24/2010 06:52:16"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="Com Invoice Profile"
+			   OUTER_JOIN_FLAG="N"
+			   TABLE="S_INV_PROF"
+			   UPDATED="06/23/2010 13:18:24"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/23/2010 13:18:24"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="Com Invoice Profile"
+				   SOURCE_FIELD="Com Invoice Profile Id"
+				   UPDATED="06/23/2010 13:18:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/23/2010 13:18:24"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

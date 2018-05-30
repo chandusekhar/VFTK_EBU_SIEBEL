@@ -1,0 +1,702 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="R142-WP15: Created by Parasuram on 04/May/2011."
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VF WP 15 Billing Inquiry"
+	   UI_FREEZE="N"
+	   UPDATED="08/29/2016 16:04:41"
+	   UPDATED_BY="SJOAO"
+	   CREATED="05/06/2011 10:54:52"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   COMMENTS="VF Diva R1.4.2 20110512: Created new for WP15"
+		   EXTERNAL_USE="N"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VF MSISDN Based Bundle VBC Service"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="08/26/2016 15:37:09"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   OBJECT_LOCKED_BY_NAME="PSANTOS"
+		   UPDATED="08/29/2016 12:31:25"
+		   UPDATED_BY="PSANTOS"
+		   CREATED="06/22/2011 13:17:20"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_LOCALE
+			   APPLICATION_CODE="STD"
+			   DISPLAY_NAME="VF MSISDN Inquiry VBC Service"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   TRANSLATE="Y"
+			   UPDATED="06/22/2011 13:17:20"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/22/2011 13:17:20"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_LOCALE>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CalculateUnitValues"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CalculateUnitValues(&amp;ps)//added By Rekha for defect PROD00027837 Retrofit
+{
+try
+{    
+		var Unit_Type = ps.GetProperty(&quot;UNIT TYPE&quot;);
+		var BundleType = ps.GetProperty(&quot;BUNDLE TYPE&quot;);
+		BundleType = trim(BundleType);
+		var UnitValue=&quot;&quot;;
+		
+		UnitValue = ps.GetProperty(&quot;STANDARD AWARD&quot;);
+		ps.SetProperty(&quot;STANDARD AWARD&quot;, GetUnitValue(Unit_Type, UnitValue, BundleType));
+		
+		UnitValue = ps.GetProperty(&quot;TOTAL AWARD&quot;);
+		ps.SetProperty(&quot;TOTAL AWARD&quot;, GetUnitValue(Unit_Type, UnitValue, BundleType));
+		
+		UnitValue = ps.GetProperty(&quot;BUNDLE EROSION&quot;);
+		ps.SetProperty(&quot;BUNDLE EROSION&quot;, GetUnitValue(Unit_Type, UnitValue, BundleType));
+
+		UnitValue = ps.GetProperty(&quot;USED AMOUNT&quot;);
+		ps.SetProperty(&quot;USED AMOUNT&quot;, GetUnitValue(Unit_Type, UnitValue, BundleType));
+	
+		UnitValue = ps.GetProperty(&quot;INITIAL AMOUNT&quot;);
+		ps.SetProperty(&quot;INITIAL AMOUNT&quot;, GetUnitValue(Unit_Type, UnitValue, BundleType));
+
+		UnitValue = ps.GetProperty(&quot;CURRENT AMOUNT&quot;);
+		ps.SetProperty(&quot;CURRENT AMOUNT&quot;, GetUnitValue(Unit_Type, UnitValue, BundleType));
+		
+		UnitValue = ps.GetProperty(&quot;REMAINING AMOUNT&quot;);
+		ps.SetProperty(&quot;REMAINING AMOUNT&quot;, GetUnitValue(Unit_Type, UnitValue, BundleType));
+		
+		UnitValue = ps.GetProperty(&quot;TRANSFER FROM PREVIOUS MONTH&quot;);
+		ps.SetProperty(&quot;TRANSFER FROM PREVIOUS MONTH&quot;, GetUnitValue(Unit_Type, UnitValue, BundleType));
+		
+		UnitValue = ps.GetProperty(&quot;TRANSFER TO NEXT MONTH&quot;);
+		ps.SetProperty(&quot;TRANSFER TO NEXT MONTH&quot;, GetUnitValue(Unit_Type, UnitValue, BundleType));
+}
+catch(e)
+{
+		throw(e);
+}				
+}"
+			   SEQUENCE="1"
+			   UPDATED="07/18/2013 20:51:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/07/2012 12:44:23"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Convert"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Convert(Inputs,Outputs)
+{
+		try
+	{
+		var UnitValue =  Inputs.GetProperty(&quot;REMAINING AMOUNT&quot;); 
+	    var Unit_Type =  Inputs.GetProperty(&quot;BUNDLE TYPE&quot;);
+		//var Unit_Type =  Inputs.GetProperty(&quot;UNIT TYPE&quot;);
+		//var BundleType = Inputs.GetProperty(&quot;BUNDLE TYPE&quot;);
+		GetUnitValue(Unit_Type, UnitValue, Unit_Type) // Onceki kod bu şekilde oldugu bundle type kısminada unit type gibi bir degisken verdim. Sacma ama oncekilerin sacmaligi.
+		//GetUnitValue(Unit_Type, UnitValue, BundleType);
+	     Outputs.SetProperty(&quot;REMAINING AMOUNT&quot;, GetUnitValue(Unit_Type, UnitValue, Unit_Type));
+	    //Outputs.SetProperty(&quot;REMAINING AMOUNT&quot;, GetUnitValue(Unit_Type, UnitValue, BundleType));
+		
+	}
+	catch(e)
+	{
+		throw(e);
+	} 
+
+}"
+			   SEQUENCE="2"
+			   UPDATED="03/31/2015 21:42:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2012 20:24:29"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GetUnitValue"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GetUnitValue(Unit_Type, UnitValue, pBundleType)//added By Rekha for defect PROD00027837 Retrofit
+{
+ try 
+ {
+ 		if((UnitValue==&quot;&quot; || UnitValue==&quot;0&quot;) &amp;&amp; (Unit_Type !=&quot;DATA&quot;))
+ 		{
+ 			UnitValue = UnitValue;
+ 			return UnitValue;
+ 		}
+ 		if(pBundleType ==&quot;Money&quot;)
+		{
+			UnitValue = ToNumber(UnitValue);
+			UnitValue = UnitValue/10000; // Unit Type = Money icin 10000&apos;e bolunup kurus degeri elde edilir.
+			var DKLimit1 = &quot;100&quot;;
+			var DKLimit2 = &quot;10&quot;;
+			if (UnitValue &lt; DKLimit1)
+				UnitValue = UnitValue + &quot;K&quot;;
+			else
+			{
+					strresto = UnitValue % 100;
+					if (strresto == &quot;0&quot;)
+					{
+						UnitValue = UnitValue/DKLimit1;
+						UnitValue = UnitValue + &quot; TL&quot;;
+					}
+					else 
+					{
+						if ((UnitValue % 10) == &quot;0&quot;)
+						{
+							UnitValue = UnitValue/DKLimit1;						
+							UnitValue = UnitValue + &quot; TL&quot;;		
+						}
+					}												
+			}
+		}
+ 		else if(Unit_Type ==&quot;Byte&quot;)
+		{
+			UnitValue= ToNumber(((UnitValue)/1024)/1024);
+		}
+		else if(Unit_Type ==&quot;0.1 Sn&quot;)
+		{
+			UnitValue= ToNumber(((UnitValue)/10)/60);
+			UnitValue = UnitValue + &quot;dk&quot;;		
+		}
+		else if(Unit_Type ==&quot;Adet&quot;)
+		{
+			UnitValue = UnitValue;
+		}
+		else if(Unit_Type ==&quot;DATA&quot; || Unit_Type ==&quot;ROAMING_DATA&quot;)
+		{
+			var limit1 = &quot;1024&quot;;
+			var limit2 = &quot;1048576&quot;;
+			var limit3 = &quot;1073741824&quot;;
+			UnitValue = ToNumber(UnitValue);
+			var strresto;
+			var convert = &quot;100&quot;;
+			var convert2 = &quot;10&quot;;		
+			if (UnitValue &lt; limit1)
+			{
+				var ErrMess = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;AD11001&quot;); 
+				UnitValue = ErrMess;
+			}
+			else if (UnitValue &lt; limit2)
+			{
+				UnitValue = UnitValue/limit1;
+				UnitValue= UnitValue.toFixed(3);
+				UnitValue = UnitValue * convert;
+				UnitValue = ToInteger(UnitValue);
+				UnitValue = UnitValue/convert;
+				strresto = UnitValue % 100;
+				if (strresto == &quot;0&quot;)
+					{
+					UnitValue = ToInteger(UnitValue);
+					}
+				else if ((UnitValue % 10) == &quot;0&quot;)
+					{
+					UnitValue = UnitValue * convert2;
+					UnitValue = ToInteger(UnitValue);
+					UnitValue = UnitValue/convert2;		
+					}													
+				UnitValue = UnitValue + &quot; KB&quot;;
+				}
+			else if (UnitValue &lt; limit3)
+			{
+				UnitValue = UnitValue/limit2;													
+				UnitValue= UnitValue.toFixed(3);
+				UnitValue = UnitValue * convert;
+				UnitValue = ToInteger(UnitValue);
+				UnitValue = UnitValue/convert;
+				strresto = UnitValue % 100;
+				if (strresto == &quot;0&quot;)
+				{
+				UnitValue = ToInteger(UnitValue);
+				}
+			else if ((UnitValue % 10) == &quot;0&quot;)
+				{
+				UnitValue = UnitValue * convert2;
+				UnitValue = ToInteger(UnitValue);
+				UnitValue = UnitValue/convert2;		
+				}
+			UnitValue = UnitValue + &quot; MB&quot;;
+			}
+			else if ((UnitValue &gt; limit3) || (UnitValue == limit3))
+			{
+				UnitValue = UnitValue/limit3;	
+				UnitValue= UnitValue.toFixed(3);
+				UnitValue = UnitValue * convert;
+				UnitValue = ToInteger(UnitValue);
+				UnitValue = UnitValue/convert;
+				strresto = UnitValue % 100;
+				if (strresto == &quot;0&quot;)
+				{
+					UnitValue = ToInteger(UnitValue);
+				}
+				else if ((UnitValue % 10) == &quot;0&quot;)
+				{
+					UnitValue = UnitValue * convert2;
+					UnitValue = ToInteger(UnitValue);
+					UnitValue = UnitValue/convert2;		
+				}												
+				UnitValue = UnitValue + &quot; GB&quot;;
+			}		
+		}
+		else if(Unit_Type ==&quot;VOICE&quot;)
+		{		
+			var DKLimit1 = &quot;60&quot;;
+			UnitValue = ToNumber(UnitValue);
+			if (UnitValue &lt; DKLimit1)
+				UnitValue = UnitValue + &quot;sn&quot;;
+			else
+			{
+			UnitValue = UnitValue / DKLimit1;
+			UnitValue = ToInteger(UnitValue);
+			UnitValue = UnitValue + &quot;dk&quot;;
+			}
+		}
+		else if(Unit_Type ==&quot;TL&quot;)
+		{
+			UnitValue = ToNumber(UnitValue);
+			var DKLimit1 = &quot;100&quot;;
+			var DKLimit2 = &quot;10&quot;;
+			if (UnitValue &lt; DKLimit1)
+				UnitValue = UnitValue + &quot;K&quot;;
+			else
+			{
+				strresto = UnitValue % 100;
+				if (strresto == &quot;0&quot;)
+				{
+					UnitValue = UnitValue/DKLimit1;
+					UnitValue = UnitValue + &quot; TL&quot;;
+				}
+				else 
+				{
+				if ((UnitValue % 10) == &quot;0&quot;)
+					{
+						UnitValue = UnitValue/DKLimit1;						
+						UnitValue = UnitValue + &quot; TL&quot;;		
+					}
+					
+				else
+				    {
+				        UnitValue = UnitValue/DKLimit1;						
+						UnitValue = UnitValue + &quot; TL&quot;; 
+
+                    }	
+				
+				}												
+			}
+		}
+		else if(Unit_Type == &quot;Money&quot;)
+		{
+			UnitValue = ToNumber(UnitValue);
+			UnitValue = UnitValue/10000; // Unit Type = Money icin 10000&apos;e bolunup kurus degeri elde edilir.
+			var DKLimit1 = &quot;100&quot;;
+			var DKLimit2 = &quot;10&quot;;
+			if (UnitValue &lt; DKLimit1)
+				UnitValue = UnitValue + &quot;K&quot;;
+			else
+				{
+					strresto = UnitValue % 100;
+					if (strresto == &quot;0&quot;)
+					{
+						UnitValue = UnitValue/DKLimit1;
+						UnitValue = UnitValue + &quot; TL&quot;;
+					}
+					else 
+					{
+						if ((UnitValue % 10) == &quot;0&quot;)
+						{
+							UnitValue = UnitValue/DKLimit1;						
+							UnitValue = UnitValue + &quot; TL&quot;;		
+						}
+					}												
+				}
+		}
+		
+		
+		
+		return UnitValue;	
+ }
+ catch(e)
+ {
+ 	throw(e);
+ }		
+}"
+			   SEQUENCE="3"
+			   UPDATED="04/22/2015 11:16:38"
+			   UPDATED_BY="JMARQUES"
+			   CREATED="02/09/2012 12:21:38"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Init"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Init(Inputs,Outputs)
+{
+	try
+	{
+		var svcParms = Inputs.GetProperty(&quot;Parameters&quot;);
+		var svcSource = Inputs.GetProperty(&quot;Remote Source&quot;);
+		var vbcParms = svcParms + &quot;,&quot; + svcSource;
+		var search = Inputs.GetProperty(&quot;Business Component Name&quot;);
+		var busObj : BusObject = TheApplication().GetBusObject(&quot;Account&quot;);
+		var busComp : BusComp = busObj.GetBusComp(&quot;SRF Field&quot;);
+		var record;
+		busComp.ClearToQuery();
+		busComp.ActivateField(&quot;Name&quot;);
+		//VFTK Junaid 20120519 - Scripting 15: Null check is not required since it&apos;s a vanilla behaviour that BC name will be passed always to VBC &apos;Init&apos; method
+		busComp.SetSearchSpec(&quot;Business Component&quot;,search);
+		busComp.ExecuteQuery(ForwardOnly);
+	
+		record = busComp.FirstRecord();
+	
+		while (record != &quot;0&quot;)
+		{
+			var fName = busComp.GetFieldValue(&quot;Name&quot;);
+			if (fName != &quot;SSA Primary Field&quot;)
+			{
+				Outputs.SetProperty(fName, &quot;&quot;);
+			}
+			record = busComp.NextRecord();
+		}
+		
+		
+		return (CancelOperation);
+	}
+	catch(e)
+	{
+		throw(e);
+	}
+	finally
+	{
+		busComp = null;
+		busObj	= null;
+	}
+}"
+			   SEQUENCE="4"
+			   UPDATED="07/26/2012 13:23:50"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/22/2011 13:17:20"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Query"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Query(Inputs, Outputs)
+{
+	try
+	{
+			var MSISDN = TheApplication().GetProfileAttr(&quot;paMSISDNBundle&quot;);
+			var MSISDNBundle = 	TheApplication().GetProfileAttr(&quot;BundleInquiryValue&quot;);
+			var BUNDLE_PERIOD = TheApplication().GetProfileAttr(&quot;paBP&quot;);//PROD00026894
+			var strTimeStamp = Clib.time();
+			var strP6 : PropertySet;
+			var strdefaultType = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;Inquiry Type&quot;, &quot;VOICE&quot;);
+			if (MSISDNBundle != strdefaultType &amp;&amp; MSISDNBundle != &quot;&quot;)
+				strdefaultType = MSISDNBundle;
+			
+			// IMARTINS 09082016 | Retrofit of VFTRCBU-26751 DEF-10000
+			var QControl=TheApplication().GetProfileAttr(&quot;MBundleQuery&quot;);
+			
+		    if (QControl!=&quot;Y&quot; &amp;&amp; TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;) != &quot;VF Msisdn Bundle Inquiry View&quot;)   
+		    {       
+			    strP6 = TheApplication().NewPropertySet();            
+				strP6.SetProperty(&quot;Bundle Inquiry&quot;, strdefaultType);	  	
+				Outputs.AddChild(strP6);
+			}
+			// IMARTINS END
+			
+			var psInputs  : PropertySet;
+			var psOutputs : PropertySet;
+			var svcWF : Service;
+			svcWF	= TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+			var strP2 : PropertySet;
+			var strP3 : PropertySet;
+			var strP4 : PropertySet;
+			var ps : PropertySet;
+			var strP5 : PropertySet;
+			var strP1, totChild, ChildCnt;
+
+		    if(TheApplication().GetProfileAttr(&quot;BA Inquiry View&quot;) == &quot;Y&quot; || TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;) == &quot;PLW BA Bundle Inquiry View&quot;)
+			{
+			TheApplication().SetProfileAttr(&quot;BA Inquiry View&quot;, &quot;N&quot;);
+			return (CancelOperation);
+			}
+			else if(MSISDN != &quot;&quot;)
+			{	
+			
+				var ListOfRetrieveCostBundleReq = TheApplication().NewPropertySet();    
+				var RetrieveCostBundleReq = TheApplication().NewPropertySet(); 
+				//var ListOfHeader:PropertySet = TheApplication().NewPropertySet(); //JMARQUES
+				//var Header:PropertySet = TheApplication().NewPropertySet(); //JMARQUES
+				var ListOfRetrieveUsageInput = TheApplication().NewPropertySet(); 
+				var RetrieveUsageInput = TheApplication().NewPropertySet();
+				var ListOfListOfAttrb=TheApplication().NewPropertySet();
+				var ListOfAttrb=TheApplication().NewPropertySet();
+				var ListOfAttrb2=TheApplication().NewPropertySet();
+				var AttrSet = TheApplication().NewPropertySet(); 
+				var ListOfAttrbHier = TheApplication().NewPropertySet(); //JMARQUES NEW
+				var ListOfAttrbHier1 = TheApplication().NewPropertySet(); //JMARQUES NEW
+ 		
+				ListOfRetrieveCostBundleReq.SetType(&quot;ListOfGetCostControlBundleUsageRequest&quot;);
+				RetrieveCostBundleReq.SetType(&quot;GetCostControlBundleUsageRequest&quot;);
+				
+				ListOfRetrieveUsageInput.SetType(&quot;ListOfRequest&quot;);//JMARQUES
+				RetrieveUsageInput.SetType(&quot;Request&quot;); //JMARQUES
+				
+				//ListOfHeader.SetType(&quot;ListOfHEADER_INPUT&quot;); JMARQUES
+				//Header.SetType(&quot;HEADER_INPUT&quot;); JMARQUES
+			    
+			    ListOfListOfAttrb.SetType(&quot;ListOfListOfAttributes&quot;);
+				ListOfAttrbHier.SetType(&quot;ListOfAttributes&quot;); // JMARQUES NEW
+				ListOfAttrbHier1.SetType(&quot;ListOfAttribute&quot;); // JMARQUES NEW
+				ListOfAttrb.SetType(&quot;Attribute&quot;);
+	    		ListOfAttrb2.SetType(&quot;Attribute&quot;); 
+				
+				ListOfListOfAttrb.AddChild(ListOfAttrbHier); // JMARQUES NEW
+				ListOfAttrbHier.AddChild(ListOfAttrbHier1);// JMARQUES NEW
+		
+				ListOfAttrbHier1.AddChild(ListOfAttrb);
+				ListOfAttrbHier1.AddChild(ListOfAttrb2);
+		
+				//ListOfHeader.AddChild(Header); JMARQUES
+				
+				RetrieveUsageInput.AddChild(ListOfListOfAttrb);
+				ListOfRetrieveUsageInput.AddChild(RetrieveUsageInput);
+				
+				//RetrieveCostBundleReq.AddChild(ListOfHeader); JMARQUES
+				RetrieveCostBundleReq.AddChild(ListOfRetrieveUsageInput);
+				ListOfRetrieveCostBundleReq.AddChild(RetrieveCostBundleReq);
+			    
+			    //JMARQUES 
+				/*Header.SetProperty(&quot;TIMESTAMP&quot;,&quot;&quot;);
+				Header.SetProperty(&quot;CHANNEL&quot;, &quot;Siebel&quot;);		 
+				Header.SetProperty(&quot;TRANSACTION_ID&quot;,strTimeStamp);*/
+			
+				RetrieveUsageInput.SetProperty(&quot;BillingAccount&quot;,&quot;&quot;); //JMARQUES
+				RetrieveUsageInput.SetProperty(&quot;MSISDN&quot;,MSISDN);
+				RetrieveUsageInput.SetProperty(&quot;BundlePeriod&quot;,&quot;&quot;); //JMARQUES
+				RetrieveUsageInput.SetProperty(&quot;ContractTrackingId&quot;,&quot;&quot;); //JMARQUES
+				RetrieveUsageInput.SetProperty(&quot;ContractTrackingIdServ&quot;,&quot;&quot;);// JMARQUES
+				RetrieveUsageInput.SetProperty(&quot;BundleId&quot;,&quot;&quot;); //JMARQUES
+			
+				ListOfAttrb.SetProperty(&quot;Name&quot;,&quot;&quot;); 
+				ListOfAttrb.SetProperty(&quot;Value&quot;,&quot;&quot;); 
+			
+    			ListOfAttrb2.SetProperty(&quot;Name&quot;,&quot;&quot;); 
+				ListOfAttrb2.SetProperty(&quot;Value&quot;,&quot;&quot;);
+			
+				psInputs  = TheApplication().NewPropertySet();
+				psOutputs = TheApplication().NewPropertySet();
+				var WFInput = TheApplication().NewPropertySet(); 
+		  		WFInput.SetType(&quot;SiebelMessage&quot;); 
+				WFInput.AddChild(ListOfRetrieveCostBundleReq);
+				WFInput.SetProperty(&quot;IntObjectName&quot;,&quot;GetCostControlBundleUsageRequest&quot;);  //JMARQUES
+				WFInput.SetProperty(&quot;IntObjectFormat&quot;,&quot;Siebel Hierarchical&quot;); 
+				WFInput.SetProperty(&quot;MessageType&quot;,&quot;Integration Object&quot;); 
+		
+				psInputs.AddChild(WFInput);
+				
+				psInputs.SetProperty(&quot;ProcessName&quot;, &quot;VF MSISDN Based Bundle Inquiry Workflow&quot;);
+				//psInputs.SetProperty(&quot;TIMESTAMP&quot;, &quot;&quot;); //JMARQUES
+				//psInputs.SetProperty(&quot;CHANNEL&quot;, &quot;Siebel&quot;); //JMARQUES
+				//psInputs.SetProperty(&quot;TRANSACTION_ID&quot;, strTimeStamp); //JMARQUES
+				psInputs.SetProperty(&quot;MSISDN&quot;, MSISDN);
+				psInputs.SetProperty(&quot;BUNDLE_PERIOD&quot;,BUNDLE_PERIOD);//PROD00026894
+		        	
+	      		svcWF.InvokeMethod(&quot;RunProcess&quot;, psInputs, psOutputs);
+				
+				if(psOutputs.GetProperty(&quot;Status Code&quot;) == 0)
+				{
+				    ChildCnt = psOutputs.GetChild(0).GetChild(0).GetChildCount();
+				    if(ChildCnt &gt; 0)
+				    {
+				    	Outputs.Reset(); //PSANTOS VFTRCBU-32626
+				    	strP2 = TheApplication().NewPropertySet();
+					    strP1 = psOutputs.GetChild(0).GetChild(0).GetChild(0).GetType();
+					    totChild = psOutputs.GetChild(0).GetChild(0).GetChildCount();
+					    for (var i = 0; i &lt; totChild; i++)
+					    {
+					     strP2 = psOutputs.GetChild(0).GetChild(0).GetChild(i);
+					     strP3=TheApplication().NewPropertySet();
+				         ps=TheApplication().NewPropertySet();
+	     				 strP3 = strP2.Copy();
+						 CalculateUnitValues(strP3);//added By Rekha for defect PROD00027837 Retrofit
+	     				 Outputs.AddChild(strP3);
+					    }
+					 }
+					 else
+					 {
+					 	strP4 = TheApplication().NewPropertySet(); 
+						strP4.SetProperty(&quot;MSISDN&quot;, &quot;&quot;);
+						Outputs.Reset(); //PSANTOS VFTRCBU-32626
+	     				Outputs.AddChild(strP4);
+	     			 }
+				}
+				else
+				{
+					strP5 = TheApplication().NewPropertySet(); 
+					strP5.SetProperty(&quot;MSISDN&quot;, &quot;&quot;);
+					Outputs.Reset(); //PSANTOS VFTRCBU-32626
+	     			Outputs.AddChild(strP5);
+					TheApplication().SetProfileAttr(&quot;MSISDNError&quot;,psOutputs.GetProperty(&quot;Error Message&quot;));
+	     		}
+			 }
+		/*	 else
+			 {
+				var psMSISDN = TheApplication().GetProfileAttr(&quot;paPickMSISDNBundle&quot;);
+	    		strP3 = TheApplication().NewPropertySet(); 
+				strP3.SetProperty(&quot;MSISDN&quot;, psMSISDN);
+	     		Outputs.AddChild(strP3);
+	    	 	return(CancelOperation);
+			 }*/
+		
+	}
+	catch(e)
+	{
+			throw(e);
+	}
+	finally
+	{
+		
+		TheApplication().SetProfileAttr(&quot;paMSISDNBundle&quot;,&quot;&quot;);
+		TheApplication().SetProfileAttr(&quot;paBP&quot;,&quot;&quot;);
+		TheApplication().SetProfileAttr(&quot;MBundleQuery&quot;, &quot;N&quot;); // IMARTINS 09082016 | Retrofit of VFTRCBU-26751 DEF-10000
+		psInputs = null;
+		psOutputs = null;
+		svcWF = null;
+		strP2 = null;
+		strP3 = null;
+		strP4 = null;
+		strP5 = null;
+		strP6 = null;
+		ps = null;
+	}
+}"
+			   SEQUENCE="5"
+			   UPDATED="08/29/2016 12:31:25"
+			   UPDATED_BY="PSANTOS"
+			   CREATED="06/22/2011 13:17:20"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	if (MethodName == &quot;Init&quot; || MethodName == &quot;PreInsert&quot; || MethodName == &quot;Insert&quot;)
+	{
+		Init (Inputs, Outputs);
+		return(CancelOperation);
+	}
+	else if (MethodName == &quot;Query&quot;)
+	{
+		Query (Inputs, Outputs);
+		return(CancelOperation);
+	}
+	else if (MethodName == &quot;Update&quot;)
+	{
+		Update (Inputs, Outputs);
+		return(CancelOperation);
+	}
+	else if (MethodName == &quot;Convert&quot;)
+	{
+		Convert (Inputs, Outputs);
+		return(CancelOperation);
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="8"
+			   UPDATED="07/18/2013 20:51:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/22/2011 13:17:20"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Update"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Update(Inputs,Outputs)
+{
+	try
+	{
+		var child;
+		var childCount;
+		var fieldName, fieldValue;
+		var row : PropertySet;
+		row = TheApplication().NewPropertySet();
+		
+		// Go through each child in Inputs and construct
+		// necessary sql statements for update and query
+		childCount = Inputs.GetChildCount();
+		for (var i = 0; i &lt; childCount; i++)
+		{
+			child = Inputs.GetChild(i);
+			fieldName = child.GetProperty(&quot;Field Name&quot;);
+			fieldValue = child.GetProperty(&quot;Field Value&quot;);
+			if (child.GetProperty(&quot;Changed&quot;) == &quot;true&quot;)
+			{
+			 row.SetProperty(fieldName, fieldValue);	
+			}
+		}
+		
+		Outputs.AddChild(row);
+		return (CancelOperation);
+		
+	}
+	catch(e)
+	{
+		throw(e);
+	} 
+	finally
+	{
+		row = null;
+	}
+}"
+			   SEQUENCE="7"
+			   UPDATED="07/18/2013 20:51:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/13/2012 19:42:52"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="trim"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function trim(s) { 
+var r=/\b(.*)\b/.exec(s); 
+return (r==null)?&quot;&quot;:r[1]; 
+}"
+			   SEQUENCE="6"
+			   UPDATED="07/18/2013 20:51:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/18/2013 20:51:39"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

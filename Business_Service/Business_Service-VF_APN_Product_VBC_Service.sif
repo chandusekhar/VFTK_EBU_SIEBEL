@@ -1,0 +1,412 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="- PLW Account"
+	   UI_FREEZE="N"
+	   UPDATED="11/09/2016 11:43:15"
+	   UPDATED_BY="ALINO"
+	   CREATED="01/31/2009 12:28:34"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   COMMENTS="TC-5784"
+		   EXTERNAL_USE="N"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VF APN Product VBC Service"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="10/26/2016 16:21:49"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   OBJECT_LOCKED_BY_NAME="ALINO"
+		   UPDATED="11/09/2016 11:42:47"
+		   UPDATED_BY="ALINO"
+		   CREATED="03/31/2015 21:42:36"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_LOCALE
+			   APPLICATION_CODE="STD"
+			   DISPLAY_NAME="VF APN Product VBC Service"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   TRANSLATE="Y"
+			   UPDATED="03/31/2015 21:42:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/31/2015 21:42:36"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_LOCALE>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Init"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Init(Inputs,Outputs)
+{
+	try{
+		
+			Outputs.SetProperty(&quot;APN Flg&quot;,&quot;&quot;);
+			Outputs.SetProperty(&quot;APN Address&quot;,&quot;&quot;);
+			Outputs.SetProperty(&quot;APN Type&quot;,&quot;&quot;);
+			Outputs.SetProperty(&quot;Asset Id&quot;,&quot;&quot;);
+			Outputs.SetProperty(&quot;APN Corporate Flg&quot;,&quot;&quot;);
+			Outputs.SetProperty(&quot;KSK Flg&quot;,&quot;&quot;);
+			Outputs.SetProperty(&quot;Party Id&quot;,&quot;&quot;);
+			Outputs.SetProperty(&quot;APN User Position&quot;,&quot;&quot;);
+			Outputs.SetProperty(&quot;Role&quot;,&quot;&quot;);
+			Outputs.SetProperty(&quot;RoleCalc&quot;,&quot;&quot;);
+			Outputs.SetProperty(&quot;APN Rate List&quot;,&quot;&quot;);		
+		
+			return (CancelOperation);
+		}
+	catch (e)
+	{
+		throw e;
+		return (CancelOperation);
+	}
+		return (ContinueOperation);
+
+
+}"
+			   SEQUENCE="1"
+			   UPDATED="10/26/2016 16:38:42"
+			   UPDATED_BY="ALINO"
+			   CREATED="03/31/2015 21:42:36"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Query"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Query(Inputs, Outputs)
+{
+	try
+	{
+		var	strAPNAddress=&quot;&quot;;
+		var	strAPNFlg=&quot;&quot;;
+		var	strAPNType=&quot;&quot;;
+		var	strAssetNumber=&quot;&quot;;
+		var	strCorporateFlg=&quot;&quot;;			
+		var	strKSKFlg=&quot;&quot;;
+		var	strRateList=&quot;&quot;;
+		var	strId=&quot;&quot;;
+		var strPartyId=&quot;&quot;;
+		var strAPNRateList=&quot;&quot;;
+		var Role = TheApplication().GetProfileAttr(&quot;PositionType&quot;);
+		var oBOVFAccountSimpleBO = TheApplication().GetBusObject(&quot;VF Account Simple BO&quot;);
+		var oBCVFAPNProduct = oBOVFAccountSimpleBO.GetBusComp(&quot;VF APN Product&quot;);
+		var strAccountId = TheApplication().GetProfileAttr(&quot;OrdLineAccountId&quot;);
+		var strRootPartNum = TheApplication().GetProfileAttr(&quot;RootProdPartNum&quot;); //JMARQUES
+		var record2;
+		var expr2;
+		var expr3;
+		var expr4;
+		var searchst;
+		var oBOAPNAddress = TheApplication().GetBusObject(&quot;APN Address&quot;);
+		var oBCApnAddress = oBOAPNAddress.GetBusComp(&quot;Apn Address&quot;);
+		var record;
+		var psEmpty : PropertySet;
+		var psEmpty2 : PropertySet;
+		var strGPAApnAddress = TheApplication().GetProfileAttr(&quot;APN Address&quot;); //ALINO VFTRCBU-34637
+		var strGPAApnCorpFlag = TheApplication().GetProfileAttr(&quot;APN Corporate Flg&quot;); //ALINO VFTRCBU-34637
+		var strGPAApnType = TheApplication().GetProfileAttr(&quot;APN Type&quot;); //ALINO VFTRCBU-34637
+		var strGPAApnRateList = TheApplication().GetProfileAttr(&quot;APN Rate List&quot;); //ALINO VFTRCBU-34637	
+				
+		//++SANTOSP 04/2015 - VFTRCBU-1769
+		var oBS : Service = TheApplication().GetService(&quot;TELCO Order Management Utilities&quot;);
+		var pIn : PropertySet = TheApplication().NewPropertySet()
+		var pOut : PropertySet = TheApplication().NewPropertySet();
+		
+		// ESANTOS VFTRCBU-24834
+		var BSRoles =TheApplication().GetService(&quot;ACS NI General Operations&quot;);
+		var psInputs : PropertySet = TheApplication().NewPropertySet()
+		var psOutputs : PropertySet = TheApplication().NewPropertySet();
+		psInputs.SetProperty(&quot;Function&quot;,&quot;VF_ROLE_LIST&quot;);
+		psInputs.SetProperty(&quot;Name&quot;,&quot;Limited_APN_Roles&quot;);
+		BSRoles.InvokeMethod(&quot;GetParameter&quot;,psInputs,psOutputs);
+		pIn.SetProperty(&quot;roles&quot;, psOutputs.GetProperty(&quot;Cons123&quot;));
+		//pIn.SetProperty(&quot;roles&quot;,&quot;Role10,Role4,Role2,Role55,Role28,Role29,Role8,Role57,Role54,Role7,Role27&quot;);
+		 
+		oBS.InvokeMethod(&quot;UserHasRole&quot;,pIn,pOut);
+		var sHasRole = pOut.GetProperty(&quot;hasRole&quot;);
+		
+		//if ((Role == &quot;Role10&quot;) || (Role == &quot;Role4&quot;) || (Role == &quot;Role2&quot;) || (Role == &quot;Role55&quot;) || (Role == &quot;Role28&quot;) || (Role == &quot;Role29&quot;) || (Role == &quot;Role8&quot;) || (Role == &quot;Role57&quot;) || (Role == &quot;Role54&quot;) || (Role == &quot;Role7&quot;) || (Role == &quot;Role27&quot;))
+		if(sHasRole == &quot;Y&quot;)	//--SANTOSP 04/2015 - VFTRCBU-1769
+		{
+			oBCApnAddress.SetViewMode(AllView); 
+			oBCApnAddress.ClearToQuery();	
+			oBCApnAddress.ActivateField(&quot;APN Address&quot;);
+			oBCApnAddress.ActivateField(&quot;APN Flg&quot;);
+			oBCApnAddress.ActivateField(&quot;APN Type&quot;);
+			oBCApnAddress.ActivateField(&quot;Asset Number&quot;);
+			oBCApnAddress.ActivateField(&quot;Corporate Flg&quot;);
+			oBCApnAddress.ActivateField(&quot;KSK Flg&quot;);
+			oBCApnAddress.ActivateField(&quot;Rate List&quot;);
+
+			oBCApnAddress.SetSearchSpec(&quot;KSK Flg&quot;,&quot;Y&quot;);		
+		
+			if(strRootPartNum == &quot;70000&quot;) //JMARQUES
+			{ 
+				//oBCApnAddress.SetSearchSpec(&quot;APN Type&quot;,&quot;CBU_APN&quot;);
+				
+				//ALINO VFTRCBU-34637 START
+				if(strGPAApnAddress != null) {
+					oBCApnAddress.SetSearchSpec(&quot;APN Address&quot;,strGPAApnAddress);
+					}
+				if(strGPAApnCorpFlag != null){
+					oBCApnAddress.SetSearchSpec(&quot;Corporate Flg&quot;, strGPAApnCorpFlag);
+					}		
+				if(strGPAApnRateList != null) {
+					oBCApnAddress.SetSearchSpec(&quot;Rate List&quot;,strGPAApnRateList);
+					}
+				if(strGPAApnType != null){
+					oBCApnAddress.SetSearchSpec(&quot;APN Type&quot;,strGPAApnType);
+					}
+				//ALINO VFTRCBU-34637 END
+				else{
+					oBCApnAddress.SetSearchSpec(&quot;APN Type&quot;,&quot;CBU_APN&quot;);
+					}			
+			}
+			else 
+				oBCApnAddress.SetSearchSpec(&quot;APN Type&quot;,&quot;&lt;&gt; &apos;CBU_APN&apos;&quot;);	
+				
+			oBCApnAddress.ExecuteQuery(ForwardBackward);
+			record = oBCApnAddress.FirstRecord();
+			
+			while (record != &quot;0&quot;)
+			{
+				psEmpty=TheApplication().NewPropertySet();
+				strAPNAddress=oBCApnAddress.GetFieldValue(&quot;APN Address&quot;);
+				strAPNFlg=oBCApnAddress.GetFieldValue(&quot;APN Flg&quot;);
+				strAPNType=oBCApnAddress.GetFieldValue(&quot;APN Type&quot;);
+				strAssetNumber=oBCApnAddress.GetFieldValue(&quot;Asset Number&quot;);
+				strCorporateFlg=oBCApnAddress.GetFieldValue(&quot;Corporate Flg&quot;);
+				strKSKFlg=oBCApnAddress.GetFieldValue(&quot;KSK Flg&quot;);
+				strRateList=oBCApnAddress.GetFieldValue(&quot;Rate List&quot;);
+				strId=oBCApnAddress.GetFieldValue(&quot;Id&quot;);	
+			
+				psEmpty.SetProperty(&quot;APN Address&quot;,strAPNAddress);
+				psEmpty.SetProperty(&quot;APN Flg&quot;,strAPNFlg);
+				psEmpty.SetProperty(&quot;APN Type&quot;,strAPNType);
+				psEmpty.SetProperty(&quot;Asset Id&quot;,strAssetNumber);
+				psEmpty.SetProperty(&quot;APN Corporate Flg&quot;,strCorporateFlg);
+				psEmpty.SetProperty(&quot;KSK Flg&quot;,strKSKFlg);
+				psEmpty.SetProperty(&quot;APN Rate List&quot;,strRateList);
+				psEmpty.SetProperty(&quot;Party Id&quot;,&quot;&quot;);
+
+				Outputs.AddChild(psEmpty);	
+				record = oBCApnAddress.NextRecord();
+			}
+				
+			oBCVFAPNProduct.SetViewMode(AllView); 	   	
+			oBCVFAPNProduct.ClearToQuery();
+			oBCVFAPNProduct.ActivateField(&quot;APN Address&quot;);
+			oBCVFAPNProduct.ActivateField(&quot;APN Flg&quot;);
+			oBCVFAPNProduct.ActivateField(&quot;APN Type&quot;);
+			oBCVFAPNProduct.ActivateField(&quot;Asset Id&quot;);
+			oBCVFAPNProduct.ActivateField(&quot;APN Corporate Flg&quot;);
+			oBCVFAPNProduct.ActivateField(&quot;KSK Flg&quot;);
+			oBCVFAPNProduct.ActivateField(&quot;Party Id&quot;);
+			oBCVFAPNProduct.ActivateField(&quot;APN Rate List&quot;);
+			
+		
+			expr2 = &quot;[Party Id] = &apos;&quot;+ strAccountId + &quot;&apos;&quot;;		
+			expr3 = &quot; AND( [APN Type] = &apos;&quot;+&quot;Corporate APN&quot;+ &quot;&apos;&quot; 
+			expr4 = &quot;OR [APN Type]= &apos;&quot;+&quot;M2M APN&quot;+ &quot;&apos;)&quot; ;
+			
+			if(strRootPartNum == &quot;70000&quot;)//JMARQUES
+			{ 
+				//searchst = &quot;[Party Id] = &apos;&quot;+ strAccountId + &quot;&apos; AND [APN Type] = &apos;&quot;+&quot;CBU_APN&quot;+ &quot;&apos;&quot;;
+				
+				//ALINO VFTRCBU-34637 START
+				if(strGPAApnAddress != null) {
+					oBCVFAPNProduct.SetSearchSpec(&quot;APN Address&quot;,strGPAApnAddress);
+					}
+				if(strGPAApnCorpFlag != null){
+					oBCVFAPNProduct.SetSearchSpec(&quot;APN Corporate Flg&quot;, strGPAApnCorpFlag);
+					}		
+				if(strGPAApnRateList != null) {
+					oBCVFAPNProduct.SetSearchSpec(&quot;APN Rate List&quot;,strGPAApnRateList);
+					}
+				if(strGPAApnType != null){
+					oBCVFAPNProduct.SetSearchSpec(&quot;APN Type&quot;,strGPAApnType);
+					}
+				//ALINO VFTRCBU-34637 END
+				else{
+					searchst = &quot;[Party Id] = &apos;&quot;+ strAccountId + &quot;&apos; AND [APN Type] = &apos;&quot;+&quot;CBU_APN&quot;+ &quot;&apos;&quot;;
+					}
+			}
+			else
+				searchst = expr2+expr3+expr4;
+			oBCVFAPNProduct.SetSearchExpr(searchst);
+			oBCVFAPNProduct.ExecuteQuery(ForwardBackward);
+			record2 = oBCVFAPNProduct.FirstRecord();
+		
+			while (record2 != &quot;0&quot;)
+			{		
+				psEmpty2=TheApplication().NewPropertySet();
+				strAPNAddress=oBCVFAPNProduct.GetFieldValue(&quot;APN Address&quot;);
+				strAPNFlg=oBCVFAPNProduct.GetFieldValue(&quot;APN Flg&quot;);
+				strAPNType=oBCVFAPNProduct.GetFieldValue(&quot;APN Type&quot;);
+				strAssetNumber=oBCVFAPNProduct.GetFieldValue(&quot;Asset Id&quot;);
+				strCorporateFlg=oBCVFAPNProduct.GetFieldValue(&quot;APN Corporate Flg&quot;);
+				strKSKFlg=oBCVFAPNProduct.GetFieldValue(&quot;KSK Flg&quot;);
+				strPartyId=oBCVFAPNProduct.GetFieldValue(&quot;Party Id&quot;);
+				strAPNRateList=oBCVFAPNProduct.GetFieldValue(&quot;APN Rate List&quot;);
+			
+			
+				psEmpty2.SetProperty(&quot;APN Address&quot;,strAPNAddress);
+				psEmpty2.SetProperty(&quot;APN Flg&quot;,strAPNFlg);
+				psEmpty2.SetProperty(&quot;APN Type&quot;,strAPNType);
+				psEmpty2.SetProperty(&quot;Asset Id&quot;,strAssetNumber);
+				psEmpty2.SetProperty(&quot;APN Corporate Flg&quot;,strCorporateFlg);
+				psEmpty2.SetProperty(&quot;KSK Flg&quot;,strKSKFlg);
+				psEmpty2.SetProperty(&quot;Party Id&quot;,strPartyId);
+				psEmpty2.SetProperty(&quot;APN Rate List&quot;,strAPNRateList);			
+				psEmpty2.SetProperty(&quot;Party Id&quot;,&quot;&quot;);
+			
+				Outputs.AddChild(psEmpty2);
+				record2 = oBCVFAPNProduct.NextRecord();
+			}
+		}
+		else
+		{	
+			oBCVFAPNProduct.SetViewMode(AllView); 	   	
+			oBCVFAPNProduct.ClearToQuery();
+			oBCVFAPNProduct.ActivateField(&quot;APN Address&quot;);
+			oBCVFAPNProduct.ActivateField(&quot;APN Flg&quot;);
+			oBCVFAPNProduct.ActivateField(&quot;APN Type&quot;);
+			oBCVFAPNProduct.ActivateField(&quot;Asset Id&quot;);
+			oBCVFAPNProduct.ActivateField(&quot;APN Corporate Flg&quot;);
+			oBCVFAPNProduct.ActivateField(&quot;KSK Flg&quot;);
+			oBCVFAPNProduct.ActivateField(&quot;Party Id&quot;);
+			oBCVFAPNProduct.ActivateField(&quot;APN Rate List&quot;);
+			
+			expr2 = &quot;[Party Id] = &apos;&quot;+ strAccountId + &quot;&apos;&quot;;		
+			expr3 = &quot; AND( [APN Type] = &apos;&quot;+&quot;Corporate APN&quot;+ &quot;&apos;&quot; 
+			expr4 = &quot;OR [APN Type]= &apos;&quot;+&quot;M2M APN&quot;+ &quot;&apos;)&quot; ;
+			
+			if(strRootPartNum == &quot;70000&quot;)//JMARQUES
+			{ 
+				//searchst = &quot;[Party Id] = &apos;&quot;+ strAccountId + &quot;&apos; AND [APN Type] = &apos;&quot;+&quot;CBU_APN&quot;+ &quot;&apos;&quot;;
+				
+				//ALINO VFTRCBU-34637 START
+				if(strGPAApnAddress != null) {
+					oBCVFAPNProduct.SetSearchSpec(&quot;APN Address&quot;,strGPAApnAddress);
+					}
+				if(strGPAApnCorpFlag != null){
+					oBCVFAPNProduct.SetSearchSpec(&quot;APN Corporate Flg&quot;, strGPAApnCorpFlag);
+					}		
+				if(strGPAApnRateList != null) {
+					oBCVFAPNProduct.SetSearchSpec(&quot;APN Rate List&quot;,strGPAApnRateList);
+					}
+				if(strGPAApnType != null){
+					oBCVFAPNProduct.SetSearchSpec(&quot;APN Type&quot;,strGPAApnType);
+					}
+				//ALINO VFTRCBU-34637 END
+				else{	
+					oBCVFAPNProduct.SetSearchSpec(&quot;[Party Id] = &apos;&quot;+ strAccountId + &quot;&apos; AND [APN Type] = &apos;&quot;+&quot;CBU_APN&quot;+ &quot;&apos;&quot;);
+					}
+			}
+			else
+				searchst = expr2+expr3+expr4;
+			oBCVFAPNProduct.SetSearchExpr(searchst);
+			oBCVFAPNProduct.ExecuteQuery(ForwardBackward);
+			record2 = oBCVFAPNProduct.FirstRecord();
+		
+			while (record2 != &quot;0&quot;)
+			{		
+				psEmpty2=TheApplication().NewPropertySet();
+				strAPNAddress=oBCVFAPNProduct.GetFieldValue(&quot;APN Address&quot;);
+				strAPNFlg=oBCVFAPNProduct.GetFieldValue(&quot;APN Flg&quot;);
+				strAPNType=oBCVFAPNProduct.GetFieldValue(&quot;APN Type&quot;);
+				strAssetNumber=oBCVFAPNProduct.GetFieldValue(&quot;Asset Id&quot;);
+				strCorporateFlg=oBCVFAPNProduct.GetFieldValue(&quot;APN Corporate Flg&quot;);
+				strKSKFlg=oBCVFAPNProduct.GetFieldValue(&quot;KSK Flg&quot;);
+				strPartyId=oBCVFAPNProduct.GetFieldValue(&quot;Party Id&quot;);
+				strAPNRateList=oBCVFAPNProduct.GetFieldValue(&quot;APN Rate List&quot;);
+			
+			
+				psEmpty2.SetProperty(&quot;APN Address&quot;,strAPNAddress);
+				psEmpty2.SetProperty(&quot;APN Flg&quot;,strAPNFlg);
+				psEmpty2.SetProperty(&quot;APN Type&quot;,strAPNType);
+				psEmpty2.SetProperty(&quot;Asset Id&quot;,strAssetNumber);
+				psEmpty2.SetProperty(&quot;APN Corporate Flg&quot;,strCorporateFlg);
+				psEmpty2.SetProperty(&quot;KSK Flg&quot;,strKSKFlg);
+				psEmpty2.SetProperty(&quot;Party Id&quot;,strPartyId);
+				psEmpty2.SetProperty(&quot;APN Rate List&quot;,strAPNRateList);			
+				psEmpty2.SetProperty(&quot;Party Id&quot;,&quot;&quot;);
+			
+				Outputs.AddChild(psEmpty2);
+				record2 = oBCVFAPNProduct.NextRecord();
+			}
+		}
+	
+	}
+	catch (e)
+	{
+		return(CancelOperation);
+	}
+	finally
+	{
+		oBCApnAddress = null;
+		oBOAPNAddress = null;
+		oBOVFAccountSimpleBO = null;
+		oBCVFAPNProduct = null;
+		psEmpty=null;
+		psEmpty2=null;
+		strGPAApnAddress = null; //ALINO VFTRCBU-34637
+		strGPAApnCorpFlag = null; //ALINO VFTRCBU-34637
+		strGPAApnType = null; //ALINO VFTRCBU-34637
+		strGPAApnRateList = null; //ALINO VFTRCBU-34637
+	
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="11/09/2016 11:42:47"
+			   UPDATED_BY="ALINO"
+			   CREATED="03/31/2015 21:42:36"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{	
+	if (MethodName == &quot;Init&quot;)
+	{
+		Init (Inputs, Outputs);
+		return(CancelOperation);
+	}
+	else if (MethodName == &quot;Query&quot;)
+	{
+		Query (Inputs, Outputs);
+		return(CancelOperation);
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="3"
+			   UPDATED="03/31/2015 21:42:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/31/2015 21:42:36"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

@@ -1,0 +1,514 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="Service Enterprise Definition"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="Service"
+	   UI_FREEZE="N"
+	   UPDATED="11/03/2016 11:40:29"
+	   UPDATED_BY="MSOUSA"
+	   CREATED="01/01/1980 00:00:00"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   DISPLAY_NAME_-_STRING_REFERENCE="SBL_SCHEDULE-1004232623-66W"
+		   EXTERNAL_USE="Y"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VF MNP Port In Schedule"
+		   OBJECT_LOCKED="N"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   UPDATED="11/03/2016 11:40:26"
+		   UPDATED_BY="MSOUSA"
+		   CREATED="02/16/2010 09:26:40"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="ScheduleMNPIn"
+			   UPDATED="02/16/2010 09:26:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/16/2010 09:26:40"
+			   CREATED_BY="SADMIN">
+				<BUSINESS_SERVICE_METHOD_LOCALE
+				   APPLICATION_CODE="STD"
+				   DISPLAY_NAME="ScheduleMNPIn"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="02/16/2010 09:26:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/16/2010 09:26:40"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_LOCALE>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="InvocheReleaseShortNumber"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function InvocheReleaseShortNumber(strOrderItemId, strRootAssetItegId)
+{
+
+  // JIRA-14364: Although this function is not to be invoked anymore, the below RaiseErrorText is an alert if this code is invoked unexpectedly
+  TheApplication().RaiseErrorText(&quot;Please check. Assuming deprecated code in BS:VF MNP Port In Schedule::InvocheReleaseShortNumber.&quot;);
+
+  /*** JIRA-14364: Begin: Deprecated code. Not called anymore in function ScheduleMNPIn  *** 
+	try
+	{
+		var oBoOrd 	: BusObject		= TheApplication().GetBusObject(&quot;X Order Entry HP&quot;);
+		var oBcOLIXA 	: BusComp		= oBoOrd.GetBusComp(&quot;HP Submit - Order Item XA&quot;);
+		var sShortNumber = &quot;&quot;;
+		var sGroupNumber = &quot;&quot;;
+		var strAttrname = &quot;&quot;;
+		
+		if(strOrderItemId != null &amp;&amp; strOrderItemId != &quot;&quot;)
+		{
+			with(oBcOLIXA)
+			{
+				var sExpr = &quot;[Object Id] = &apos;&quot; + strOrderItemId + &quot;&apos;&quot;;
+				ClearToQuery ();
+				ActivateField (&quot;Value&quot;);
+				ActivateField (&quot;Name&quot;);
+				SetViewMode(AllView);
+				SetSearchExpr(sExpr);
+				ExecuteQuery(ForwardOnly);
+				var IsRec = FirstRecord();
+				while(IsRec)
+				{
+					strAttrname = GetFieldValue(&quot;Name&quot;);
+					switch (strAttrname)
+					{
+						case &quot;Group #&quot; :
+							sGroupNumber = GetFieldValue(&quot;Value&quot;);
+							TheApplication().SetProfileAttr(&quot;VPNGroupId&quot;, sGroupNumber);
+						break;
+						
+						case &quot;Short Number&quot; :
+							sShortNumber = GetFieldValue(&quot;Value&quot;);
+							TheApplication().SetProfileAttr(&quot;SHORT_NUMBER_PICK&quot;, sShortNumber);
+						break;
+					}	
+						IsRec = NextRecord();
+				}
+					
+			}
+		}
+		if (sShortNumber != &quot;&quot;)
+		{
+			var psInputs  :PropertySet = TheApplication ().NewPropertySet ();
+			var psOutputs :PropertySet = TheApplication ().NewPropertySet ();
+			var oServiceShortNum : Service = TheApplication().GetService(&quot;VF ManageVPNShortNumber BS&quot;);
+			psInputs.SetProperty(&quot;ActionType&quot;, &quot;Unlock&quot;);
+			psInputs.SetProperty(&quot;ShortNumber&quot;,  sShortNumber);
+			psInputs.SetProperty(&quot;VPNGroupId&quot;,sGroupNumber);
+			psInputs.SetProperty(&quot;RootAssetIntegId&quot;,strRootAssetItegId);
+			psInputs.SetProperty(&quot;ReservationEntity&quot;, &quot;ORDER&quot;);
+			oServiceShortNum.InvokeMethod(&quot;ManageVPNShortNumber&quot;, psInputs, psOutputs);
+		}
+	
+	}
+	finally
+	{
+		oBcOLIXA=null
+		oBoOrd =null;
+
+	}
+  *** JIRA-14364: Begin: Deprecated code. Not called anymore in function ScheduleMNPIn  ***/ 
+}"
+			   SEQUENCE="1"
+			   UPDATED="08/13/2015 18:23:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/06/2013 14:29:25"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="InvokeReleaseMsisdn"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="// CR034 - MNP Reject SimCard
+function InvokeReleaseMsisdn(sOrderId,sBulk,sSubType)
+{
+  // JIRA-14364: Although this function is not to be invoked anymore, the below RaiseErrorText is an alert if this code is invoked unexpectedly
+  TheApplication().RaiseErrorText(&quot;Please check. Assuming deprecated code in BS:VF MNP Port In Schedule::InvokeReleaseMsisdn.&quot;);
+  /*** JIRA-14364: Begin: Deprecated code. Not called anymore in function ScheduleMNPIn  *** 
+
+	try
+	{
+		var oBoOrd 	: BusObject		= TheApplication().GetBusObject(&quot;X Order Entry HP&quot;);
+		var oBcOLI 	: BusComp		= oBoOrd.GetBusComp(&quot;HP Submit - Order Entry - Line Items&quot;);
+		var svc	   	: Service 		= TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		var psInput	: PropertySet 	= TheApplication().NewPropertySet();
+		var psOutput: PropertySet 	= TheApplication().NewPropertySet();
+		var sModifyIMSI 	= TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ORDER_SUB_TYPE&quot;,&quot;103&quot;);
+		var sMNPPortIn      = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ORDER_SUB_TYPE&quot;,&quot;106&quot;);
+		var sMNPPortInCanc  = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ORDER_SUB_TYPE&quot;,&quot;112&quot;); 
+		var sExpr 					= &quot;&quot;;
+		var sOliId					= &quot;&quot;;	
+		var integId					= &quot;&quot;;
+		if(sOrderId != null &amp;&amp; sOrderId != &quot;&quot;)
+		{
+			with(oBcOLI)
+			{
+				sExpr = &quot;[Order Header Id] = &apos;&quot; + sOrderId + &quot;&apos; AND [Id] = [Root Order Item Id]&quot;;
+				ClearToQuery ();
+				ActivateField (&quot;MSISDN&quot;);
+				ActivateField(&quot;Asset Integration Id&quot;);
+				SetViewMode(AllView);
+				SetSearchExpr(sExpr);
+				ExecuteQuery(ForwardOnly);
+				var IsRec = FirstRecord();
+			   	while(IsRec)
+			   	{   integId = oBcOLI.GetFieldValue(&quot;Asset Integration Id&quot;);
+		   			if (sBulk == &quot;Y&quot;)
+						psInput.SetProperty(&quot;pi_msisdn&quot;,GetFieldValue(&quot;MSISDN&quot;));
+			   		sOliId = GetFieldValue(&quot;Id&quot;);
+			   		psInput.SetProperty(&quot;Order Id&quot;,sOrderId);
+			   		psInput.SetProperty(&quot;Object Id&quot;,sOliId);
+			   		psInput.SetProperty(&quot;Integration Id&quot;,integId);
+			   		psInput.SetProperty(&quot;ProcessName&quot;, &quot;VF Check Attribute Values WF&quot;);
+			   		psInput.SetProperty(&quot;Bulk&quot;,sBulk);//PROD00031094
+			   		
+		   			switch (sSubType)
+							{
+								case sModifyIMSI:
+						   		
+						   				psInput.SetProperty(&quot;AttrName&quot;,&quot;ICCI&quot;);   		
+						   				svc.InvokeMethod(&quot;RunProcess&quot;,psInput,psOutput);
+						   		break;
+						   		
+						   		case sMNPPortIn:
+						   		case sMNPPortInCanc:
+						   				psInput.SetProperty(&quot;AttrName&quot;,&quot;MSISDN&quot;);
+								   		svc.InvokeMethod(&quot;RunProcess&quot;,psInput,psOutput);
+								   		psInput.SetProperty(&quot;AttrName&quot;,&quot;ICCI&quot;);   		
+						   				svc.InvokeMethod(&quot;RunProcess&quot;,psInput,psOutput);
+						   		break;		
+						   		
+						   		default:
+								   		psInput.SetProperty(&quot;AttrName&quot;,&quot;MSISDN&quot;);
+								   		svc.InvokeMethod(&quot;RunProcess&quot;,psInput,psOutput);
+							   	break;
+							}
+			   		
+			   		
+					IsRec = NextRecord();
+			   	}
+			}
+		}
+	}
+
+	finally
+	{
+		svc		= null;
+		psInput = null;
+		psOutput= null;
+		oBcOLI 	= null;
+		oBoOrd 	= null;
+	}
+  *** JIRA-14364: Begin: Deprecated code. Not called anymore in function ScheduleMNPIn  ***/ 
+	
+}"
+			   SEQUENCE="2"
+			   UPDATED="08/13/2015 18:23:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/30/2013 12:14:08"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="ScheduleMNPIn"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function ScheduleMNPIn (Inputs, Outputs)
+{
+	/*********************************************************************************
+	* VF 02-Nov-09 : Created                                                    
+	* Author        : Nagarajan                                               
+	* Description   : This Method is used to validate
+		Response for which the due date is reached (due-date = today) and:
+		- close the SR;
+		- insert a note notifying that the SR was closed in automatic;
+		- automatically sends a second validation with an “OK” result.
+	**********************************************************************************/
+	try
+	{	
+		var ServiceRequestBO  :BusObject= TheApplication().GetBusObject(&quot;Service Request&quot;);
+		var ServiceRequestBC  :BusComp  = ServiceRequestBO.GetBusComp (&quot;Service Request&quot;);	
+		var strSRStatus 	  = TheApplication().InvokeMethod (&quot;LookupValue&quot;, &quot;SR_STATUS&quot;, &quot;Open&quot;);
+		var strSRInPStatus	  = TheApplication().InvokeMethod (&quot;LookupValue&quot;, &quot;SR_STATUS&quot;, &quot;In Progress&quot;);
+		var strSRClosedStatus = TheApplication().InvokeMethod (&quot;LookupValue&quot;, &quot;SR_STATUS&quot;, &quot;Closed&quot;);
+		var strSRCategory 	  = TheApplication().InvokeMethod (&quot;LookupValue&quot;, &quot;VF_SR_CATEGORY&quot;, &quot;MNP IN&quot;);
+		//Added for the release 1.3
+		var strConclusion 	  = TheApplication().InvokeMethod (&quot;LookupValue&quot;, &quot;CONTACT_CONCLUSION&quot;, &quot;Request Closed&quot;);
+		var strSubconclusion  = TheApplication().InvokeMethod (&quot;LookupValue&quot;, &quot;CONTACT_SUB_CONCLUSION&quot;, &quot;Auto Closed&quot;);
+		var boOrder 		  :BusObject= TheApplication().GetBusObject(&quot;HP Order Entry&quot;);
+		var bcOrder 		  :BusComp  = boOrder.GetBusComp(&quot;HP Order Entry - Orders&quot;);
+		var bcOrderItem 	  :BusComp  = boOrder.GetBusComp(&quot;HP Order Entry - Line Items&quot;);
+		var sOrdSubType		  = TheApplication().InvokeMethod (&quot;LookupValue&quot;, &quot;ORDER_SUB_TYPE&quot;, &quot;106&quot;);
+		var booOrderExists;
+		var booLineItemExists;
+		var strOrderStatus;
+		var NewDate;
+		
+		var inProp  :PropertySet	= TheApplication().NewPropertySet();
+		var outProp :PropertySet	= TheApplication().NewPropertySet();
+		var BS 	:Service		= TheApplication().GetService(&quot;VF TRK Utilities&quot;);
+
+		var psInCancelOrder:PropertySet	= TheApplication().NewPropertySet();
+		var psOutCancelOrder:PropertySet = TheApplication().NewPropertySet();
+		var bsCancelOrder:Service = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+
+        /* JIRA-15821 Begin */
+		var sMSISDN;
+		var isRecord;
+		var SMSInputPs :PropertySet = TheApplication().NewPropertySet();
+		var SMSOutputPs :PropertySet = TheApplication().NewPropertySet();;
+		var bssvcWFProcMgr :Service = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+        /* JIRA-15821 End */
+
+		ServiceRequestBC.SetViewMode (AllView);
+		ServiceRequestBC.ActivateField(&quot;VF SR Category&quot;);
+		ServiceRequestBC.ActivateField(&quot;VF Acquisition Date MNP In&quot;);
+		ServiceRequestBC.ActivateField(&quot;Status&quot;);
+		ServiceRequestBC.ActivateField(&quot;Sub-Status&quot;);
+		ServiceRequestBC.ActivateField(&quot;SR Number&quot;);
+		ServiceRequestBC.ActivateField(&quot;SR MSISDN&quot;);
+		ServiceRequestBC.ActivateField(&quot;Asset Id&quot;);
+		ServiceRequestBC.ActivateField(&quot;Description&quot;);
+		ServiceRequestBC.ActivateField(&quot;SR Cut Over Date&quot;);		
+		ServiceRequestBC.ActivateField(&quot;Order Id&quot;);
+		//Added for the release 1.3
+		ServiceRequestBC.ActivateField(&quot;Conclusion&quot;);
+		ServiceRequestBC.ActivateField(&quot;Sub-Conclusion&quot;);
+		ServiceRequestBC.ClearToQuery ();			
+		var strSrcExpr = &quot;[VF SR Category] = &apos;&quot;+strSRCategory+&quot;&apos; AND ([Status] = &apos;&quot;+strSRStatus+&quot;&apos; OR [Status] = &apos;&quot;+strSRInPStatus+&quot;&apos;) AND [VF Acquisition Date MNP In] IS NOT NULL&quot;;
+		ServiceRequestBC.SetSearchExpr (strSrcExpr);
+		ServiceRequestBC.SetSortSpec(&quot;VF Acquisition Date MNP In (ASCENDING)&quot;);				
+		ServiceRequestBC.ExecuteQuery (ForwardOnly);//Review Parent-Child Query:No changes BC based on different BO 16may2012 Udbhav IDC VFTK
+		var SRExists = ServiceRequestBC.FirstRecord ();
+		
+		var currentDate  	= new Date;	
+		var actualDate 		= new Date(currentDate.getFullYear(),currentDate.getMonth(),currentDate.getDate());
+		var actualDateSec 	= actualDate.getTime()/1000;
+
+//		var daysToCheck		= TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;VF_ACQUISITION_DAYS_CHECK&quot;, &quot;2&quot;);//JIRA-32759:Deprecated
+		var daysToCheck		= TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;VF_BTK_ACQUISITION_DAYS_CHECK&quot;,&quot;NumberOfDays&quot;);//JIRA-32759:Using new LOV entry (1day instead of 2days). 	
+
+	
+		while (SRExists)
+		{
+			var AcquisitionDateTime 	= new Date(ServiceRequestBC.GetFieldValue(&quot;VF Acquisition Date MNP In&quot;));
+			var AcquisitionDate 		= new Date(AcquisitionDateTime.getFullYear(),AcquisitionDateTime.getMonth(),AcquisitionDateTime.getDate());
+			var AcquisitionDateSec 		= AcquisitionDate.getTime()/1000;
+			var elapsed 				= Clib.difftime(actualDateSec,AcquisitionDateSec);
+			var	SRRowId  				= ServiceRequestBC.GetFieldValue(&quot;Id&quot;);
+			var SRStatus         		= ServiceRequestBC.GetFieldValue(&quot;Status&quot;);
+			var strSubStatusAcc 		= TheApplication().InvokeMethod (&quot;LookupValue&quot;, &quot;SR_SUB_STATUS&quot;, &quot;Accepted&quot;);
+			var strOrderId = ServiceRequestBC.GetFieldValue(&quot;Order Id&quot;);
+			var strOrderItemId = &quot;&quot;;
+			var strRootAssetItegId = &quot;&quot;;
+			
+			elapsed = elapsed/(3600*24);
+
+			if (elapsed &gt; daysToCheck)
+			{
+				try
+				{
+					// Added for the release 1.3
+	      			ServiceRequestBC.SetFieldValue (&quot;Conclusion&quot;, strConclusion);
+					ServiceRequestBC.SetFieldValue (&quot;Sub-Conclusion&quot;, strSubconclusion);
+					ServiceRequestBC.SetFieldValue (&quot;Status&quot;, strSRClosedStatus);
+					ServiceRequestBC.WriteRecord();
+
+					// Close waiting Order --&gt; cancelled
+					//Query for Order
+					bcOrder.ActivateField(&quot;Status&quot;);
+					bcOrder.ActivateField(&quot;Account Market Class&quot;);    //JIRA-15821
+					bcOrder.SetViewMode(AllView);
+					bcOrder.ClearToQuery();
+					
+					/**** JIRA-14364: Begin: Replacing expression. Status waiting is deprecated  ****/
+					//var express = &quot;[Id] = &apos;&quot; +strOrderId+ &quot;&apos; AND [Status] = &apos;&quot; +TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;FS_ORDER_STATUS&quot;,&quot;Waiting&quot;)+&quot;&apos;&quot;;
+					//var express = &quot;[Id] = &apos;&quot; +strOrderId+ &quot;&apos; AND [Status] = &apos;&quot; +TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;FS_ORDER_STATUS&quot;,&quot;Open&quot;)+&quot;&apos;&quot;;
+					/**** JIRA-14364: End:   Replacing expression. Status waiting is deprecated   ****/ 
+					/**** JIRA-22917/JIRA-30982:Begin ****/ 
+					//var express = &quot;[Id] = &apos;&quot; +strOrderId+ &quot;&apos; AND [Status] = &apos;&quot; +TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;FS_ORDER_STATUS&quot;,&quot;Open&quot;)+&quot;&apos;&quot;;    
+					var express = &quot;[Id] = &apos;&quot; +strOrderId+ &quot;&apos; AND ([Status] = &apos;&quot; +TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;FS_ORDER_STATUS&quot;,&quot;Open&quot;)+&quot;&apos; or [Status] =&apos;&quot;+TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;FS_ORDER_STATUS&quot;,&quot;Failed&quot;)+&quot;&apos;)&quot;;					
+					/**** JIRA-22917/JIRA-30982:End
+					/**** JIRA-22917/JIRA-30982:End*/
+					// Begin: Review Input validation: Scripting 15 null check Added 16may2012 Udbhav IDC
+					inProp.SetProperty(&quot;strOrderId&quot;,strOrderId);
+					BS.InvokeMethod(&quot;Input Validation&quot;,inProp, outProp);
+					//End 
+					bcOrder.SetSearchExpr(express);
+					bcOrder.ExecuteQuery(ForwardOnly);//Review Parent-Child Query:No changes as No link between BC’s, 16may2012 Udbhav IDC
+					booOrderExists = bcOrder.FirstRecord();
+					if (booOrderExists)
+					{ 
+                        /*** JIRA-14364: Begin: Replacing deprecated code to cancel order by new code using the WF: TELCO Cancel Order  ***/ 
+						//strOrderStatus = bcOrder.SetFieldValue (&quot;Status&quot;, TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;FS_ORDER_STATUS&quot;,&quot;Cancelled&quot;));
+						//bcOrder.WriteRecord();
+						//bcOrderItem.SetViewMode(AllView);
+						//bcOrderItem.ClearToQuery();
+						//bcOrderItem.ActivateField(&quot;Status&quot;);
+						//bcOrderItem.ActivateField(&quot;Part Number&quot;);//
+						//bcOrderItem.SetSearchSpec (&quot;Order Header Id&quot;, strOrderId);//null check done above
+						//bcOrderItem.ExecuteQuery(ForwardOnly);//Review Parent-Child Query:No changes as No link between BC’s, 16may2012 Udbhav IDC 
+						//booLineItemExists = bcOrderItem.FirstRecord();
+						//while (booLineItemExists)
+						//{	
+							////update line item status to cancelled
+							//strOrderStatus = bcOrderItem.SetFieldValue (&quot;Status&quot;, TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;FS_ORDER_STATUS&quot;,&quot;Cancelled&quot;));
+							
+							//if (bcOrderItem.GetFieldValue(&quot;Part Number&quot;)==&apos;1000&apos;)
+							//	strRootAssetItegId = bcOrderItem.GetFieldValue(&quot;Asset Integration Id&quot;);
+							
+							////Release VPN Short-Number
+							//if(bcOrderItem.GetFieldValue(&quot;Part Number&quot;)==&apos;3001&apos;)
+							//{
+							//	strOrderItemId = bcOrderItem.GetFieldValue(&quot;Id&quot;);
+							//	InvocheReleaseShortNumber(strOrderItemId, strRootAssetItegId);
+							//}
+							
+							//booLineItemExists = bcOrderItem.NextRecord();
+						//}
+						//InvokeReleaseMsisdn(strOrderId,&quot;N&quot;,sOrdSubType);
+						
+						
+						psInCancelOrder.SetProperty(&quot;ProcessName&quot;, &quot;TELCO Cancel Order&quot;);
+						psInCancelOrder.SetProperty(&quot;Object Id&quot;, strOrderId );
+						bsCancelOrder.InvokeMethod(&quot;RunProcess&quot;, psInCancelOrder, psOutCancelOrder);
+						/*** JIRA-14364: End: Deprecated code. The order should now be cancelled by invoking the WF: TELCO Cancel Order	***/
+						
+						/*** WA#18:JIRA-15821: Begin block send notification via AUTO-DIALER  ***/ 						
+                        var sAccMarketClass = bcOrder.GetFieldValue(&quot;Account Market Class&quot;);
+                        if (sAccMarketClass == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACCOUNT_TYPE&quot;,&quot;102&quot;) )
+                        {
+						  with(bcOrderItem)
+						  {
+						    SetViewMode(AllView);
+						    ClearToQuery();
+						    ActivateField(&quot;MSISDN&quot;);
+						    SetSearchExpr(&quot;[Order Header Id]=&apos;&quot;+strOrderId+&quot;&apos; AND [Root Order Item Id]=[Id]&quot;);
+						    ExecuteQuery(ForwardOnly);
+						    isRecord = FirstRecord()
+						    while(isRecord)
+						    {
+                			  sMSISDN = GetFieldValue(&quot;MSISDN&quot;);						
+                			  if (sMSISDN != null &amp;&amp; sMSISDN != &quot;&quot;)                
+  							  {
+							    SMSInputPs.SetProperty(&quot;ProcessName&quot;,&quot;VFTRCBU Submit SMS WF&quot;);
+	        				    SMSInputPs.SetProperty(&quot;ChannelId&quot;, &quot;AUTODIALER_CANCELPORTIN&quot;);
+	        				    SMSInputPs.SetProperty(&quot;MobilePhone#&quot;, sMSISDN);
+	        				    SMSInputPs.SetProperty(&quot;MessageBody&quot;, &quot;null message&quot;);
+	        				    bssvcWFProcMgr.InvokeMethod(&quot;RunProcess&quot;,SMSInputPs,SMSOutputPs);
+                			  }
+                			  SMSInputPs.Reset();
+                			  SMSOutputPs.Reset();
+                			  isRecord = NextRecord();  				  						
+						    }//!while
+						  }//!with
+						}//!if 
+						/*** WA#18:JIRA-15821: End block Invoking AUTO-DIALER  ***/ 
+					}
+				}
+				catch (e)
+				{
+				}			
+			}
+			else if	(elapsed == daysToCheck)
+			{
+				try
+				{			
+					var NewAcqDate = new Date(AcquisitionDate.getFullYear(),AcquisitionDate.getMonth(),AcquisitionDate.getDate(),14,59,00,00);
+				   	var stringDate = (NewAcqDate.getMonth()+1)+&quot;/&quot;+(NewAcqDate.getDate())+&quot;/&quot;+NewAcqDate.getFullYear()+&quot; &quot;+(NewAcqDate.getHours())+&quot;:&quot;+(NewAcqDate.getMinutes())+&quot;:&quot;+(NewAcqDate.getSeconds());
+				   	ServiceRequestBC.SetFieldValue(&quot;VF Acquisition Date MNP In&quot;,stringDate);
+				   	ServiceRequestBC.WriteRecord();
+					//Query for Order
+					bcOrder.ClearToQuery();
+					bcOrder.SetViewMode(AllView);
+					bcOrder.ActivateField(&quot;Acquisition Date&quot;);
+					bcOrder.SetSearchSpec (&quot;Id&quot;, strOrderId);//null check done above
+					bcOrder.ExecuteQuery(ForwardOnly);
+					booOrderExists = bcOrder.FirstRecord();
+					if (booOrderExists)
+					{ 
+						bcOrder.SetFieldValue (&quot;Acquisition Date&quot;, stringDate);
+						bcOrder.WriteRecord();
+					}
+				}
+				catch (e)
+				{
+				}	
+			}
+			
+			SRExists = ServiceRequestBC.NextRecord();
+		}
+		return(CancelOperation);
+	}
+
+	finally
+	{
+		SMSInputPs = null;
+		SMSOutputPs = null;
+		bssvcWFProcMgr = null;
+		bcOrder = null;
+		bcOrderItem	= null;
+		ServiceRequestBC = null;	
+		inProp = null;
+		outProp = null;
+		BS = null;
+		ServiceRequestBO = null;
+		boOrder = null;
+		bsCancelOrder = null;
+        psInCancelOrder = null;		
+        psOutCancelOrder = null;		
+	}	
+}"
+			   SEQUENCE="3"
+			   UPDATED="11/03/2016 11:06:10"
+			   UPDATED_BY="MSOUSA"
+			   CREATED="02/16/2010 09:26:40"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	switch (MethodName)
+	{
+		case &quot;ScheduleMNPIn&quot;:
+			ScheduleMNPIn (Inputs, Outputs);
+			return (CancelOperation);
+		default:
+			break;
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="4"
+			   UPDATED="09/06/2013 14:29:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/16/2010 09:26:40"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

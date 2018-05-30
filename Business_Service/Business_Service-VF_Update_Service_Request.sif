@@ -1,0 +1,344 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VF SR Creation"
+	   UI_FREEZE="N"
+	   UPDATED="09/09/2016 10:43:27"
+	   UPDATED_BY="IMARTINS"
+	   CREATED="05/23/2011 19:47:20"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   COMMENTS="Created for WP10, R2.1 by A.Rocco"
+		   EXTERNAL_USE="N"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VF Update Service Request"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="09/08/2016 16:30:21"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   OBJECT_LOCKED_BY_NAME="IMARTINS"
+		   UPDATED="09/09/2016 10:43:26"
+		   UPDATED_BY="IMARTINS"
+		   CREATED="03/27/2012 09:02:26"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="VF Update Service Request"
+			   UPDATED="03/27/2012 09:02:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/27/2012 09:02:26"
+			   CREATED_BY="SADMIN">
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="Integration Object"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   INTEGRATION_OBJECT="VF SR Creation"
+				   NAME="Inputs"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Hierarchy"
+				   TYPE="Input"
+				   UPDATED="03/27/2012 09:02:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/27/2012 09:02:26"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="AddSRAttachment"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function AddSRAttachment(Inputs,Outputs)
+{
+
+/**********************************************************************
+	ESANTOS - 20140828 - TC5507
+	New function to split Attachment URL&apos;s comming from Online
+	
+***********************************************************************/
+	try
+	{
+		var strAttachments = Inputs.GetProperty(&quot;Attachments&quot;);
+		var strPrevDelimiterPos = Inputs.GetProperty(&quot;PrevDelimiterPos&quot;);
+		var strDelimiter = Inputs.GetProperty(&quot;Delimiter&quot;);
+		var pattern = /(ATTACHMENT_URL: )/g;
+		var strLastIndexOf;
+		var strIndexOf;
+		var strAttachment;
+		var strHasMore;
+	
+		strAttachments = strAttachments.substring(16, strAttachments.length); //to remove first Pattern
+		strAttachments = strAttachments.replace(pattern, strDelimiter);	
+		strIndexOf = strAttachments.indexOf(strDelimiter, ToNumber(strPrevDelimiterPos)+1);
+		strLastIndexOf = strAttachments.lastIndexOf(strDelimiter);
+		
+		if(strPrevDelimiterPos == strLastIndexOf || strLastIndexOf == &quot;-1&quot; || strIndexOf == &quot;-1&quot; || strPrevDelimiterPos == &quot;-1&quot;)
+		{
+			if (strPrevDelimiterPos != 0)
+				strPrevDelimiterPos = ToNumber(strPrevDelimiterPos)+1;
+			
+			strAttachment = strAttachments.substring(strPrevDelimiterPos, strAttachments.length);
+			strHasMore = &quot;N&quot;;
+		}
+		else
+		{
+			if (strPrevDelimiterPos != 0)
+				strPrevDelimiterPos = ToNumber(strPrevDelimiterPos)+1;
+			
+			strAttachment = strAttachments.substring(strPrevDelimiterPos, ToNumber(strIndexOf)-1);
+			strHasMore = &quot;Y&quot;;
+		}
+	
+	Outputs.SetProperty(&quot;AttachmentURL&quot;, strAttachment);
+	Outputs.SetProperty(&quot;HasMore&quot;, strHasMore);
+	Outputs.SetProperty(&quot;PrevDelimiterPos&quot;, strIndexOf);
+	
+	}
+
+		
+	catch(e)
+	{
+		throw(e);
+		return (CancelOperation);
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="03/31/2015 21:42:53"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/31/2015 21:42:53"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{	
+	switch (MethodName)
+	{ 
+		case &quot;VF Update Service Request&quot;:
+			UpdateSR(Inputs,Outputs);
+			return (CancelOperation);
+		case &quot;VF Add SR Attachment&quot;:
+			AddSRAttachment(Inputs,Outputs);
+			return (CancelOperation);
+		default:
+			return (ContinueOperation);
+	}
+}"
+			   SEQUENCE="3"
+			   UPDATED="03/31/2015 21:42:53"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/27/2012 09:02:26"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="UpdateSR"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function UpdateSR(Inputs, Outputs) {
+	try {
+		var SRInput = Inputs.GetChild(0).GetChild(0).GetChild(0);
+		var strArea = SRInput.GetProperty(&quot;ACS Area&quot;); //SI
+		var strBillingAccountCode = SRInput.GetProperty(&quot;Billing Account Id&quot;); //SI
+		var strChannel = SRInput.GetProperty(&quot;Channel&quot;); // Si
+		var strContactNumber = SRInput.GetProperty(&quot;VF Applicant Phone&quot;); //SI
+		var strCustomerCode = SRInput.GetProperty(&quot;CSN&quot;); //SI
+		var strDescription = SRInput.GetProperty(&quot;Description&quot;); // SI
+		var strInvoiceDate = SRInput.GetProperty(&quot;Invoice Date&quot;); //SI
+		var strInvoiceNumber = SRInput.GetProperty(&quot;Invoice Number&quot;);
+		var strLoggedMSISDN = SRInput.GetProperty(&quot;VF Logged MSISDN&quot;); // SI
+		var strOrderId = SRInput.GetProperty(&quot;Order Id&quot;); //SI
+		var strOwnerBy = SRInput.GetProperty(&quot;Owner&quot;); //SI
+		var strOwnerGroup = SRInput.GetProperty(&quot;Owned By Group Id&quot;); //SI
+		var strPriority = SRInput.GetProperty(&quot;Priority&quot;); //SI
+		var strServiceRequestId = SRInput.GetProperty(&quot;SR Number&quot;); //
+		var strStatus = SRInput.GetProperty(&quot;Status&quot;); //SI
+		var strSubarea = SRInput.GetProperty(&quot;ACS Sub-Area&quot;); //SI
+		var strType = SRInput.GetProperty(&quot;SR Type No Picklist&quot;); //SI
+		//VFTRCBU WA#31 - Start
+		var strTripletNo = SRInput.GetProperty(&quot;VFTRCBU Triplet No&quot;);
+		var strReason = SRInput.GetProperty(&quot;Reason&quot;);
+		var strConclusion = SRInput.GetProperty(&quot;Conclusion&quot;);
+		var strSubConclusion = SRInput.GetProperty(&quot;Sub-Conclusion&quot;);
+		//VFTRCBU WA#31 - Start
+		var strSubStatus = SRInput.GetProperty(&quot;Sub-Status&quot;); //CR95 - HRODRIGUES
+
+		var ServiceRequestBO : BusObject;
+		var ServiceRequestBC : BusComp;
+
+		/*VFTRCBU WA#31 - BC changed to get all fields in update
+		ServiceRequestBO = TheApplication().GetBusObject(&quot;VF Service Request Creation&quot;);
+		ServiceRequestBC = ServiceRequestBO.GetBusComp(&quot;VF Service Request Light&quot;);*/
+		ServiceRequestBO = TheApplication().GetBusObject(&quot;Service Request&quot;);
+		ServiceRequestBC = ServiceRequestBO.GetBusComp(&quot;Service Request (Simple)&quot;);
+		var inProp : PropertySet = TheApplication().NewPropertySet();
+		var outProp : PropertySet = TheApplication().NewPropertySet();
+		var BS : Service = TheApplication().GetService(&quot;VF TRK Utilities&quot;);
+
+		with (ServiceRequestBC) {
+			SetViewMode(AllView);
+			//ActivateField(&quot;SR Number&quot;);
+			//ActivateField(&quot;VF Channel&quot;);
+			//ActivateField(&quot;VF Logged MSISDN&quot;);
+			ActivateField(&quot;Description&quot;); // VFTK Junaid 20120420 - Added for defect C_MSP00001195
+			// VFTK Junaid 20120502 - Added for defect C_MSP00001265
+			//ActivateField(&quot;CSN&quot;);
+			//ActivateField(&quot;Main Phone Number&quot;);
+			ActivateField(&quot;Order Id&quot;);
+			//ActivateField(&quot;Owner Group&quot;);
+			ActivateField(&quot;Priority&quot;);
+			//ActivateField(&quot;Sub-Area&quot;);
+			//ActivateField(&quot;Area&quot;);
+			//ActivateField(&quot;SR Type&quot;);
+			ActivateField(&quot;Status&quot;);
+			//ActivateField(&quot;Billing Account Name&quot;);
+			ActivateField(&quot;Owned By Group Id&quot;);
+			//VFTRCBU WA#31 - Start
+			ActivateField(&quot;SR Type No Picklist&quot;);
+			ActivateField(&quot;ACS Area&quot;);
+			ActivateField(&quot;ACS Sub-Area&quot;);
+			ActivateField(&quot;VF Applicant Phone&quot;);
+			ActivateField(&quot;VF Invoice Date&quot;);
+			ActivateField(&quot;VF Invoice Number&quot;);
+			ActivateField(&quot;Owner&quot;);
+			ActivateField(&quot;VFTRCBU Triplet No&quot;);
+			ActivateField(&quot;Reason&quot;);
+			ActivateField(&quot;Conclusion&quot;);
+			//ActivateField(&quot;Sub-Conclusion&quot;); IMARTINS VFTRCBU-33246 09092016 Inactivated
+			ActivateField(&quot;Sub-Conclusion Hierarchical&quot;); // IMARTINS VFTRCBU-33246 09092016 new field to constraint by conclusion (picklist hierarchical)
+			//VFTRCBU WA#31 - End
+			//End
+			ClearToQuery();
+			// Begin: Review Input validation: Scripting 15 null check Added 17may2012 Udbhav IDC
+			inProp.SetProperty(&quot;strServiceRequestId&quot;, strServiceRequestId);
+			BS.InvokeMethod(&quot;Input Validation&quot;, inProp, outProp);
+			//End
+			SetSearchExpr(&quot;[SR Number] = &apos;&quot; + strServiceRequestId + &quot;&apos;&quot;);
+			ExecuteQuery(ForwardOnly);
+			if (FirstRecord()) // VFTK Junaid 20120420 - Added for defect C_MSP00001195
+			{
+				/*	if (strChannel != &quot;&quot;)
+				SetFieldValue(&quot;VF Channel&quot;, strChannel);
+				if (strLoggedMSISDN != &quot;&quot;)
+				SetFieldValue(&quot;VF Logged MSISDN&quot;, strLoggedMSISDN);*/
+				//VFTRCBU WA#31 - Start
+				if (strTripletNo != &quot;&quot;)
+					SetFieldValue(&quot;VFTRCBU Triplet No&quot;, strTripletNo);
+				else {
+					if (strSubarea != &quot;&quot;)
+						SetFieldValue(&quot;Sub-Area&quot;, strSubarea);
+					if (strArea != &quot;&quot;)
+						SetFieldValue(&quot;Area&quot;, strArea);
+					if (strType != &quot;&quot;)
+						SetFieldValue(&quot;SR Type&quot;, strType);
+				}
+				if (strReason != &quot;&quot;)
+					SetFieldValue(&quot;Reason&quot;, strReason);
+				if (strConclusion != &quot;&quot;)
+					SetFieldValue(&quot;Conclusion&quot;, strConclusion);
+				if (strSubConclusion != &quot;&quot;)
+					SetFieldValue(&quot;Sub-Conclusion Hierarchical&quot;, strSubConclusion); // IMARTINS VFTRCBU-33246 09092016 change field from Sub-Conclusion to Sub-Conclusion Hierarchical 
+				if (strContactNumber != &quot;&quot;)
+					SetFieldValue(&quot;VF Applicant Phone&quot;, strContactNumber);
+				if (strInvoiceDate != &quot;&quot;)
+					SetFieldValue(&quot;VF Invoice Date&quot;, strInvoiceDate);
+				if (strInvoiceNumber != &quot;&quot;)
+					SetFieldValue(&quot;VF Invoice Number&quot;, strInvoiceNumber);
+				if (strOwnerBy != &quot;&quot;)
+					SetFieldValue(&quot;Owner&quot;, strOwnerBy);
+				//VFTRCBU WA#31 - End
+				if (strStatus != &quot;&quot;)
+					SetFieldValue(&quot;Status&quot;, strStatus);
+				/*if (strBillingAccountCode != &quot;&quot;)
+				SetFieldValue(&quot;Billing Account Name&quot;, strBillingAccountCode);*/
+				if (strOwnerGroup != &quot;&quot;)
+					SetFieldValue(&quot;Owned By Group Id&quot;, strOwnerGroup);
+				if (strPriority != &quot;&quot;)
+					SetFieldValue(&quot;Priority&quot;, strPriority);
+				if (strDescription != &quot;&quot;)
+					SetFieldValue(&quot;Description&quot;, strDescription);
+				if (strOrderId != &quot;&quot;)
+					SetFieldValue(&quot;Order Id&quot;, strOrderId);
+				//CR95 - HRODRIGUES
+				if (strSubStatus != &quot;&quot;)
+					SetFieldValue(&quot;Sub-Status&quot;, strSubStatus);
+				/*if (strCustomerCode != &quot;&quot;)
+				SetFieldValue(&quot;CSN&quot;, strCustomerCode);*/
+				/*if (strContactNumber != &quot;&quot;)
+				SetFieldValue(&quot;Main Phone Number&quot;, strContactNumber);*/
+				//VFTRCBU WA#31 - Start - Insert the External Questions/Answers
+				var strSRId = GetFieldValue(&quot;Id&quot;);
+				var bcExternalQuestion : BusComp = ServiceRequestBO.GetBusComp(&quot;VFTRCBU SR External Info Questions&quot;);
+				try {//VFTRCBU-32928 - HRODRIGUES - Avoid error when has no ListOfQuestions
+					var iChild = SRInput.GetChild(1).GetChildCount();
+					var strQuestion;
+					var strAnswer;
+
+					for (var i = 0; i &lt; iChild; i++) {
+						strQuestion = SRInput.GetChild(1).GetChild(i).GetProperty(&quot;VFTRCBU Question&quot;);
+						strAnswer = SRInput.GetChild(1).GetChild(i).GetProperty(&quot;VFTRCBU Answer&quot;);
+
+						if (strQuestion != &quot;&quot;) {
+							with (bcExternalQuestion) {
+								ClearToQuery();
+								SetViewMode(AllView);
+								ExecuteQuery(ForwardOnly);
+
+								NewRecord(NewAfter);
+								SetFieldValue(&quot;VFTRCBU SR Id&quot;, strSRId);
+								SetFieldValue(&quot;VFTRCBU Question&quot;, strQuestion);
+								SetFieldValue(&quot;VFTRCBU Answer&quot;, strAnswer);
+								WriteRecord();
+							}
+						}
+					}
+				}
+				catch (e){}
+				//VFTRCBU WA#31 - End
+				WriteRecord(); // VFTK Junaid 20120420 - Added for defect C_MSP00001195
+			}
+		}
+	} catch (e) {
+		throw (e);
+		return (CancelOperation);
+	}
+
+	finally {
+		SRInput = null;
+		ServiceRequestBC = null;
+		ServiceRequestBO = null;
+		inProp = null;
+		outProp = null;
+		BS = null;
+		bcExternalQuestion = null;
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="09/09/2016 10:43:26"
+			   UPDATED_BY="IMARTINS"
+			   CREATED="03/27/2012 09:02:26"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

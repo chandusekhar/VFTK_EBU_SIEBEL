@@ -1,0 +1,275 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VF Java BS"
+	   UI_FREEZE="N"
+	   UPDATED="11/15/2016 12:14:19"
+	   UPDATED_BY="MSOUSA"
+	   CREATED="12/02/2009 06:50:11"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   EXTERNAL_USE="N"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VF Captiva Encryption Service"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="11/15/2016 12:13:03"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   OBJECT_LOCKED_BY_NAME="MSOUSA"
+		   UPDATED="11/15/2016 12:13:33"
+		   UPDATED_BY="MSOUSA"
+		   CREATED="02/18/2010 11:06:24"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_METHOD
+			   COMMENTS="VF : 01-Feb-2010 : RG : Captiva"
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="CaptivaEncrypt"
+			   UPDATED="02/18/2010 11:06:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/18/2010 11:06:24"
+			   CREATED_BY="SADMIN">
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="ApplicationId"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Output"
+				   UPDATED="02/18/2010 11:06:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/18/2010 11:06:25"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="EncryptedData"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Output"
+				   UPDATED="02/18/2010 11:06:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/18/2010 11:06:25"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="InputData"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="02/18/2010 11:06:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/18/2010 11:06:25"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_LOCALE
+				   APPLICATION_CODE="STD"
+				   DISPLAY_NAME="CaptivaEncrypt"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="02/18/2010 11:06:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/18/2010 11:06:25"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_LOCALE>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BCGetParameters"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BCGetParameters (InputParameter , OutputParameter)
+{
+	try
+	{	
+	  	//Scripting 15: There is no input being passed which is used for querying
+	  	var strParameterSrcExpr = &quot;[Type] = &apos;VFTK_ICCB_CONNECTION&apos; AND [Name] = &apos;DNS&apos;&quot;;
+	  	var boHPOrderEntry : BusObject = TheApplication().GetBusObject (&quot;HP Order Entry&quot;);
+		var bcLOV : BusComp = boHPOrderEntry.GetBusComp (&quot;List Of Values&quot;);
+		var dns;
+		
+		bcLOV.ClearToQuery ();
+		bcLOV.SetViewMode(AllView);//Mamta-Updated as per Oracle Review
+		bcLOV.ActivateField (&quot;Name&quot;);
+		bcLOV.ActivateField (&quot;Value&quot;);
+		bcLOV.ActivateField (&quot;Description&quot;);
+		bcLOV.SetSearchExpr (strParameterSrcExpr);
+		bcLOV.ExecuteQuery(ForwardOnly); //Diva 27/03/2012: Added parameter for oracle review
+		
+		if (bcLOV.FirstRecord ())
+		{
+			dns = bcLOV.GetFieldValue (&quot;Description&quot;);
+		}
+		OutputParameter.SetProperty (&quot;DNS&quot;, dns);
+	}
+	finally
+	{
+		bcLOV = null;
+		boHPOrderEntry = null;
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="08/06/2012 16:51:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/28/2010 13:13:57"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CaptivaEncrypt"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CaptivaEncrypt (Inputs, Outputs)
+{
+	try
+	{
+		/*Load Captiva Path according to Shop Code Matrix (CX Parameter) */
+		var strCaptivaURL = &quot;&quot;;
+
+		/* +++ JIRA-34757:Begin:Using VF Shop Id or VFTR Shop Id instead of ShopID which came in use for a different purpose by DEF-14409 +++ */
+		//var controlName = TheApplication().GetProfileAttr(&quot;ShopID&quot;);  // no longer useful due to DEF-14409)
+		var controlName = &quot;&quot;;
+        if (TheApplication().GetProfileAttr(&quot;VF Shop Id&quot;) == &quot;&quot; || TheApplication().GetProfileAttr(&quot;VF Shop Id&quot;) == null) 
+          controlName = TheApplication().GetProfileAttr(&quot;VFTR Shop Id&quot;);
+        else 
+          controlName = TheApplication().GetProfileAttr(&quot;VF Shop Id&quot;);
+		/* --- JIRA-34757:End: --- */
+		
+		var psInputs  	: PropertySet	= 	TheApplication().NewPropertySet();
+		var psOutputs 	: PropertySet	= 	TheApplication().NewPropertySet();
+		var bsGeneralOperations : Service = TheApplication().GetService (&quot;ACS General Operations&quot;);
+		var svcJavaService : Service = TheApplication ().GetService (&quot;VF Captiva Java Business Service&quot;);
+		var boparameter : BusObject;
+		var bcparameter : BusComp;
+		boparameter = TheApplication().GetBusObject(&quot;ACS NI Parameter&quot;);	
+		bcparameter = boparameter.GetBusComp(&quot;ACS NI Parameter (Simple)&quot;);
+		with(bcparameter)
+		{
+		 	ClearToQuery();
+		 	ActivateField(&quot;Function&quot;);
+			ActivateField(&quot;Name&quot;);
+			ActivateField(&quot;Value&quot;);
+			ActivateField(&quot;Condition1&quot;);
+			SetSearchSpec(&quot;Function&quot;,&quot;ShopIdURL&quot;);
+			SetSearchSpec(&quot;Name&quot;,controlName);
+			SetSearchSpec(&quot;Value&quot;,&quot;ShopID&quot;);
+			ExecuteQuery(ForwardOnly);
+		}
+	
+		if(bcparameter.FirstRecord())
+			strCaptivaURL = bcparameter.GetFieldValue(&quot;Condition1&quot;);
+		  
+		/*****************************************************************/
+		var TestMode = TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;VF_ICCB_TEST&quot;,&quot;N&quot;);
+		var strKeyString = TheApplication().InvokeMethod (&quot;LookupValue&quot;, &quot;VFTK_KEY_STRING&quot;, &quot;KeyString&quot;);
+		strCaptivaURL = strCaptivaURL == &quot;&quot;? TheApplication().InvokeMethod (&quot;LookupValue&quot;, &quot;VFTK_CAPTIVA_URL&quot;, &quot;CAPTIVA_URL&quot;) : strCaptivaURL;
+		var strCaptivaKey = TheApplication().InvokeMethod (&quot;LookupValue&quot;, &quot;VFTK_CAPTIVA_KEY&quot;, &quot;CAPTIVA_KEY&quot;);
+		var lovCaptivaURL1 = TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;VFTK_CAPTIVA_URL&quot;,&quot;CAPTIVA_URL1&quot;);
+		var lovCaptivaURL2 = TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;VFTK_CAPTIVA_URL&quot;,&quot;CAPTIVA_URL2&quot;);
+		var lovCaptivaKey  = TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;VFTK_CAPTIVA_KEY&quot;,&quot;CAPTIVA_KEY&quot;);
+				
+				if (lovCaptivaURL1.length &gt; 0)
+				{
+					strCaptivaURL = strCaptivaURL + lovCaptivaURL1;
+				}
+				
+				if (lovCaptivaURL2.length &gt; 0)
+				{
+					strCaptivaURL = strCaptivaURL + lovCaptivaURL2;
+				}
+		
+		TheApplication().SetProfileAttr (&quot;VFCaptivaURL&quot;,strCaptivaURL);
+		TheApplication().SetProfileAttr (&quot;VFCaptivaKey&quot;,strCaptivaKey);
+		
+		var strVFEncryptedData = &quot;&quot;;
+		var strVFApplicationId = &quot;&quot;;
+		var strUnEncryptedData = &quot;&quot;;
+		
+		var InputParameter  : PropertySet = TheApplication ().NewPropertySet();	
+		var OutputParameter : PropertySet = TheApplication ().NewPropertySet();	
+		BCGetParameters (InputParameter , OutputParameter);
+		var dns = OutputParameter.GetProperty(&quot;DNS&quot;);
+		
+		var strId 		 = Inputs.GetProperty (&quot;InputData&quot;);
+		psInputs  = TheApplication ().NewPropertySet ();
+		psOutputs = TheApplication ().NewPropertySet ();
+		
+		psInputs.SetProperty (&quot;url&quot;, TheApplication ().InvokeMethod (&quot;LookupValue&quot;,&quot;VFTK_ICCB_CONNECTION&quot;,&quot;Driver&quot;) + dns);
+		psInputs.SetProperty (&quot;userId&quot;, TheApplication ().InvokeMethod (&quot;LookupValue&quot;,&quot;VFTK_ICCB_CONNECTION&quot;,&quot;UserId&quot;));
+		psInputs.SetProperty (&quot;password&quot;, TheApplication ().InvokeMethod (&quot;LookupValue&quot;,&quot;VFTK_ICCB_CONNECTION&quot;,&quot;Password&quot;));			
+		psInputs.SetProperty (&quot;InputData&quot;, strId);
+		psInputs.SetProperty (&quot;KeyString&quot;, strKeyString);
+					
+		svcJavaService.InvokeMethod (&quot;CaptivaDESEncryption&quot;, psInputs, psOutputs);		
+
+		strVFEncryptedData = psOutputs.GetProperty (&quot;EncryptedData&quot;);
+		strVFApplicationId = psOutputs.GetProperty (&quot;ApplicationId&quot;);
+		strUnEncryptedData = psOutputs.GetProperty (&quot;UnEncryptedData&quot;);
+		TheApplication ().SetProfileAttr (&quot;VFCaptivaEncryptedData&quot;, strVFEncryptedData);
+		TheApplication ().SetProfileAttr (&quot;VFCaptivaApplicationId&quot;, strVFApplicationId);		
+	}
+	finally
+	{
+		psInputs  		= 	null;
+		psOutputs 		= 	null;
+		bsGeneralOperations = null;
+		svcJavaService = null;
+		InputParameter  = null;	
+		OutputParameter = null;	
+		bcparameter	= null;
+		boparameter	= null;
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="11/15/2016 12:13:33"
+			   UPDATED_BY="MSOUSA"
+			   CREATED="02/18/2010 11:06:25"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	if (MethodName == &quot;CaptivaEncrypt&quot;)
+	{
+		CaptivaEncrypt (Inputs, Outputs);
+		return (CancelOperation);
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="3"
+			   UPDATED="05/28/2010 13:13:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/18/2010 11:06:25"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

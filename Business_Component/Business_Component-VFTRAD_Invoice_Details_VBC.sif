@@ -1,0 +1,303 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="11/24/2016 17:14:00"
+   UPDATED_BY="SADMIN"
+   CREATED="11/24/2016 14:49:11"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="CCB228 - JFONSECA"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VFTRCBU Subscriber Invoices"
+	   UI_FREEZE="N"
+	   UPDATED="05/17/2017 10:22:50"
+	   UPDATED_BY="JFONSECA"
+	   CREATED="04/05/2017 11:12:26"
+	   CREATED_BY="JFONSECA"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="N"
+		   CLASS="CSSBCVExtern"
+		   COMMENTS="CCB228 - JFONSECA"
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MULTI_RECIPIENT_SELECT="N"
+		   NAME="VFTRAD Invoice Details VBC"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="05/03/2017 11:42:47"
+		   OWNER_DELETE="N"
+		   POPUP_VISIBILITY_AUTO_ALL="N"
+		   SCRIPTED="Y"
+		   TYPE="Non-Transient"
+		   OBJECT_LOCKED_BY_NAME="JFONSECA"
+		   UPDATED="05/12/2017 14:04:20"
+		   UPDATED_BY="JFONSECA"
+		   CREATED="04/10/2017 10:42:16"
+		   CREATED_BY="JFONSECA">
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreQuery"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreQuery()
+{
+	
+	TheApplication().SetProfileAttr(&quot;ID_SubscriberContext&quot;, &quot;Y&quot;);
+	
+	var strTransactionId = Clib.rand() + &quot;&quot; + new Date().getTime();
+		strTransactionId = &quot;Siebel-&quot; + strTransactionId.substring(0,10);
+	TheApplication().SetProfileAttr(&quot;ID_SubscriberTransactionID&quot;, strTransactionId);
+	
+	var count = this.ParentBusComp().CountRecords();
+	
+	if(count &gt; &quot;0&quot;)
+	{
+		var strInvNumber = this.ParentBusComp().GetFieldValue(&quot;INVOICE_NUMBER&quot;);
+		TheApplication().SetProfileAttr(&quot;ID_SubscriberInvoiceNumber&quot;, strInvNumber);
+			if(strInvNumber != &quot;&quot;)
+			{
+				TheApplication().SetProfileAttr(&quot;VFSkipQueryWF&quot;, &quot;N&quot;);
+			}
+			else
+			{
+				TheApplication().SetProfileAttr(&quot;VFSkipQueryWF&quot;, &quot;Y&quot;);
+			}
+	}
+	else
+	{
+		TheApplication().SetProfileAttr(&quot;VFSkipQueryWF&quot;, &quot;Y&quot;);
+	}
+	
+	
+	
+}"
+			   SEQUENCE="1"
+			   UPDATED="05/12/2017 14:04:20"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 10:42:17"
+			   CREATED_BY="JFONSECA">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSINESS_COMPONENT_USER_PROP
+			   COMMENTS="CCB228 - ALINO"
+			   INACTIVE="N"
+			   NAME="Service Name"
+			   VALUE="VF VBC Integration BS"
+			   UPDATED="04/20/2017 16:03:40"
+			   UPDATED_BY="ALINO"
+			   CREATED="04/20/2017 15:47:46"
+			   CREATED_BY="ALINO">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   COMMENTS="CCB228 - ALINO"
+			   INACTIVE="N"
+			   NAME="Service Parameters"
+			   VALUE="IOName=VFTRAD Subscriber Invoice Details VBC IO;DataMapName=VFTRAD Subscriber Invoice Details Response Map;RequireContext=Y"
+			   UPDATED="04/20/2017 15:49:14"
+			   UPDATED_BY="ALINO"
+			   CREATED="04/20/2017 15:49:14"
+			   CREATED_BY="ALINO">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="AMOUNT_EXC_TAX"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/10/2017 10:42:18"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 10:42:18"
+			   CREATED_BY="JFONSECA">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[AMOUNT_EXC_TAX]/100"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="AMOUNT_EXC_TAX_CALC"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/11/2017 15:17:08"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="05/11/2017 14:47:29"
+			   CREATED_BY="JFONSECA">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="AMOUNT_INCL_TAX"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/10/2017 10:42:19"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 10:42:19"
+			   CREATED_BY="JFONSECA">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[AMOUNT_EXC_TAX]/100"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="AMOUNT_INCL_TAX_CALC"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/11/2017 15:17:14"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="05/11/2017 14:48:03"
+			   CREATED_BY="JFONSECA">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="DETAIL_DESCRIPTION"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/10/2017 10:42:19"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 10:42:19"
+			   CREATED_BY="JFONSECA">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="INVOICE_DETAIL_CODE"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/10/2017 10:42:19"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 10:42:19"
+			   CREATED_BY="JFONSECA">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="INVOICE_NUMBER"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/10/2017 10:42:19"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 10:42:19"
+			   CREATED_BY="JFONSECA">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="TAX_CODE"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/10/2017 10:42:19"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 10:42:19"
+			   CREATED_BY="JFONSECA">
+			</FIELD>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

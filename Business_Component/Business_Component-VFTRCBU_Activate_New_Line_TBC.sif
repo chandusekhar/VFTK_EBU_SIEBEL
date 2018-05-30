@@ -1,0 +1,4076 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="20140703 - VFTRCBU Project for WP#01 objects"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VFTRCBU Customer_Account_Subscriber Management"
+	   UI_FREEZE="N"
+	   UPDATED="03/05/2018 16:26:55"
+	   UPDATED_BY="IBM_FIGENB"
+	   CREATED="08/14/2014 20:13:39"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="N"
+		   CLASS="CSSBCTaskTransient"
+		   COMMENTS="WA#11 AVIEIRA 20140804"
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MULTI_RECIPIENT_SELECT="N"
+		   NAME="VFTRCBU Activate New Line TBC"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LOCKED="N"
+		   OWNER_DELETE="N"
+		   POPUP_VISIBILITY_AUTO_ALL="N"
+		   SCRIPTED="Y"
+		   TABLE="S_TU_LOG"
+		   TYPE="Transient"
+		   UPDATED="03/05/2018 16:29:19"
+		   UPDATED_BY="IBM_FIGENB"
+		   CREATED="10/01/2014 20:08:11"
+		   CREATED_BY="SADMIN">
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreSetFieldValue"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreSetFieldValue (FieldName, FieldValue)
+{
+	if (FieldName == &quot;MSISDN&quot;) 
+	{
+	  PreSetMSISDN(FieldValue);	
+	}
+		
+	if (FieldName == &quot;ICCID&quot;) 
+	{
+	  PreSetICCID(FieldValue, &quot;&quot;, &quot;&quot;);	
+	}
+		
+	if (FieldName == &quot;MNPPortIn_MSISDN&quot;) 
+	{
+	  //GetDonorOperator(FieldValue);	   // JIRA-VFTRCBU-11997 - This interface is no longer to be used. The Lock MSISDN operation will return the Donor Operator
+	  PreSetMNPPortIn_MSISDN(FieldValue);  // JIRA-VFTRCBU-11997 - Back again to lock the MSISDN immediately after setting the field 
+	}
+	
+	if (FieldName == &quot;GSM Type&quot;) 
+	{
+		TheApplication().SetProfileAttr(&quot;VFTRCBU GSM Type&quot;,FieldValue);
+	}
+	
+	if (FieldName == &quot;VFTRCBU Reason&quot;) 
+	{
+		TheApplication().SetProfileAttr(&quot;VFTRCBUReason_ActTask&quot;,FieldValue);
+		
+		//ACAMBAS: VFTRCBU-21583 - Start
+		if((FieldValue == &quot;&quot; || FieldValue == null) &amp;&amp; this.GetFieldValue(&quot;VFTRCBU Reason&quot;) != null &amp;&amp; this.GetFieldValue(&quot;VFTRCBU Reason&quot;) != &quot;&quot;) {
+			return (CancelOperation);	
+		}
+		//ACAMBAS: VFTRCBU-21583 - End
+	}
+		
+	if (FieldName == &quot;MNPPortIn_ICCID&quot;) 
+	{
+	  PreSetMNPPortIn_ICCID(FieldValue, &quot;&quot;, &quot;&quot;);
+	}
+	
+	//[IBMMOLAMLI] - Sales Agile 2nd Sprint - Golf SimCard
+	if (FieldName == &quot;VFTRCBU TBUI Originating Shop Code&quot; ) 
+	{
+	  	TheApplication().SetProfileAttr(&quot;GolfShopCode&quot;, FieldValue ); 
+		TheApplication().SetProfileAttr(&quot;GolfDealerCode&quot;, this.GetFieldValue(&quot;VFTRCBU TBUI Originating Dealer Code&quot;) ); 
+		TheApplication().SetProfileAttr(&quot;IsGolfUser&quot;, this.GetFieldValue(&quot;Golf Simcard Project Position Calc&quot;) ); 		
+	}
+	
+	
+	return (ContinueOperation);	
+
+}"
+			   SEQUENCE="13"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="12/17/2014 01:31:01"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreWriteRecord"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreWriteRecord ()
+{
+	var sActiveViewName = TheApplication().ActiveViewName();
+	if(sActiveViewName == &quot;VFTRCBU Activate New Line - Create End User&quot; || sActiveViewName == &quot;VFTRCBU MNP Port In Activate New Line - Create End User&quot;)
+	{		
+		var dateOfBirth = this.GetFieldValue(&quot;VF End User Date of Birth&quot;);
+		if(dateOfBirth != null &amp;&amp; dateOfBirth != &quot;&quot;)
+		{
+			this.ValidateBirthDate();
+			TheApplication().SetProfileAttr(&quot;VFTRCBURequiredEndUser&quot;,&quot;Y&quot;);
+		}
+		
+		var VFTRCBURequiredEndUser = TheApplication().GetProfileAttr(&quot;VFTRCBURequiredEndUser&quot;);	
+		if(VFTRCBURequiredEndUser == &quot;Y&quot;)
+		{
+		RequiredInfo();
+		}
+	}
+	
+	return (ContinueOperation);
+}"
+			   SEQUENCE="14"
+			   UPDATED="03/05/2018 16:26:55"
+			   UPDATED_BY="IBM_FIGENB"
+			   CREATED="06/21/2015 23:18:09"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GetDonorOperator"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GetDonorOperator(sMSISDN)	
+{
+
+  TheApplication().RaiseErrorText(&quot;Please check. Invoking deprecated code in BC:VFTRCBU Activate New Line TBC::GetDonorOperator&quot;);
+
+  /**********************************************************************************************
+  Description: This function invokes the outbound ICCBServices Web Service interface, operation GetDonorOperator.
+  			   Retrieves the DonorOperator based on a given MSISDN. No lock/reserve or any other NI operation is done 
+  			   in backend.
+  			   
+  Arguments:
+    Input : MSISDN	
+    Output: Donor Operator
+   
+  History: 220150715. Because of JIRA-VFTRCBU-11997 this code will no longer be necessary. Commented the whole function and raised the RaiseErrorText
+  ***********************************************************************************************/
+
+  /*********** JIRA-VFTRCBU-11997 Begin. Comment the whole function (keeping it anyway because one never knows) ******
+  try
+  {
+    var sDonorOperator = &quot;&quot;;
+	var psIn  : PropertySet = TheApplication().NewPropertySet();
+	var psOut : PropertySet = TheApplication().NewPropertySet();
+		
+	if (sMSISDN != &quot;&quot;)
+	{
+	  psIn.SetProperty(&quot;MNPPortIn_MSISDN&quot;, sMSISDN);
+	  psIn.SetProperty(&quot;ProcessName&quot;, &quot;VFTRCBU MNP Get Donor Operator WF&quot;);			
+	  TheApplication().GetService(&quot;Workflow Process Manager&quot;).InvokeMethod(&quot;RunProcess&quot;, psIn, psOut);
+	  sDonorOperator = psOut.GetProperty(&quot;DonorOpt&quot;);
+	  this.SetFieldValue(&quot;MNPPortIn_Donor Operator&quot;, sDonorOperator);
+	}	
+  }
+			
+  finally
+  {
+	psIn  = null;
+	psOut = null;
+  }
+  *****  JIRA-VFTRCBU-11997 End. *****************************************************************************************/
+  
+}"
+			   SEQUENCE="1"
+			   UPDATED="08/17/2015 18:49:31"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/10/2015 11:55:22"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GetGolfUserName"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GetGolfUserName(sDefaultUserName)
+{
+	//ACAMBAS: VFTRCBU-32203 - Comment because there is no order to get dealer code from when this function is invoked (activation new line tbui)
+	/*try
+	{
+		var boParameter : BusObject = TheApplication().GetBusObject(&quot;ACS NI Parameter&quot;);
+		var bcParameter : BusComp   = boParameter.GetBusComp(&quot;ACS NI Parameter&quot;);
+		var boOrder     : BusObject = null;
+		var bcOrder     : BusComp   = null;
+		var boEmployee  : BusObject = null;
+		var bcEmployee  : BusComp   = null;
+
+		var sUserName     = &quot;&quot;;
+		var sGolfPosition = this.GetFieldValue(&quot;Golf Position Name&quot;);
+		var sGolfSIMCard  = &quot;&quot;;
+	    var sDealerCode   = &quot;&quot;;
+		var sSearchExpr   = &quot;&quot;;
+
+		sUserName = sDefaultUserName;
+
+		if (sGolfPosition == null || sGolfPosition == &quot;&quot;)
+		{
+			return(sUserName);
+		}
+
+		sSearchExpr = &quot;[Function]=&apos;GolfProject_SimCard&apos; AND [Name]=&apos;GolfProject&apos; AND [Condition1]=&apos;&quot; + sGolfPosition + &quot;&apos;&quot;
+
+		bcParameter.SetViewMode(AllView);
+		bcParameter.ClearToQuery();
+		bcParameter.ActivateField(&quot;Condition2&quot;);
+		bcParameter.SetSearchExpr(sSearchExpr);
+		bcParameter.ExecuteQuery(ForwardOnly);  
+
+		if (!bcParameter.FirstRecord())
+		{
+			return(sUserName);
+		}
+
+		sGolfSIMCard = bcParameter.GetFieldValue(&quot;Condition2&quot;);
+		
+		if (sGolfSIMCard == null || sGolfSIMCard == &quot;&quot; || sGolfSIMCard != &quot;True&quot;)
+		{
+			return(sUserName);
+		}
+
+		boOrder     = this.BusObject();
+		bcOrder     = boOrder.GetBusComp(&quot;Order Entry - Orders&quot;);
+		sDealerCode = bcOrder.GetFieldValue(&quot;VF Dealer Code&quot;);
+
+		if (sDealerCode == null || sDealerCode == &quot;&quot;)
+		{
+			return(sUserName);
+		}
+
+		boEmployee = TheApplication().GetBusObject(&quot;Employee&quot;);
+		bcEmployee = boEmployee.GetBusComp(&quot;Employee&quot;);
+
+		bcEmployee.SetViewMode(AllView);
+		bcEmployee.ClearToQuery();
+		bcEmployee.ActivateField(&quot;Login Name&quot;);
+		bcEmployee.SetSearchSpec(&quot;VF Dealer Code&quot;, sDealerCode);
+		bcEmployee.ExecuteQuery(ForwardOnly);
+
+		if (!bcEmployee.FirstRecord())
+		{
+			return(sUserName);
+		}
+
+		sUserName = bcEmployee.GetFieldValue(&quot;Login Name&quot;);
+
+		return(sUserName);
+	}
+	finally
+	{
+		bcEmployee  = null;
+		boEmployee  = null;
+		bcOrder     = null;
+		boOrder     = null;
+		bcParameter = null;
+		boParameter = null;
+	}*/
+}"
+			   SEQUENCE="2"
+			   UPDATED="08/06/2016 00:27:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/02/2015 10:34:46"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GetMSISDN"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GetMSISDN(sMSISDN, sMSIDNType)
+{
+	try
+	{
+		var boMSISDN : BusObject = TheApplication().GetBusObject(&quot;VFTRCBU MSISDN BO&quot;);
+		var bcMSISDN : BusComp   = boMSISDN.GetBusComp(&quot;VFTRCBU MSISDN VBC&quot;);
+
+		var sOutMSISDN = &quot;&quot;;
+
+		if (sMSISDN == null || sMSISDN == &quot;&quot; || sMSIDNType == null || sMSIDNType == &quot;&quot;)
+		{
+			return sOutMSISDN;
+		}
+
+		bcMSISDN.SetViewMode(AllView);
+		bcMSISDN.ClearToQuery();
+		bcMSISDN.ActivateField(&quot;VFTRCBU MSISDN&quot;);
+		bcMSISDN.SetSearchExpr(&quot;[VFTRCBU GSM Type]=&apos;&quot; + sMSIDNType + &quot;&apos; AND [VFTRCBU MSISDN]=&apos;&quot; + sMSISDN + &quot;&apos;&quot;);
+		bcMSISDN.ExecuteQuery(ForwardOnly);
+ 
+		if (bcMSISDN.FirstRecord())
+		{
+			sOutMSISDN = bcMSISDN.GetFieldValue(&quot;VFTRCBU MSISDN&quot;);
+		}
+
+		return sOutMSISDN;
+	}
+	finally
+	{
+		bcMSISDN = null;
+		boMSISDN = null;
+	}
+}"
+			   SEQUENCE="4"
+			   UPDATED="03/05/2018 15:45:08"
+			   UPDATED_BY="1-FYSRA2I"
+			   CREATED="05/07/2015 22:34:17"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GetSIMCardGroup"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GetSIMCardGroup(sName)
+{
+	try
+	{
+		var boOrder : BusObject = TheApplication().GetBusObject(&quot;HP Order Entry&quot;);
+		var bcLOV   : BusComp   = boOrder.GetBusComp(&quot;List Of Values&quot;);
+
+		var sDescription   = &quot;&quot;;
+		var sLOVSearchExpr = &quot;&quot;;
+
+		if (sName == null || sName == &quot;&quot;)
+		{
+			return(sDescription);
+		}
+		
+		//ACAMBAS: VFTRCBU-33185 - Start 
+		//var sName = LookupName(&quot;VFTRCBU_SIM_TYPE_OPERATIONS&quot;, sValue);  
+
+		//sLOVSearchExpr = &quot;[Type]=&apos;VF_TWIN_SIM_TYPE&apos; AND [Value]=&apos;&quot; + sValue + &quot;&apos; AND [Active]=&apos;Y&apos;&quot;;
+		sLOVSearchExpr = &quot;[Type]=&apos;VF_TWIN_SIM_TYPE&apos; AND [Name]=&apos;&quot; + sName + &quot;&apos; AND [Active]=&apos;Y&apos;&quot;;
+		//ACAMBAS: VFTRCBU-33185 - End 
+
+		bcLOV.SetViewMode(AllView);	
+		bcLOV.ClearToQuery();
+		bcLOV.ActivateField(&quot;Description&quot;);
+		bcLOV.SetSearchExpr(sLOVSearchExpr);
+		bcLOV.ExecuteQuery(ForwardOnly);
+
+		if (bcLOV.FirstRecord())
+		{
+			sDescription = bcLOV.GetFieldValue(&quot;Description&quot;);
+		}
+
+		return(sDescription);
+	}
+	finally
+	{
+		bcLOV   = null;
+		boOrder = null;
+	}
+}"
+			   SEQUENCE="5"
+			   UPDATED="09/20/2016 00:59:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/20/2016 00:59:48"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="LookupName"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function LookupName(Type,Value)
+{
+	try
+	{
+		var oBS:Service = TheApplication().GetService(&quot;ACS NI General Operations&quot;);
+		var oPSInputs:PropertySet = TheApplication().NewPropertySet();
+		var oPSOutputs:PropertySet = TheApplication().NewPropertySet();
+		var LIC:String = &quot;&quot;;
+	
+		oPSInputs.SetProperty(&quot;LOV&quot;,Type);
+		oPSInputs.SetProperty(&quot;Val&quot;,Value);
+	
+		oBS.InvokeMethod(&quot;LookupName&quot;,oPSInputs,oPSOutputs);
+	
+		LIC = oPSOutputs.GetProperty(&quot;Name&quot;);
+	
+		oBS=null;
+		oPSInputs=null;
+		oPSOutputs=null;
+	
+		return(LIC);
+	}catch(e)
+	{
+		return(&quot;&quot;);
+	}
+	finally
+	{
+		oBS=null;
+		oPSInputs=null;
+		oPSOutputs=null;
+	}
+}"
+			   SEQUENCE="6"
+			   UPDATED="09/20/2016 00:59:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/20/2016 00:59:48"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="PreSetICCID"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function PreSetICCID(sICCID, sSIMType, sMSISDN)	
+{	
+//	try
+//	{
+		var bsManager : Service        = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		var psManagerIn  : PropertySet = TheApplication().NewPropertySet();
+		var psManagerOut : PropertySet = TheApplication().NewPropertySet();
+		var sNIError:String = &quot;&quot;;
+//		var sICCID          = null;
+
+		var boEmployee : BusObject     = TheApplication().GetBusObject(&quot;Employee&quot;);
+		var bcEmployee : BusComp       = boEmployee.GetBusComp(&quot;Employee&quot;);
+		var sUserName           = TheApplication().LoginName();
+		var sEmployeeSearchExpr = &quot;[Login Name]=&apos;&quot; + sUserName + &quot;&apos;&quot;;
+		var sShopCode           = &quot;&quot;;
+		var sCoupledMSISDN      = &quot;&quot;;
+		//var sMSISDN = this.GetFieldValue(&quot;MSISDN&quot;);
+		var Id = this.GetFieldValue(&quot;Id&quot;);
+		var sOldICCID = this.GetFieldValue(&quot;ICCID&quot;);
+		var sLenICCID = null;
+		var sError1 = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0275&quot;);
+		var sError2 = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0274&quot;);
+		
+		//ACAMBAS: VFTRCBU-32203 - Start
+		//sUserName = GetGolfUserName(sUserName);
+		//ACAMBAS: VFTRCBU-32203 - End
+		
+		if(sSIMType == &quot;&quot;)
+		{
+			sSIMType = this.GetFieldValue(&quot;VFTRCBU SIM Card Type&quot;);
+		}
+		if(sMSISDN == &quot;&quot;)
+		{
+			sMSISDN = this.GetFieldValue(&quot;MSISDN&quot;);
+		}
+		
+		if (sOldICCID != &quot;&quot; &amp;&amp; sOldICCID != sICCID)
+		{
+			//Call WF to UnLock ICCID(sOldICCID); 
+			psManagerIn.SetProperty(&quot;VFTRCBU User Id&quot;,   sUserName);
+			psManagerIn.SetProperty(&quot;VFTRCBU ICCID&quot;,     sOldICCID);
+			psManagerIn.SetProperty(&quot;VFTRCBU Lock Type&quot;, &quot;UL&quot;);
+			psManagerIn.SetProperty(&quot;VFTRCBU Integration Id&quot;, Id);
+			psManagerIn.SetProperty(&quot;ProcessName&quot;,       &quot;VFTRCBU Manage SIM Card Lock WF&quot;);
+			psManagerIn.SetProperty (&quot;VFTRCBU Process Type&quot;, &quot;S&quot;);
+			
+			try
+			{
+				bsManager.InvokeMethod(&quot;RunProcess&quot;, psManagerIn, psManagerOut);
+			}
+			catch(e)
+			{
+				sNIError = TheApplication().GetProfileAttr(&quot;LastUserDefinedErrorMessage&quot;);
+				if(sNIError != null &amp;&amp; sNIError != &quot;&quot;)
+					TheApplication().RaiseErrorText(sNIError);
+				else
+					throw(e);
+			}
+		
+		}
+		
+		if ( sICCID != &quot;&quot; &amp;&amp; sOldICCID != sICCID)
+		{
+			sLenICCID = sICCID.length;
+			if (sLenICCID != 18) 		
+			{							
+			TheApplication().RaiseErrorText(sError2);
+			}
+			
+			
+			if (sSIMType == null || sSIMType == &quot;&quot;)
+			{
+			TheApplication().RaiseErrorText(sError1);
+			}
+				
+			bcEmployee.ClearToQuery ();
+			bcEmployee.SetViewMode (AllView);
+			bcEmployee.ActivateField(&quot;Login Name&quot;);
+			bcEmployee.ActivateField(&quot;VF Shop Id&quot;);
+			bcEmployee.SetSearchExpr(sEmployeeSearchExpr);
+			bcEmployee.ExecuteQuery(ForwardOnly);
+			
+			 var sError3 = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0152&quot;);
+             
+
+             var sDUal = TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;VFTRCBU_SIM_TYPE_OPERATIONS&quot;,&quot;DU&quot;);
+             //var sMobile = TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;VFTRCBU_SIM_TYPE_OPERATIONS&quot;,&quot;MS&quot;); //PSANTOS VFTRCBU-19308 23102015
+
+             if (sSIMType == sDUal )
+             {
+             	TheApplication().RaiseErrorText(sError3);
+             }
+
+             			
+			
+			if (bcEmployee.FirstRecord ())
+			{
+				sShopCode = bcEmployee.GetFieldValue (&quot;VF Shop Id&quot;);
+			}
+					
+			psManagerIn.SetProperty(&quot;VFTRCBU ICCID&quot;,            sICCID);
+			psManagerIn.SetProperty(&quot;VFTRCBU SIM Type&quot;,         sSIMType);
+			psManagerIn.SetProperty(&quot;VFTRCBU Brand&quot;,            &quot;PO&quot;);
+			psManagerIn.SetProperty(&quot;VFTRCBU Shop Code&quot;,        sShopCode);
+			psManagerIn.SetProperty(&quot;VFTRCBU User Id&quot;,          sUserName);
+			psManagerIn.SetProperty(&quot;VFTRCBU MSISDN&quot;,           sMSISDN);		
+			psManagerIn.SetProperty(&quot;VFTRCBU Secondary MSISDN&quot;, sCoupledMSISDN);
+			psManagerIn.SetProperty(&quot;TaskUI&quot;, &quot;Y&quot;);
+			psManagerIn.SetProperty(&quot;VFTRCBU Process Type&quot;, &quot;S&quot;);
+			psManagerIn.SetProperty(&quot;ProcessName&quot;,              &quot;VFTRCBU Get ICCID Info WF&quot;);
+				
+			try
+			{
+				bsManager.InvokeMethod(&quot;RunProcess&quot;, psManagerIn, psManagerOut);
+			}
+			catch(e)
+			{
+				sNIError = TheApplication().GetProfileAttr(&quot;VFTRCBU NI Error Message&quot;);
+				if(sNIError != null &amp;&amp; sNIError != &quot;&quot;)
+					TheApplication().RaiseErrorText(sNIError);
+				else
+					throw(e);
+			}
+			
+			// LOCK ICCID
+			
+			psManagerIn.SetProperty (&quot;VFTRCBU Process Type&quot;, &quot;S&quot;);
+			psManagerIn.SetProperty(&quot;VFTRCBU User Id&quot;,   sUserName);
+			psManagerIn.SetProperty(&quot;VFTRCBU ICCID&quot;,     sICCID);
+			psManagerIn.SetProperty(&quot;VFTRCBU Lock Type&quot;, &quot;LO&quot;);
+			psManagerIn.SetProperty(&quot;VFTRCBU Integration Id&quot;, Id);
+			psManagerIn.SetProperty(&quot;ProcessName&quot;,       &quot;VFTRCBU Manage SIM Card Lock WF&quot;);
+			
+			try
+			{
+				bsManager.InvokeMethod(&quot;RunProcess&quot;, psManagerIn, psManagerOut);
+			}
+			catch(e)
+			{
+				sNIError = TheApplication().GetProfileAttr(&quot;VFTRCBU NI Error Message&quot;);
+				if(sNIError != null &amp;&amp; sNIError != &quot;&quot;)
+					TheApplication().RaiseErrorText(sNIError);
+				else
+					throw(e);
+			}
+			
+			//ACAMBAS: VFTRCBU-33228 - Start
+			//sSIMType = LookupDesc(sSIMType); 
+			//sSIMType = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VFTRCBU_SIM_TYPE_CBU_ACTIVAT&quot;,sSIMType); 	
+			var sSIMTypeLIC = LookupName(&quot;VFTRCBU_SIM_TYPE_OPERATIONS&quot;, sSIMType); 
+			var sSIMTypeGroup = GetSIMCardGroup(sSIMTypeLIC); 
+			sSIMTypeGroup = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VFTRCBU_SIM_TYPE_CBU_ACTIVAT&quot;, sSIMTypeGroup); 
+
+			//this.SetFieldValue(&quot;VFTRCBU SIM Card Type&quot;, sSIMType);
+			this.SetFieldValue(&quot;VFTRCBU SIM Card Type&quot;, sSIMTypeGroup);	
+			this.SetFieldValue(&quot;VFTRCBU SIM Card Type LIC&quot;, sSIMTypeLIC); 
+			//ACAMBAS: VFTRCBU-33228 - End							
+
+			this.SetFieldValue(&quot;ICCID&quot;, sICCID);
+		//	TheApplication().SetProfileAttr(&quot;Read only control&quot;, &quot;Y&quot;);
+			TheApplication().SetProfileAttr(&quot;MSISDNRO&quot;,&quot;Y&quot;);
+		}	
+//	}
+			
+//	finally
+//	{
+		psManagerIn  = null;
+		psManagerOut = null;
+		bsManager    = null;
+//	}
+}"
+			   SEQUENCE="7"
+			   UPDATED="09/20/2016 00:59:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/29/2014 11:30:52"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="PreSetMNPPortIn_ICCID"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function PreSetMNPPortIn_ICCID(sICCID, sSIMType, sMSISDN)	
+{	
+//  try
+//  {
+	var bsManager : Service        = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+	var psManagerIn  : PropertySet = TheApplication().NewPropertySet();
+	var psManagerOut : PropertySet = TheApplication().NewPropertySet();
+	var sNIError:String = &quot;&quot;;
+//	var sICCID          = null;
+
+	var boEmployee : BusObject     = TheApplication().GetBusObject(&quot;Employee&quot;);
+	var bcEmployee : BusComp       = boEmployee.GetBusComp(&quot;Employee&quot;);
+	var sUserName           = TheApplication().LoginName();
+	var sEmployeeSearchExpr = &quot;[Login Name]=&apos;&quot; + sUserName + &quot;&apos;&quot;;
+	var sShopCode           = &quot;&quot;;
+	var sCoupledMSISDN      = &quot;&quot;;
+	//var sMSISDN = this.GetFieldValue(&quot;MNPPortIn_MSISDN&quot;);
+	var Id = this.GetFieldValue(&quot;Id&quot;);
+	var sOldICCID = this.GetFieldValue(&quot;MNPPortIn_ICCID&quot;);
+	var sLenICCID = null;
+	var sError1 = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0275&quot;);
+	var sError2 = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0274&quot;);
+
+	this.SetFieldValue(&quot;IsICCIDRO&quot;,&quot;N&quot;);
+	
+	//ACAMBAS: VFTRCBU-32203 - Start
+	//sUserName = GetGolfUserName(sUserName);
+	//ACAMBAS: VFTRCBU-32203 - End
+
+	if(sSIMType == &quot;&quot;)
+	{
+	  sSIMType = this.GetFieldValue(&quot;VFTRCBU SIM Card Type&quot;);
+	  if (sSIMType == &quot;&quot; || sSIMType == null)
+	  {
+        sSIMType = TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;VFTRCBU_SIM_TYPE_OPERATIONS&quot;,&quot;NO&quot;);
+	  }
+	}
+
+	if(sMSISDN == &quot;&quot;)
+	{
+	  sMSISDN = this.GetFieldValue(&quot;MNPPortIn_MSISDN&quot;);
+	}
+		
+	if (sOldICCID != &quot;&quot; &amp;&amp; sOldICCID != sICCID)
+	{
+		//Call WF to UnLock ICCID(sOldICCID); 
+		psManagerIn.SetProperty(&quot;VFTRCBU User Id&quot;,   sUserName);
+		psManagerIn.SetProperty(&quot;VFTRCBU ICCID&quot;,     sOldICCID);
+		psManagerIn.SetProperty(&quot;VFTRCBU Lock Type&quot;, &quot;UL&quot;);
+		psManagerIn.SetProperty(&quot;VFTRCBU Integration Id&quot;, Id);
+		psManagerIn.SetProperty(&quot;ProcessName&quot;,       &quot;VFTRCBU Manage SIM Card Lock WF&quot;);
+		psManagerIn.SetProperty (&quot;VFTRCBU Process Type&quot;, &quot;M&quot;);
+		
+		try
+		{
+			bsManager.InvokeMethod(&quot;RunProcess&quot;, psManagerIn, psManagerOut);
+		}
+		catch(e)
+		{
+			sNIError = TheApplication().GetProfileAttr(&quot;LastUserDefinedErrorMessage&quot;);
+			if(sNIError != null &amp;&amp; sNIError != &quot;&quot;)
+				TheApplication().RaiseErrorText(sNIError);
+			else
+				throw(e);
+		}
+	
+	}
+		
+	if ( sICCID != &quot;&quot; &amp;&amp; sOldICCID != sICCID)
+	{
+		sLenICCID = sICCID.length;
+		if (sLenICCID != 18) 		
+		{							
+		  TheApplication().RaiseErrorText(sError2);
+		}
+			
+			
+		if (sSIMType == null || sSIMType == &quot;&quot;)
+		{
+		  TheApplication().RaiseErrorText(sError1);
+		}
+
+		bcEmployee.ClearToQuery ();
+		bcEmployee.SetViewMode (AllView);
+		bcEmployee.ActivateField(&quot;Login Name&quot;);
+		bcEmployee.ActivateField(&quot;VF Shop Id&quot;);
+		bcEmployee.SetSearchExpr(sEmployeeSearchExpr);
+		bcEmployee.ExecuteQuery(ForwardOnly);
+
+		var sError3 = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0152&quot;);
+        
+        var sDUal = TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;VFTRCBU_SIM_TYPE_OPERATIONS&quot;,&quot;DU&quot;);
+        //var sMobile = TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;VFTRCBU_SIM_TYPE_OPERATIONS&quot;,&quot;MS&quot;); //PSANTOS VFTRCBU-19308 23102015
+
+        if (sSIMType == sDUal )
+        {
+          TheApplication().RaiseErrorText(sError3);
+        }
+
+		if (bcEmployee.FirstRecord ())
+		{
+			sShopCode = bcEmployee.GetFieldValue (&quot;VF Shop Id&quot;);
+		}
+					
+		psManagerIn.SetProperty(&quot;VFTRCBU ICCID&quot;,            sICCID);
+		psManagerIn.SetProperty(&quot;VFTRCBU SIM Type&quot;,         sSIMType);
+		psManagerIn.SetProperty(&quot;VFTRCBU Brand&quot;,            &quot;PO&quot;);
+		psManagerIn.SetProperty(&quot;VFTRCBU Shop Code&quot;,        sShopCode);
+		psManagerIn.SetProperty(&quot;VFTRCBU User Id&quot;,          sUserName);
+		psManagerIn.SetProperty(&quot;VFTRCBU MSISDN&quot;,           sMSISDN);		
+		psManagerIn.SetProperty(&quot;VFTRCBU Secondary MSISDN&quot;, sCoupledMSISDN);
+		psManagerIn.SetProperty(&quot;TaskUI&quot;, &quot;Y&quot;);
+		psManagerIn.SetProperty(&quot;VFTRCBU Process Type&quot;, &quot;M&quot;);
+		psManagerIn.SetProperty(&quot;ProcessName&quot;,              &quot;VFTRCBU Get ICCID Info WF&quot;);
+		
+		try
+		{
+			bsManager.InvokeMethod(&quot;RunProcess&quot;, psManagerIn, psManagerOut);
+		}
+		catch(e)
+		{
+			sNIError = TheApplication().GetProfileAttr(&quot;LastUserDefinedErrorMessage&quot;);
+			if(sNIError != null &amp;&amp; sNIError != &quot;&quot;)
+				TheApplication().RaiseErrorText(sNIError);
+			else
+				throw(e);
+		}
+			
+		// LOCK ICCID
+			
+		psManagerIn.SetProperty (&quot;VFTRCBU Process Type&quot;, &quot;M&quot;);
+		psManagerIn.SetProperty(&quot;VFTRCBU User Id&quot;,   sUserName);
+		psManagerIn.SetProperty(&quot;VFTRCBU ICCID&quot;,     sICCID);
+		psManagerIn.SetProperty(&quot;VFTRCBU Lock Type&quot;, &quot;LO&quot;);
+		psManagerIn.SetProperty(&quot;VFTRCBU Integration Id&quot;, Id);
+		psManagerIn.SetProperty(&quot;ProcessName&quot;,       &quot;VFTRCBU Manage SIM Card Lock WF&quot;);
+		
+		try
+		{
+			bsManager.InvokeMethod(&quot;RunProcess&quot;, psManagerIn, psManagerOut);
+		}
+		catch(e)
+		{
+			sNIError = TheApplication().GetProfileAttr(&quot;LastUserDefinedErrorMessage&quot;);
+			if(sNIError != null &amp;&amp; sNIError != &quot;&quot;)
+				TheApplication().RaiseErrorText(sNIError);
+			else
+				throw(e);
+		}
+			
+		this.SetFieldValue(&quot;VFTRCBU SIM Card Type&quot;, sSIMType);
+		this.SetFieldValue(&quot;MNPPortIn_ICCID&quot;, sICCID);
+		//	TheApplication().SetProfileAttr(&quot;Read only control&quot;, &quot;Y&quot;);
+	}	
+
+// }
+  			
+//  finally
+//  {
+	psManagerIn  = null;
+	psManagerOut = null;
+	bsManager    = null;
+//  }
+}"
+			   SEQUENCE="8"
+			   UPDATED="09/20/2016 00:59:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/02/2015 21:25:14"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="PreSetMNPPortIn_MSISDN"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function PreSetMNPPortIn_MSISDN(sMSISDN)	
+{	
+  try
+  {
+	var bsManager : Service        = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+	var psManagerIn  : PropertySet = TheApplication().NewPropertySet();
+	var psManagerOut : PropertySet = TheApplication().NewPropertySet();
+	var sDonorOperator  = null;
+//	var sICCID          = null;
+//	var sSIMType	 	= null;
+//	var boEmployee : BusObject     = TheApplication().GetBusObject(&quot;Employee&quot;);
+//	var bcEmployee : BusComp       = boEmployee.GetBusComp(&quot;Employee&quot;);
+	var sUserName           = TheApplication().LoginName();
+//	var sEmployeeSearchExpr = &quot;[Login Name]=&apos;&quot; + sUserName + &quot;&apos;&quot;;
+//	var sShopCode           = &quot;&quot;;
+//	var sCoupledMSISDN      = &quot;&quot;; 
+	var sOldMSISDN = this.GetFieldValue(&quot;MNPPortIn_MSISDN&quot;);
+	var Id = this.GetFieldValue(&quot;Id&quot;);
+//	var sGSMTYPE = this.GetFieldValue(&quot;GSM Type&quot;);
+	var sError1	= TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0090&quot;);
+	var sError2	= TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0132&quot;);
+//	var profAttr = TheApplication().GetProfileAttr(&quot;MSISDNRO&quot;);
+	var sError3 = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0096&quot;);			//Please insert a valid querying format
+	var sNIError:String = &quot;&quot;;
+
+
+	this.SetFieldValue(&quot;IsICCIDRO&quot;,&quot;N&quot;);
+	
+	//ACAMBAS: VFTRCBU-32203 - Start
+	//sUserName = GetGolfUserName(sUserName);
+	//ACAMBAS: VFTRCBU-32203 - End
+		
+//	if (sOldMSISDN != &quot;&quot; &amp;&amp; sMSISDN == &quot;&quot;)
+	if (sOldMSISDN != &quot;&quot; &amp;&amp; sOldMSISDN != sMSISDN)
+	
+	{	
+		//Call WF to UnLock MSISDN(strOldMSISDN); 
+		psManagerIn.SetProperty (&quot;VFTRCBU Process Type&quot;, &quot;M&quot;);
+		psManagerIn.SetProperty(&quot;VFTRCBU User Id&quot;,        sUserName);
+		psManagerIn.SetProperty(&quot;VFTRCBU MSISDN&quot;,         sOldMSISDN);
+		psManagerIn.SetProperty(&quot;VFTRCBU Lock Type&quot;,      &quot;UL&quot;);
+		psManagerIn.SetProperty(&quot;VFTRCBU Integration Id&quot;, Id);			
+		psManagerIn.SetProperty(&quot;ProcessName&quot;,            &quot;VFTRCBU Manage MSISDN Lock WF&quot;);
+		
+		try
+		{
+			bsManager.InvokeMethod(&quot;RunProcess&quot;, psManagerIn, psManagerOut);
+		}
+		catch(e)
+		{
+			sNIError = TheApplication().GetProfileAttr(&quot;LastUserDefinedErrorMessage&quot;);
+			if(sNIError != null &amp;&amp; sNIError != &quot;&quot;)
+				TheApplication().RaiseErrorText(sNIError);
+			else
+				throw(e);
+		}
+		
+		this.SetFieldValue(&quot;MNPPortIn_Donor Operator&quot;, sDonorOperator);	
+		/** Begin - SetFieldsValues not applicable for a Port-In operation **/ 
+		//	this.SetFieldValue(&quot;MNPPortIn_ICCID&quot;, &quot;&quot;);
+		//	this.SetFieldValue(&quot;VFTRCBU SIM Card Type&quot;, &quot;Normal&quot;);
+		//	this.SetFieldValue(&quot;GSM Type&quot;, &quot;Normal&quot;);
+		/** End - **/ 	
+		this.SetFieldValue(&quot;MNPPortIn_Donor Operator&quot;, &quot;&quot;);	
+	 	
+	}
+	
+	if ( sMSISDN != &quot;&quot; &amp;&amp; sOldMSISDN != sMSISDN)
+	{
+	  //TheApplication().SetProfileAttr(&quot;Read only control&quot;, &quot;N&quot;);								
+//	  if(profAttr == &quot;N&quot;)
+//	  {
+
+		  //Get MSISDN
+		  //sMSISDN = GetMSISDN(sMSISDN, sGSMTYPE);
+
+      if ( sMSISDN == &quot;&quot; || sMSISDN == null )
+	     TheApplication().RaiseErrorText(sError2);	
+
+		//Manage Lock MSISDN
+		psManagerIn.SetProperty (&quot;VFTRCBU Process Type&quot;, &quot;M&quot;);
+		
+		psManagerIn.SetProperty(&quot;VFTRCBU User Id&quot;,        sUserName);
+		psManagerIn.SetProperty(&quot;VFTRCBU MSISDN&quot;,         sMSISDN);
+		psManagerIn.SetProperty(&quot;VFTRCBU Lock Type&quot;,      &quot;LO&quot;);
+		psManagerIn.SetProperty(&quot;VFTRCBU Integration Id&quot;, Id);     	
+		psManagerIn.SetProperty(&quot;ProcessName&quot;,            &quot;VFTRCBU Manage MSISDN Lock WF&quot;);
+		
+		try
+		{
+			bsManager.InvokeMethod(&quot;RunProcess&quot;, psManagerIn, psManagerOut);
+		}
+		catch(e)
+		{
+			sNIError = TheApplication().GetProfileAttr(&quot;LastUserDefinedErrorMessage&quot;);
+			if(sNIError != null &amp;&amp; sNIError != &quot;&quot;)
+				TheApplication().RaiseErrorText(sNIError);
+			else
+				throw(e);
+		}
+		
+		/** Begin - SetFieldsValues below not applicable for a Port-In operation **/ 
+		// sICCID = psManagerOut.GetProperty(&quot;ICCID&quot;);
+		// sSIMType = psManagerOut.GetProperty(&quot;SIMCardType&quot;);			
+		// this.SetFieldValue(&quot;VFTRCBU SIM Card Type&quot;, sSIMType);	
+		// this.SetFieldValue(&quot;MNPPortIn_ICCID&quot;, sICCID);
+		/** End - **/ 
+		
+		sDonorOperator = psManagerOut.GetProperty(&quot;DonorOpt&quot;);
+		this.SetFieldValue(&quot;MNPPortIn_Donor Operator&quot;, sDonorOperator);	
+						
+
+	 	
+//	  }
+//	  else
+//	  {
+//		TheApplication().RaiseErrorText(sError3);
+//		return(CancelOperation);
+//	  }	  	
+
+	  /*TheApplication().SetProfileAttr(&quot;Read only control&quot;, &quot;Y&quot;);
+			
+	  if ( sICCID == &quot;&quot;)
+	  {
+		TheApplication().SetProfileAttr(&quot;Read only control&quot;, &quot;N&quot;);
+	  }
+	  */
+	}
+  }
+			
+  finally
+  {
+	psManagerIn  = null;
+	psManagerOut = null;
+	bsManager    = null;
+  }
+}"
+			   SEQUENCE="9"
+			   UPDATED="03/05/2018 15:45:08"
+			   UPDATED_BY="1-FYSRA2I"
+			   CREATED="03/02/2015 21:25:14"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="PreSetMSISDN"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function PreSetMSISDN(sMSISDN)	
+{	
+//	try
+//	{
+		var bsManager : Service        = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		var psManagerIn  : PropertySet = TheApplication().NewPropertySet();
+		var psManagerOut : PropertySet = TheApplication().NewPropertySet();
+		var sDonorOperator  = null;
+		var sICCID          = null;
+		var sSIMType	 	= null;
+		var boEmployee : BusObject     = TheApplication().GetBusObject(&quot;Employee&quot;);
+		var bcEmployee : BusComp       = boEmployee.GetBusComp(&quot;Employee&quot;);
+		var sUserName           = TheApplication().LoginName();
+		var sEmployeeSearchExpr = &quot;[Login Name]=&apos;&quot; + sUserName + &quot;&apos;&quot;;
+		var sShopCode           = &quot;&quot;;
+		var sCoupledMSISDN      = &quot;&quot;;
+		var sOldMSISDN = this.GetFieldValue(&quot;MSISDN&quot;);
+		var Id = this.GetFieldValue(&quot;Id&quot;);
+		var sGSMTYPE = this.GetFieldValue(&quot;GSM Type&quot;);
+		var sError1	= TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0090&quot;);
+		var sError2	= TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0132&quot;);
+		var sError4	= TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0346&quot;); //WA#18 Gaps - RPIRES
+		var profAttr = TheApplication().GetProfileAttr(&quot;MSISDNRO&quot;);
+		var sError3 = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0096&quot;);			//Please insert a valid querying format
+		var sNIError:String = &quot;&quot;;
+		var sReason = this.GetFieldValue(&quot;VFTRCBU Reason&quot;);
+		
+		//ACAMBAS: VFTRCBU-32203 - Start
+		//sUserName = GetGolfUserName(sUserName);
+		//ACAMBAS: VFTRCBU-32203 - End;
+
+		if ((sMSISDN != &quot;&quot; &amp;&amp; sMSISDN != null) &amp;&amp; (sReason == &quot;&quot; || sReason == null))
+				TheApplication().RaiseErrorText(sError4);
+		
+		if (sOldMSISDN != &quot;&quot; &amp;&amp; sOldMSISDN != sMSISDN)
+		{	
+			//Call WF to UnLock MSISDN(strOldMSISDN); 
+			//Manage Lock MSISDN
+			if(sReason == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACS_ORDER_REASON&quot;,&quot;224&quot;))
+				psManagerIn.SetProperty (&quot;VFTRCBU Process Type&quot;, &quot;R&quot;);
+			else
+				psManagerIn.SetProperty (&quot;VFTRCBU Process Type&quot;, &quot;S&quot;);
+			psManagerIn.SetProperty(&quot;VFTRCBU User Id&quot;,        sUserName);
+			psManagerIn.SetProperty(&quot;VFTRCBU MSISDN&quot;,         sOldMSISDN);
+			psManagerIn.SetProperty(&quot;VFTRCBU Lock Type&quot;,      &quot;UL&quot;);
+			psManagerIn.SetProperty(&quot;VFTRCBU Integration Id&quot;, Id);			
+			psManagerIn.SetProperty(&quot;ProcessName&quot;,            &quot;VFTRCBU Manage MSISDN Lock WF&quot;);
+		
+			try
+			{
+				bsManager.InvokeMethod(&quot;RunProcess&quot;, psManagerIn, psManagerOut);
+			}
+			catch(e)
+			{
+				sNIError = TheApplication().GetProfileAttr(&quot;LastUserDefinedErrorMessage&quot;);
+				if(sNIError != null &amp;&amp; sNIError != &quot;&quot;)
+					TheApplication().RaiseErrorText(sNIError);
+				else
+					throw(e);
+			}
+			
+			this.SetFieldValue(&quot;IsICCIDRO&quot;,&quot;N&quot;);
+			PreSetICCID(&quot;&quot;, sICCID, sMSISDN);
+			this.SetFieldValue(&quot;ICCID&quot;, &quot;&quot;);
+			this.SetFieldValue(&quot;VFTRCBU SIM Card Type&quot;, &quot;Normal&quot;);
+			this.SetFieldValue(&quot;GSM Type&quot;, &quot;Normal&quot;);
+			this.SetFieldValue(&quot;IsICCIDRO&quot;,&quot;Y&quot;);
+			
+		}
+		if ( sMSISDN != &quot;&quot; &amp;&amp; sOldMSISDN != sMSISDN)
+		{
+//			if(profAttr == &quot;N&quot;)
+//		    {
+
+				//Get MSISDN
+				sMSISDN = GetMSISDN(sMSISDN, sGSMTYPE);
+				
+				
+				if ( sMSISDN == &quot;&quot; || sMSISDN == null )
+				TheApplication().RaiseErrorText(sError2);	
+
+				//Manage Lock MSISDN
+				if(sReason == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACS_ORDER_REASON&quot;,&quot;224&quot;))
+					psManagerIn.SetProperty (&quot;VFTRCBU Process Type&quot;, &quot;R&quot;);
+				else
+					psManagerIn.SetProperty (&quot;VFTRCBU Process Type&quot;, &quot;S&quot;);
+			
+				psManagerIn.SetProperty(&quot;VFTRCBU User Id&quot;,        sUserName);
+				psManagerIn.SetProperty(&quot;VFTRCBU MSISDN&quot;,         sMSISDN);
+				psManagerIn.SetProperty(&quot;VFTRCBU Lock Type&quot;,      &quot;LO&quot;);
+				psManagerIn.SetProperty(&quot;VFTRCBU Integration Id&quot;, Id);     	
+				psManagerIn.SetProperty(&quot;ProcessName&quot;,            &quot;VFTRCBU Manage MSISDN Lock WF&quot;);
+			
+				try
+				{
+					bsManager.InvokeMethod(&quot;RunProcess&quot;, psManagerIn, psManagerOut);
+				}
+				catch(e)
+				{
+					sNIError = TheApplication().GetProfileAttr(&quot;LastUserDefinedErrorMessage&quot;);
+					if(sNIError != null &amp;&amp; sNIError != &quot;&quot;)
+						TheApplication().RaiseErrorText(sNIError);
+					else
+						throw(e);
+				}
+				
+				sICCID = psManagerOut.GetProperty(&quot;ICCID&quot;);
+				sSIMType = psManagerOut.GetProperty(&quot;SIMCardType&quot;);
+
+				this.SetFieldValue(&quot;IsICCIDRO&quot;,&quot;N&quot;);
+				if(sICCID != null &amp;&amp; sICCID != &quot;&quot;)
+					PreSetICCID(sICCID, sSIMType, sMSISDN);	
+				
+				//ACAMBAS: VFTRCBU-33228 - Start
+				//sSIMType = LookupDesc(sSIMType); 
+				//sSIMType = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VFTRCBU_SIM_TYPE_CBU_ACTIVAT&quot;,sSIMType); 	
+				var sSIMTypeLIC = LookupName(&quot;VFTRCBU_SIM_TYPE_OPERATIONS&quot;, sSIMType); 
+				var sSIMTypeGroup = GetSIMCardGroup(sSIMTypeLIC); 
+				sSIMTypeGroup = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VFTRCBU_SIM_TYPE_CBU_ACTIVAT&quot;, sSIMTypeGroup); 
+
+				//this.SetFieldValue(&quot;VFTRCBU SIM Card Type&quot;, sSIMType);
+				this.SetFieldValue(&quot;VFTRCBU SIM Card Type&quot;, sSIMTypeGroup);	
+				this.SetFieldValue(&quot;VFTRCBU SIM Card Type LIC&quot;, sSIMTypeLIC); 
+				//ACAMBAS: VFTRCBU-33228 - End						
+				
+				this.SetFieldValue(&quot;ICCID&quot;, sICCID);
+				
+				if(sICCID != null &amp;&amp; sICCID != &quot;&quot;)
+					this.SetFieldValue(&quot;IsICCIDRO&quot;,&quot;Y&quot;);
+				else
+					this.SetFieldValue(&quot;IsICCIDRO&quot;,&quot;N&quot;);
+/*			}
+			else
+			{
+				TheApplication().RaiseErrorText(sError3);
+				return(CancelOperation);
+			}
+*/
+		}
+//	}
+			
+//	finally
+//	{
+		psManagerIn  = null;
+		psManagerOut = null;
+		bsManager    = null;
+//	}
+}"
+			   SEQUENCE="10"
+			   UPDATED="03/05/2018 15:45:08"
+			   UPDATED_BY="1-FYSRA2I"
+			   CREATED="12/17/2014 01:31:01"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="RequiredInfo"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function RequiredInfo()
+{
+	var sTrk = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;X_CITIZENSHIP&quot;, &quot;Turkish&quot;);
+	var sNation = this.GetFieldValue(&quot;VF End User Citizenship&quot;);
+	var sFrstName = this.GetFieldValue(&quot;VF End User First Name&quot;);
+	var sLName = this.GetFieldValue(&quot;VF End User Last Name&quot;);
+	var sDOB = this.GetFieldValue(&quot;VF End User Date of Birth&quot;);
+	var sPOB = this.GetFieldValue(&quot;VF End User Place of Birth&quot;);
+	var sFatherName = this.GetFieldValue(&quot;VF End User Mernis Father Name&quot;);
+	var sGender = this.GetFieldValue(&quot;VF End User M/F&quot;);
+	var sPassNum = this.GetFieldValue(&quot;VF End User SSN&quot;);
+	var sIssueDate = this.GetFieldValue(&quot;VF End User Document Creation Date&quot;);
+	var sDocumentType = this.GetFieldValue(&quot;VF End User VF Document Type&quot;);
+	var sDocumentNum = this.GetFieldValue(&quot;VF End User Document Number&quot;);
+	var sJob = this.GetFieldValue(&quot;VF End User Previous Jobs&quot;);
+	var sTCId = this.GetFieldValue(&quot;VF End User SSN&quot;);
+	var sMotherMaidenName = this.GetFieldValue(&quot;VF End User Mother Maiden Name&quot;);
+	
+	var sControlLabel=&quot;&quot;;
+    var smissing_fields=&quot;&quot;;
+    var last_ocur;
+    var fields;
+	
+	var sErr;
+	if (sNation == sTrk)
+	{
+		if (sFrstName == &quot;&quot; || sLName == &quot;&quot; || sTCId == &quot;&quot; || sFatherName == &quot;&quot; || sPOB == &quot;&quot; || sDOB == &quot;&quot;)
+		{
+			if (sTCId == &quot;&quot;)
+			{
+				sControlLabel = getLabel (&quot;X_VF_TC_ID_CONTACT&quot;);   
+				smissing_fields = smissing_fields + sControlLabel + &quot;, &quot;;	
+			}
+			if (sFrstName == &quot;&quot;)
+			{
+				sControlLabel = getLabel (&quot;X_VFTRCBU_TASK_CUSTOMER_NAME_REQ&quot;);   
+				smissing_fields = smissing_fields + sControlLabel + &quot;, &quot;;	
+			}
+			if (sLName == &quot;&quot;)
+			{
+				sControlLabel = getLabel (&quot;X_VFTRCBU_TASK_CUSTOMER_SURNAME_REQ&quot;);   
+				smissing_fields = smissing_fields + sControlLabel + &quot;, &quot;;	
+			}
+			if (sFatherName == &quot;&quot;)
+			{
+				sControlLabel = getLabel (&quot;X_VF_MERNIS_FATHER_NAME_REQ&quot;);   
+				smissing_fields = smissing_fields + sControlLabel + &quot;, &quot;;	
+			}
+			if (sPOB == &quot;&quot;)
+			{
+				sControlLabel = getLabel (&quot;X_VFTRCBU_PLACE_OF_BIRTH_REQ&quot;);   
+				smissing_fields = smissing_fields + sControlLabel + &quot;, &quot;;	
+			}
+			if (sDOB == &quot;&quot;)
+			{
+				sControlLabel = getLabel (&quot;X_VFTRCBU_BIRTH_DATE_REQ&quot;);   
+				smissing_fields = smissing_fields + sControlLabel + &quot;, &quot;;	
+			}
+
+            last_ocur= smissing_fields.lastIndexOf(&quot;, &quot;);
+            fields=smissing_fields.substring(0,last_ocur);
+
+			sErr = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0205&quot;, fields);
+			TheApplication().RaiseErrorText(sErr);
+			return(CancelOperation);
+		}	
+	}
+	else
+	{	 	
+		if (sDocumentNum == &quot;&quot; || sIssueDate == &quot;&quot; || sJob == &quot;&quot; || sFrstName == &quot;&quot; || sLName == &quot;&quot; || sDOB == &quot;&quot; || sPOB == &quot;&quot; || sGender == &quot;&quot; || sPassNum == &quot;&quot; || sFatherName == &quot;&quot;)
+		{          
+            if (sDocumentNum == &quot;&quot;)
+            {
+            	sControlLabel = getLabel (&quot;X_SBL_ID_NUMBER-1009093421-6M6&quot;);   
+                smissing_fields = smissing_fields + sControlLabel + &quot;, &quot;;	
+            }
+            
+            if (sIssueDate == &quot;&quot;)
+            {
+            	sControlLabel = getLabel (&quot;X_VFTRCBU_TASK_CUSTOMER_ISSUEDDATE_REQ&quot;);   
+                smissing_fields = smissing_fields + sControlLabel + &quot;, &quot;;	
+            }
+            
+            if (sJob == &quot;&quot;)
+            {
+            	sControlLabel = getLabel (&quot;X_VFTRCBU_TASK_CUSTOMER_JOB_REQ&quot;);   
+                smissing_fields = smissing_fields + sControlLabel + &quot;, &quot;;	
+            }
+            
+            if (sFrstName == &quot;&quot;)
+            {
+            	sControlLabel = getLabel (&quot;X_VFTRCBU_TASK_CUSTOMER_NAME_REQ&quot;);   
+                smissing_fields = smissing_fields + sControlLabel + &quot;, &quot;;	
+            }
+            
+            if (sLName == &quot;&quot;)
+            {
+            	sControlLabel = getLabel (&quot;X_VFTRCBU_TASK_CUSTOMER_SURNAME_REQ&quot;);   
+                smissing_fields = smissing_fields + sControlLabel + &quot;, &quot;;	
+            }
+            
+            if (sDOB == &quot;&quot;)
+            {
+            	sControlLabel = getLabel (&quot;X_VFTRCBU_BIRTH_DATE_PRM&quot;);   
+                smissing_fields = smissing_fields + sControlLabel + &quot;, &quot;;	
+            }
+            
+            if (sPOB == &quot;&quot;)
+            {
+            	sControlLabel = getLabel (&quot;X_PLACE_OF_BIRTH_PRM&quot;);   
+                smissing_fields = smissing_fields + sControlLabel + &quot;, &quot;;	
+            }
+            
+            if (sGender == &quot;&quot;)
+            {
+            	sControlLabel = getLabel (&quot;X_VFTRCBU_GENDER_PRM&quot;);   
+                smissing_fields = smissing_fields + sControlLabel + &quot;, &quot;;	
+            }
+            
+            if (sPassNum == &quot;&quot;)
+            {
+            	sControlLabel = getLabel (&quot;X_VFTRCBU_PASSPORT_NUMBER_PRM&quot;);   
+                smissing_fields = smissing_fields + sControlLabel + &quot;, &quot;;	
+            }
+            
+            if (sFatherName == &quot;&quot;)
+            {
+            	sControlLabel = getLabel (&quot;X_VF_MERNIS_FATHER_NAME&quot;);   
+                smissing_fields = smissing_fields + sControlLabel + &quot;, &quot;;	
+            }
+		
+			last_ocur= smissing_fields.lastIndexOf(&quot;, &quot;);
+            fields=smissing_fields.substring(0,last_ocur);
+		
+			sErr = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0205&quot;, fields);
+			TheApplication().RaiseErrorText(sErr);
+			return (CancelOperation);
+		}
+	}
+}"
+			   SEQUENCE="11"
+			   UPDATED="03/05/2018 16:26:55"
+			   UPDATED_BY="IBM_FIGENB"
+			   CREATED="11/30/2015 10:16:37"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="ValidateBirthDate"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function ValidateBirthDate(){
+	//WA#05 - GAP - JSARMENTO - 18052014
+
+	try
+	{
+		var sResult = &quot;False&quot;;
+		var dateBS : Service = TheApplication().GetService(&quot;TELCO DateTime Utils&quot;);
+		var sMinimumYears = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;CONTACT_MIN_BIRTH_YEARS&quot;,&quot;BIRTH_YEARS&quot;); //FCARRIL: LIC modified from &quot;8&quot; to &quot;BIRTH_YEARS&quot;
+		var sBirthDate = this.GetFieldValue(&quot;VF End User Date of Birth&quot;);
+		var oPSInputs  : PropertySet = TheApplication().NewPropertySet();
+		var oPSOutputs : PropertySet = TheApplication().NewPropertySet();
+		
+		oPSInputs.SetProperty(&quot;date&quot;, sBirthDate);
+		oPSInputs.SetProperty(&quot;years&quot;, sMinimumYears);
+		dateBS.InvokeMethod(&quot;AddYears&quot;,oPSInputs,oPSOutputs);
+		var newBirthDate = oPSOutputs.GetProperty(&quot;Result&quot;);
+		oPSInputs.Reset();
+		oPSOutputs.Reset();
+		
+		oPSInputs.SetProperty(&quot;date&quot;, newBirthDate);
+		dateBS.InvokeMethod(&quot;CompareDateWithToday&quot;,oPSInputs,oPSOutputs);
+		var result = oPSOutputs.GetProperty(&quot;result&quot;);
+		
+		if (result == &quot;1&quot;) {
+			var sMsg = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0315&quot;, sMinimumYears); //FCARRIL: Added sMinimumYears as parameter
+	        TheApplication().RaiseErrorText(sMsg);
+	    }
+	    else
+	    	sResult=&quot;True&quot;;
+		
+	
+	/*
+		var sResult = &quot;False&quot;;
+	
+		var sBirthDate = this.GetFieldValue(&quot;Date of Birth&quot;);
+		
+		var sMinimumYears = parseInt(TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;CONTACT_MIN_BIRTH_YEARS&quot;,&quot;8&quot;));
+		
+		var sMinimumYearsToDays = (sMinimumYears * 365); //convertion to days.
+			
+		var dateBS : Service = TheApplication().GetService(&quot;TELCO DateTime Utils&quot;);
+		var oPSInputs  : PropertySet = TheApplication().NewPropertySet();
+		var oPSOutputs : PropertySet = TheApplication().NewPropertySet();
+			
+		oPSInputs.SetProperty(&quot;Date1&quot;,sBirthDate);
+	
+		dateBS.InvokeMethod(&quot;DateTimeDiff&quot;,oPSInputs,oPSOutputs);
+		var result = oPSOutputs.GetProperty(&quot;Result&quot;);
+			
+		if(result &lt; sMinimumYearsToDays){
+	          var sMsg = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0315&quot;);
+	          TheApplication().RaiseErrorText(sMsg);
+		}
+		else
+			sResult = &quot;True&quot;;
+			*/
+
+		return sResult;
+	}
+	finally
+	{
+		dateBS = null;
+		oPSInputs = null;
+		oPSOutputs = null;
+	}	
+
+}"
+			   SEQUENCE="12"
+			   UPDATED="09/20/2016 00:59:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/21/2015 23:18:09"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="getLabel"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function getLabel (SymbolicString)
+{              
+	try
+	{
+		var name =&quot;&quot;;
+		var sBO : BusObject = TheApplication().GetBusObject (&quot;Repository Symbolic String&quot;);
+		var sBC : BusComp = sBO.GetBusComp (&quot;Repository Symbolic String Locale&quot;);
+		with(sBC)
+		{
+      		SetViewMode(AllView);               
+      		ActivateField (&quot;Name&quot;);
+      		ActivateField (&quot;Language Code&quot;);
+      		ActivateField (&quot;String Value&quot;);
+      		ClearToQuery();
+      		SetSearchSpec(&quot;Symbolic String Name&quot;,SymbolicString);
+      		SetSearchSpec(&quot;Language Code&quot;,TheApplication().InvokeMethod(&quot;Language&quot;));
+      		ExecuteQuery(ForwardOnly);
+      		if (FirstRecord ())
+     		{
+          	//Remove HTML Tags from Caption
+            	var snameaux = GetFieldValue (&quot;String Value&quot;);
+                var sfirst_ocur = snameaux.indexOf(&quot;&lt;html&quot;)
+                if (sfirst_ocur == -1)
+                	sfirst_ocur = snameaux.indexOf(&quot;&lt;img&quot;);
+                 if (sfirst_ocur == -1)
+                 	sfirst_ocur=snameaux.length;
+                      
+                 var snameaux_sub=snameaux.substring(0,sfirst_ocur);
+                 name= snameaux_sub.replace(/\s*$/,&quot;&quot;);
+      		}
+		}
+		return(name);
+	}
+	finally
+	{
+		sBC=null
+	    sBO=null
+	}
+}"
+			   SEQUENCE="3"
+			   UPDATED="11/30/2015 10:16:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/30/2015 10:16:37"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSINESS_COMPONENT_USER_PROP
+			   COMMENTS="PSANTOS - WA#32 D2"
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: End User Option"
+			   VALUE="IsPRMSubDealerTask"
+			   UPDATED="08/05/2015 11:54:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/05/2015 11:54:54"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: ICCID"
+			   VALUE="IsICCIDRO"
+			   UPDATED="03/15/2015 00:08:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/29/2014 11:30:52"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: Is Legal Guardian Required"
+			   VALUE="Is Legal Guardian Required Calc"
+			   UPDATED="08/05/2015 11:54:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: MNPPortIn_Bypass View SupplServices Bypass Selected"
+			   VALUE="MNPPortIn_Product Template Empty"
+			   UPDATED="05/11/2015 21:15:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/11/2015 21:15:48"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: VFTRCBU SIM Card Type"
+			   VALUE="IsICCIDRO"
+			   UPDATED="03/15/2015 00:08:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/15/2015 00:08:30"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   COMMENTS="JIRA-VFTRCBU-11997 : Inactivated because not needed"
+			   INACTIVE="Y"
+			   NAME="Named Method 1"
+			   VALUE="&quot;SetPortInDonorOperator&quot;,  &quot;SET&quot;, &quot;MNPPortIn_Donor Operator&quot;,  &quot;GetProfileAttr(&quot;&quot;PA_GetDonorOperator&quot;&quot;)&quot;"
+			   UPDATED="08/17/2015 18:49:31"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/10/2015 11:55:22"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Active Metadata Version Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Billing Account"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_04"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Citizenship"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_04"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Comments"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_05"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="End User Option"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU End User Options PickList"
+			   PRE_DEFAULT_VALUE="Expr: &quot;LookupValue(&quot;&quot;VFTRCBU_END_USER_OPTIONS&quot;&quot;, &quot;&quot;Select Existing End User&quot;&quot;)&quot;"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="End User Option"
+				   INACTIVE="N"
+				   NAME="End User Option"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="10/01/2014 20:08:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2014 20:08:11"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_05"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="GSM Type"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU GSM Type PickList CBU"
+			   PRE_DEFAULT_VALUE="Expr: &quot;LookupValue(&quot;&quot;VFTRCBU_MSISDN_TYPES&quot;&quot;,&quot;&quot;N&quot;&quot;)&quot;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="GSM Type"
+				   INACTIVE="N"
+				   NAME="GSM Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VFTRCBU Value"
+				   SEQUENCE="1"
+				   UPDATED="05/07/2015 22:34:17"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/29/2014 11:30:52"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="MSISDN"
+				   INACTIVE="N"
+				   NAME="MSISDN"
+				   NO_CLEAR="N"
+				   SEQUENCE="2"
+				   UPDATED="05/07/2015 22:34:17"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/07/2015 22:34:17"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupName(&quot;VFTRCBU_MSISDN_TYPES&quot;,[GSM Type])"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="GSM Type LIC"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/18/2015 15:59:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/18/2015 15:59:36"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="PositionName()"
+			   COMMENTS="[IBMMOLAMLI] - Sales Agile 2nd Sprint - Golf SimCard"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Golf Position Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="11/02/2015 10:34:46"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="InvokeServiceMethod(&quot;ACS NI General Operations&quot;,&quot;GetParameterWithConstraint&quot;,&quot;Function= GolfProject_SimCard, Name=GolfProject, Cons1=eval([Golf Position Name])&quot;,&quot;Cons2&quot;)"
+			   COMMENTS="[IBMMOLAMLI] - Sales Agile 2nd Sprint - Golf SimCard"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Golf Simcard Project Position Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:35"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="12/30/2017 12:04:35"
+			   CREATED_BY="IBM_MERVEO">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_06"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="ICCID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   VALIDATION="Len([ICCID]) = 18"
+			   VALIDATION_MESSAGE_-_STRING_REFERENCE="X_VF_ICCID_ERROR"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_C1_03"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Is Customer Underage"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_06"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Is Legal Guardian Required"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Expr: &quot;IIF([Is Customer Underage] = &quot;&quot;Y&quot;&quot;, &quot;&quot;Y&quot;&quot;, &quot;&quot;N&quot;&quot;)&quot;"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([IsPRMSubDealerTask] = &quot;Y&quot; OR [Is Customer Underage] = &quot;Y&quot;,&quot;Y&quot;,&quot;N&quot;)"
+			   COMMENTS="PSANTOS - WA#32 D2 - Updated to include IsPRMSubDealerTask flag"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Is Legal Guardian Required Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/05/2015 11:54:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/05/2015 11:54:54"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_C1_04"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Is SS1 Selected"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_C1_02"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Is SS10 Selected"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_C1_01"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Is SS2 Selected"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_C1_05"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Is SS3 Selected"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_C1_08"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_01"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Is SS4 Selected"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_C1_11"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_01"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Is SS5 Selected"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_C1_10"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_01"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Is SS6 Selected"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_C1_03"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_01"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Is SS7 Selected"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_C1_12"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_01"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Is SS8 Selected"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_C1_16"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_01"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Is SS9 Selected"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_C1_04"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_01"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="IsICCIDRO"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Y"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="03/15/2015 00:08:30"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_C1_17"
+			   COMMENTS="PSANTOS - WA#32 D2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_01"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="IsPRMSubDealerTask"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="08/05/2015 11:54:54"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_07"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Legal Guardian First Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_07"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Legal Guardian Last Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_DN_04"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Legal Guardian Power of Attorney Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_08"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Legal Guardian Power of Attorney Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_08"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Legal Guardian Public Notary"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_09"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MNPCancelMSISDN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   VALIDATION="Len([MNPCancelMSISDN]) = 10"
+			   VALIDATION_MESSAGE_-_STRING_REFERENCE="X_VF_MSISDN_ERROR"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="03/02/2015 21:25:14"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VFTRCBU_MNP_PORTIN_TBUI_BYP_SS&quot;,&quot;BYPASS_SS01&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MNPPortIn_Bypass View SupplServices Bypass Label"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/09/2015 23:32:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/09/2015 23:32:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_C1_13"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_01"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MNPPortIn_Bypass View SupplServices Bypass Selected"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="04/09/2015 23:32:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_09"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MNPPortIn_Donor Operator"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="01/18/2015 15:59:36"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_10"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MNPPortIn_ICCID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   VALIDATION="Len([MNPPortIn_ICCID]) = 18"
+			   VALIDATION_MESSAGE_-_STRING_REFERENCE="X_VF_ICCID_ERROR"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="01/18/2015 15:59:36"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_10"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MNPPortIn_MSISDN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   VALIDATION="Len([MNPPortIn_MSISDN]) = 10"
+			   VALIDATION_MESSAGE_-_STRING_REFERENCE="X_VF_MSISDN_ERROR"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="01/18/2015 15:59:36"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V500_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MNPPortIn_Port Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="01/18/2015 15:59:36"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V500_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MNPPortIn_Preferred Port In Date"
+			   NO_COPY="N"
+			   PICKLIST="VF Preferred port in time"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="01/18/2015 15:59:36"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="MNPPortIn_Preferred Port In Date"
+				   INACTIVE="N"
+				   NAME="MNPPortIn_Preferred Port In Date"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="01/18/2015 15:59:36"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 15:59:36"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V500_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_07"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MNPPortIn_Product Template"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU MNP Port In Activate New Line Order Templates"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="01/18/2015 15:59:36"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Active Metadata Version Id"
+				   INACTIVE="N"
+				   NAME="Active Metadata Version Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Metadata Version Id"
+				   UPDATED="01/18/2015 15:59:36"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 15:59:36"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Comments"
+				   INACTIVE="N"
+				   NAME="Comments"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Comments"
+				   UPDATED="01/18/2015 15:59:36"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 15:59:36"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="MNPPortIn_Product Template"
+				   INACTIVE="N"
+				   NAME="MNPPortIn_Product Template"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="01/18/2015 15:59:36"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 15:59:36"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="MNPPortIn_Product Template Translated"
+				   INACTIVE="N"
+				   NAME="MNPPortIn_Product Template Translated"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name Translated"
+				   UPDATED="05/11/2015 21:15:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/11/2015 21:15:48"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([MNPPortIn_Product Template Translated] IS NULL,&quot;Y&quot;,&quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MNPPortIn_Product Template Empty"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/11/2015 21:15:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/11/2015 21:15:48"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V500_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_08"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MNPPortIn_Product Template Translated"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU MNP Port In Activate New Line Order Templates"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="05/11/2015 21:15:49"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Active Metadata Version Id"
+				   INACTIVE="N"
+				   NAME="Active Metadata Version Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Metadata Version Id"
+				   UPDATED="05/11/2015 21:15:49"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/11/2015 21:15:49"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Comments"
+				   INACTIVE="N"
+				   NAME="Comments"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Comments"
+				   UPDATED="05/11/2015 21:15:49"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/11/2015 21:15:49"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="MNPPortIn_Product Template"
+				   INACTIVE="N"
+				   NAME="MNPPortIn_Product Template"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="05/11/2015 21:15:49"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/11/2015 21:15:49"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="MNPPortIn_Product Template Translated"
+				   INACTIVE="N"
+				   NAME="MNPPortIn_Product Template Translated"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name Translated"
+				   UPDATED="05/11/2015 21:15:49"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/11/2015 21:15:49"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V500_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_09"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MNPPortIn_Reference Number"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="01/18/2015 15:59:36"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V500_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_10"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MNPPortIn_Transaction Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="01/18/2015 15:59:36"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1024_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MNPPortIn_VFTRCBU TBUI Originating Dealer Code"
+			   NO_COPY="N"
+			   PICKLIST="VF PickList Employee Visibility"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="01/18/2015 15:59:36"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="MNPPortIn_VFTRCBU TBUI Originating Dealer Code"
+				   INACTIVE="N"
+				   NAME="MNPPortIn_VFTRCBU TBUI Originating Dealer Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Dealer Code"
+				   UPDATED="01/18/2015 15:59:36"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 15:59:36"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="MNPPortIn_VFTRCBU TBUI Originating Shop Code"
+				   INACTIVE="N"
+				   NAME="MNPPortIn_VFTRCBU TBUI Originating Shop Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Shop Id"
+				   UPDATED="01/18/2015 15:59:36"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 15:59:36"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1024_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_05"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MNPPortIn_VFTRCBU TBUI Originating Shop Code"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="01/18/2015 15:59:36"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_DN_02"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MSISDN"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU Coupled MSISDN PickList"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   VALIDATION="Len([MSISDN]) = 10"
+			   VALIDATION_MESSAGE_-_STRING_REFERENCE="X_VF_MSISDN_ERROR"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="GSM Type"
+				   INACTIVE="N"
+				   NAME="GSM Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VFTRCBU GSM Type"
+				   SEQUENCE="1"
+				   UPDATED="05/07/2015 22:34:17"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/29/2014 11:30:52"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="WA#14 10/12/2014 DG"
+				   FIELD="MSISDN"
+				   INACTIVE="N"
+				   NAME="MSISDN"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VFTRCBU MSISDN"
+				   SEQUENCE="2"
+				   UPDATED="05/07/2015 22:34:17"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/17/2014 01:31:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1024_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_06"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Product Template"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU Activate New Line Order Templates"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Active Metadata Version Id"
+				   INACTIVE="N"
+				   NAME="Active Metadata Version Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Metadata Version Id"
+				   UPDATED="10/01/2014 20:08:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2014 20:08:11"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Comments"
+				   INACTIVE="N"
+				   NAME="Comments"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Comments"
+				   UPDATED="10/01/2014 20:08:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2014 20:08:11"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Product Template"
+				   INACTIVE="N"
+				   NAME="Product Template"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="10/01/2014 20:08:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2014 20:08:11"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Product Template Translated"
+				   INACTIVE="N"
+				   NAME="Product Template Translated"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name Translated"
+				   UPDATED="03/02/2015 21:25:14"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/02/2015 21:25:14"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1024_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_07"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Product Template Translated"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU Activate New Line Order Templates"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="03/02/2015 21:25:14"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Active Metadata Version Id"
+				   INACTIVE="N"
+				   NAME="Active Metadata Version Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Metadata Version Id"
+				   UPDATED="03/02/2015 21:25:14"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/02/2015 21:25:14"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Comments"
+				   INACTIVE="N"
+				   NAME="Comments"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Comments"
+				   UPDATED="03/02/2015 21:25:14"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/02/2015 21:25:14"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Product Template"
+				   INACTIVE="N"
+				   NAME="Product Template"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="03/02/2015 21:25:15"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/02/2015 21:25:15"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Product Template Translated"
+				   INACTIVE="N"
+				   NAME="Product Template Translated"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name Translated"
+				   UPDATED="03/02/2015 21:25:15"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/02/2015 21:25:15"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF(GetProfileAttr(&quot;Read only control&quot;)  = &quot;N&quot;, &quot;N&quot;, &quot;Y&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Read Only Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/29/2014 11:30:52"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/29/2014 11:30:52"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VFTRCBU_ACTIVATE_LINE_TBUI_SS&quot;,&quot;SS1&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SS1 Label"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2014 20:08:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VFTRCBU_ACTIVATE_LINE_TBUI_SS&quot;,&quot;SS10&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SS10 Label"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2014 20:08:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VFTRCBU_ACTIVATE_LINE_TBUI_SS&quot;,&quot;SS2&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SS2 Label"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2014 20:08:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VFTRCBU_ACTIVATE_LINE_TBUI_SS&quot;,&quot;SS3&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SS3 Label"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2014 20:08:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2014 20:08:11"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VFTRCBU_ACTIVATE_LINE_TBUI_SS&quot;,&quot;SS4&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SS4 Label"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2014 20:08:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VFTRCBU_ACTIVATE_LINE_TBUI_SS&quot;,&quot;SS5&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SS5 Label"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2014 20:08:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VFTRCBU_ACTIVATE_LINE_TBUI_SS&quot;,&quot;SS6&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SS6 Label"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2014 20:08:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VFTRCBU_ACTIVATE_LINE_TBUI_SS&quot;,&quot;SS7&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SS7 Label"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2014 20:08:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VFTRCBU_ACTIVATE_LINE_TBUI_SS&quot;,&quot;SS8&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SS8 Label"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2014 20:08:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VFTRCBU_ACTIVATE_LINE_TBUI_SS&quot;,&quot;SS9&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SS9 Label"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2014 20:08:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1500_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_06"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Subscriber First Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1500_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_07"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Subscriber Last Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1999_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_06"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF End User Citizenship"
+			   NO_COPY="N"
+			   PICKLIST="VF Citizenship Picklist"
+			   PRE_DEFAULT_VALUE="Expr: &quot;LookupValue(&quot;&quot;X_CITIZENSHIP&quot;&quot;,&quot;&quot;Turkish&quot;&quot;)&quot;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF End User Citizenship"
+				   INACTIVE="N"
+				   NAME="VF End User Citizenship"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="10/01/2014 20:08:12"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2014 20:08:12"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_DN_05"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF End User Date of Birth"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   VALIDATION="&lt;=Today()"
+			   VALIDATION_MESSAGE_-_STRING_REFERENCE="X_VF_DATE_FUTURE"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_DN_01"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF End User Document Creation Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   VALIDATION="&lt;=Today()"
+			   VALIDATION_MESSAGE_-_STRING_REFERENCE="X_VF_DATE_FUTURE"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1999_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_06"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF End User Document Number"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1999_3"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_06"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF End User Favorite Team"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU Favourite Team Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF End User Favorite Team"
+				   INACTIVE="N"
+				   NAME="VF End User Favorite Team"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="10/01/2014 20:08:12"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2014 20:08:12"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1999_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_07"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF End User First Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1999_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_07"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF End User Last Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1999_3"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_07"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF End User M/F"
+			   NO_COPY="N"
+			   PICKLIST="PickList M/F"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF End User M/F"
+				   INACTIVE="N"
+				   NAME="VF End User M/F"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="10/01/2014 20:08:12"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2014 20:08:12"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1999_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_08"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF End User Mernis Father Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1999_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_09"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF End User Mernis Mother Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1999_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_10"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF End User Mernis Status"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V2000_3"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_08"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF End User Mother Maiden Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V2000_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_08"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF End User Place of Birth"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V2000_5"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_08"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF End User Previous Jobs"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V2000_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_08"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF End User SSN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/05/2018 16:26:55"
+			   UPDATED_BY="IBM_FIGENB"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V2000_4"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_08"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF End User VF Document Type"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU Document Type Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/05/2018 16:26:55"
+			   UPDATED_BY="IBM_FIGENB"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF End User VF Document Type"
+				   INACTIVE="N"
+				   NAME="VF End User VF Document Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   SEQUENCE="2"
+				   UPDATED="12/22/2014 02:08:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2014 20:08:12"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VFTRCBU Consumer Market Class"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Consumer Market Class"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Parent Name"
+				   SEQUENCE="1"
+				   UPDATED="12/22/2014 02:08:03"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/22/2014 02:08:03"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="100"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Action Type Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/21/2015 23:18:09"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/21/2015 23:18:09"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="102"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Consumer Market Class"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/23/2015 23:59:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/22/2014 02:08:03"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V2000_3"
+			   COMMENTS="WA#18 Gaps - RPIRES"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_09"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Customer Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="06/21/2015 23:18:09"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V2000_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_09"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU End User Is Relative Contact Flag Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="10/01/2014 20:08:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V2000_5"
+			   COMMENTS="WA#18 Gaps- RPIRES"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_09"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Reason"
+			   NO_COPY="N"
+			   PICKLIST="TELCO Action Reason Parameter Picklist"
+			   PRE_DEFAULT_VALUE="Expr: &quot;LookupValue(&quot;&quot;ACS_ORDER_REASON&quot;&quot;,&quot;&quot;225&quot;&quot;)&quot;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="06/21/2015 23:18:09"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VFTRCBU Action Type Calc"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Action Type Calc"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Condition2"
+				   UPDATED="06/21/2015 23:18:09"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/21/2015 23:18:09"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VFTRCBU Consumer Market Class"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Consumer Market Class"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Attrib02"
+				   UPDATED="06/21/2015 23:18:09"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/21/2015 23:18:09"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VFTRCBU Reason"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Reason"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Translated Name"
+				   UPDATED="06/21/2015 23:18:09"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/21/2015 23:18:09"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupName(&apos;ACS_ORDER_REASON&apos;, [VFTRCBU Reason])"
+			   COMMENTS="WA#18 Gaps- RPIRES"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Reason LIC"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/21/2015 23:18:09"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/21/2015 23:18:09"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V2000_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_09"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU SIM Card Type"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU SIM Type Activation PickList"
+			   PRE_DEFAULT_VALUE="Expr: &apos;LookupValue (&quot;VFTRCBU_SIM_TYPE_CBU_ACTIVAT&quot;, &quot;NO&quot;)&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="12/17/2014 01:31:01"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VFTRCBU SIM Card Type"
+				   INACTIVE="N"
+				   NAME="VFTRCBU SIM Card Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VFTRCBU Value"
+				   UPDATED="02/03/2016 17:46:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 15:59:36"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VFTRCBU SIM Card Type LIC"
+				   INACTIVE="Y"
+				   NAME="VFTRCBU SIM Card Type LIC"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VFTRCBU Name"
+				   UPDATED="02/03/2016 17:46:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/02/2016 20:40:06"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V2000_4"
+			   COMMENTS="ACAMBAS: VFTRCBU-33228 - Calculated Value removed: LookupName(&apos;VF_TWIN_SIM_TYPE&apos;, [VFTRCBU SIM Card Type New]). It&apos;s being filled in PreSetICCID and PreSetMSISDN methods."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_09"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU SIM Card Type LIC"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="02/02/2016 20:40:06"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V2000_3"
+			   COMMENTS="[IBMMOLAMLI] - Sales Agile 2nd Sprint - Golf SimCard"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_10"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU TBUI Originating Dealer Code"
+			   NO_COPY="N"
+			   PICKLIST="VF PickList Employee Visibility"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="12/30/2017 12:04:35"
+			   CREATED_BY="IBM_MERVEO">
+				<PICK_MAP
+				   FIELD="VFTRCBU TBUI Originating Dealer Code"
+				   INACTIVE="N"
+				   NAME="VFTRCBU TBUI Originating Dealer Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Dealer Code"
+				   UPDATED="12/30/2017 12:04:35"
+				   UPDATED_BY="IBM_MERVEO"
+				   CREATED="12/30/2017 12:04:35"
+				   CREATED_BY="IBM_MERVEO">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VFTRCBU TBUI Originating Shop Code"
+				   INACTIVE="N"
+				   NAME="VFTRCBU TBUI Originating Shop Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Shop Id"
+				   UPDATED="12/30/2017 12:04:35"
+				   UPDATED_BY="IBM_MERVEO"
+				   CREATED="12/30/2017 12:04:35"
+				   CREATED_BY="IBM_MERVEO">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V2000_2"
+			   COMMENTS="FCARRIL: VFTRCBU-19572"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_10"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU TBUI Originating Dealer Code Id"
+			   NO_COPY="N"
+			   PICKLIST="VF PickList Employee Visibility"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="11/09/2015 13:58:46"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="MNPPortIn_VFTRCBU TBUI Originating Dealer Code"
+				   INACTIVE="N"
+				   NAME="MNPPortIn_VFTRCBU TBUI Originating Dealer Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Dealer Code"
+				   UPDATED="11/09/2015 13:58:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/09/2015 13:58:46"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="MNPPortIn_VFTRCBU TBUI Originating Shop Code"
+				   INACTIVE="N"
+				   NAME="MNPPortIn_VFTRCBU TBUI Originating Shop Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Shop Id"
+				   UPDATED="11/09/2015 13:58:47"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/09/2015 13:58:47"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VFTRCBU TBUI Originating Dealer Code Id"
+				   INACTIVE="N"
+				   NAME="VFTRCBU TBUI Originating Dealer Code Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="11/09/2015 13:58:47"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/09/2015 13:58:47"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V2000_5"
+			   COMMENTS="[IBMMOLAMLI] - Sales Agile 2nd Sprint - Golf SimCard"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_10"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU TBUI Originating Shop Code"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/30/2017 12:04:36"
+			   UPDATED_BY="IBM_MERVEO"
+			   CREATED="12/30/2017 12:04:35"
+			   CREATED_BY="IBM_MERVEO">
+			</FIELD>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

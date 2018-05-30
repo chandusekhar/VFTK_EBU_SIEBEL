@@ -1,0 +1,390 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="11/24/2016 17:14:00"
+   UPDATED_BY="SADMIN"
+   CREATED="11/24/2016 14:49:11"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="20161220 - VFTRCBU Project AD Cosby Enhancement"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VFTRCBU Cosby Enhancement"
+	   UI_FREEZE="N"
+	   UPDATED="02/05/2017 23:28:06"
+	   UPDATED_BY="FGUEDES"
+	   CREATED="12/20/2016 16:43:24"
+	   CREATED_BY="FCABRAL"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<WORKFLOW_PROCESS
+		   COMMENTS="PD093 - Cosby - FGUEDES"
+		   EDIT="N"
+		   INACTIVE="N"
+		   NAME="VFTRAD Send Cosby Back Dated Order SMS WF: 0"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="01/09/2017 15:31:55"
+		   PASS_BY_REF_HIERARCHY_ARGUMENT="N"
+		   PROCESS_NAME="VFTRAD Send Cosby Back Dated Order SMS WF"
+		   REPLICATION_LEVEL="None"
+		   RUNNABLE="N"
+		   STATE_MANAGEMENT_TYPE="STATEFUL"
+		   STATUS="COMPLETED"
+		   VERSION="0"
+		   WEB_SERVICE_ENABLED="N"
+		   WORKFLOW_MODE="Service Flow"
+		   OBJECT_LOCKED_BY_NAME="FGUEDES"
+		   UPDATED="02/05/2017 23:28:06"
+		   UPDATED_BY="FGUEDES"
+		   CREATED="01/09/2017 15:30:59"
+		   CREATED_BY="FGUEDES">
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Error Code"
+			   UPDATED="01/09/2017 15:31:00"
+			   UPDATED_BY="FGUEDES"
+			   CREATED="01/09/2017 15:31:00"
+			   CREATED_BY="FGUEDES">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Error Message"
+			   UPDATED="01/09/2017 15:31:00"
+			   UPDATED_BY="FGUEDES"
+			   CREATED="01/09/2017 15:31:00"
+			   CREATED_BY="FGUEDES">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="MemberMSISDN"
+			   UPDATED="01/09/2017 17:11:08"
+			   UPDATED_BY="FGUEDES"
+			   CREATED="01/09/2017 17:11:08"
+			   CREATED_BY="FGUEDES">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="NONE"
+			   NAME="MemberTariffItemId"
+			   UPDATED="01/12/2017 18:29:07"
+			   UPDATED_BY="FGUEDES"
+			   CREATED="01/10/2017 14:20:57"
+			   CREATED_BY="FGUEDES">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Object Id"
+			   UPDATED="01/09/2017 15:30:59"
+			   UPDATED_BY="FGUEDES"
+			   CREATED="01/09/2017 15:30:59"
+			   CREATED_BY="FGUEDES">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Process Instance Id"
+			   UPDATED="01/09/2017 15:31:00"
+			   UPDATED_BY="FGUEDES"
+			   CREATED="01/09/2017 15:31:00"
+			   CREATED_BY="FGUEDES">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   INOUT="INOUT"
+			   NAME="Siebel Operation Object Id"
+			   UPDATED="01/09/2017 15:31:00"
+			   UPDATED_BY="FGUEDES"
+			   CREATED="01/09/2017 15:31:00"
+			   CREATED_BY="FGUEDES">
+			</WF_PROCESS_PROP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*444 48 540 969*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="End 0"
+			   TYPE="END"
+			   UPDATED="01/10/2017 14:19:25"
+			   UPDATED_BY="FGUEDES"
+			   CREATED="01/09/2017 15:33:05"
+			   CREATED_BY="FGUEDES">
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="GetFieldsFromFirstRow"
+			   BUSINESS_SERVICE_NAME="TELCO BusComp Utils"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*180 48 276 969*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Default Tariff Item Id"
+			   TYPE="TASK"
+			   UPDATED="01/10/2017 14:26:01"
+			   UPDATED_BY="FGUEDES"
+			   CREATED="01/10/2017 14:19:29"
+			   CREATED_BY="FGUEDES">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*312 724*NPts1*22*P06*276 724*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 0"
+				   TO_STEP_NAME="Send Cosby BDO SMS"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="01/10/2017 14:19:52"
+				   UPDATED_BY="FGUEDES"
+				   CREATED="01/10/2017 14:19:35"
+				   CREATED_BY="FGUEDES">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Get Default Tariff Item Id"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*312 724*NPts1*22*P06*276 724*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 0"
+					   TO_STEP_NAME="Send Cosby BDO SMS"
+					   UPDATED="01/10/2017 14:19:52"
+					   UPDATED_BY="FGUEDES"
+					   CREATED="01/10/2017 14:19:35"
+					   CREATED_BY="FGUEDES">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="BusinessComponent"
+				   SEQUENCE="1"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="TELCO Line Items - Simple"
+				   UPDATED="01/10/2017 14:22:07"
+				   UPDATED_BY="FGUEDES"
+				   CREATED="01/10/2017 14:20:19"
+				   CREATED_BY="FGUEDES">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="BusinessObject"
+				   SEQUENCE="2"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="TELCO Order Item - Simple"
+				   UPDATED="01/10/2017 14:21:42"
+				   UPDATED_BY="FGUEDES"
+				   CREATED="01/10/2017 14:20:23"
+				   CREATED_BY="FGUEDES">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Id"
+				   SEQUENCE="4"
+				   TYPE="LITERAL"
+				   UPDATED="01/10/2017 14:20:40"
+				   UPDATED_BY="FGUEDES"
+				   CREATED="01/10/2017 14:20:40"
+				   CREATED_BY="FGUEDES">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Get Default Tariff Item Id50"
+				   OUTPUT_ARG="Id"
+				   PROPERTY_NAME="MemberTariffItemId"
+				   SEQUENCE="5"
+				   TYPE="ARGUMENT"
+				   UPDATED="01/10/2017 14:25:53"
+				   UPDATED_BY="FGUEDES"
+				   CREATED="01/10/2017 14:25:53"
+				   CREATED_BY="FGUEDES">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SearchExpression"
+				   SEQUENCE="3"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="&quot;[Parent Order Item Id] IS  NOT NULL AND [VF Product Group] = &apos;&quot;+LookupValue(&apos;VFTRAD_SHARABLEBD_DFLT_TARIFF&apos;,&apos;GROUP&apos;)+&quot;&apos; AND [VF Product Type]=&apos;&quot;+LookupValue(&apos;VFTRAD_SHARABLEBD_DFLT_TARIFF&apos;,&apos;TYPE&apos;)+&quot;&apos; AND [VF Product Sub Type]=&apos;&quot;+LookupValue(&apos;VFTRAD_SHARABLEBD_DFLT_TARIFF&apos;,&apos;SUBTYPE&apos;)+&quot;&apos; AND [Action Code] = &apos;&quot;+LookupValue(&apos;DELTA_ACTION_CODE&apos;,&apos;New&apos;)+&quot;&apos; AND [Order Header Id] = &apos;&quot; + [&amp;Object Id] +&quot;&quot;"
+				   UPDATED="01/10/2017 14:25:52"
+				   UPDATED_BY="FGUEDES"
+				   CREATED="01/10/2017 14:20:28"
+				   CREATED_BY="FGUEDES">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*312 48 408 969*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="Send Cosby BDO SMS"
+			   SUBPROCESS_NAME="VFTRCBU Submit SMS WF"
+			   TYPE="SUB_PROCESS"
+			   UPDATED="01/10/2017 14:21:23"
+			   UPDATED_BY="FGUEDES"
+			   CREATED="01/09/2017 15:32:27"
+			   CREATED_BY="FGUEDES">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*444 724*NPts1*22*P06*408 724*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 1"
+				   TO_STEP_NAME="End 0"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="01/10/2017 14:19:25"
+				   UPDATED_BY="FGUEDES"
+				   CREATED="01/09/2017 15:33:07"
+				   CREATED_BY="FGUEDES">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Send Cosby BDO SMS"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*444 724*NPts1*22*P06*408 724*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 1"
+					   TO_STEP_NAME="End 0"
+					   UPDATED="01/10/2017 14:19:25"
+					   UPDATED_BY="FGUEDES"
+					   CREATED="01/09/2017 15:33:08"
+					   CREATED_BY="FGUEDES">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="ChannelId"
+				   SEQUENCE="1"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="SMS"
+				   UPDATED="01/09/2017 17:13:47"
+				   UPDATED_BY="FGUEDES"
+				   CREATED="01/09/2017 17:13:47"
+				   CREATED_BY="FGUEDES">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="CommTemplateName"
+				   SEQUENCE="8"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="LookupValue(&quot;VFTRCBU_MSG_TEMPLATE&quot;, &quot;PD093 - Cosby Enhancement BDO SMS&quot;)"
+				   UPDATED="01/10/2017 10:58:07"
+				   UPDATED_BY="FGUEDES"
+				   CREATED="01/10/2017 10:55:50"
+				   CREATED_BY="FGUEDES">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Is Siebel Comm Template"
+				   SEQUENCE="9"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Y"
+				   UPDATED="01/10/2017 11:44:03"
+				   UPDATED_BY="FGUEDES"
+				   CREATED="01/10/2017 11:44:03"
+				   CREATED_BY="FGUEDES">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="MobilePhone#"
+				   SEQUENCE="2"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="IIF(Left([&amp;MemberMSISDN], 2) = &apos;90&apos; OR Left([&amp;MemberMSISDN], 3) = &apos;+90&apos;, [&amp;MemberMSISDN], &apos;90&apos; + [&amp;MemberMSISDN])"
+				   UPDATED="01/10/2017 10:39:07"
+				   UPDATED_BY="FGUEDES"
+				   CREATED="01/09/2017 17:14:01"
+				   CREATED_BY="FGUEDES">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="SourceBusObj"
+				   SEQUENCE="5"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="TELCO Order Item - Simple"
+				   UPDATED="01/10/2017 10:39:27"
+				   UPDATED_BY="FGUEDES"
+				   CREATED="01/10/2017 10:39:27"
+				   CREATED_BY="FGUEDES">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="TemplateInstanceObjectId"
+				   PROPERTY_NAME="MemberTariffItemId"
+				   SEQUENCE="3"
+				   TYPE="PROPERTY"
+				   UPDATED="01/10/2017 14:21:23"
+				   UPDATED_BY="FGUEDES"
+				   CREATED="01/09/2017 17:18:07"
+				   CREATED_BY="FGUEDES">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r12*48 48 144 969*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="Start"
+			   TYPE="START"
+			   UPDATED="01/10/2017 14:19:52"
+			   UPDATED_BY="FGUEDES"
+			   CREATED="01/09/2017 15:32:15"
+			   CREATED_BY="FGUEDES">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*180 724*NPts1*22*P06*132 724*ToHS1*08*ArrowEnd1*4"
+				   NAME="Start"
+				   TO_STEP_NAME="Get Default Tariff Item Id"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="01/10/2017 14:19:52"
+				   UPDATED_BY="FGUEDES"
+				   CREATED="01/09/2017 15:32:37"
+				   CREATED_BY="FGUEDES">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Start"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*180 724*NPts1*22*P06*132 724*ToHS1*08*ArrowEnd1*4"
+					   NAME="Start"
+					   TO_STEP_NAME="Get Default Tariff Item Id"
+					   UPDATED="01/10/2017 14:19:52"
+					   UPDATED_BY="FGUEDES"
+					   CREATED="01/09/2017 15:32:37"
+					   CREATED_BY="FGUEDES">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+		</WORKFLOW_PROCESS>
+	</PROJECT>
+</REPOSITORY>
+
+
+

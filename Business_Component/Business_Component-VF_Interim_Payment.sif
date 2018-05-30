@@ -1,0 +1,2540 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="05/20/2015 12:00:07"
+   UPDATED_BY="SADMIN"
+   CREATED="05/19/2015 19:58:21"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="LOCKED BY VTAO UI UPGRADE (Control Alignment)"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="Account"
+	   UI_FREEZE="N"
+	   UPDATED="06/21/2017 09:17:43"
+	   UPDATED_BY="VF_SKILICSAL"
+	   CREATED="01/01/1980 00:00:00"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="N"
+		   CLASS="CSSBCVExtern"
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MULTI_RECIPIENT_SELECT="N"
+		   NAME="VF Interim Payment"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LOCKED="N"
+		   OWNER_DELETE="N"
+		   POPUP_VISIBILITY_AUTO_ALL="N"
+		   SCRIPTED="Y"
+		   TYPE="Non-Transient"
+		   UPDATED="08/01/2017 15:26:43"
+		   UPDATED_BY="IBMDEVELOPER7"
+		   CREATED="09/30/2010 13:29:50"
+		   CREATED_BY="SADMIN">
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreInvokeMethod (MethodName)
+{
+	try{
+		var psInputs : PropertySet;
+		var psOutputs : PropertySet;
+		var psAddress : PropertySet;
+		var sWF : Service;
+		TheApplication().SetProfileAttr(&quot;VF Interim Payment&quot;,&quot;VF Interim Payment&quot;);//TLGA-4160
+
+		if(TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;) == &quot;VF Invoice Reprint View&quot; ||
+		   TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;) == &quot;VF Billing Account Portal Summary View&quot;
+		  ){
+		  
+			if(MethodName == &quot;Submit&quot;)
+			{
+				sWF  = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+				psInputs  = TheApplication().NewPropertySet();
+				psOutputs = TheApplication().NewPropertySet();
+				var oBO = TheApplication().ActiveBusObject();
+				var sInvoiceNr = &quot;&quot;;
+				var sToDate = &quot;&quot;;
+				var sInvoiceAmt = &quot;&quot;;
+				var sAddr = &quot;&quot;;
+				var sPostalCode = &quot;&quot;;
+				var sProv = &quot;&quot;;
+				var sCity = &quot;&quot;;
+				var strTimeStamp=&quot;&quot;;
+				var strSequenceNumberMNP = &quot;&quot;;
+				var sMasterAccntId = &quot;&quot;;
+				var strTransactionID   = &quot;SIEBEL-&quot;;
+				var dtToday = new Date();
+				Clib.strftime(strTimeStamp, &quot;%m/%d/%Y %X&quot;, Clib.localtime(Clib.time()));
+				var strDateToday =(dtToday.getMonth()+1) + &apos;/&apos; + dtToday.getDate() +&apos;/&apos; + dtToday.getFullYear();
+				var sPostalAddr = TheApplication().GetProfileAttr(&quot;InvReprintPostalAddr&quot;);
+				if(sPostalAddr != &quot;&quot; &amp;&amp; sPostalAddr != null)
+				{
+					psAddress = TheApplication().NewPropertySet();
+					if (oBO.Name() == &quot;Billing Account&quot;)
+			      	{
+			        	var bcBA = oBO.GetBusComp(&quot;Billing Account&quot;);
+			        	sMasterAccntId = bcBA.GetFieldValue(&quot;Master Account Id&quot;);		
+			       	}
+					var sCustName = this.GetFieldValue(&quot;CUSTOMER_CODE&quot;);
+					getAddressDetails(sPostalAddr,sMasterAccntId,psAddress);
+					sAddr = psAddress.GetProperty(&quot;StreetAddress&quot;);
+					sPostalCode = psAddress.GetProperty(&quot;PostalCode&quot;);
+					sProv = psAddress.GetProperty(&quot;Province&quot;);
+					sCity = psAddress.GetProperty(&quot;City&quot;);
+				}
+				strSequenceNumberMNP = getSequence();
+				strTransactionID = strTransactionID + strSequenceNumberMNP;
+				var Selected = this.FirstSelected();
+
+				psInputs.SetProperty(&quot;ProcessName&quot;, &quot;VF Invoice Re-Print Request WF&quot;);
+				psInputs.SetProperty(&quot;REQUEST_USER&quot;,this.GetFieldValue(&quot;REQUEST_USER&quot;));
+				psInputs.SetProperty(&quot;BILLING_ACCOUNT_CODE&quot;,TheApplication().GetProfileAttr(&quot;InvReprintBillCode&quot;));
+				psInputs.SetProperty(&quot;BILLING_ACCOUNT_ID&quot;,TheApplication().GetProfileAttr(&quot;InvReprintBillId&quot;));
+				psInputs.SetProperty(&quot;DISTRIBUTION_CHANNEL&quot;,TheApplication().GetProfileAttr(&quot;InvReprintDelMode&quot;));
+				psInputs.SetProperty(&quot;FAX_NUM&quot;,TheApplication().GetProfileAttr(&quot;InvReprintFaxNr&quot;));
+				psInputs.SetProperty(&quot;EMAIL&quot;,TheApplication().GetProfileAttr(&quot;InvReprintEmail&quot;));
+				
+			    if (oBO.Name() == &quot;Billing Account&quot;)
+			    {
+			       var oBC = oBO.GetBusComp(&quot;Billing Account&quot;);
+			       psInputs.SetProperty(&quot;NAME&quot;,oBC.GetFieldValue(&quot;Customer Account Name&quot;));			
+			    }
+			//	psInputs.SetProperty(&quot;NAME&quot;,this.GetFieldValue(&quot;CUSTOMER_NAME&quot;));
+				psInputs.SetProperty(&quot;ADDRESS1&quot;,sAddr);
+				psInputs.SetProperty(&quot;TIMESTAMP&quot;,strTimeStamp);
+				psInputs.SetProperty(&quot;TRANSACTION_ID&quot;,strTransactionID);
+				psInputs.SetProperty(&quot;CHANNEL&quot;, &quot;SIEBEL&quot;);
+				psInputs.SetProperty(&quot;POSTAL_CODE&quot;,sPostalCode);
+				psInputs.SetProperty(&quot;PROVINCE&quot;,sProv);
+				psInputs.SetProperty(&quot;CITY&quot;,sCity);
+				//psInputs.SetProperty(&quot;ACCOUNT_ID&quot;,this.GetFieldValue(&quot;CUSTOMER_CODE&quot;));//TLGA-4160
+				psInputs.SetProperty(&quot;ACCOUNT_ID&quot;,this.GetFieldValue(&quot;CRM_CUSTOMER_CODE&quot;));//TLGA-4160
+				psInputs.SetProperty(&quot;CreationDate&quot;,strDateToday);
+				psInputs.SetProperty(&quot;REQUEST_TYPE&quot;,TheApplication().GetProfileAttr(&quot;InvReprintReqType&quot;));
+				while(Selected){
+					sInvoiceNr = this.GetFieldValue(&quot;INVOICE_NUMBER&quot;);
+					sToDate = this.GetFieldValue(&quot;INVOICE_DUE_DATE&quot;);
+					sInvoiceAmt = this.GetFieldValue(&quot;INVOICE_DUE_AMOUNT&quot;);
+					psInputs.SetProperty(&quot;INVOICE_ID&quot;,sInvoiceNr);
+					psInputs.SetProperty(&quot;INVOICE_DUE_DATE&quot;,sToDate);
+					psInputs.SetProperty(&quot;INVOICE_AMOUNT&quot;,sInvoiceAmt);
+					sWF.InvokeMethod(&quot;RunProcess&quot;, psInputs, psOutputs);
+					sInvoiceNr = &quot;&quot;;
+					sToDate = &quot;&quot;;
+					sInvoiceAmt = &quot;&quot;;
+					Selected = this.NextSelected();
+				}
+				TheApplication().SetProfileAttr(&quot;InvReprintBillCode&quot;,&quot;&quot;);
+				TheApplication().SetProfileAttr(&quot;InvReprintBillId&quot;,&quot;&quot;);
+				TheApplication().SetProfileAttr(&quot;InvReprintDelMode&quot;,&quot;&quot;);
+				TheApplication().SetProfileAttr(&quot;InvReprintFaxNr&quot;,&quot;&quot;);
+				TheApplication().SetProfileAttr(&quot;InvReprintEmail&quot;,&quot;&quot;);
+				TheApplication().SetProfileAttr(&quot;InvReprintReqType&quot;,&quot;&quot;);
+				TheApplication().SetProfileAttr(&quot;InvReprintPostalAddr&quot;,&quot;&quot;);
+				return (CancelOperation);
+			}
+		}
+		return (ContinueOperation);
+	}
+	finally
+	{
+		sWF	= null;
+		psInputs = null;
+		psOutputs = null;
+		psAddress = null;
+		TheApplication().SetProfileAttr(&quot;VF Interim Payment&quot;,&quot;&quot;); //++ DEF-2353
+	}
+}"
+			   SEQUENCE="3"
+			   UPDATED="07/16/2015 11:58:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/19/2011 19:15:01"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreQuery"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreQuery ()
+{
+	TheApplication().SetProfileAttr(&quot;SkipIPQuery&quot;,&quot;Y&quot;); //RPIRES: Added to skip VBC extra query during PreQuery
+
+	 try
+	 {
+	 	var bcBA : BusComp;
+	 	var boName = this.BusObject().Name();	 	
+	 	var strBillingCode = &quot;&quot;;
+	 	var activeView = TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;);
+	 	var prevIPBillingCode = TheApplication().GetProfileAttr(&quot;IPBillingCode&quot;);
+			if(activeView != &quot;VF Payment History View&quot; &amp;&amp; activeView != &quot;VF Payment Installments View&quot; &amp;&amp; activeView != &quot;VF PDF Viewing View&quot; &amp;&amp; activeView != null &amp;&amp; activeView != &quot;&quot;)//Removed Reprint view condition for PROD00026624; RPIRES - added activeView validations for VFTRCBU-26944
+		 	{
+		 		if(TheApplication().GetProfileAttr(&quot;invoiceInquirySkipBCPreQuery&quot;) != &quot;Y&quot;) //RCRISPIM: VFTRCBU-11807
+				{
+					  bcBA = this.BusObject().GetBusComp(&quot;Billing Account&quot;);
+					  if(bcBA!=null &amp;&amp; bcBA.FirstSelected())
+					  {
+					  	strBillingCode = bcBA.GetFieldValue(&quot;Account Code&quot;);
+					  	TheApplication().SetProfileAttr(&quot;IPBillingCode&quot;,strBillingCode);
+					  }
+				  }
+				  
+				  //RCRISPIM: VFTRCBU-11138 - START
+				  if(activeView == &quot;VFTRCBU Subscriber CDR Inquiry View&quot;)
+				  {
+				  	   strBillingCode = this.ParentBusComp().GetFieldValue(&quot;Billing Account Code&quot;);
+				  	   TheApplication().SetProfileAttr(&quot;IPBillingCode&quot;,strBillingCode);
+				  }
+				  //RCRISPIM: VFTRCBU-11138 - END
+			}
+			if(activeView == &quot;VF Invoice Reprint View&quot; || activeView == &quot;VF Billing Account Payments Installment View&quot; || activeView == &quot;VFTRCBU Subscriber CDR Inquiry View&quot;) //GEN_REQ_059 13.12.2012
+		 	{
+		 		//Start comment by Parasuram for fixing PROD00025810
+			 	if(TheApplication().GetProfileAttr(&quot;IPBillingCode&quot;)==&quot;&quot;)
+			 	{
+				  bcBA = this.BusObject().GetBusComp(&quot;Billing Account&quot;);
+				  if(bcBA!=null &amp;&amp; bcBA.FirstRecord())
+				  {
+				  	strBillingCode = bcBA.GetFieldValue(&quot;Account Code&quot;);
+				  	TheApplication().SetProfileAttr(&quot;IPBillingCode&quot;,strBillingCode);
+				  }
+				}
+			 }
+		 
+		 if(activeView == &quot;VF Billing Account Portal Summary View&quot; &amp;&amp; TheApplication().GetProfileAttr(&quot;invoiceInquiryButton&quot;) == &quot;Y&quot;) //GEN_REQ_059 13.12.2012
+	 	{
+	 		//Start comment by Parasuram for fixing PROD00025810
+		 	if(TheApplication().GetProfileAttr(&quot;IPBillingCode&quot;)==&quot;&quot;)
+		 	{
+			  bcBA = this.BusObject().GetBusComp(&quot;Billing Account&quot;);
+			  if(bcBA!=null) // &amp;&amp; bcBA.FirstRecord())
+			  {			  
+			  	var baId = bcBA.GetFieldValue(&quot;Id&quot;);
+			  	TheApplication().SetProfileAttr(&quot;IPBillingId&quot;,baId);
+			  }
+			}
+		 }
+		 			 		 
+		 if ( boName != null)
+		 {	 
+		 	if(boName == &quot;Billing Account&quot; &amp;&amp; TheApplication().GetProfileAttr(&quot;invoiceInquiryButton&quot;) == &quot;Y&quot;)
+		 	{	 		 		 	
+		 		if(TheApplication().GetProfileAttr(&quot;IPBillingId&quot;)==&quot;&quot;)
+		 		{	 			 			
+				  bcBA = this.BusObject().GetBusComp(&quot;Billing Account&quot;);	 				  
+				  if(bcBA!=null) // &amp;&amp; bcBA.FirstRecord())
+				  {		 				  				  				  
+				  	var baId = bcBA.GetFieldValue(&quot;Id&quot;);		 				  	
+				  	TheApplication().SetProfileAttr(&quot;IPBillingId&quot;,baId);
+				  }
+				}
+		 	}
+		 	else if(boName == &quot;Asset Management - Asset Item&quot;)
+		 	{	 
+		 		TheApplication().SetProfileAttr(&quot;IPAssetContext&quot;,&quot;Y&quot;);		 	
+		 		if(TheApplication().GetProfileAttr(&quot;IPBillingCode&quot;)==&quot;&quot;)
+		 		{	 		 		
+				  bcBA = this.BusObject().GetBusComp(&quot;Asset Mgmt - Asset&quot;);	 				  
+				  if(bcBA!=null) // &amp;&amp; bcBA.FirstRecord())
+				  {		 				  
+				  	var baId = bcBA.GetFieldValue(&quot;Account Code&quot;);		 				  	
+				  	TheApplication().SetProfileAttr(&quot;IPBillingCode&quot;,baId);
+				  }
+				}
+		 	} 
+		 }
+	 }
+	 catch(e){
+	 	throw e;
+	 }
+	 finally
+	 {
+	 	if(prevIPBillingCode != strBillingCode)
+		 	TheApplication().SetProfileAttr(&quot;IntError&quot;,&quot;&quot;);
+	 	bcBA = null;
+	 	TheApplication().SetProfileAttr(&quot;SkipIPQuery&quot;,&quot;N&quot;); //RPIRES: Added to skip VBC extra query during PreQuery
+	 }
+}"
+			   SEQUENCE="4"
+			   UPDATED="03/01/2017 14:50:52"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/21/2011 14:14:32"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreSetFieldValue"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreSetFieldValue (FieldName, FieldValue)
+{
+	try
+	{
+		var BillingAccountBC : BusComp;
+		var AccountBC : BusComp;
+		var nFaxNum = &quot;&quot;;
+		//Setting the value to all record selected
+		if(FieldName == &quot;REQUEST_TYPE&quot; || FieldName == &quot;DELIVERY_MODE&quot; || FieldName == &quot;POSTAL_ADDRESS&quot; || FieldName == &quot;FAX_NUMBER&quot; || FieldName == &quot;EMAIL_ADDRESS&quot;)
+		{
+			var oSelected = this.FirstSelected();
+			while(oSelected)
+			{
+				this.SetFieldValue(FieldName,FieldValue);//Oracle Review October 2011 - SetFieldValue in this BC and FieldValue depending 
+				oSelected = this.NextSelected();
+			}
+			oSelected = this.FirstSelected();
+			//Setting default Fax Number if Delivery Mode = Fax
+			if(FieldName == &quot;DELIVERY_MODE&quot; &amp;&amp; FieldValue == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_REPRINT_DEL_MODE&quot;,&quot;Fax&quot;))
+			{
+				while(oSelected)
+				{
+					BillingAccountBC = this.ParentBusComp();
+					if(BillingAccountBC.Name == &quot;Billing Account&quot; || BillingAccountBC.Name == &quot;VF PRM Billing Account&quot;){ //Oracle Review October 2011 - Check if ParentBusComp is Billing Account
+						//AccountBC = BillingAccountBC.ParentBusComp();
+						//if (AccountBC.Name == &quot;Account&quot;){ //Oracle Review October 2011 - Check if ParentBusComp is Account
+							//nFaxNum = AccountBC.GetFieldValue(&quot;Main Fax Number&quot;);
+							nFaxNum = BillingAccountBC.GetFieldValue(&quot;VF Main Fax Number&quot;); //GEN_REQ_059 14.12.2012
+							this.SetFieldValue(&quot;FAX_NUMBER&quot;,nFaxNum);//Oracle Review October 2011 - SetFieldValue in this BC and FieldValue depending 
+						//}
+					}
+					oSelected = this.NextSelected();
+				}
+			}
+		}
+		if(FieldName == &quot;DELIVERY_MODE&quot;)
+		{
+			var sFax = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_REPRINT_DEL_MODE&quot;,&quot;Fax&quot;);
+			var sPostAddr = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_REPRINT_DEL_MODE&quot;,&quot;Mail&quot;);
+			var sEmail = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_REPRINT_DEL_MODE&quot;,&quot;E-mail&quot;);
+			switch(FieldValue)
+			{
+				case sFax:
+					BillingAccountBC = this.ParentBusComp();  
+					if(BillingAccountBC.Name == &quot;Billing Account&quot; || BillingAccountBC.Name == &quot;VF PRM Billing Account&quot;){//Oracle Review October 2011 - Check if ParentBusComp is Billing Account
+						//AccountBC = BillingAccountBC.ParentBusComp();
+						//if (AccountBC.Name == &quot;Account&quot;){ //Oracle Review October 2011 - Check if ParentBusComp is Account
+						//	nFaxNum = AccountBC.GetFieldValue(&quot;Main Fax Number&quot;);
+							nFaxNum = BillingAccountBC.GetFieldValue(&quot;VF Main Fax Number&quot;); //GEN_REQ_059 14.12.2012
+							this.SetFieldValue(&quot;FAX_NUMBER&quot;,nFaxNum);//Oracle Review October 2011 - SetFieldValue in this BC and FieldValue depending 
+						//}
+					}
+					
+					if(this.GetFieldValue(&quot;EMAIL_ADDRESS&quot;) != &quot;&quot;)
+						this.SetFieldValue(&quot;EMAIL_ADDRESS&quot;,&quot;&quot;);//Oracle Review October 2011 - SetFieldValue in this BC and FieldValue depending 
+
+					if(this.GetFieldValue(&quot;POSTAL_ADDRESS&quot;) != &quot;&quot;)
+						this.SetFieldValue(&quot;POSTAL_ADDRESS&quot;,&quot;&quot;);//Oracle Review October 2011 - SetFieldValue in this BC and FieldValue depending 
+				break;
+
+				case sPostAddr:
+					if(this.GetFieldValue(&quot;FAX_NUMBER&quot;) != &quot;&quot;)
+						this.SetFieldValue(&quot;FAX_NUMBER&quot;,&quot;&quot;);//Oracle Review October 2011 - SetFieldValue in this BC and FieldValue depending 
+
+					if(this.GetFieldValue(&quot;EMAIL_ADDRESS&quot;) != &quot;&quot;)
+						this.SetFieldValue(&quot;EMAIL_ADDRESS&quot;,&quot;&quot;);//Oracle Review October 2011 - SetFieldValue in this BC and FieldValue depending 
+				break;
+
+				case sEmail:
+					if(this.GetFieldValue(&quot;FAX_NUMBER&quot;) != &quot;&quot;)
+						this.SetFieldValue(&quot;FAX_NUMBER&quot;,&quot;&quot;);//Oracle Review October 2011 - SetFieldValue in this BC and FieldValue depending 
+
+					if(this.GetFieldValue(&quot;POSTAL_ADDRESS&quot;) != &quot;&quot;)
+						this.SetFieldValue(&quot;POSTAL_ADDRESS&quot;,&quot;&quot;);//Oracle Review October 2011 - SetFieldValue in this BC and FieldValue depending 
+				break;
+			}
+		}
+		if(FieldName == &quot;REQUEST_TYPE&quot;)
+		{
+			if(this.GetFieldValue(&quot;DELIVERY_MODE&quot;) != &quot;&quot;)
+				this.SetFieldValue(&quot;DELIVERY_MODE&quot;,&quot;&quot;);//Oracle Review October 2011 - SetFieldValue in this BC and FieldValue depending 
+
+			if(this.GetFieldValue(&quot;FAX_NUMBER&quot;) != &quot;&quot;)
+				this.SetFieldValue(&quot;FAX_NUMBER&quot;,&quot;&quot;);//Oracle Review October 2011 - SetFieldValue in this BC and FieldValue depending 
+
+			if(this.GetFieldValue(&quot;EMAIL_ADDRESS&quot;) != &quot;&quot;)
+				this.SetFieldValue(&quot;EMAIL_ADDRESS&quot;,&quot;&quot;);//Oracle Review October 2011 - SetFieldValue in this BC and FieldValue depending 
+
+			if(this.GetFieldValue(&quot;POSTAL_ADDRESS&quot;) != &quot;&quot;)
+				this.SetFieldValue(&quot;POSTAL_ADDRESS&quot;,&quot;&quot;);//Oracle Review October 2011 - SetFieldValue in this BC and FieldValue depending 
+		}
+
+		if (FieldName == &quot;FAX_NUMBER&quot;)
+		{
+			if(FieldValue != null &amp;&amp; FieldValue.match(/^[9][0][0-9]{10}$/) == null)
+			{ 
+				var strMessageCategory = &quot;VF Message Category&quot;;
+				var strCode = &quot;075&quot;;
+				var sMsg = TheApplication().LookupMessage(strMessageCategory, strCode);
+				TheApplication().RaiseErrorText(sMsg);              
+				return (CancelOperation);
+			}
+		}
+	}
+	finally
+	{
+		BillingAccountBC = null;
+		AccountBC = null;
+	}
+}"
+			   SEQUENCE="5"
+			   UPDATED="12/15/2012 12:24:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/17/2011 18:12:40"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="getAddressDetails"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function getAddressDetails(sPostalAddr,sMasterAccntId,psAddress)
+{
+	try{
+		var oBO : BusObject = TheApplication().GetBusObject(&quot;CUT Address&quot;);
+		var oBC : BusComp = oBO.GetBusComp(&quot;CUT Address&quot;);
+		var streetAddr1 = &quot;&quot;;
+		var AptNr = &quot;&quot;;
+		var Distr = &quot;&quot;;
+		var NgbdVlg = &quot;&quot;;
+		var Site = &quot;&quot;;
+		var streetAddr = &quot;&quot;;
+		var Aven = &quot;&quot;;
+		var Vill = &quot;&quot;;
+		var Place = &quot;&quot;;
+		var Num = &quot;&quot;;
+		with(oBC)
+		{
+			SetViewMode(AllView);
+			ClearToQuery();
+			ActivateField(&quot;Street Address&quot;);
+			ActivateField(&quot;Apartment Number&quot;);
+			ActivateField(&quot;District&quot;);
+			ActivateField(&quot;VF Neighborhood/Village&quot;);
+			ActivateField(&quot;VF Site&quot;);
+			ActivateField(&quot;Postal Code&quot;);
+			ActivateField(&quot;Province&quot;);
+			ActivateField(&quot;City&quot;);
+			ActivateField(&quot;Address Num&quot;);
+			ActivateField(&quot;VF Place&quot;);
+			ActivateField(&quot;VF Avenue Boulevar&quot;);
+			ActivateField(&quot;VF Village&quot;);
+			
+			var cmdArray = sPostalAddr.split(&quot; Mah.,&quot;);
+            var village = cmdArray[0];
+            SetSearchExpr(&quot;[Client Id] = &apos;&quot;+ sMasterAccntId +&quot;&apos; and [VF Neighborhood/Village] = &apos;&quot;+ village +&quot;&apos;&quot;);
+			
+			//SetSearchExpr(&quot;[Client Id] = &apos;&quot;+ AccntName +&quot;&apos; and [Address Name] = &apos;&quot;+ sPostalAddr +&quot;&apos;&quot;);
+			ExecuteQuery(ForwardOnly);
+			if(FirstRecord())
+			{
+				streetAddr = GetFieldValue(&quot;Street Address&quot;);
+				AptNr = GetFieldValue(&quot;Apartment Number&quot;);
+				Distr = GetFieldValue(&quot;District&quot;);
+				NgbdVlg = GetFieldValue(&quot;VF Neighborhood/Village&quot;);
+				Site = GetFieldValue(&quot;VF Site&quot;);
+				Aven = GetFieldValue(&quot;VF Avenue Boulevar&quot;);
+				Vill = GetFieldValue(&quot;VF Village&quot;);
+				Place = GetFieldValue(&quot;VF Place&quot;);
+				Num = GetFieldValue(&quot;Address Num&quot;);
+				streetAddr1 = NgbdVlg + &quot; Mah.&quot; + Vill + &quot; Köyü&quot; + Aven + &quot; &quot; + streetAddr + &quot; &quot; + Place + &quot; &quot; + Site + &quot; &quot; + AptNr + &quot; &quot; + Num + &quot; &quot; + Distr;
+				psAddress.SetProperty(&quot;StreetAddress&quot;,streetAddr1);
+				psAddress.SetProperty(&quot;PostalCode&quot;,GetFieldValue(&quot;Postal Code&quot;));
+				psAddress.SetProperty(&quot;Province&quot;,GetFieldValue(&quot;Province&quot;));
+				psAddress.SetProperty(&quot;City&quot;,GetFieldValue(&quot;City&quot;));
+			}
+		}
+	}
+	finally
+	{
+		oBC = null;
+		oBO = null;
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="09/23/2013 14:55:09"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/20/2011 11:32:52"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="getSequence"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function getSequence()
+{
+	try
+	{
+		var strChannel         = &quot;SIEBEL&quot;; 
+		var strTimeStamp       = &quot;&quot;; 
+		var strSequenceNumberMNP =&quot;&quot;;			
+		var VFSequenceBo : BusObject		= TheApplication().GetBusObject(&quot;VF Sequence BO&quot;);
+		var VFSequenceBc : BusComp		= VFSequenceBo.GetBusComp(&quot;VF Sequence BusComp&quot;);
+		var strProcessName 		= &quot;VF_UNBILL&quot;;	
+
+		VFSequenceBc.NewRecord(NewAfter);
+		VFSequenceBc.SetFieldValue(&quot;Process Name&quot;,strProcessName);
+		VFSequenceBc.WriteRecord();
+		var strSearchSpec = VFSequenceBc.GetFieldValue(&quot;Id&quot;);
+		
+		VFSequenceBc.ClearToQuery();
+		VFSequenceBc.SetSearchSpec(&quot;Id&quot;, strSearchSpec);
+		VFSequenceBc.ExecuteQuery(ForwardOnly);
+		
+		var booRecordExists = VFSequenceBc.FirstRecord ();  
+		
+		if (booRecordExists)
+		{
+			strSequenceNumberMNP = VFSequenceBc.GetFieldValue(&quot;Sequence&quot;);
+		}
+		return(strSequenceNumberMNP);
+	}
+	finally
+	{
+		VFSequenceBc = null;
+		VFSequenceBo = null;
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="06/24/2012 10:11:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2011 12:50:55"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: DELIVERY_MODE"
+			   VALUE="VF Delivery Mode RO Calc"
+			   UPDATED="05/23/2011 20:30:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/23/2011 15:42:37"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: EMAIL_ADDRESS"
+			   VALUE="VF Email RO Calc"
+			   UPDATED="05/23/2011 20:30:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/23/2011 15:42:23"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: FAX_NUMBER"
+			   VALUE="VF Fax RO Calc"
+			   UPDATED="05/23/2011 20:30:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/23/2011 15:41:24"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: POSTAL_ADDRESS"
+			   VALUE="VF Postal Address RO Calc"
+			   UPDATED="05/23/2011 20:30:43"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/23/2011 15:42:14"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: Refund Method"
+			   VALUE="VF Refund Method RO Calc"
+			   UPDATED="03/26/2013 20:37:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/26/2013 20:37:40"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="Named Method 1"
+			   VALUE="&quot;InstallmentInquiry&quot;,&quot;INVOKESVC&quot;, &quot;CUT eSales Order Entry Toolkit Service&quot;, &quot;GotoView&quot;, &quot;&quot;Business Component&quot;&quot;, &quot;&quot;Account&quot;&quot;, &quot;&quot;Row Id&quot;&quot;, &quot;[Account Id]&quot;, &quot;&quot;View&quot;&quot;, &quot;&quot;VF Payment Installments View&quot;&quot;"
+			   UPDATED="05/16/2011 13:49:49"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/16/2011 12:48:41"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Service Name"
+			   VALUE="VF Interim Payment VBC Service"
+			   UPDATED="09/30/2010 13:29:50"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/30/2010 13:29:50"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="CR182 01/26/2011 BB"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="BANK_OF_PAYMENT"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/27/2011 17:37:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/27/2011 17:37:34"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="BILLING_ACCOUNT_NO"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/21/2011 14:14:32"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/30/2010 13:29:50"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="BILLING_ACCOUNT_NUM"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/17/2015 10:34:09"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/08/2011 10:19:07"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CRM_CUSTOMER_CODE"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/30/2010 13:29:50"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/30/2010 13:29:50"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="ParentFieldValue(&quot;Customer Account Number&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CUSTOMER_CODE"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/18/2013 20:50:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/19/2011 11:01:31"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([CRM_CUSTOMER_CODE] IS NULL,[CRM_CUSTOMER_CODE],[CUSTOMER_CODE])"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CUSTOMER_CODE_MERGE"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/18/2013 20:50:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/18/2013 20:50:36"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="ParentFieldValue(&quot;VF Customer Name&quot;)"
+			   COMMENTS="ISCHPOTE : DEFECT: 06/02/2013 : Changed the cal field from VF Account Name to VF Customer Name"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CUSTOMER_NAME"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/22/2013 14:29:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/20/2011 11:24:30"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="R142-WP15: Created by Parasuram on 18/May/2011."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Currency Code"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/18/2011 13:24:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/18/2011 13:24:07"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="DELIVERY_MODE"
+			   NO_COPY="N"
+			   PICKLIST="VF Invoice Delivery Mode"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/23/2011 19:45:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/17/2011 12:12:24"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="DELIVERY_MODE"
+				   INACTIVE="N"
+				   NAME="DELIVERY_MODE"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="05/17/2011 18:01:50"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/17/2011 18:01:50"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="REQUEST_TYPE"
+				   INACTIVE="N"
+				   NAME="REQUEST_TYPE"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Parent"
+				   UPDATED="05/17/2011 18:06:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/17/2011 18:03:54"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="VF Parasu R1.4.2 20110411: Created new for fix VFDM00002926.Updated By Rekha18112011 for Retrofit"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="DUNNING_ACTION_DESC"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="60"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/21/2011 12:50:51"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/30/2010 13:29:50"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VF_DUN_ACTION&quot;,[DUNNING_ACTION_DESC])"
+			   COMMENTS="VF Parasu R1.4.2 20110411: Created new for fix VFDM00002926."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="DUNNING_ACTION_DESC_CALC"
+			   NO_COPY="N"
+			   PICKLIST="VF PickList Dunning Action"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="60"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/03/2012 17:43:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/21/2011 12:50:51"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="DUNNING_ACTION_DESC_CALC"
+				   INACTIVE="N"
+				   NAME="DUNNING_ACTION_DESC_CALC"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="09/03/2012 17:43:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/03/2012 17:43:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="DUNNING_ACTION_ID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/30/2010 13:29:50"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/30/2010 13:29:50"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="VF Parasu R1.4.2 20110411: Created new for fix VFDM00002926.Updated By Rekha18112011 for Retrofit"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="DUNNING_STATUS_DESC"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="60"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/03/2012 17:43:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/30/2010 13:29:50"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VF_DUNNING_STATUS_DESC&quot;,[DUNNING_STATUS_DESC])"
+			   COMMENTS="VF Parasu R1.4.2 20110411: Created new for fix VFDM00002926."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="DUNNING_STATUS_DESC_CALC"
+			   NO_COPY="N"
+			   PICKLIST="VF PickList Dunning Status Description"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="60"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/03/2012 17:43:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/21/2011 12:50:51"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="DUNNING_STATUS_DESC_CALC"
+				   INACTIVE="N"
+				   NAME="DUNNING_STATUS_DESC_CALC"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="09/03/2012 17:43:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/03/2012 17:43:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="DUNNING_STATUS_ID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/03/2012 17:43:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/30/2010 13:29:50"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="GEN_REQ_157"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Description"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/07/2013 15:04:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/11/2013 12:52:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="EMAIL_ADDRESS"
+			   NO_COPY="N"
+			   PICKLIST="VF Customer Email Addresses PickList"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/27/2013 20:52:08"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/17/2011 12:14:13"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="CRM_CUSTOMER_CODE"
+				   INACTIVE="N"
+				   NAME="CRM_CUSTOMER_CODE"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Account Code"
+				   UPDATED="06/27/2013 20:52:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/21/2013 17:04:13"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="CUSTOMER_CODE"
+				   INACTIVE="Y"
+				   NAME="CUSTOMER_CODE"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Account Id"
+				   UPDATED="05/21/2013 17:04:13"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/19/2011 11:03:16"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="EMAIL_ADDRESS"
+				   INACTIVE="N"
+				   NAME="EMAIL_ADDRESS"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Email Address"
+				   UPDATED="05/19/2011 11:03:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/19/2011 11:03:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="FAX_NUMBER"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/17/2011 12:15:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/17/2011 12:13:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="INSTALLMENT_NUMBER"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/09/2011 11:59:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/09/2011 11:59:39"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="ACAMBAS - 2014-08-13: VFTRCBU WA#27"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="INSTALMENT_END_DATE"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/08/2014 19:07:56"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/08/2014 19:07:56"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="ACAMBAS - 2014-08-13: VFTRCBU WA#27"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="INSTALMENT_START_DATE"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/08/2014 19:07:56"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/08/2014 19:07:56"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="INVOICE_CREATION_DATE"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/20/2011 18:36:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/30/2010 13:29:50"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="INVOICE_CUTOFF_DATE"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/20/2012 13:43:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2012 13:43:38"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   CURRENCY_CODE_FIELD="Currency Code"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="INVOICE_DUE_AMOUNT"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/20/2011 18:36:27"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/30/2010 13:29:50"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="INVOICE_DUE_DATE"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/20/2011 18:36:28"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/30/2010 13:29:50"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="INVOICE_NUMBER"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/06/2015 09:41:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/30/2010 13:29:50"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="GEN_REQ_157"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="INVOICE_STATUS"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/27/2013 21:45:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/11/2013 12:52:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VF_INVOICE_STATUS&quot;,[INVOICE_STATUS])"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="INVOICE_STATUS_VALUE"
+			   NO_COPY="N"
+			   PICKLIST="VF PickList Invoice Status New"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/23/2013 17:13:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2013 15:10:39"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="CR182 01/26/2011 BB"
+			   COMPOSITE="N"
+			   CURRENCY_CODE_FIELD="Currency Code"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="INVOICE_TAX_AMOUNT"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/18/2011 13:24:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/27/2011 17:37:34"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="VF Parasu R1.4.2 20110411: Created new for fix VFDM00002926.Updated By Rekha18112011 for Retrofit"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="INVOICE_TYPE_DESC"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="60"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/21/2011 12:50:51"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/18/2010 16:09:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VF_INVOICE_TYPE_DESC&quot;,[INVOICE_TYPE_DESC])"
+			   COMMENTS="VF Parasu R1.4.2 20110411: Created new for fix VFDM00002926."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="INVOICE_TYPE_DESC_CALC"
+			   NO_COPY="N"
+			   PICKLIST="VF PickList Invoice Type Description"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="60"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/03/2012 17:43:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/21/2011 12:50:51"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="INVOICE_TYPE_DESC_CALC"
+				   INACTIVE="N"
+				   NAME="INVOICE_TYPE_DESC_CALC"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="09/03/2012 17:43:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/03/2012 17:43:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="INVOICE_TYPE_ID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/18/2010 16:09:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/18/2010 16:09:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="FCARRIL: VFTRCBU-29406"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="IsMigrated"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/17/2016 20:43:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/17/2016 20:43:12"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MSISDN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/30/2010 13:29:50"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/30/2010 13:29:50"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="CR182 01/26/2011 BBVF;  Parasu R1.4.2 20110411: Created new for fix VFDM00002926.Updated By Rekha18112011 for Retrofit"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="PAYMENT_CHANNEL"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/21/2011 12:50:51"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/27/2011 17:37:34"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VF_PAYMENT_CHANNEL&quot;,[PAYMENT_CHANNEL])"
+			   COMMENTS="VF Parasu R1.4.2 20110411: Created new for fix VFDM00002926."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="PAYMENT_CHANNEL_CALC"
+			   NO_COPY="N"
+			   PICKLIST="VF PickList Payment Channel"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="60"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/03/2012 17:43:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/21/2011 12:50:51"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="PAYMENT_CHANNEL_CALC"
+				   INACTIVE="N"
+				   NAME="PAYMENT_CHANNEL_CALC"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="09/03/2012 17:43:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/03/2012 17:43:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="PAYMENT_DATE"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="40"
+			   TYPE="DTYPE_DATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/18/2017 20:18:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/30/2010 13:29:50"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="PAYMENT_DESC"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/30/2012 15:02:51"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/30/2012 15:02:51"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="PAYMENT_SOURCE"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/27/2011 17:37:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/30/2010 13:29:50"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="VF Parasu R1.4.2 20110411: Created new for fix VFDM00002926.Updated By Rekha18112011 for Retrofit"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="PAYMENT_STATUS_DESC"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="60"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/21/2011 12:50:51"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/30/2010 13:29:50"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VF_PAYMENT_STATUS_DESC&quot;,[PAYMENT_STATUS_DESC])"
+			   COMMENTS="VF Parasu R1.4.2 20110411: Created new for fix VFDM00002926."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="PAYMENT_STATUS_DESC_CALC"
+			   NO_COPY="N"
+			   PICKLIST="VF PickList Payment Status Description"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="60"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/26/2013 20:37:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/21/2011 12:50:51"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="PAYMENT_STATUS_DESC_CALC"
+				   INACTIVE="N"
+				   NAME="PAYMENT_STATUS_DESC_CALC"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="09/03/2012 17:43:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/03/2012 17:43:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="PAYMENT_STATUS_ID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/06/2015 09:41:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/30/2010 13:29:50"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupName(&quot;VF_PAYMENT_STATUS_DESC&quot;,[PAYMENT_STATUS_DESC])"
+			   COMMENTS="VF Parasu R1.4.2 20110411: Created new for fix VFDM00002926."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="PAYMENT_STATUS_NAME"
+			   NO_COPY="N"
+			   PICKLIST="VF PickList Payment Status Description"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="60"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/10/2013 11:52:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/10/2013 11:52:13"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="PAYMENT_STATUS_DESC_CALC"
+				   INACTIVE="N"
+				   NAME="PAYMENT_STATUS_DESC_CALC"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="04/10/2013 11:52:13"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/10/2013 11:52:13"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="
+
+feskicioglu"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="PAYMENT_TYPE"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/17/2015 10:34:09"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2012 13:43:38"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF ([PAYMENT_TYPE] = LookupValue(&quot;VF_PAYMENT_TYPE&quot;,[PAYMENT_TYPE]),LookupValue(&quot;VF_PAYMENT_TYPE&quot;, &quot;Diğer&quot;),LookupValue(&quot;VF_PAYMENT_TYPE&quot;,[PAYMENT_TYPE]))"
+			   COMMENTS="
+
+feskicioglu"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="PAYMENT_TYPE_CALC"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/17/2015 10:34:09"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2012 13:43:38"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="R142-WP15: Created by Parasuram on 12/May/2011."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="PERIOD_END_DATE"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/08/2011 10:18:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/12/2011 12:58:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="R142-WP15: Created by Parasuram on 12/May/2011."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="PERIOD_START_DATE"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Expr: &apos;Today() - 180&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/08/2011 10:18:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/12/2011 12:57:35"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="POSTAL_ADDRESS"
+			   NO_COPY="N"
+			   PICKLIST="VF Customer Postal Addr PickList"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="2000"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/18/2013 20:50:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/17/2011 12:13:23"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="CRM_CUSTOMER_CODE"
+				   INACTIVE="Y"
+				   NAME="CRM_CUSTOMER_CODE"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Account Code"
+				   UPDATED="07/18/2013 20:50:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/21/2013 17:04:13"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="CUSTOMER_CODE"
+				   INACTIVE="N"
+				   NAME="CUSTOMER_CODE"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Customer Code"
+				   UPDATED="07/18/2013 20:50:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/19/2011 11:06:04"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="CUSTOMER_CODE_MERGE"
+				   INACTIVE="Y"
+				   NAME="CUSTOMER_CODE_MERGE"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF Customer Code"
+				   UPDATED="07/18/2013 20:50:36"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/18/2013 20:50:36"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="CUSTOMER_NAME"
+				   INACTIVE="Y"
+				   NAME="CUSTOMER_NAME"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Account Name"
+				   UPDATED="05/20/2011 18:12:14"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/20/2011 17:07:48"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="POSTAL_ADDRESS"
+				   INACTIVE="N"
+				   NAME="POSTAL_ADDRESS"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Calculated Address Rep Invoice"
+				   UPDATED="11/28/2012 12:49:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/19/2011 11:05:44"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="P_BILL_ACCOUNT_NO"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/30/2010 13:29:50"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/30/2010 13:29:50"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="REQUEST_ID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/03/2012 17:43:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/09/2011 12:13:54"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="REQUEST_TYPE"
+			   NO_COPY="N"
+			   PICKLIST="VF Invoice Reprint Type"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/23/2011 19:48:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/17/2011 12:11:51"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="REQUEST_TYPE"
+				   INACTIVE="N"
+				   NAME="REQUEST_TYPE"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="05/23/2011 19:47:50"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/23/2011 19:47:50"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LoginName()"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="REQUEST_USER"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/20/2011 18:36:52"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/20/2011 11:39:03"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="GEN_REQ_157"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Refund Method"
+			   NO_COPY="N"
+			   PICKLIST="VF PickList Invoice Payment Method"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/26/2013 20:37:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/11/2013 12:52:41"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Refund Method"
+				   INACTIVE="N"
+				   NAME="Refund Method"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="03/14/2013 20:57:18"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/14/2013 20:57:18"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupName(&quot;VF_INV_REFUND_METHOD&quot;, [Refund Method])"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Refund Method Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/10/2013 11:52:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/10/2013 11:52:13"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SELECT"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/09/2011 16:54:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/09/2011 16:53:15"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf (Today() &gt; [INVOICE_CREATION_DATE], &quot;Y&quot;,&quot;N&quot;)"
+			   COMMENTS="VFTK Amul 20111123 - Created for CR205"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF CutOff"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/23/2011 18:50:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/23/2011 18:50:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([REQUEST_TYPE]IS NULL AND [DELIVERY_MODE]  IS  NULL ,&quot;Y&quot;,&quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Delivery Mode RO Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/25/2011 19:02:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/23/2011 15:30:36"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[VF Today Date] - [INVOICE_DUE_DATE]"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Diff Days"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/18/2011 13:24:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/18/2011 13:24:07"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF(([DELIVERY_MODE]=LookupValue(&quot;VF_REPRINT_DEL_MODE&quot;,&quot;Mail&quot;)OR [DELIVERY_MODE]=LookupValue(&quot;VF_REPRINT_DEL_MODE&quot;,&quot;Fax&quot;) OR [DELIVERY_MODE] IS  NULL ) AND [EMAIL_ADDRESS] IS  NULL,&quot;Y&quot;,&quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Email RO Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/25/2011 19:14:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/23/2011 15:36:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF(([DELIVERY_MODE]=LookupValue(&quot;VF_REPRINT_DEL_MODE&quot;,&quot;Mail&quot;)OR [DELIVERY_MODE]=LookupValue(&quot;VF_REPRINT_DEL_MODE&quot;,&quot;E-mail&quot;) OR[DELIVERY_MODE] IS  NULL ) AND [FAX_NUMBER] IS  NULL,&quot;Y&quot;,&quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Fax RO Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/25/2011 19:14:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/23/2011 15:36:15"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF((ParentFieldValue(&quot;VF Media Type&quot;) = LookupValue(&quot;BILL_MEDIA_TYPE&quot;,&quot;105&quot;)) OR (ParentFieldValue(&quot;VF Media Type&quot;) = LookupValue(&quot;BILL_MEDIA_TYPE&quot;,&quot;107&quot;)),&quot;N&quot;,&quot;Y&quot;)"
+			   COMMENTS="GEN_REQ_802 : IDC-GPS :01/29/2013: Created new"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Media Type Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/18/2013 20:50:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/11/2013 12:52:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF(([DELIVERY_MODE]=LookupValue(&quot;VF_REPRINT_DEL_MODE&quot;,&quot;E-mail&quot;)OR [DELIVERY_MODE]=LookupValue(&quot;VF_REPRINT_DEL_MODE&quot;,&quot;Fax&quot;) OR[DELIVERY_MODE] IS  NULL ) AND [POSTAL_ADDRESS] IS  NULL,&quot;Y&quot;,&quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Postal Address RO Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/25/2011 19:14:31"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/23/2011 15:32:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Refund Method RO Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/28/2013 11:15:10"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/26/2013 20:37:40"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="Today()"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Today Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/18/2011 13:24:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/18/2011 13:24:07"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf (Today() &gt; [INVOICE_DUE_DATE], &quot;Y&quot;,&quot;N&quot;)"
+			   COMMENTS="VFTK Amul 20111123 - Created for CR205"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Unpaid"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/23/2011 18:50:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/23/2011 18:50:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupMessage(&quot;VF Message Category&quot;, &quot;AD9005&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF submit reprint Message"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/02/2012 16:47:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/02/2012 16:46:00"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRAD YTS Pay Type"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="60"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/20/2017 11:07:44"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="06/20/2017 11:07:44"
+			   CREATED_BY="VF_SKILICSAL">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="ParentFieldValue(&quot;VF Customer Type Calc&quot;)"
+			   COMMENTS="WA#06: AROSA 27-11-2014 added"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Customer Type Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/12/2014 11:43:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/12/2014 11:43:15"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="&quot;PDF_URL&quot;"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF_INVOICE_PDF_URL"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/25/2011 18:13:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/25/2011 11:04:27"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="VF Diva R1.4.2 20110503: Created as part of WP15."
+			   COMPOSITE="N"
+			   CURRENCY_CODE_FIELD="Currency Code"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF_TOT_OUTBAL"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/10/2011 17:12:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/09/2011 14:32:40"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="VF Diva R1.4.2 20110503: Created as part of WP15."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF_TOT_OUTBAL_LAST_UPD"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/16/2011 09:26:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/09/2011 14:33:00"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

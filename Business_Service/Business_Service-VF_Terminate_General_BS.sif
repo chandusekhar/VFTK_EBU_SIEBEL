@@ -1,0 +1,245 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VF WP03 VPN"
+	   UI_FREEZE="N"
+	   UPDATED="05/03/2017 22:50:14"
+	   UPDATED_BY="JMARQUES"
+	   CREATED="07/15/2011 20:28:28"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   EXTERNAL_USE="N"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VF Terminate General BS"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="05/03/2017 15:43:47"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   OBJECT_LOCKED_BY_NAME="JMARQUES"
+		   UPDATED="05/03/2017 22:50:14"
+		   UPDATED_BY="JMARQUES"
+		   CREATED="11/14/2011 18:38:17"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="TerminateGeneralAccounts"
+			   UPDATED="11/14/2011 18:38:17"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/14/2011 18:38:17"
+			   CREATED_BY="SADMIN">
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="AttrName"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="11/14/2011 18:38:17"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/14/2011 18:38:17"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="ChangeCategoryAction"
+				   OPTIONAL="Y"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="11/14/2011 18:38:17"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/14/2011 18:38:17"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="CompPartNumber"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="11/14/2011 18:38:17"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/14/2011 18:38:17"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="OrderReason"
+				   OPTIONAL="Y"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="11/14/2011 18:38:17"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/14/2011 18:38:17"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="PartNumber"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="11/14/2011 18:38:17"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/14/2011 18:38:17"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	switch(MethodName)
+	{
+		case &quot;TerminateGeneralAccounts&quot;:
+			TerminateGeneralAccounts(Inputs,Outputs);
+		break;
+	}
+	return (CancelOperation);
+}"
+			   SEQUENCE="2"
+			   UPDATED="12/19/2014 19:02:40"
+			   UPDATED_BY="JCARVALHO"
+			   CREATED="11/14/2011 18:38:17"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="TerminateGeneralAccounts"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function TerminateGeneralAccounts(psInputs, psOutputs)
+{
+	try
+	{
+		var boAsset : BusObject         = TheApplication().GetBusObject(&quot;TELCO Asset - Simple&quot;); //JIRA-37342:use this BO instead of &quot;Asset Mgmt - Asset (NoLink)&quot; TELCO Asset - Simple
+		var bcAsset : BusComp           = boAsset.GetBusComp(&quot;Asset Mgmt - Asset - Header - HP2&quot;); //JIRA-37342:use this BC instead of &quot;Asset Mgmt - Asset - Header&quot; Asset Mgmt - Asset - Header - HP2
+		var bsManager: Service          = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		var psManagerIn : PropertySet   = TheApplication().NewPropertySet();
+		var psManagerOut : PropertySet  = TheApplication().NewPropertySet();
+
+		var sStatusInactive       = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;IMPL_PHASE&quot;,&quot;Inactive&quot;);
+		var sStatusLimitedDunning = &quot;204&quot;; //&quot;ACS_ORDER_REASON&quot;,&quot;Limited-Dunning&quot;
+
+		var sPartNumber      = psInputs.GetProperty(&quot;PartNumber&quot;);           // From Workflow
+		var sCompPartNumber  = psInputs.GetProperty(&quot;CompPartNumber&quot;);       // From Workflow
+		var sAttribName      = psInputs.GetProperty(&quot;AttrName&quot;);             // From Workflow
+		var sVPNAccountFlag  = psInputs.GetProperty(&quot;ChangeCategoryAction&quot;); // From Workflow
+		var sAssetSearchExpr = &quot;&quot;;
+		var sAssetId         = &quot;&quot;;
+		var sGroupNr         = &quot;&quot;;
+		var sAttribValue     = &quot;&quot;;
+		var sAllTerminated   = &quot;N&quot;;
+
+		if (sPartNumber == null || sPartNumber == &quot;&quot; ||
+			sCompPartNumber == null || sCompPartNumber == &quot;&quot; ||
+			sAttribName == null || sAttribName == &quot;&quot;)
+		{
+			return;
+		}
+
+		// Added Limited Dunning filter for TLG-1620
+		sAssetSearchExpr = &quot;[Product Part Number]=&apos;&quot; + sPartNumber + &quot;&apos; AND [Status]=&apos;&quot; + sStatusInactive +
+						   &quot;&apos; AND ([VF All Child Deactivated]=&apos;N&apos; OR [VF All Child Deactivated] IS NULL)&quot;;
+
+		// Query for all Inactive MTT Group on Asset
+		bcAsset.ClearToQuery();
+		bcAsset.SetViewMode(AllView);
+		bcAsset.ActivateField(&quot;Group Number&quot;);
+		bcAsset.ActivateField(&quot;VF All Child Deactivated&quot;);
+		bcAsset.ActivateField(&quot;VF Root Dunning Status&quot;);
+		bcAsset.SetSearchExpr(sAssetSearchExpr);
+		bcAsset.ExecuteQuery(ForwardOnly);
+
+		if (!bcAsset.FirstRecord())
+		{
+			return;
+		}
+
+		do
+		{
+			if (bcAsset.GetFieldValue(&quot;VF Root Dunning Status&quot;) != sStatusLimitedDunning) {
+		
+				sAssetId = bcAsset.GetFieldValue(&quot;Id&quot;);
+				sGroupNr = bcAsset.GetFieldValue(&quot;Group Number&quot;);
+	
+				if (sPartNumber == &quot;21400&quot;)
+				{
+					// Id of the Inactive component (MTT Group ONLY)
+					sAttribValue = sAssetId;
+				}
+				else if (sPartNumber == &quot;3000&quot;)
+				{
+					//Group Number (VPN Group ONLY)
+					sAttribValue = sGroupNr;
+				}
+	
+				if (sAttribValue == null || sAttribValue == &quot;&quot;)
+				{
+					sAttribValue = &quot;DUMMY_VALUE&quot;;
+				}
+	
+				psManagerIn.Reset();
+				psManagerOut.Reset();
+	
+				psManagerIn.SetProperty(&quot;ProcessName&quot;,           &quot;TELCO Terminate Group Components&quot;);
+				psManagerIn.SetProperty(&quot;Object Id&quot;,             sAssetId);
+				psManagerIn.SetProperty(&quot;Attribute Name&quot;,        sAttribName);
+				psManagerIn.SetProperty(&quot;Attribute Value&quot;,       sAttribValue);
+				psManagerIn.SetProperty(&quot;Component Part Number&quot;, sCompPartNumber);
+				psManagerIn.SetProperty(&quot;VPN Component&quot;,         sVPNAccountFlag);
+	
+				bsManager.InvokeMethod(&quot;RunProcess&quot;, psManagerIn, psManagerOut);
+	
+				sAllTerminated = psManagerOut.GetProperty(&quot;All Components Terminated&quot;);
+	
+				bcAsset.SetFieldValue(&quot;VF All Child Deactivated&quot;, sAllTerminated);
+				bcAsset.WriteRecord();
+			}
+		}
+		while(bcAsset.NextRecord());
+	}
+	finally
+	{
+		bcAsset = null;
+		boAsset = null;
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="05/03/2017 22:50:14"
+			   UPDATED_BY="JMARQUES"
+			   CREATED="11/14/2011 18:38:17"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

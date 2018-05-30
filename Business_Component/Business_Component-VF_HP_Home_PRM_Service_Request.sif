@@ -1,0 +1,822 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   LOCKED_DATE="08/11/2017 16:03:57"
+	   NAME="HP Service Request"
+	   UI_FREEZE="N"
+	   UPDATED="02/02/2018 11:43:48"
+	   UPDATED_BY="IBM_RCATITA"
+	   CREATED="10/26/2009 14:26:34"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="N"
+		   CLASS="CSSBCServiceRequest"
+		   COMMENTS="05-Feb-13 : Created due to PRM GEN_REQ_117 : Sumit
+"
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MULTI_RECIPIENT_SELECT="Y"
+		   NAME="VF HP Home PRM Service Request"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LOCKED="N"
+		   OWNER_DELETE="N"
+		   POPUP_VISIBILITY_AUTO_ALL="Y"
+		   POPUP_VISIBILITY_TYPE="Manager"
+		   SCRIPTED="N"
+		   SEARCH_SPECIFICATION="[Template Flag] &lt;&gt; &apos;Y&apos;"
+		   TABLE="S_SRV_REQ"
+		   TYPE="Non-Transient"
+		   UPDATED="02/02/2018 10:15:58"
+		   UPDATED_BY="IBM_RCATITA"
+		   CREATED="08/27/2013 20:12:13"
+		   CREATED_BY="SADMIN">
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="(declarations)"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="var strLoginId;
+
+var strdivId; 
+var strdivName;
+
+var strSRStatus; 	
+var strSROwnGroup;   
+var strOwnedById;    
+var strInProcess;    
+var strSRSubStatus; 
+var strQueue;		
+var strMNP;   	
+var strClosed; 	
+var strOpen; 	
+var strInprogress;
+var strSubStatus;"
+			   SEQUENCE="1"
+			   UPDATED="08/27/2013 20:12:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:14"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_ChangeRecord"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_ChangeRecord ()
+{//Oracle review - code not to be removed
+	//CR270 profile attribute for query in browser script
+	TheApplication().SetProfileAttr(&quot;ProAccId&quot;, this.GetFieldValue(&quot;CSN&quot;));
+	TheApplication().SetProfileAttr(&quot;ProSRId&quot;, this.GetFieldValue(&quot;SR Number&quot;));
+}"
+			   SEQUENCE="3"
+			   UPDATED="08/27/2013 20:12:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:14"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreQuery"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreQuery () 
+{
+	var expr ;
+	var TakeLogs;
+	var TakeLogs_Network;
+	var TakeLogs_MNP;
+	var SRNo ;
+	var FieldInfo ;
+	var FieldValue ;  
+	var k = 0;  
+	var j = 0;
+	var m = 0;  
+	var CheckLogFlag = TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;VF_LOGGING_FLAG&quot;,&quot;FLAG_PASS&quot;);
+	TakeLogs = TheApplication().GetProfileAttr(&quot;Take_Logs&quot;);
+	TakeLogs_Network = TheApplication().GetProfileAttr(&quot;Take_Logs_NTW&quot;);
+	TakeLogs_MNP = TheApplication().GetProfileAttr(&quot;Take_Logs_MNP&quot;);    
+	
+	if (CheckLogFlag == &quot;Y&quot; &amp;&amp; TakeLogs_MNP == &quot;Y&quot;)
+	{
+		expr = GetSearchExpr();
+		SRNo = Clib.strstr(expr,&quot;[SR Number]&quot;);
+	    var MSISDN =  Clib.strstr(expr,&quot;[MSISDN]&quot;);
+	    
+	    if (MSISDN != null)
+	   {
+		MSISDN  =  GetSearchSpec(&quot;MSISDN&quot;); 
+		FieldInfo = &quot;MSISDN&quot;;
+		FieldValue = MSISDN;
+		LogInsert(FieldInfo,FieldValue);
+		k = k + 1;
+	    }
+	    if (SRNo != null)
+	    {
+		SRNo  =  GetSearchSpec(&quot;SR Number&quot;); 
+		FieldInfo = &quot;Hizmet Talebi No&quot;; 
+		FieldValue = SRNo;  
+		LogInsert(FieldInfo,FieldValue);
+		k = k + 1;
+	    }
+	    
+	    if (k == 0)
+	    {
+		FieldInfo = &quot;&quot;;
+		FieldValue = &quot;&quot;;
+		LogInsert(FieldInfo,FieldValue);
+	    }  
+		TheApplication().SetProfileAttr(&quot;Take_Logs_MNP&quot;,&quot;N&quot;); 
+	}
+	
+	if (CheckLogFlag == &quot;Y&quot; &amp;&amp; TakeLogs == &quot;Y&quot;)
+	{
+		expr = GetSearchExpr();
+		SRNo = Clib.strstr(expr,&quot;[SR Number]&quot;);
+	    var FirstName =  Clib.strstr(expr,&quot;[Account First Name]&quot;);
+	    var LastName =  Clib.strstr(expr,&quot;[Account Last Name]&quot;);  
+	    var GSM =  Clib.strstr(expr,&quot;[VF Customer GSM]&quot;); 
+	    var BAName =  Clib.strstr(expr,&quot;[Billing Account Name]&quot;); 
+	    var CSN =  Clib.strstr(expr,&quot;[CSN]&quot;); 
+	    var OrderId =  Clib.strstr(expr,&quot;[Order Id]&quot;); 
+	    var Priority =  Clib.strstr(expr,&quot;[Priority]&quot;); 
+	    
+	    if (SRNo != null)
+	    {
+			SRNo  =  GetSearchSpec(&quot;SR Number&quot;); 
+			FieldInfo = &quot;Hizmet Talebi No&quot;; 
+			FieldValue = SRNo;  
+			LogInsert(FieldInfo,FieldValue);
+			j = j + 1;
+	    }
+	    if (FirstName != null)
+	    {
+			FirstName  =  GetSearchSpec(&quot;Account First Name&quot;); 
+			FieldInfo = &quot;Adı&quot;; 
+			FieldValue = FirstName;  
+			LogInsert(FieldInfo,FieldValue);
+			j = j + 1;
+	    }
+	    if (LastName != null)
+	    {
+			LastName  =  GetSearchSpec(&quot;Account Last Name&quot;); 
+			FieldInfo = &quot;Soyad&quot;;
+			FieldValue = LastName;  
+			LogInsert(FieldInfo,FieldValue);
+			j = j + 1;   
+	    }
+	    if (GSM != null)
+	    {
+			GSM  =  GetSearchSpec(&quot;VF Customer GSM&quot;); 
+			FieldInfo = &quot;GSM&quot;;
+			FieldValue = GSM;  
+			LogInsert(FieldInfo,FieldValue);
+			j = j + 1;		    
+	    }
+	    if (BAName != null)
+	    {
+			BAName  =  GetSearchSpec(&quot;Billing Account Name&quot;); 
+			FieldInfo = &quot;Fatura Hesap No&quot;;
+			FieldValue = BAName;  
+			LogInsert(FieldInfo,FieldValue);
+			j = j + 1;
+	    }  
+	    if (CSN != null)
+	    {
+			CSN  =  GetSearchSpec(&quot;CSN&quot;); 
+			FieldInfo = &quot;Müşteri No&quot;;
+			FieldValue = CSN;  
+			LogInsert(FieldInfo,FieldValue);
+			j = j + 1;
+	    }
+	    if (OrderId != null)
+	    {
+			OrderId  =  GetSearchSpec(&quot;Order Id&quot;); 
+			FieldInfo = &quot;Sipariş No&quot;;
+			FieldValue = OrderId;  
+			LogInsert(FieldInfo,FieldValue);
+			j = j + 1;  
+	    }
+	    if (Priority != null)
+	    {
+			Priority  =  GetSearchSpec(&quot;Priority&quot;); 
+			FieldInfo = &quot;Öncelik&quot;;
+			FieldValue = Priority;  
+			LogInsert(FieldInfo,FieldValue);
+			j = j + 1;  
+	    }
+	    
+	    if (j == 0)
+	    {
+			FieldInfo = &quot;&quot;;
+			FieldValue = &quot;&quot;;
+			LogInsert(FieldInfo,FieldValue);    
+	    }  
+		TheApplication().SetProfileAttr(&quot;Take_Logs&quot;,&quot;N&quot;);
+	}
+	
+	if (CheckLogFlag == &quot;Y&quot; &amp;&amp; TakeLogs_Network == &quot;Y&quot;)
+	{
+		expr = GetSearchExpr();
+		SRNo = Clib.strstr(expr,&quot;[SR Number]&quot;);
+		var Area =  Clib.strstr(expr,&quot;[Area]&quot;);
+	    
+		if (SRNo != null)
+	    {
+			SRNo  =  GetSearchSpec(&quot;SR Number&quot;); 
+			FieldInfo = &quot;Hizmet Talebi No&quot;; 
+			FieldValue = SRNo;  
+			LogInsert(FieldInfo,FieldValue);
+			m = m + 1;
+	    }
+	    if (Area != null)
+	    {
+			Area  =  GetSearchSpec(&quot;Area&quot;); 
+			FieldInfo = &quot;Alanı&quot;; 
+			FieldValue = Area;  
+			LogInsert(FieldInfo,FieldValue);
+			m = m + 1;
+	    }
+	    
+	    if (m == 0)
+	    {
+			FieldInfo = &quot;&quot;;
+			FieldValue = &quot;&quot;;
+			LogInsert(FieldInfo,FieldValue); 
+	    }  
+		TheApplication().SetProfileAttr(&quot;Take_Logs_NTW&quot;,&quot;N&quot;);
+	}
+	return (ContinueOperation);  
+}"
+			   SEQUENCE="4"
+			   UPDATED="08/27/2013 20:12:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:14"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="LogInsert"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function LogInsert(FieldInfo,FieldValue)
+{
+//Oracle Review October 2011 - Deep Code
+	try
+	{
+	var LogBO = TheApplication ().GetBusObject(&quot;ACS NI Parameter&quot;);
+	var LogBC = LogBO.GetBusComp (&quot;VF LOG EVENTS&quot;);
+	var View = TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;);
+	var Login = TheApplication().LoginName();
+	var Process = &quot;Sorgu&quot;;
+		with(LogBC)
+		{
+	    NewRecord(NewAfter);
+	    SetFieldValue(&quot;Field Info&quot;,FieldInfo);
+	    SetFieldValue(&quot;Process Info&quot;,Process);
+	    SetFieldValue(&quot;User Name&quot;,Login);
+		SetFieldValue(&quot;View&quot;,View);
+		SetFieldValue(&quot;Field Value&quot;,FieldValue);
+		WriteRecord();  
+		}
+	}
+	finally
+	{
+	LogBC = null;
+	LogBO = null;
+	} 
+}"
+			   SEQUENCE="2"
+			   UPDATED="08/27/2013 20:12:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:14"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_VIEW_MODE
+			   INACTIVE="N"
+			   NAME="Organization"
+			   OWNER_TYPE="Organization"
+			   VISIBILITY_MVFIELD="Organization"
+			   VISIBILITY_MVLINK="Organization"
+			   UPDATED="08/27/2013 20:12:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:14"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_VIEW_MODE>
+			<BUSCOMP_VIEW_MODE
+			   NAME="Personal"
+			   OWNER_TYPE="Person"
+			   VISIBILITY_FIELD="Created By"
+			   UPDATED="08/27/2013 20:12:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:14"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_VIEW_MODE>
+			<BUSCOMP_VIEW_MODE
+			   NAME="Sales Rep"
+			   OWNER_TYPE="Position"
+			   VISIBILITY_FIELD="VF Created Position Id"
+			   UPDATED="08/27/2013 20:12:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:14"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_VIEW_MODE>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="All Mode Sort"
+			   VALUE="Normal"
+			   UPDATED="08/27/2013 20:12:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:14"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="DB2 Optimization Level"
+			   VALUE="3"
+			   UPDATED="08/27/2013 20:12:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:14"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="CST_OU_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Account Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/27/2013 20:12:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:14"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="OU_NUM"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_ORG_EXT"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CSN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/27/2013 20:12:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:14"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[SR Number]+&apos;    &apos;+ [Name Calc1]"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Name Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/27/2013 20:12:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:14"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf ([VF Reassigment Date] IS NULL,&quot;&quot;, &quot;(&quot;+ [VF Reassigment Date Formated] + &quot;)&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Name Calc1"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/27/2013 20:12:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:14"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="BU_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Primary Organization Id"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="System: OrganizationId"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/27/2013 20:12:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:14"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SR_NUM"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SR Number"
+			   NO_COPY="Y"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="64"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/27/2013 20:12:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:14"
+			   CREATED_BY="SADMIN">
+				<FIELD_USER_PROP
+				   INACTIVE="N"
+				   NAME="DisplayType"
+				   VALUE="DTYPE_ID"
+				   UPDATED="08/27/2013 20:12:14"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/27/2013 20:12:14"
+				   CREATED_BY="SADMIN">
+				</FIELD_USER_PROP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SR_STAT_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Status"
+			   NO_COPY="N"
+			   PICKLIST="FIN PickList Service Request Status"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/27/2013 20:12:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:15"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Status"
+				   INACTIVE="N"
+				   NAME="Status"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   SEQUENCE="1"
+				   UPDATED="08/27/2013 20:12:15"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/27/2013 20:12:15"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Sub-Status"
+				   INACTIVE="Y"
+				   NAME="Sub-Status"
+				   NO_CLEAR="N"
+				   SEQUENCE="2"
+				   UPDATED="08/27/2013 20:12:15"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/27/2013 20:12:15"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="TEMPLATE_FLG"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Template Flag"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/27/2013 20:12:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:15"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="PR_HELD_POSTN_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_EMPLOYEE_CREATED"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Created Position Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/27/2013 20:12:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:15"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_FIRST_POSITION"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_SRV_REQ_X"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF First Position"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="System: PositionId"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/02/2018 11:42:08"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/02/2018 11:42:08"
+			   CREATED_BY="IBM_RCATITA">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_RE_ASGN_DT"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Reassigment Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/27/2013 20:12:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:15"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="ToChar([VF Reassigment Date], &apos;DD/MM/YYYY H:m:s&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Reassigment Date Formated"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/27/2013 20:12:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:15"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="ATTRIB_30"
+			   COMMENTS="8/18/2011 - COPS71 - Erdem Bodur"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_SRV_REQ_X"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Resolution Date"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Expr: &apos;[VF Resolution Date Calc] + ([VF Resolution Time Calc]/24)&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/27/2013 20:12:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:15"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_SHOP_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_EMP_PER"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Shop Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/27/2013 20:12:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:15"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_EMPLOYEE_CREATED"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_CONTACT"
+			   UPDATED="08/27/2013 20:12:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:15"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Created By"
+				   SOURCE_FIELD="Created By"
+				   UPDATED="08/27/2013 20:12:15"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/27/2013 20:12:15"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_EMP_PER"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_EMP_PER"
+			   UPDATED="08/27/2013 20:12:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:15"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Shop Id"
+				   SOURCE_FIELD="Created By"
+				   UPDATED="08/27/2013 20:12:15"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/27/2013 20:12:15"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_ORG_EXT"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_ORG_EXT"
+			   UPDATED="08/27/2013 20:12:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:15"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Account Id"
+				   SOURCE_FIELD="Account Id"
+				   UPDATED="08/27/2013 20:12:15"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/27/2013 20:12:15"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<MULTI_VALUE_LINK
+			   AUTO_PRIMARY="Default"
+			   CHECK_NO_MATCH="N"
+			   DESTINATION_BUSINESS_COMPONENT="Organization"
+			   DESTINATION_LINK="Service Request/Organization"
+			   INACTIVE="N"
+			   NAME="Organization"
+			   NO_ASSOCIATE="N"
+			   NO_COPY="Y"
+			   NO_DELETE="N"
+			   NO_INSERT="Y"
+			   NO_UPDATE="N"
+			   POPUP_UPDATE_ONLY="N"
+			   PRIMARY_ID_FIELD="Primary Organization Id"
+			   SOURCE_FIELD="Id"
+			   USE_PRIMARY_JOIN="Y"
+			   UPDATED="08/27/2013 20:12:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2013 20:12:15"
+			   CREATED_BY="SADMIN">
+			</MULTI_VALUE_LINK>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

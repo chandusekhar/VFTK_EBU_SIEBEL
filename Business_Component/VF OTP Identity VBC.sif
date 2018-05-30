@@ -1,0 +1,904 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="04/28/2018 18:51:18"
+   UPDATED_BY="SADMIN"
+   CREATED="04/28/2018 10:52:36"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VF Customer Validation Management"
+	   UI_FREEZE="N"
+	   UPDATED="05/16/2018 15:46:53"
+	   UPDATED_BY="IBM_ETUNALI"
+	   CREATED="08/14/2014 20:14:06"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="N"
+		   CLASS="CSSBCVExtern"
+		   COMMENTS="Created by CF - CR767 Data Masking"
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MULTI_RECIPIENT_SELECT="N"
+		   NAME="VF OTP Identity VBC"
+		   NO_DELETE="Y"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="05/16/2018 15:04:59"
+		   OWNER_DELETE="N"
+		   POPUP_VISIBILITY_AUTO_ALL="N"
+		   SCRIPTED="Y"
+		   TYPE="Non-Transient"
+		   OBJECT_LOCKED_BY_NAME="IBM_ETUNALI"
+		   UPDATED="05/16/2018 15:46:53"
+		   UPDATED_BY="IBM_ETUNALI"
+		   CREATED="08/18/2014 22:18:48"
+		   CREATED_BY="SADMIN">
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreInvokeMethod (MethodName)
+{
+	if(MethodName==&quot;ExecuteQuery&quot; )
+		TheApplication().SetProfileAttr(&quot;VFSkipQueryWF&quot;,&quot;N&quot;);	
+	
+	if(MethodName==&quot;OTPSubmit&quot;)
+	{
+		//Set VF VBC Action
+		var VFVBCAction = &quot;GeneratePassword&quot;;
+		this.SetFieldValue(&quot;VF VBC Action&quot;, VFVBCAction);
+		TheApplication().SetProfileAttr(&quot;VFVBCAction&quot;,VFVBCAction);
+		
+		var svc_WorkflowProcessManager = TheApplication().GetService (&quot;Workflow Process Manager&quot;);
+		var pset_Inputs = TheApplication().NewPropertySet();
+		var pset_Outputs = TheApplication().NewPropertySet();
+		
+		//Validate necessary fields for password generation
+		//and check if an SMS request has been sent during the last OTP Duration period
+		pset_Inputs.SetProperty(&quot;ProcessName&quot;, &quot;VF Validate OTP &amp; Identity Information WF&quot;);
+		pset_Inputs.SetProperty(&quot;Customer&quot;, this.GetFieldValue(&quot;VF Customer&quot;));
+		if (this.GetFieldValue(&quot;VFTRCBU Consumer&quot;)==&quot;Y&quot;)
+		{
+		pset_Inputs.SetProperty(&quot;MSISDN&quot;, this.GetFieldValue(&quot;VFTRCBU MSISDN&quot;));
+		}
+		else
+		{
+		pset_Inputs.SetProperty(&quot;MSISDN&quot;, this.GetFieldValue(&quot;VF MSISDN&quot;));
+		}
+		pset_Inputs.SetProperty(&quot;VBC Action&quot;, VFVBCAction);
+		//pset_Inputs.SetProperty(&quot;SMS Sent Time&quot;, &quot;11/29/2013 10:00:53&quot;);
+		pset_Inputs.SetProperty(&quot;SMS Sent Time&quot;, this.GetFieldValue(&quot;VF SMS Sent Time&quot;));
+		pset_Inputs.SetProperty(&quot;VFTRCBU Consumer&quot;, this.GetFieldValue(&quot;VFTRCBU Consumer&quot;)); //WA01 - 09012015
+		pset_Inputs.SetProperty(&quot;VFTRCBU Is Turkish&quot;, this.GetFieldValue(&quot;VFTRCBU Is Turkish&quot;)); //WA01 - 09012015
+		svc_WorkflowProcessManager.InvokeMethod(&quot;RunProcess&quot;, pset_Inputs, pset_Outputs);
+		
+		var errorMessage = pset_Outputs.GetProperty(&quot;Error Message&quot;);
+		var SMSSent = pset_Outputs.GetProperty(&quot;SMSSent&quot;);
+		TheApplication().SetProfileAttr(&quot;SMSSent&quot;,SMSSent);
+		
+		if (errorMessage != null &amp;&amp; errorMessage != &quot;&quot;)
+		{
+			//Clear VF VBC Action
+			this.SetFieldValue(&quot;VF VBC Action&quot;,&quot;&quot;);
+			TheApplication().SetProfileAttr(&quot;VFVBCAction&quot;,&quot;&quot;);
+			
+			TheApplication().RaiseErrorText(errorMessage);
+		}
+		
+		return (CancelOperation);  
+	}
+		
+	return (ContinueOperation);
+}"
+			   SEQUENCE="2"
+			   UPDATED="04/23/2015 20:18:08"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreSetFieldValue"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreSetFieldValue (FieldName, FieldValue)
+{	
+	if (FieldName == &quot;VF Validation Type&quot;)
+	{
+		if (FieldValue == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_OTP_VALIDATION_TYPE&quot;,&quot;OTP&quot;))
+		{			
+			//Clear fields when validation type is changed
+			this.SetFieldValue(&quot;VF Tax Id&quot;,&quot;&quot;);
+			this.SetFieldValue(&quot;VFTRCBU Father Name&quot;,&quot;&quot;);
+			this.SetFieldValue(&quot;VFTRCBU TCID&quot;,&quot;&quot;);
+			this.SetFieldValue(&quot;VFTRCBU Birth Date&quot;,&quot;&quot;);
+		}
+		
+		if (FieldValue == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_OTP_VALIDATION_TYPE&quot;,&quot;IDENTITY&quot;))
+		{	
+			//Clear fields when validation type is changed
+			this.SetFieldValue(&quot;VF Inserted Password&quot;,&quot;&quot;);
+			this.SetFieldValue(&quot;VF MSISDN&quot;,&quot;&quot;);
+			this.SetFieldValue(&quot;VFTRCBU MSISDN&quot;,&quot;&quot;);
+		}
+	}
+	else if (FieldName == &quot;VFTRCBU TCID&quot;)
+	{
+		var ErrMsg = &quot;0034&quot;;
+		CheckTcId(FieldValue, ErrMsg);
+	}
+	
+	return (ContinueOperation);
+}"
+			   SEQUENCE="3"
+			   UPDATED="04/23/2015 20:18:08"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_WriteRecord"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_WriteRecord ()
+{
+	if(this.GetFieldValue(&quot;VF VBC Action&quot;) == &quot;GeneratePassword&quot; 
+	&amp;&amp; TheApplication().GetProfileAttr(&quot;VFVBCAction&quot;) == &quot;GeneratePassword&quot;)
+	{
+		this.SetFieldValue(&quot;VF VBC Action&quot;,&quot;&quot;);
+		TheApplication().SetProfileAttr(&quot;VFVBCAction&quot;,&quot;&quot;);
+		
+		//Show SMS sent confirmation popup
+		TheApplication().RaiseError(&quot;X_SMS_HAS_BEEN_SENT&quot;);
+	}
+}"
+			   SEQUENCE="4"
+			   UPDATED="04/23/2015 20:18:08"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CheckTcId"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CheckTcId (Field,ErrMsg)
+{
+	var sMsg = &quot;&quot;;
+	var strMessageCategory = &quot;VFTRCBU User Defined Errors&quot;;
+	var strCode = ErrMsg;
+	/*tc id owns 11 numbers, the first one cannot be 0, the following regular exp check this property*/
+	//var sCheck 		= 	/^[1-9]\d{10}$/;
+	var regRes = Field.match(/^[1-9][0-9]{10}$/);
+	
+	if(regRes != null)	
+	{
+		var tcIdNoLong=parseInt(Field,10);
+	    var tmp, tmp1;
+	    var oddSum, evenSum, total, chkDigit1, chkDigit2;
+	    var array=new Array;   
+
+       	tmp  =Math.floor(tcIdNoLong/100);  //Assigning Temporary    
+       	tmp1 =Math.floor(tcIdNoLong/100);  //Assigning Temporary1
+       	
+       	for(var i=9;i&gt;0;i--)
+       	{
+       		array[i]=(tmp1%10);	
+       		tmp1=Math.floor(tmp1/10);	
+       	}
+       	oddSum=array[1]+array[3]+array[5]+array[7]+array[9];
+       	evenSum=array[2]+array[4]+array[6]+array[8];     	
+       	total=oddSum*3+evenSum; 
+       	chkDigit1=(10-(total % 10))%10;
+       	oddSum=chkDigit1+array[8]+array[6]+array[4]+array[2];
+       	evenSum=array[9]+array[7]+array[5]+array[3]+array[1];
+       	total=oddSum*3+evenSum;	 
+       	chkDigit2=(10-(total % 10))%10;
+       	tmp=tmp*100+chkDigit1*10+chkDigit2; 
+       	
+       	if (tmp !=tcIdNoLong)
+      	{	      		
+	        sMsg = TheApplication().LookupMessage(strMessageCategory, strCode);
+	        TheApplication().RaiseErrorText(sMsg);
+     	}
+     }
+     else
+     {
+     	sMsg = TheApplication().LookupMessage(strMessageCategory, strCode);
+        TheApplication().RaiseErrorText(sMsg);    //size
+     }
+}"
+			   SEQUENCE="1"
+			   UPDATED="04/23/2015 20:18:08"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:18:08"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Service Name"
+			   VALUE="VF VBC Integration BS"
+			   UPDATED="08/18/2014 22:18:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Service Parameters"
+			   VALUE="IOName=VF OTP Identity IO;RequireContext=Y"
+			   UPDATED="08/18/2014 22:18:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Context Navigation"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/18/2014 22:18:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Customer"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/18/2014 22:18:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Enable Continue"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/18/2014 22:18:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Entity"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/18/2014 22:18:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Identity Transaction Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/18/2014 22:18:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Inserted Password"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="6"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/18/2014 22:18:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Last OTP Request Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/18/2014 22:18:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Last OTP Request Status"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/18/2014 22:18:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF MSISDN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/18/2014 22:18:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF SMS Sent Time"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/18/2014 22:18:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF SMS Transaction ID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/18/2014 22:18:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Searched Criteria"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/18/2014 22:18:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Tax Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/18/2014 22:18:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF VBC Action"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/18/2014 22:18:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Validation Type"
+			   NO_COPY="N"
+			   PICKLIST="VF OTP Validation Type Picklist"
+			   PRE_DEFAULT_VALUE="Expr: &apos;LookupValue (&quot;VF_OTP_VALIDATION_TYPE&quot;, &quot;OTP&quot;)&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/18/2014 22:18:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Validation Type"
+				   INACTIVE="N"
+				   NAME="VF Validation Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   SEQUENCE="1"
+				   UPDATED="08/18/2014 22:18:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/18/2014 22:18:48"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupName (&quot;VF_OTP_VALIDATION_TYPE&quot;, [VF Validation Type])"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Validation Type LIC"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/18/2014 22:18:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Validation Type"
+				   INACTIVE="N"
+				   NAME="VF Validation Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   SEQUENCE="1"
+				   UPDATED="08/18/2014 22:18:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/18/2014 22:18:48"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Birth Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:44:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/30/2015 09:44:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Consumer"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:44:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/30/2015 09:44:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Father Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:44:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/30/2015 09:44:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Is Turkish"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:44:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/30/2015 09:44:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU MSISDN"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU OTP MSISDN Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:44:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/30/2015 09:44:26"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VF Customer"
+				   INACTIVE="N"
+				   NAME="VF Customer"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Owner Account Id"
+				   UPDATED="01/30/2015 09:44:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/30/2015 09:44:26"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VFTRCBU MSISDN"
+				   INACTIVE="N"
+				   NAME="VFTRCBU MSISDN"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VF MSISDN"
+				   UPDATED="01/30/2015 09:44:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/30/2015 09:44:26"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU TCID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:18:08"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/30/2015 09:44:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VF Validation Type LIC]=&apos;IDENTITY&apos;,&apos;TIDENTITYCBU&apos;,&apos;OTPCBU&apos;)"
+			   COMMENTS="OLD: IIF([VF Validation Type LIC]=&apos;IDENTITY&apos;, IIF([VFTRCBU Is Turkish]=&apos;Y&apos;,&apos;TIDENTITYCBU&apos;,&apos;FIDENTITYCBU&apos;),&apos;OTPCBU&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Toggle CBU Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/16/2018 15:46:53"
+			   UPDATED_BY="IBM_ETUNALI"
+			   CREATED="01/30/2015 09:44:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VFTRCBU Consumer]=&quot;Y&quot;,[VFTRCBU Toggle CBU Calc],[VFTRCBU Toggle EBU Calc])"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Toggle Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:44:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/30/2015 09:44:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VF Validation Type LIC]=&apos;IDENTITY&apos;,&apos;IDENTITYEBU&apos;,&apos;OTPEBU&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Toggle EBU Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:44:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/30/2015 09:44:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="Contact"
+			   OUTER_JOIN_FLAG="N"
+			   TABLE="S_CONTACT"
+			   UPDATED="08/18/2014 22:18:48"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 22:18:48"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PR_DEPT_OU_ID"
+				   INACTIVE="N"
+				   NAME="VF Customer"
+				   SOURCE_FIELD="VF Customer"
+				   UPDATED="08/18/2014 22:18:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/18/2014 22:18:48"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

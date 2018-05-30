@@ -1,0 +1,296 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="07/24/2014 12:08:09"
+   UPDATED_BY="SADMIN"
+   CREATED="07/24/2014 11:05:56"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LANGUAGE_LOCKED="ENU"
+	   LOCKED="Y"
+	   LOCKED_DATE="12/16/2016 19:32:22"
+	   NAME="VF P2P Interfaces"
+	   UI_FREEZE="N"
+	   LOCKED_BY_NAME="MLUIS"
+	   UPDATED="12/19/2016 16:33:31"
+	   UPDATED_BY="MLUIS"
+	   CREATED="10/06/2009 10:41:44"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   COMMENTS="ACS NSWAMY 17Nov2009. Created for HLR Inquiry Service"
+		   EXTERNAL_USE="N"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VF CDR SMS Log VBC Service"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="12/14/2016 14:59:21"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   OBJECT_LOCKED_BY_NAME="MLUIS"
+		   UPDATED="12/19/2016 11:30:47"
+		   UPDATED_BY="MLUIS"
+		   CREATED="03/18/2011 18:20:04"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_LOCALE
+			   APPLICATION_CODE="STD"
+			   DISPLAY_NAME="VF - Order Management"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   TRANSLATE="Y"
+			   UPDATED="03/18/2011 18:20:04"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/18/2011 18:20:04"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_LOCALE>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="Init"
+			   UPDATED="03/18/2011 18:20:04"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/18/2011 18:20:04"
+			   CREATED_BY="SADMIN">
+				<BUSINESS_SERVICE_METHOD_LOCALE
+				   APPLICATION_CODE="STD"
+				   DISPLAY_NAME="Init"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/18/2011 18:20:04"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/18/2011 18:20:04"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_LOCALE>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="Query"
+			   UPDATED="03/18/2011 18:20:04"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/18/2011 18:20:04"
+			   CREATED_BY="SADMIN">
+				<BUSINESS_SERVICE_METHOD_LOCALE
+				   APPLICATION_CODE="STD"
+				   DISPLAY_NAME="Query"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/18/2011 18:20:04"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/18/2011 18:20:04"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_LOCALE>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Init"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Init(Inputs,Outputs)
+{
+	try
+	{
+		var search = Inputs.GetProperty(&quot;Business Component Name&quot;);
+		var busObj : BusObject = TheApplication().GetBusObject(&quot;Account&quot;);
+		var busComp : BusComp = busObj.GetBusComp(&quot;SRF Field&quot;);
+		var recordExist;
+		var fieldName;
+		//Scripting 15: Null check is not required since it&apos;s a vanilla behaviour that BC name will be passed always to VBC Init method
+		busComp.ActivateField(&quot;Name&quot;);
+		busComp.ClearToQuery();
+		busComp.SetSearchSpec(&quot;Business Component&quot;,search);
+		busComp.ExecuteQuery(ForwardOnly);
+		recordExist = busComp.FirstRecord();
+		
+		while (recordExist)
+		{
+			fieldName = busComp.GetFieldValue(&quot;Name&quot;);
+			Outputs.SetProperty(fieldName, &quot;&quot;);
+			recordExist = busComp.NextRecord();
+		}
+	}
+	finally
+	{	
+		busComp = null;
+		busObj = null;
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="06/27/2012 17:41:17"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/18/2011 18:20:04"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Query"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Query(Inputs, Outputs)
+{
+	try
+	{
+		var strTemp = Inputs.GetProperty(&quot;search-string&quot;);
+		var intIndexFirstQuote = strTemp.indexOf(&quot;\&quot;&quot;) + 1;
+		var intIndexStar = strTemp.indexOf(&quot;*&quot;);
+		var intIndexLastQuote = strTemp.lastIndexOf(&quot;\&quot;&quot;);
+		
+		/*****START - MLUIS CCB 208 new date filter*******************/
+		var intIndexMSISDN = strTemp.indexOf(&quot;[MSISDN] = &quot;) + 12;
+		var intIndexEndDate = strTemp.indexOf(&quot;[Finish Date] = &quot;) + 17;
+		var intIndexStartDate = strTemp.indexOf(&quot;[Start Date] = &quot;) + 16;
+		var intIndexEndUserSS = strTemp.indexOf(&quot;) AND &quot;) - 1;
+		var intIndexStartDateEnd = strTemp.indexOf(&quot; AND &quot;) - 1;
+		var strEndDate : String = &quot;&quot;;
+		var strStartDate : String = &quot;&quot;;
+		
+		if (intIndexEndDate &lt; 17)
+		{
+			intIndexStartDateEnd = intIndexEndUserSS;		
+		}
+		else
+		{
+			strEndDate = strTemp.substring(intIndexEndDate, ((intIndexStar &lt; intIndexEndUserSS)&amp;&amp; intIndexStar &gt; intIndexEndUserSS) ? intIndexStar : intIndexEndUserSS);
+		}
+		if (intIndexStartDate &gt; 16)
+		{
+			strStartDate = strTemp.substring(intIndexStartDate, ((intIndexStar &lt; intIndexStartDateEnd)&amp;&amp; intIndexStar &gt; intIndexStartDate) ? intIndexStar : intIndexStartDateEnd);	
+		}
+		
+		if ( strEndDate.length == 10)
+		{
+			strEndDate = strEndDate+ &quot; 00:00:00&quot;;
+		}
+		if ( strStartDate.length == 10)
+		{
+			strStartDate = strStartDate+ &quot; 00:00:00&quot;;
+		}
+		
+		
+		var strMSISDN = strTemp.substring(intIndexMSISDN, ((intIndexStar &lt; intIndexLastQuote)&amp;&amp; intIndexStar &gt; intIndexMSISDN) ? intIndexStar : intIndexLastQuote);
+//		var strMSISDN = strTemp.substring(intIndexFirstQuote, ((intIndexStar &lt; intIndexLastQuote)&amp;&amp; intIndexStar &gt; intIndexFirstQuote) ? intIndexStar : intIndexLastQuote);
+		/*****END - MLUIS CCB 208 new date filter*******************/
+		
+		var boAsset : BusObject = TheApplication().GetBusObject(&quot;Asset Management - Send to Billing&quot;);
+		var bcAsset : BusComp = boAsset.GetBusComp(&quot;Asset Mgmt - Asset - Header&quot;);
+		var strMarType = &quot;&quot;;
+		var strPos = TheApplication().PositionName();
+		var psInputs  : PropertySet = TheApplication().NewPropertySet();
+		var psOutputs : PropertySet = TheApplication().NewPropertySet();
+		var svcWF	  : Service = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		var totChild;
+		var strP1 : PropertySet;
+		var strP2 : PropertySet;
+		if(strMSISDN != &quot;&quot;)
+		{
+			
+			
+			with(bcAsset)
+			{
+				ClearToQuery();
+				SetViewMode(AllView);
+				ActivateField(&quot;Market Type&quot;);
+				SetSearchSpec(&quot;VF MSISDN&quot;,strMSISDN);
+				ExecuteQuery(ForwardOnly);
+				if(FirstRecord())
+				{
+					strMarType = GetFieldValue(&quot;Market Type&quot;);
+				}
+			}	
+			//if(strPos != &quot;SME Dealer&quot; &amp;&amp; TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;CUSTOMER_CLASS&quot;,&quot;EBU&quot;) != strMarType) --DEF-1025
+			if(strPos != &quot;SME Dealer&quot;)
+			{
+				var str : String = strMSISDN;
+				if ( str.length == 10){
+					str = &quot;90&quot; + strMSISDN;
+				}
+					psInputs.SetProperty(&quot;ProcessName&quot;, &quot;VF CDR SMS Log&quot;);
+				psInputs.SetProperty(&quot;MSISDN&quot;, str);
+				psInputs.SetProperty(&quot;StartDate&quot;, strStartDate);
+				psInputs.SetProperty(&quot;EndDate&quot;, strEndDate);
+				svcWF.InvokeMethod(&quot;RunProcess&quot;, psInputs, psOutputs);
+				if(psOutputs.GetProperty(&quot;Status Code&quot;) == &quot;0&quot;)
+				{
+					strP2 = TheApplication().NewPropertySet();
+					strP1 = psOutputs.GetChild(0).GetChild(0);
+					totChild = strP1.GetChildCount();
+					for (var i = 0; i &lt; totChild; i++)
+					{
+						strP2 = strP1.GetChild(i);
+						Outputs.AddChild(strP2);
+					}
+				}
+			}
+		}		
+	}
+	finally
+	{
+		svcWF = null;
+		psInputs = null;
+		psOutputs = null;
+		strP1 = null;
+		strP2 = null;
+		bcAsset = null;
+		boAsset = null;
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="12/19/2016 11:30:47"
+			   UPDATED_BY="MLUIS"
+			   CREATED="03/18/2011 18:20:04"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreCanInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreCanInvokeMethod (MethodName, &amp;CanInvoke)
+{
+	CanInvoke = &quot;True&quot;;
+	return (ContinueOperation);
+}"
+			   SEQUENCE="3"
+			   UPDATED="06/27/2012 17:40:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/18/2011 18:20:04"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	switch(MethodName)
+	{
+		case &quot;Init&quot;:
+			Init (Inputs, Outputs);
+			return(CancelOperation);
+		case &quot;Query&quot;:
+			Query (Inputs, Outputs);
+			return(CancelOperation);
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="4"
+			   UPDATED="06/27/2012 17:40:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/18/2011 18:20:04"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

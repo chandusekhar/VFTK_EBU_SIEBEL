@@ -1,0 +1,718 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VF P2P Interfaces"
+	   UI_FREEZE="N"
+	   UPDATED="04/27/2017 16:20:16"
+	   UPDATED_BY="SJOAO"
+	   CREATED="10/06/2009 10:41:44"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="N"
+		   CLASS="CSSBCVExtern"
+		   COMMENTS="VFTK : RG : 25/05/2010 : Created an EBC for the user to chk SMS Log history"
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MULTI_RECIPIENT_SELECT="N"
+		   NAME="VF CDR SMS LOG"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="04/26/2017 10:04:39"
+		   OWNER_DELETE="N"
+		   POPUP_VISIBILITY_AUTO_ALL="N"
+		   SCRIPTED="Y"
+		   TYPE="Non-Transient"
+		   OBJECT_LOCKED_BY_NAME="SJOAO"
+		   UPDATED="04/27/2017 16:20:16"
+		   UPDATED_BY="SJOAO"
+		   CREATED="06/03/2010 08:42:02"
+		   CREATED_BY="SADMIN">
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreQuery"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreQuery ()
+{
+	try
+	{
+		if(this.GetSearchExpr() == &quot;&quot;)
+		{
+			var msg=TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;167&quot;);
+			TheApplication().RaiseErrorText(msg);
+		}
+		var TakeLogs ;
+		var CheckLogFlag = TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;VF_LOGGING_FLAG&quot;,&quot;FLAG_PASS&quot;);
+		TakeLogs = TheApplication().GetProfileAttr(&quot;Take_Logs&quot;);
+			
+		if (CheckLogFlag == &quot;Y&quot; &amp;&amp; TakeLogs == &quot;Y&quot;)
+		{
+			var expr = GetSearchExpr();
+			var FieldInfo ;
+			var FieldValue ;  
+			var MSISDN = Clib.strstr(expr,&quot;[MSISDN]&quot;);
+
+		    if ( MSISDN != null) 
+		    {
+		    	MSISDN =  GetSearchSpec(&quot;MSISDN&quot;);  
+		    	FieldInfo = &quot;MSISDN&quot;;
+		    	FieldValue = MSISDN;
+		    	LogInsert(FieldInfo,FieldValue);  
+			}
+			else
+			{
+		    	FieldInfo = &quot;&quot;;
+		    	FieldValue = &quot;&quot;;
+		    	LogInsert(FieldInfo,FieldValue);
+		    }
+
+			TheApplication().SetProfileAttr(&quot;Take_Logs&quot;,&quot;N&quot;); 
+	 	}
+		return (ContinueOperation);
+	}
+	catch(e)
+	{
+		null;
+	}
+	finally
+	{
+		
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="04/27/2017 15:54:55"
+			   UPDATED_BY="SJOAO"
+			   CREATED="07/30/2010 09:15:33"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="LogInsert"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function LogInsert(FieldInfo,FieldValue)
+{
+	try
+	{
+	var LogBO = TheApplication ().GetBusObject(&quot;ACS NI Parameter&quot;);
+	var LogBC = LogBO.GetBusComp (&quot;VF LOG EVENTS&quot;);
+	var View = TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;);
+	var Login = TheApplication().LoginName();
+	var Process = &quot;Sorgu&quot;;
+		with(LogBC)
+		{
+		NewRecord(NewAfter);
+		SetFieldValue(&quot;Field Info&quot;,FieldInfo);
+		SetFieldValue(&quot;Process Info&quot;,Process);
+		SetFieldValue(&quot;User Name&quot;,Login);
+    	SetFieldValue(&quot;View&quot;,View);
+    	SetFieldValue(&quot;Field Value&quot;,FieldValue);
+		WriteRecord();  
+		} 
+	}
+	finally
+	{
+	LogBC = null;
+	LogBO = null;
+	}
+
+}"
+			   SEQUENCE="1"
+			   UPDATED="05/29/2012 08:30:20"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/03/2011 12:57:47"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Service Name"
+			   VALUE="VF CDR SMS Log VBC Service"
+			   UPDATED="03/18/2011 18:20:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/18/2011 18:20:03"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="CR User"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/18/2011 18:20:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2010 08:42:02"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Client Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/18/2011 18:20:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2010 08:42:02"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="DCS"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/18/2011 18:20:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2010 08:42:02"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Delivery Receipt"
+			   NO_COPY="N"
+			   PICKLIST="SMS_log_delivery_receipt"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/18/2011 18:20:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2010 08:42:02"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Delivery Receipt"
+				   INACTIVE="N"
+				   NAME="Delivery Receipt"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="09/02/2010 17:10:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/02/2010 17:10:51"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;DELIVERY_RECEIPT&quot;,[Delivery Receipt])"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Delivery Receipt Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/07/2010 09:29:06"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/02/2010 17:10:51"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Expiry Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/18/2011 18:20:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2010 08:42:02"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Finish Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/27/2017 16:20:11"
+			   UPDATED_BY="SJOAO"
+			   CREATED="06/03/2010 08:42:02"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Insert Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/18/2011 18:20:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2010 08:42:02"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Logging"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/18/2011 18:20:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2010 08:42:02"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="MSISDN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/18/2011 18:20:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2010 08:42:03"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Message"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="2000"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/26/2017 09:59:57"
+			   UPDATED_BY="SJOAO"
+			   CREATED="06/03/2010 08:42:03"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Message Ref"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/18/2011 18:20:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2010 08:42:03"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Message Type"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/18/2011 18:20:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2010 08:42:03"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF ([Message Type] = &quot;U&quot;, &quot;USSD&quot;, &quot;SMS&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Message Type Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/17/2010 17:04:32"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/17/2010 17:04:32"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Originator"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/18/2011 18:20:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2010 08:42:03"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Priority"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/18/2011 18:20:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2010 08:42:03"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Request Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/18/2011 18:20:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2010 08:42:03"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Response Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/18/2011 18:20:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2010 08:42:03"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SMS Template Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/18/2011 18:20:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2010 08:42:03"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="SMSC Timestamp"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/18/2011 18:20:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2010 08:42:03"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Start Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/27/2017 16:20:16"
+			   UPDATED_BY="SJOAO"
+			   CREATED="06/03/2010 08:42:03"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Status"
+			   NO_COPY="N"
+			   PICKLIST="SMS_Log_Status"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/18/2011 18:20:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2010 08:42:03"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Status"
+				   INACTIVE="N"
+				   NAME="Status"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="09/02/2010 17:10:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/02/2010 17:10:51"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;SMS_STATUS&quot;,[Status])"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Status Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/07/2010 09:29:06"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/02/2010 17:10:51"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Status Desc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/18/2011 18:20:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2010 08:42:03"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

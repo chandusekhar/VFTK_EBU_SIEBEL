@@ -1,0 +1,2262 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LANGUAGE_LOCKED="ENU"
+	   LOCKED="Y"
+	   LOCKED_DATE="01/09/2018 14:23:46"
+	   NAME="VFTRCBU Products and Services"
+	   UI_FREEZE="N"
+	   LOCKED_BY_NAME="IBM_RCATITA"
+	   UPDATED="02/01/2018 15:17:32"
+	   UPDATED_BY="IBM_RCATITA"
+	   CREATED="02/02/2015 22:35:32"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="N"
+		   CLASS="CSSBCCUTAgreement"
+		   COMMENTS="RCRISPIM: Created for WA#15"
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MULTI_RECIPIENT_SELECT="N"
+		   NAME="VFTRCBU Agreements"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LOCKED="N"
+		   OWNER_DELETE="N"
+		   POPUP_VISIBILITY_AUTO_ALL="N"
+		   SCRIPTED="Y"
+		   TABLE="S_DOC_AGREE"
+		   TYPE="Non-Transient"
+		   UPDATED="02/01/2018 12:25:42"
+		   UPDATED_BY="IBM_RCATITA"
+		   CREATED="04/23/2015 20:17:42"
+		   CREATED_BY="SADMIN">
+			<BUSCOMP_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="BusComp_PreSetFieldValue"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="BusComp_PreSetFieldValue"
+			   SCRIPT="function BusComp_PreSetFieldValue (fieldName, value)
+{
+	
+	try{
+	
+			//VFTRCBU-32958 - HRODRIGUES - Included the validation on view to avoid popup in order submission
+			var sActiveViewName = theApplication().GetProfileAttr(&quot;ActiveViewName&quot;);
+			
+			if(sActiveViewName == &quot;VFTRCBU Subscriber Agreements View&quot; || sActiveViewName == &quot;VFTRCBU Subscriber Agreements History View&quot;)
+			{ 
+				var ACSNIGeneralOperations = theApplication().GetService (&quot;ACS NI General Operations&quot;);
+				var Inputs  = theApplication().NewPropertySet();
+				var Outputs = theApplication().NewPropertySet();
+				var str_Message = &quot;&quot;;
+				
+				var pset_Inputs = theApplication().NewPropertySet();
+				var pset_Outputs = theApplication().NewPropertySet();
+				
+				pset_Inputs.SetProperty(&quot;LOV Type&quot;, &quot;VFTRCBU_2ND_CAMP_CANC&quot;);
+				pset_Inputs.SetProperty(&quot;LOV Name&quot;, &quot;Yes&quot;);
+				pset_Outputs = ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupValue&quot;, pset_Inputs);
+				var sLOV = pset_Outputs.GetProperty(&quot;LOV Value&quot;);
+	
+				if(fieldName == &quot;VFTRCBU 2nd Campaign Cancellation&quot;)
+				{
+					if(value == sLOV)
+					{					
+						Inputs.SetProperty(&quot;Code&quot;, &quot;0330&quot;);
+						Inputs.SetProperty(&quot;MessageCategory&quot;, &quot;VFTRCBU User Defined Errors&quot;);
+						Outputs = ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupMsg&quot;, Inputs);
+						str_Message = Outputs.GetProperty(&quot;Message&quot;);
+						
+						if(!(confirm(str_Message)))
+						{
+							return (&quot;CancelOperation&quot;);	
+						}
+						else
+						{
+							return(&quot;ContinueOperation&quot;);
+						}
+					}
+				}
+			}
+	}
+	finally
+	{
+			ACSNIGeneralOperations = null;
+			Inputs  = null;
+			Outputs = null;
+			str_Message = null;
+			pset_Inputs = null;
+			pset_Outputs = null;
+	}
+
+
+}"
+			   UPDATED="09/02/2016 00:12:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/28/2015 23:46:29"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_BROWSER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreQuery"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreQuery ()
+{
+	try
+	{
+		//DEF-24507 - IBMRDAS - Begin
+		var sSearchExpr = this.GetSearchExpr();
+		var ActiveView = TheApplication().ActiveViewName();
+		if (ActiveView == &quot;VFTRCBU Package Information View&quot;)
+		{	
+			if(sSearchExpr == &quot;&quot;)
+			{
+				this.ClearToQuery();
+				this.SetSearchExpr(&quot;[Id]=&apos;1&apos;&quot;);
+				this.ExecuteQuery(ForwardOnly);
+			}
+		}
+		//DEF-24507 - IBMRDAS - End
+	}
+	catch(e)
+	{
+	
+	}
+	finally
+	{
+
+	}	
+	return (ContinueOperation);
+}"
+			   SEQUENCE="1"
+			   UPDATED="02/01/2018 15:16:35"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="02/01/2018 15:16:35"
+			   CREATED_BY="IBM_RCATITA">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreWriteRecord"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreWriteRecord ()
+{
+
+//FCARRIL:VFTRCBU-23408
+var Is2ndCancel = TheApplication().GetProfileAttr(&quot;Is2ndCancel&quot;);
+if(Is2ndCancel == &quot;Y&quot;){
+		var AgreementId = this.GetFieldValue(&quot;Id&quot;);
+
+		var psWkfl    : Service     = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		var psWkflIn  : PropertySet = TheApplication().NewPropertySet();
+		var psWkflOut : PropertySet = TheApplication().NewPropertySet();
+		psWkflIn.SetProperty(&quot;Object Id&quot;, AgreementId);
+		psWkflIn.SetProperty(&quot;ProcessName&quot;, &quot;VFTRCBU FRODO Cancel 2nd Campaign SMS WF&quot;);
+
+		psWkfl.InvokeMethod(&quot;RunProcess&quot;, psWkflIn, psWkflOut);
+		
+		TheApplication().SetProfileAttr(&quot;Is2ndCancel&quot;,&quot;&quot;);
+		
+		psWkflIn = null;
+		psWkflOut = null;
+		psWkfl = null;
+		
+}
+//FCARRIL: END
+	return (ContinueOperation);
+	
+}"
+			   SEQUENCE="2"
+			   UPDATED="02/01/2018 15:16:35"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="01/12/2016 23:22:40"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_SetFieldValue"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_SetFieldValue (FieldName)
+{
+	var sToday = null;
+	var sFrodo2ndDate = null;
+
+	var sDataUtils = TheApplication().GetService (&quot;TELCO DateTime Utils&quot;);
+	var Inputs  = TheApplication().NewPropertySet();
+	var Outputs = TheApplication().NewPropertySet();
+	
+	//VFTRCBU-32958 - HRODRIGUES - Included the validation on view to avoid popup in order submission
+	var sActiveViewName = TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;);
+	
+	if(sActiveViewName == &quot;VFTRCBU Subscriber Agreements View&quot; || sActiveViewName == &quot;VFTRCBU Subscriber Agreements History View&quot;)
+	{ 
+		if(FieldName == &quot;VFTRCBU 2nd Campaign Cancellation&quot;)
+		{
+			Clib.strftime(sToday, &quot;%m/%d/%Y %H:%M:%S&quot;, Clib.localtime(Clib.time()));
+			
+			if(this.GetFieldValue(&quot;VFTRCBU 2nd Campaign Cancellation&quot;) == TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;VFTRCBU_2ND_CAMP_CANC&quot;, &quot;Yes&quot;))
+			{			
+				this.ActivateField(&quot;VFTRCBU 2nd Campaign Start Date&quot;);
+				
+				Inputs.SetProperty(&quot;Date2&quot;,this.GetFieldValue(&quot;VFTRCBU 2nd Campaign Start Date&quot;));
+				Inputs.SetProperty(&quot;Date1&quot;, sToday);
+				Inputs.SetProperty(&quot;Ignore Time&quot;, &quot;N&quot;);
+				sDataUtils.InvokeMethod(&quot;DateTimeDiff&quot;,Inputs, Outputs);
+				
+				if(Outputs.GetProperty(&quot;Result&quot;) &lt; 1 ){ //  today
+					TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0336&quot;));
+				}
+				
+				else {
+					//FCARRIL:VFTRCBU-23408
+				    TheApplication().SetProfileAttr(&quot;Is2ndCancel&quot;,&quot;Y&quot;);
+				    //END:FCARRIL
+				    			
+					this.SetFieldValue(&quot;VFTRCBU 2nd Cancellation Date&quot;, sToday);
+					//ACAMBAS: VFTRCBU-22029 - Start
+					//this.SetFieldValue(&quot;VFTRCBU 2nd Cancellation Source&quot;,TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;VFTRCBU_FRODO_CANC_SOURCE&quot;, &quot;Siebel User&quot;));
+					this.SetFieldValue(&quot;VFTRCBU 2nd Cancellation Source&quot;, TheApplication().LoginName());
+					//ACAMBAS: VFTRCBU-22029 - End
+					this.SetFieldValue(&quot;VFTRCBU 2nd Campaign Start Date&quot;, &quot;&quot;);
+				    this.WriteRecord();
+				    
+			    }
+			}
+			else
+			{
+				//FCARRIL:VFTRCBU-23408
+				TheApplication().SetProfileAttr(&quot;Is2ndCancel&quot;,&quot;&quot;);
+				//END:FCARRIL
+				
+				this.ActivateField(&quot;VFTRCBU Agreement End Date Calc&quot;);
+				this.SetFieldValue(&quot;VFTRCBU 2nd Cancellation Date&quot;, &quot;&quot;);
+				this.SetFieldValue(&quot;VFTRCBU 2nd Cancellation Source&quot;, &quot;&quot;);
+				this.SetFieldValue(&quot;VFTRCBU 2nd Campaign Start Date&quot;, this.GetFieldValue(&quot;VFTRCBU Agreement End Date Calc&quot;));
+				this.WriteRecord();
+				
+			}
+		}
+	}
+}"
+			   SEQUENCE="4"
+			   UPDATED="02/01/2018 15:16:35"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="06/28/2015 23:46:29"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSINESS_COMPONENT_USER_PROP
+			   COMMENTS="JMARQUES - CA11 - FRODO"
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: VFTRCBU 2nd Campaign Cancellation"
+			   VALUE="VFTRCBU 2nd Campaign Cancellation RO"
+			   UPDATED="06/28/2015 23:46:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/28/2015 23:46:29"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   COMMENTS="JMARQUES - CA11 - FRODO"
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 1"
+			   VALUE="&quot;VFTRCBU 2nd Campaign Cancellation&quot;, &quot;VFTRCBU 2nd Cancellation Source&quot;, &quot;IIF([VFTRCBU 2nd Campaign Cancellation] = LookupValue(&quot;&quot;VFTRCBU_2ND_CAMP_CANC&quot;&quot;, &quot;&quot;Yes&quot;&quot;), LookupValue(&quot;&quot;VFTRCBU_FRODO_CANC_SOURCE&quot;&quot;, &quot;&quot;Siebel User&quot;&quot;), &quot;&quot;&quot;&quot;)&quot;"
+			   UPDATED="06/28/2015 23:46:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/28/2015 23:46:29"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   COMMENTS="JMARQUES - CA11 - FRODO"
+			   INACTIVE="Y"
+			   NAME="On Field Update Set 2"
+			   VALUE="&quot;VFTRCBU 2nd Campaign Cancellation&quot;, &quot;VFTRCBU 2nd Cancellation Date&quot;, &quot;IIF([VFTRCBU 2nd Campaign Cancellation] = LookupValue(&quot;&quot;VFTRCBU_2ND_CAMP_CANC&quot;&quot;, &quot;&quot;Yes&quot;&quot;),Today(), &quot;&quot;&quot;&quot;)&quot;"
+			   UPDATED="06/28/2015 23:46:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/28/2015 23:46:29"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="TARGET_OU_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Account Id"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Parent: &apos;Account.Id&apos;, &apos;Contact.Account Id&apos;, &apos;Quote.Account Id&apos;, &apos;Order Entry - Orders.Account Id&apos;, &apos;Project.Account Id&apos;, &apos;Opportunity.Account Id&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="EFF_END_DT"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Agreement End Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="ROW_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Agreement Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="AGREE_NUM"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Agreement Number"
+			   NO_COPY="Y"
+			   PRE_DEFAULT_VALUE="Expr: &apos;RowIdToRowIdNum ([Id])&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+				<FIELD_USER_PROP
+				   INACTIVE="N"
+				   NAME="DisplayType"
+				   VALUE="DTYPE_ID"
+				   UPDATED="04/23/2015 20:17:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2015 20:17:42"
+				   CREATED_BY="SADMIN">
+				</FIELD_USER_PROP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="EFF_START_DT"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Agreement Start Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="STAT_CD"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Agreement Status"
+			   NO_COPY="Y"
+			   PICKLIST="PickList Service Agreement Status"
+			   PRE_DEFAULT_VALUE="Expr: &quot;LookupValue(&quot;&quot;SRV_AGREE_STATUS&quot;&quot;, &quot;&quot;Pending&quot;&quot;)&quot;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Agreement Status"
+				   INACTIVE="N"
+				   NAME="Agreement Status"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="04/23/2015 20:17:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2015 20:17:42"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="AGREE_CD"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Agreement Type"
+			   NO_COPY="N"
+			   PICKLIST="PickList Agreement Type"
+			   PRE_DEFAULT_VALUE="Field: &apos;Default Agreement Type&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Agreement Type"
+				   INACTIVE="N"
+				   NAME="Agreement Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="04/23/2015 20:17:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2015 20:17:42"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="CREATED"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Created Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf(ParentBCName () = &quot;Quote&quot;, LookupValue(&quot;AGREEMENT_TYPE&quot;, &quot;Contract&quot;), IIf(ParentBCName () = &quot;Project&quot;, LookupValue(&quot;AGREEMENT_TYPE&quot;, &quot;Contract&quot;), LookupValue(&quot;AGREEMENT_TYPE&quot;, &quot;Service Level Agreement&quot;)))"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Default Agreement Type"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="LAST_UPD"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Last Updated"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Name"
+			   NO_COPY="Y"
+			   POST_DEFAULT_VALUE="Field: &apos;Agreement Number&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="ORDER_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Order Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="PAR_AGREE_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Parent Agreement Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_PRI_LST"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Price List"
+			   NO_COPY="N"
+			   PICKLIST="PickList Price List"
+			   PRE_DEFAULT_VALUE="Expr: &quot;Preference (&quot;&quot;Quote&quot;&quot;, &quot;&quot;PriceList&quot;&quot;)&quot;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Currency Code"
+				   INACTIVE="N"
+				   NAME="Currency Code"
+				   NO_CLEAR="Y"
+				   PICK_LIST_FIELD="Currency Code"
+				   UPDATED="04/23/2015 20:17:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2015 20:17:42"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Freight Terms"
+				   INACTIVE="N"
+				   NAME="Freight Terms"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Freight Terms"
+				   UPDATED="04/23/2015 20:17:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2015 20:17:42"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Payment Term"
+				   INACTIVE="N"
+				   NAME="Payment Term"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Payment Term"
+				   UPDATED="04/23/2015 20:17:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2015 20:17:42"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Payment Term Id"
+				   INACTIVE="N"
+				   NAME="Payment Term Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Payment Term Id"
+				   UPDATED="04/23/2015 20:17:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2015 20:17:42"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Price List"
+				   INACTIVE="N"
+				   NAME="Price List"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="04/23/2015 20:17:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2015 20:17:42"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Price List Id"
+				   INACTIVE="N"
+				   NAME="Price List Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="04/23/2015 20:17:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2015 20:17:42"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Shipping Method"
+				   INACTIVE="N"
+				   NAME="Shipping Method"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Shipping Method"
+				   UPDATED="04/23/2015 20:17:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2015 20:17:42"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="PRI_LST_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Price List Id"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Parent: &apos;Quote.Price List Id&apos;, &apos;Order Entry - Orders.Price List Id&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="REV_NUM"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Revision Number"
+			   NO_COPY="Y"
+			   PRE_DEFAULT_VALUE="1"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="STATUS_CD"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_ASSET"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Asset Status"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/12/2018 19:33:03"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="01/12/2018 19:33:03"
+			   CREATED_BY="IBM_RCATITA">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRAD_UPFRONT_PAYMENT"
+			   COMMENTS="ACAMBAS: VFTRADM-816"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRAD Upfront Payment"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2017 22:38:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2017 22:38:19"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_SECOND_CAMP_CANC"
+			   COMMENTS="JMARQUES - CA11 - FRODO"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU 2nd Campaign Cancellation"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU Frodo 2nd Camp Cancellation"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/28/2015 23:46:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/28/2015 23:46:29"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   COMMENTS="JMARQUES - CA11 - FRODO"
+				   FIELD="VFTRCBU 2nd Campaign Cancellation"
+				   INACTIVE="N"
+				   NAME="VFTRCBU 2nd Campaign Cancellation"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VFTRCBU Value"
+				   SEQUENCE="1"
+				   UPDATED="06/28/2015 23:46:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/28/2015 23:46:29"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_SECOND_CAMP_CANC"
+			   COMMENTS="JMARQUES - CA11 - FRODO"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU 2nd Campaign Cancellation NoPick"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/28/2015 23:46:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/28/2015 23:46:29"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf (([VFTRCBU 2nd Campaign Cancellation RO1]= &quot;Y&quot; OR [VFTRCBU 2nd Campaign Cancellation RO2]= &quot;Y&quot;) AND [VFTRCBU 2nd Campaign Cancellation RO3]&lt;&gt; &quot;Y&quot;, &quot;Y&quot;, &quot;N&quot;)"
+			   COMMENTS="JMARQUES - CA11 - FRODO"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU 2nd Campaign Cancellation RO"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/10/2016 16:09:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/28/2015 23:46:29"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf ([Agreement Status] &lt;&gt; LookupValue(&quot;SRV_AGREE_STATUS&quot;, &quot;Active&quot;) OR [VFTRCBU 2nd Campaign Cancellation] IS NULL OR [VFTRCBU 2nd Campaign Cancellation] = &quot;&quot; OR [VFTRCBU 2nd Campaign Cancellation] = LookupValue(&quot;VFTRCBU_2ND_CAMP_CANC&quot;, &quot;Yes&quot;),&quot;Y&quot;,&quot;N&quot;)"
+			   COMMENTS="JMARQUES - CA11 - FRODO"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU 2nd Campaign Cancellation RO1"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/05/2015 00:56:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/28/2015 23:46:29"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf (([VFTRCBU 2nd Campaign Start Date] &gt;=TimeStamp() + LookupValue(&quot;VFTRCBU_FRODO_PARAMETRIC_CANC&quot;,&quot;Days&quot;)) OR ([VFTRCBU 2nd Campaign Start Date] &lt; TimeStamp() + 1) , &quot;Y&quot;, &quot;N&quot;)"
+			   COMMENTS="JMARQUES - CA11 - FRODO"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU 2nd Campaign Cancellation RO2"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/10/2016 16:09:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/28/2015 23:46:29"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf(BCHasRows(&quot;VFTRCBU SIM Card BO&quot;, &quot;VFTRCBU Role PickList Generic&quot;, &apos;[VFTRCBU Not Visible To User Roles Calc] = &quot;Y&quot; AND [VFTRCBU Type] = &quot;VFTRCBU_2ND_CAMP_CANC&quot; AND [VFTRCBU Name] = &quot;No&quot;&apos;, &quot;All&quot;),&quot;Y&quot;,&quot;N&quot;)"
+			   COMMENTS="JMARQUES - CA11 - FRODO; VFTRCBU-23313 - 20160109;CSANTOS - VFTRCBU-30712 - 20160627"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU 2nd Campaign Cancellation RO3"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/28/2016 16:28:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/28/2015 23:46:29"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_SECOND_CAMP_NAME"
+			   COMMENTS="JMARQUES - CA11 - FRODO"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU 2nd Campaign Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/28/2015 23:46:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/28/2015 23:46:29"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_SECOND_CAMP_PART_NUM"
+			   COMMENTS="JMARQUES - CA11 - FRODO"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU 2nd Campaign Part Num"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/28/2015 23:46:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/28/2015 23:46:29"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_CAMP_START_DT_FRODO"
+			   COMMENTS="JMARQUES - CA11 - FRODO"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU 2nd Campaign Start Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/28/2015 23:46:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/28/2015 23:46:29"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_CAMP_CANC_DT_FRODO"
+			   COMMENTS="JMARQUES - CA11 - FRODO"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU 2nd Cancellation Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/28/2015 23:46:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/28/2015 23:46:29"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_CAMP_CANC_SOURCE"
+			   COMMENTS="ACAMBAS - VFTRCBU-22029: Picklist &apos;VFTRCBU Cancellation Source PickList&apos; removed
+JMARQUES - CA11 - FRODO"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU 2nd Cancellation Source"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/14/2015 11:43:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/28/2015 23:46:29"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   COMMENTS="ACAMBAS - VFTRCBU-22029: Inactivated
+JMARQUES - CA11 - FRODO"
+				   FIELD="VFTRCBU 2nd Cancellation Source"
+				   INACTIVE="Y"
+				   NAME="VFTRCBU 2nd Cancellation Source"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   SEQUENCE="1"
+				   UPDATED="12/14/2015 11:43:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/28/2015 23:46:29"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_ADD_PENALTY"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Additional Penalty"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_ADD_PENALTY_DT"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Additional Penalty End Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[Agreement End Date] + (1/(24*60*60))"
+			   COMMENTS="FTOSCANO - CA11 - FRODO"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Agreement End Date Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/05/2015 00:56:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/05/2015 00:56:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_AGREEMENT_FAMILY"
+			   COMMENTS="FTOSCANO - WA#15"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Agreement Family"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/02/2015 21:18:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/02/2015 21:18:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_AMOUNT_CREDIT_CARD"
+			   COMMENTS="VFTRCBU PD023 ALINO 25/01/2017 - Retrofit JFONSECA 06/04/2017"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Amount Charged Through Credit Card"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2017 22:38:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/19/2017 22:38:19"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_BILL_CYCLE_DEP"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Bill Cycle Dependent"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="BILL_ACCNT_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_ASSET"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Billing Account"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="VF_LEGACY_PROD_ID"
+			   COMMENTS="VFTRCBU-30977 - CJANEIRO"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_PROD_INT_X"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Campaign ICCB Code"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/28/2016 16:28:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:28:19"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_CANCEL_DT"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Cancel Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_CANCELLED_AGREEMENT"
+			   COMMENTS="FTOSCANO - WA#15"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Cancelled Agreement"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/02/2015 21:18:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/02/2015 21:18:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_CREDIT_CARD_PAID_INS"
+			   COMMENTS="FTOSCANO - WA#15"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Credit Card Paid Installments"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2017 22:38:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/02/2015 21:18:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="TARGET_OU_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Customer Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/27/2017 16:16:14"
+			   UPDATED_BY="IBM_FIGENB"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_DEALER_CODE"
+			   COMMENTS="FTOSCANO - WA#15"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Dealer Code"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/02/2015 21:18:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/02/2015 21:18:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_DURATION"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Duration"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_INACTIVATED_DATE"
+			   COMMENTS="FTOSCANO - WA#15"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Inactivated Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/02/2015 21:18:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/02/2015 21:18:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_INITIAL_TARIFF_PLAN"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Initial Tariff Plan"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/02/2015 21:18:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   COMMENTS="WA#15 - CJANEIRO"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="InitialTariff"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Initial Tariff Plan Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/18/2015 11:15:20"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/18/2015 11:15:20"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_INSTALLMENT_VALUE"
+			   COMMENTS="FTOSCANO - WA#15"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Installment Value"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/19/2017 22:38:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/02/2015 21:18:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_DOWNGRADE"
+			   COMMENTS="JFONSECA - WA#15"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Is Downgrade"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/21/2015 13:18:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/21/2015 13:18:01"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf ([Agreement Status] = LookupValue(&quot;SRV_AGREE_STATUS&quot;, &quot;Active&quot;) AND [VFTRCBU 2nd Campaign Cancellation] = LookupValue(&apos;VFTRCBU_2ND_CAMP_CANC&apos;,&apos;No&apos;),&quot;Y&quot;,&quot;N&quot;)"
+			   COMMENTS="VFTRCBU-21024 - 26112015"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Job SMS SearchSpec"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/30/2015 12:18:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/30/2015 12:18:40"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_MSISDN"
+			   COMMENTS="ForceActive Y - VFTRCBU-23754"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_ASSET"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU MSISDN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/27/2017 15:18:45"
+			   UPDATED_BY="IBM_FIGENB"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_NUMBER_OF_INSTALL"
+			   COMMENTS="FTOSCANO - WA#15"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Number Of Installments"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/02/2015 21:18:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/02/2015 21:18:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_ORIGINAL_PRICE_DT"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Original Price Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_PAYMENT_METHOD"
+			   COMMENTS="FTOSCANO - WA#15"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Payment Method"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/02/2015 21:18:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/02/2015 21:18:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_PENALTY_CHARGED_AMOU"
+			   COMMENTS="FTOSCANO - WA#15"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Penalty Charged Amount"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/02/2015 21:18:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/02/2015 21:18:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_PREVIOUS_AGREEMENT_P"
+			   COMMENTS="FTOSCANO - WA#15"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Previous Agreement Penalty"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/02/2015 21:18:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/02/2015 21:18:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_PREVIOUS_AGREE_DATE"
+			   COMMENTS="FTOSCANO - WA#15"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Previous Agreement Penalty End Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/02/2015 21:18:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/02/2015 21:18:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_PROCESS_FLG"
+			   COMMENTS="VFTRCBU-29459 - CJANEIRO; VFTRCBU-33197"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Proccessed Flag"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/20/2016 00:59:51"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/25/2016 09:47:02"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_PROCESS_ERROR"
+			   COMMENTS=" VFTRCBU-33197"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Processed Error"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1000"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/20/2016 00:59:51"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/20/2016 00:59:51"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="PRODUCT_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Product Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="DESC_TEXT"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Product Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="255"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SERVICE_LENGTH"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_PROD_INT"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Product Service Length"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_INTEGER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/28/2016 16:28:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:28:19"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SERV_LENGTH_UOM_CD"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_PROD_INT"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Product Service Length UoM"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/28/2016 16:28:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:28:19"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   DEST_FIELD="VFTRCBU Penalty"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUE_LINK="VFTRCBU Penalty Details"
+			   MULTI_VALUED="Y"
+			   NAME="VFTRCBU Promotion Penalty"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/14/2015 11:43:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/14/2015 11:43:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_S_CONTRACTING_1"
+			   COMMENTS="VFTRCBU-21024 - 25112015"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU SMS Smart Contracting # 1"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/30/2015 12:18:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/30/2015 12:18:40"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_S_CONTRACTING_2"
+			   COMMENTS="VFTRCBU-21024 - 25112015"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU SMS Smart Contracting # 2"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/30/2015 12:18:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/30/2015 12:18:40"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_MSISDN"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Subscriber Asset Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_SUBSIDY_AMOUNT"
+			   COMMENTS="FTOSCANO - WA#15"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Subsidy Amount"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/02/2015 21:18:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/02/2015 21:18:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_NR_SWAPS"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Tariff Plan Swaps"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="0"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/18/2015 11:15:20"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="VALID_FLG"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Valid Flag"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Y"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<JOIN
+			   COMMENTS="WA#15 - CJANEIRO"
+			   INACTIVE="N"
+			   NAME="InitialTariff"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_PROD_INT"
+			   UPDATED="11/18/2015 11:15:20"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/18/2015 11:15:20"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Product Id"
+				   SOURCE_FIELD="VFTRCBU Initial Tariff Plan"
+				   UPDATED="11/18/2015 11:15:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/18/2015 11:15:20"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_ASSET"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_ASSET"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="INTEGRATION_ID"
+				   INACTIVE="N"
+				   NAME="Asset"
+				   SOURCE_FIELD="VFTRCBU Subscriber Asset Id"
+				   UPDATED="04/23/2015 20:17:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2015 20:17:42"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_PRI_LST"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_PRI_LST"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="Price List Id"
+				   SOURCE_FIELD="Price List Id"
+				   UPDATED="04/23/2015 20:17:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2015 20:17:42"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_PROD_INT"
+			   OUTER_JOIN_FLAG="N"
+			   TABLE="S_PROD_INT"
+			   UPDATED="04/23/2015 20:17:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2015 20:17:42"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Product Id"
+				   SOURCE_FIELD="VFTRCBU Product Id"
+				   UPDATED="04/23/2015 20:17:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2015 20:17:42"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   COMMENTS="VFTRCBU-30997 - CJANEIRO"
+			   INACTIVE="N"
+			   NAME="S_PROD_INT_X"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_PROD_INT_X"
+			   UPDATED="07/28/2016 16:28:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:28:19"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Product Id"
+				   SOURCE_FIELD="VFTRCBU Product Id"
+				   UPDATED="07/28/2016 16:28:19"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/28/2016 16:28:19"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<MULTI_VALUE_LINK
+			   AUTO_PRIMARY="Default"
+			   CHECK_NO_MATCH="N"
+			   DESTINATION_BUSINESS_COMPONENT="VFTRCBU Promotion Penalty Details"
+			   DESTINATION_LINK="VFTRCBU Agreements/VFTRCBU Promotion Penalty Details"
+			   INACTIVE="N"
+			   NAME="VFTRCBU Penalty Details"
+			   NO_ASSOCIATE="N"
+			   NO_COPY="N"
+			   NO_DELETE="N"
+			   NO_INSERT="N"
+			   NO_UPDATE="N"
+			   POPUP_UPDATE_ONLY="N"
+			   SOURCE_FIELD="Agreement Id"
+			   USE_PRIMARY_JOIN="Y"
+			   UPDATED="12/14/2015 11:43:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/14/2015 11:43:42"
+			   CREATED_BY="SADMIN">
+			</MULTI_VALUE_LINK>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

@@ -1,0 +1,604 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VF Order Management Interfaces"
+	   UI_FREEZE="N"
+	   UPDATED="03/29/2018 13:15:36"
+	   UPDATED_BY="IBM_GFIGUEIREDO"
+	   CREATED="10/30/2009 11:17:11"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   EXTERNAL_USE="N"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VF MNP Disconnect Order"
+		   OBJECT_LOCKED="N"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   UPDATED="04/06/2018 15:45:07"
+		   UPDATED_BY="IBM_GFIGUEIREDO"
+		   CREATED="03/09/2010 09:06:05"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_LOCALE
+			   APPLICATION_CODE="STD"
+			   DISPLAY_NAME="VF MNP Disconnect Order"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   TRANSLATE="Y"
+			   UPDATED="03/09/2010 09:06:05"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/09/2010 09:06:05"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_LOCALE>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="DisconnectMNPOut"
+			   UPDATED="03/09/2010 09:06:06"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/09/2010 09:06:05"
+			   CREATED_BY="SADMIN">
+				<BUSINESS_SERVICE_METHOD_LOCALE
+				   APPLICATION_CODE="STD"
+				   DISPLAY_NAME="DisconnectMNPOut"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/09/2010 09:06:06"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/09/2010 09:06:06"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_LOCALE>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="DateToString"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function DateToString (dDate)
+{
+	try
+	{
+		var sMonth = ToString(dDate.getMonth() + 1);
+		if (sMonth.length == 1)
+		{
+			sMonth = &quot;0&quot; + sMonth;
+		}
+		var sDay = ToString(dDate.getDate());
+		if (sDay.length == 1)
+		{
+			sDay = &quot;0&quot; + sDay;
+		}
+		var sHours = ToString(dDate.getHours());
+		if (sHours.length == 1)
+		{
+			sHours = &quot;0&quot; + sHours;
+		}
+		var sMinutes = ToString(dDate.getMinutes());
+		if (sMinutes.length == 1)
+		{
+			sMinutes = &quot;0&quot; + sMinutes;
+		}
+		var sSeconds = ToString(dDate.getSeconds());
+		if (sSeconds.length == 1)
+		{
+			sSeconds = &quot;0&quot; + sSeconds;
+		}
+		return (sMonth + &quot;/&quot; + sDay + &quot;/&quot; + dDate.getFullYear() + &quot; &quot; + sHours + &quot;:&quot; + sMinutes + &quot;:&quot; + sSeconds);
+	}
+	catch(e)
+	{
+		throw (e);
+		return (CancelOperation);
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="07/11/2012 16:15:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/19/2012 08:24:29"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="DisconnectMNPOut"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function DisconnectMNPOut (Inputs, Outputs)
+{
+	try
+	{
+		var delay = TheApplication ().InvokeMethod (&quot;LookupValue&quot;,&quot;DISC_MNP_OUT_DELAY_MIN&quot;,&quot;Delay&quot;);
+		var Active = TheApplication ().InvokeMethod (&quot;LookupValue&quot;,&quot;IMPL_PHASE&quot;,&quot;Active&quot;);
+		var Suspended = TheApplication ().InvokeMethod (&quot;LookupValue&quot;,&quot;IMPL_PHASE&quot;,&quot;Suspended&quot;);
+
+		/*var today = new Date();
+		var millisecToday = today.getTime()
+		var CutOverDateDelay = new Date(millisecToday + (delay * 1000 * 60));
+		var strCutOverDateDelay = DateToString(CutOverDateDelay);*/ //NDC DD TLGA-4334
+		
+		var strCutOverDateDelay = null; //NDC DD TLGA-4334
+		Clib.strftime(strCutOverDateDelay , &apos;%m/%d/%Y %H:%M:%S&apos;, Clib.localtime( Clib.time() +  (delay * 60)) );
+		
+		var boServiceRequest : BusObject = TheApplication ().GetBusObject (&quot;Service Request&quot;);
+		var bcServiceRequest : BusComp = boServiceRequest.GetBusComp (&quot;Service Request&quot;);
+		var bcMSISDN : BusComp = boServiceRequest.GetBusComp (&quot;VF MNP Port Out MSISDN&quot;);
+		var boAsset : BusObject = TheApplication ().GetBusObject (&quot;Asset Management&quot;);
+		var bcAsset : BusComp = boAsset.GetBusComp (&quot;Asset Mgmt - Asset - Header&quot;);
+		var bsDeactivateAsset : Service = TheApplication().GetService (&quot;ACS Order Portal&quot;);
+		
+		var strMSISDN;
+		var donorOperator = &quot;VODAFONE&quot;;
+		var recipientOperator =&quot;&quot;;
+		var strAssetId = &quot;&quot;;
+		var strMetropolisSRDate = &quot;&quot;;
+		var portingDateTime;
+		var booSRExists;
+		var booMSISDNExists;
+		var bsMnpDisconnection;
+		var portId;
+		var referenceNumber;
+
+     	var psWFInputs : PropertySet = TheApplication().NewPropertySet();
+      	var psWFOutputs : PropertySet = TheApplication().NewPropertySet();
+        //DEF-11010/ VFTRCBU-28672 - GBRAZ Added Sub-Area restriction (Service Request for MNP OUT Cancellation)
+		var strSrSrcExpr = &quot;[VF SR Category] = &apos;MNP OUT&apos; AND [Sub-Area] &lt;&gt; &apos;PORT-OUT İPTALI&apos; AND [SR Cut Over Date] IS NOT NULL AND [SR Cut Over Date] &lt;= &apos;&quot;+strCutOverDateDelay+&quot;&apos; AND [Status] = &apos;&quot;+TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;SR_STATUS&quot;,&quot;Closed&quot;)+&quot;&apos; AND ([VF MNP OUT Processed] = &apos;Workable&apos; AND [VF TA Cod Flag] = &apos;Y&apos;)&quot;;
+		var strMSISDSrcExpr = &quot;([VF Status] = &apos;&quot;+TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;MNP_STATUS&quot;,&quot;Accepted&quot;)+&quot;&apos; OR [VF Status] = &apos;&quot;+TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;MNP_STATUS&quot;,&quot;Autoaccepted&quot;)+&quot;&apos;) AND ([VF MNP OUT Processed] = &apos;Workable&apos; OR [VF MNP OUT Processed] IS NULL)&quot;;
+		
+        //JIRA-17825:Due to fix on a different (JIRA-17246), the field &quot;BC=Service Request::Status is being set readonly when SR is Closed. 
+        //Still inside this process, SRs in status &quot;Closed&quot; are required to be set to &quot;Open&quot;. The next SetAdminMode statement was added to overcomes this situation
+		bcServiceRequest.InvokeMethod(&quot;SetAdminMode&quot;, &quot;TRUE&quot;); 
+		//JIRA-17825:End
+		
+		with(bcServiceRequest)
+		{
+			ClearToQuery ();
+			ActivateField (&quot;VF SR Category&quot;);
+			ActivateField (&quot;SR Cut Over Date&quot;);
+			ActivateField (&quot;Status&quot;);
+			ActivateField (&quot;VF MNP OUT Processed&quot;);
+			ActivateField (&quot;SR Recepient Operator&quot;);
+			ActivateField (&quot;SR Donor Operator&quot;);
+			ActivateField (&quot;VF Port Id&quot;);
+			ActivateField (&quot;VF MNP Request ID&quot;);
+			ActivateField(&quot;VF TA Cod Flag&quot;);
+			//ActivateField (&quot;VF TA Cod 9lag&quot;);
+			SetViewMode (AllView);
+			SetSearchExpr (strSrSrcExpr);
+		}
+		with(bcMSISDN)
+		{
+			ClearToQuery ();
+			SetViewMode (AllView);
+			ActivateField (&quot;VF MSISDN&quot;);
+			ActivateField (&quot;VF Status&quot;);
+			SetSearchExpr (strMSISDSrcExpr);
+		}
+		bcServiceRequest.ExecuteQuery (ForwardOnly);	
+		booSRExists = bcServiceRequest.FirstRecord ();//Review 30: Removed query on Child bC since there is a link.
+		
+		while (booSRExists)
+		{
+			bcServiceRequest.SetFieldValue (&quot;Status&quot;, TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;SR_STATUS&quot;,&quot;Open&quot;));
+  			recipientOperator 	= bcServiceRequest.GetFieldValue(&quot;SR Recepient Operator&quot;);
+			donorOperator 		= bcServiceRequest.GetFieldValue(&quot;SR Donor Operator&quot;);
+			portingDateTime 	= bcServiceRequest.GetFieldValue(&quot;SR Cut Over Date&quot;);
+			portId				= bcServiceRequest.GetFieldValue(&quot;VF Port Id&quot;);
+			referenceNumber		= bcServiceRequest.GetFieldValue(&quot;VF MNP Request ID&quot;);
+			booMSISDNExists = bcMSISDN.FirstRecord ();
+			while (booMSISDNExists)
+			{
+				strMSISDN  = bcMSISDN.GetFieldValue (&quot;VF MSISDN&quot;);
+				var strAssetSrcExpr = &quot;[Serial Number] = &apos;&quot;+strMSISDN+&quot;&apos; AND ([Status] = &apos;&quot;+Active+&quot;&apos; OR [Status] = &apos;&quot;+Suspended+&quot;&apos;)&quot;;
+
+				bcAsset.ClearToQuery ();
+				bcAsset.SetViewMode (AllView);
+				bcAsset.ActivateField (&quot;VFTR Metropolis Complain Date&quot;);
+				bcAsset.SetSearchExpr (strAssetSrcExpr);
+				bcAsset.ExecuteQuery (ForwardOnly);
+
+				if (bcAsset.FirstRecord ())
+				{
+					strAssetId = bcAsset.GetFieldValue (&quot;Id&quot;);
+					strMetropolisSRDate = bcAsset.GetFieldValue (&quot;VFTR Metropolis Complain Date&quot;);
+					psWFInputs.SetProperty(&quot;Reason&quot;,&quot;1020&quot;);
+     				psWFInputs.SetProperty(&quot;ProcessName&quot;, &quot;VF MNP Disconnection&quot;);
+  					psWFInputs.SetProperty(&quot;AssetId&quot;, strAssetId);
+  					psWFInputs.SetProperty(&quot;MSISDN&quot;, strMSISDN);
+					psWFInputs.SetProperty(&quot;PortingDateTime&quot;, portingDateTime);
+					psWFInputs.SetProperty(&quot;RecipientOperator&quot;, recipientOperator);
+					psWFInputs.SetProperty(&quot;DonorOperator&quot;, donorOperator);
+					psWFInputs.SetProperty(&quot;PortID&quot;, portId);
+					psWFInputs.SetProperty(&quot;ReferenceNumber&quot;, referenceNumber);
+					psWFInputs.SetProperty(&quot;X_VFTR_METROPOLIS_SR_DATE&quot;, strMetropolisSRDate);
+  					bsDeactivateAsset.InvokeMethod (&quot;DisconnectMNPOrder&quot;, psWFInputs, psWFOutputs);
+				}
+
+				bcMSISDN.SetFieldValue(&quot;VF MNP OUT Processed&quot;, &quot;Elaborated&quot;);
+				booMSISDNExists = bcMSISDN.NextRecord ();
+			}
+			bcServiceRequest.SetFieldValue (&quot;VF MNP OUT Processed&quot;, &quot;Elaborated&quot;);
+  			bcServiceRequest.SetFieldValue (&quot;Status&quot;, TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;SR_STATUS&quot;,&quot;Closed&quot;));
+  			bcServiceRequest.SetFieldValue (&quot;Sub-Status&quot;, TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;SR_SUB_STATUS&quot;,&quot;Resolved&quot;));
+   			bcServiceRequest.WriteRecord ();
+   			booSRExists = bcServiceRequest.NextRecord ();
+		}
+	}
+	finally
+	{
+		psWFInputs = null;
+		psWFOutputs = null;
+		bcAsset = null;
+		bsDeactivateAsset = null;
+		bcServiceRequest = null;
+		bcMSISDN         = null;
+		boServiceRequest = null;
+		boAsset = null;
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="06/14/2016 22:24:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/09/2010 09:06:06"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="DisconnectMNPOutAsync"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function DisconnectMNPOutAsync (Inputs, Outputs)
+{
+	try
+	{
+		var delay = TheApplication ().InvokeMethod (&quot;LookupValue&quot;,&quot;DISC_MNP_OUT_DELAY_MIN&quot;,&quot;Delay&quot;);
+		var asyncWF : Service = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		
+		var strCutOverDateDelay = null; //NDC DD TLGA-4334
+		Clib.strftime(strCutOverDateDelay , &apos;%m/%d/%Y %H:%M:%S&apos;, Clib.localtime( Clib.time() +  (delay * 60)) );
+		
+		var boServiceRequest : BusObject = TheApplication ().GetBusObject (&quot;Service Request&quot;);
+		var bcServiceRequest : BusComp = boServiceRequest.GetBusComp (&quot;Service Request&quot;);
+		var bcMSISDN : BusComp = boServiceRequest.GetBusComp (&quot;VF MNP Port Out MSISDN&quot;);
+
+     	var psWFInputs : PropertySet = TheApplication().NewPropertySet();
+      	var psWFOutputs : PropertySet = TheApplication().NewPropertySet();
+
+		// Jira: VFTRCBU-37061
+		var WPREh :Service = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		var psWFEhI :PropertySet = TheApplication().NewPropertySet();
+		var psWFEhO :PropertySet = TheApplication().NewPropertySet();         	
+      	
+      	var strMSISDN = null;
+      	var srId = null;
+		var booSRExists;
+		var booMSISDNExists;
+
+ 		//DEF-11010/ VFTRCBU-28672 - GBRAZ Added Sub-Area restriction (Service Request for MNP OUT Cancellation)
+ 		//Searchspect that retrives SR&apos;s
+		var strSrSrcExpr = &quot;[VF SR Category] = &apos;MNP OUT&apos; AND [Sub-Area] &lt;&gt; &apos;PORT-OUT İPTALI&apos; AND [SR Cut Over Date] IS NOT NULL AND [SR Cut Over Date] &lt;= &apos;&quot;+strCutOverDateDelay+&quot;&apos; AND [Status] = &apos;&quot;+TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;SR_STATUS&quot;,&quot;Closed&quot;)+&quot;&apos; AND ([VF MNP OUT Processed] = &apos;Workable&apos; AND [VF TA Cod Flag] = &apos;Y&apos;)&quot;;
+		//Searchspect that retrives MSISDNs to be ported out
+		var strMSISDSrcExpr = &quot;([VF Status] = &apos;&quot;+TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;MNP_STATUS&quot;,&quot;Accepted&quot;)+&quot;&apos; OR [VF Status] = &apos;&quot;+TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;MNP_STATUS&quot;,&quot;Autoaccepted&quot;)+&quot;&apos;) AND ([VF MNP OUT Processed] = &apos;Workable&apos; OR [VF MNP OUT Processed] IS NULL)&quot;;
+		
+        //JIRA-17825:Due to fix on a different (JIRA-17246), the field &quot;BC=Service Request::Status is being set readonly when SR is Closed. 
+        //Still inside this process, SRs in status &quot;Closed&quot; are required to be set to &quot;Open&quot;. The next SetAdminMode statement was added to overcomes this situation
+		bcServiceRequest.InvokeMethod(&quot;SetAdminMode&quot;, &quot;TRUE&quot;); 
+		//JIRA-17825:End
+		
+		with(bcServiceRequest)
+		{
+			ClearToQuery ();
+			ActivateField (&quot;VF SR Category&quot;);
+			ActivateField (&quot;SR Cut Over Date&quot;);
+			ActivateField (&quot;Status&quot;);
+			ActivateField (&quot;VF MNP OUT Processed&quot;);
+			ActivateField (&quot;SR Recepient Operator&quot;);
+			ActivateField (&quot;SR Donor Operator&quot;);
+			ActivateField (&quot;VF Port Id&quot;);
+			ActivateField (&quot;VF MNP Request ID&quot;);
+			ActivateField(&quot;VF TA Cod Flag&quot;);
+			SetViewMode (AllView);
+			SetSearchExpr (strSrSrcExpr);
+		}
+		with(bcMSISDN)
+		{
+			ClearToQuery ();
+			SetViewMode (AllView);
+			ActivateField (&quot;VF MSISDN&quot;);
+			ActivateField (&quot;VF Status&quot;);
+			SetSearchExpr (strMSISDSrcExpr);
+		}
+	
+		bcServiceRequest.ExecuteQuery (ForwardOnly);	
+		booSRExists = bcServiceRequest.FirstRecord ();//Review 30: Removed query on Child bC since there is a link.
+		
+		while (booSRExists)
+		{
+			srId = bcServiceRequest.GetFieldValue(&quot;Id&quot;);
+			booMSISDNExists = bcMSISDN.FirstRecord ();
+			while (booMSISDNExists)
+			{
+				strMSISDN  = bcMSISDN.GetFieldValue (&quot;VF MSISDN&quot;);
+				psWFInputs.SetProperty(&quot;ProcessName&quot;,&quot;VFTRCBU MNP Disconnect Async Wrapper WF&quot;);
+				psWFInputs.SetProperty(&quot;SR_Id&quot;,srId);
+				psWFInputs.SetProperty(&quot;MSISDN&quot;,strMSISDN);
+				asyncWF.InvokeMethod(&quot;RunProcess&quot;,psWFInputs,psWFOutputs);
+				
+				booMSISDNExists = bcMSISDN.NextRecord ();
+			}
+   			booSRExists = bcServiceRequest.NextRecord ();
+		}
+	}
+	catch (e)
+	{
+			// Jira: VFTRCBU-37061
+			psWFEhI.Reset();
+			psWFEhO.Reset();
+			psWFEhI.SetProperty(&quot;ProcessName&quot;,&quot;TELCO Error Handling Process WF&quot;);
+			psWFEhI.SetProperty(&quot;Object Id&quot;,srId);
+			psWFEhI.SetProperty(&quot;Service Code&quot;,strMSISDN);	
+			psWFEhI.SetProperty(&quot;Error Object Type&quot;,&quot;Business Service&quot;);
+			psWFEhI.SetProperty(&quot;Error Object Name&quot;,&quot;VF MNP Disconnect Order.DisconnectMNPOutAsync&quot;);
+			psWFEhI.SetProperty(&quot;Type&quot;,&quot;WA#18:MNPOutBatchDisconnect&quot;);
+			psWFEhI.SetProperty(&quot;Error Code&quot;,e.errCode);
+			psWFEhI.SetProperty(&quot;Error Message&quot;,e.errText);	
+			psWFEhI.SetProperty(&quot;ThrowError&quot;,&quot;N&quot;);							
+			WPREh.InvokeMethod(&quot;RunProcess&quot;,psWFEhI,psWFEhO);  	
+	}		
+	finally
+	{
+	
+		// Jira: VFTRCBU-37061
+		psWFEhI =null;
+		psWFEhO =null;
+		WPREh =null;
+
+		psWFInputs = null;
+		psWFOutputs = null;
+		bcMSISDN = null;
+		bcServiceRequest = null;
+		boServiceRequest = null;
+	}
+}"
+			   SEQUENCE="3"
+			   UPDATED="03/06/2018 11:31:17"
+			   UPDATED_BY="IBM_GFIGUEIREDO"
+			   CREATED="05/31/2016 09:21:26"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="DisconnectMNPOutAsyncOrderCreation"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function DisconnectMNPOutAsyncOrderCreation (Inputs, Outputs)
+{
+	try
+	{
+		var delay = TheApplication ().InvokeMethod (&quot;LookupValue&quot;,&quot;DISC_MNP_OUT_DELAY_MIN&quot;,&quot;Delay&quot;);
+		var Active = TheApplication ().InvokeMethod (&quot;LookupValue&quot;,&quot;IMPL_PHASE&quot;,&quot;Active&quot;);
+		var Suspended = TheApplication ().InvokeMethod (&quot;LookupValue&quot;,&quot;IMPL_PHASE&quot;,&quot;Suspended&quot;);
+
+		/*var today = new Date();
+		var millisecToday = today.getTime()
+		var CutOverDateDelay = new Date(millisecToday + (delay * 1000 * 60));
+		var strCutOverDateDelay = DateToString(CutOverDateDelay);*/ //NDC DD TLGA-4334
+		
+		var strCutOverDateDelay = null; //NDC DD TLGA-4334
+		Clib.strftime(strCutOverDateDelay , &apos;%m/%d/%Y %H:%M:%S&apos;, Clib.localtime( Clib.time() +  (delay * 60)) );
+		
+		var boServiceRequest : BusObject = TheApplication ().GetBusObject (&quot;Service Request&quot;);
+		var bcServiceRequest : BusComp = boServiceRequest.GetBusComp (&quot;Service Request&quot;);
+		var bcMSISDN : BusComp = boServiceRequest.GetBusComp (&quot;VF MNP Port Out MSISDN&quot;);
+		var boAsset : BusObject = TheApplication ().GetBusObject (&quot;Asset Management&quot;);
+		var bcAsset : BusComp = boAsset.GetBusComp (&quot;Asset Mgmt - Asset - Header&quot;);
+		var bsDeactivateAsset : Service = TheApplication().GetService (&quot;ACS Order Portal&quot;);
+		
+		var strMSISDN = Inputs.GetProperty(&quot;MSISDN&quot;);
+		var donorOperator = &quot;VODAFONE&quot;;
+		var recipientOperator =&quot;&quot;;
+		var strAssetId = &quot;&quot;;
+		var strMetropolisSRDate = &quot;&quot;;
+		var portingDateTime;
+		var booSRExists;
+		var booMSISDNExists;
+		var bsMnpDisconnection;
+		var portId;
+		var referenceNumber;
+		var SR_Id = Inputs.GetProperty(&quot;SR_Id&quot;);
+
+     	var psWFInputs : PropertySet = TheApplication().NewPropertySet();
+      	var psWFOutputs : PropertySet = TheApplication().NewPropertySet();
+      	
+		// Jira: VFTRCBU-37061
+		var WPREh :Service = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		var psWFEhI :PropertySet = TheApplication().NewPropertySet();
+		var psWFEhO :PropertySet = TheApplication().NewPropertySet();      	
+
+		var strMSISDSrcExpr = &quot;([VF Status] = &apos;&quot;+TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;MNP_STATUS&quot;,&quot;Accepted&quot;)+&quot;&apos; OR [VF Status] = &apos;&quot;+TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;MNP_STATUS&quot;,&quot;Autoaccepted&quot;)+&quot;&apos;) AND ([VF MNP OUT Processed] = &apos;Workable&apos; OR [VF MNP OUT Processed] IS NULL)&quot;;
+		
+        //JIRA-17825:Due to fix on a different (JIRA-17246), the field &quot;BC=Service Request::Status is being set readonly when SR is Closed. 
+        //Still inside this process, SRs in status &quot;Closed&quot; are required to be set to &quot;Open&quot;. The next SetAdminMode statement was added to overcomes this situation
+		bcServiceRequest.InvokeMethod(&quot;SetAdminMode&quot;, &quot;TRUE&quot;); 
+		//JIRA-17825:End
+		
+		with(bcServiceRequest)
+		{
+			ClearToQuery ();
+			ActivateField (&quot;VF SR Category&quot;);
+			ActivateField (&quot;SR Cut Over Date&quot;);
+			ActivateField (&quot;Status&quot;);
+			ActivateField (&quot;VF MNP OUT Processed&quot;);
+			ActivateField (&quot;SR Recepient Operator&quot;);
+			ActivateField (&quot;SR Donor Operator&quot;);
+			ActivateField (&quot;VF Port Id&quot;);
+			ActivateField (&quot;VF MNP Request ID&quot;);
+			ActivateField(&quot;VF TA Cod Flag&quot;);
+			//ActivateField (&quot;VF TA Cod 9lag&quot;);
+			SetViewMode (AllView);
+			SetSearchSpec(&quot;Id&quot;,SR_Id);
+		}
+		with(bcMSISDN)
+		{
+			ClearToQuery ();
+			SetViewMode (AllView);
+			ActivateField (&quot;VF MSISDN&quot;);
+			ActivateField (&quot;VF Status&quot;);
+			SetSearchSpec (&quot;VF MSISDN&quot;,strMSISDN);
+		}
+		bcServiceRequest.ExecuteQuery (ForwardOnly);	
+		booSRExists = bcServiceRequest.FirstRecord ();//Review 30: Removed query on Child bC since there is a link.
+		
+		if(booSRExists)
+		{	
+			bcServiceRequest.SetFieldValue (&quot;Status&quot;, TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;SR_STATUS&quot;,&quot;Open&quot;));
+  			recipientOperator 	= bcServiceRequest.GetFieldValue(&quot;SR Recepient Operator&quot;);
+			donorOperator 		= bcServiceRequest.GetFieldValue(&quot;SR Donor Operator&quot;);
+			portingDateTime 	= bcServiceRequest.GetFieldValue(&quot;SR Cut Over Date&quot;);
+			portId				= bcServiceRequest.GetFieldValue(&quot;VF Port Id&quot;);
+			referenceNumber		= bcServiceRequest.GetFieldValue(&quot;VF MNP Request ID&quot;);
+			booMSISDNExists = bcMSISDN.FirstRecord ();
+			while (booMSISDNExists)
+			{			
+				var strAssetSrcExpr = &quot;[Serial Number] = &apos;&quot;+strMSISDN+&quot;&apos; AND ([Status] = &apos;&quot;+Active+&quot;&apos; OR [Status] = &apos;&quot;+Suspended+&quot;&apos;)&quot;;
+
+				bcAsset.ClearToQuery ();
+				bcAsset.SetViewMode (AllView);
+				bcAsset.ActivateField (&quot;VFTR Metropolis Complain Date&quot;);
+				bcAsset.SetSearchExpr (strAssetSrcExpr);
+				bcAsset.ExecuteQuery (ForwardOnly);
+
+				if (bcAsset.FirstRecord ())
+				{			
+					strAssetId = bcAsset.GetFieldValue (&quot;Id&quot;);
+					strMetropolisSRDate = bcAsset.GetFieldValue (&quot;VFTR Metropolis Complain Date&quot;);
+					psWFInputs.SetProperty(&quot;Reason&quot;,&quot;1020&quot;);
+     				psWFInputs.SetProperty(&quot;ProcessName&quot;, &quot;VF MNP Disconnection&quot;);
+  					psWFInputs.SetProperty(&quot;AssetId&quot;, strAssetId);
+  					psWFInputs.SetProperty(&quot;MSISDN&quot;, strMSISDN);
+					psWFInputs.SetProperty(&quot;PortingDateTime&quot;, portingDateTime);
+					psWFInputs.SetProperty(&quot;RecipientOperator&quot;, recipientOperator);
+					psWFInputs.SetProperty(&quot;DonorOperator&quot;, donorOperator);
+					psWFInputs.SetProperty(&quot;PortID&quot;, portId);
+					psWFInputs.SetProperty(&quot;ReferenceNumber&quot;, referenceNumber);
+					psWFInputs.SetProperty(&quot;X_VFTR_METROPOLIS_SR_DATE&quot;, strMetropolisSRDate);
+  					bsDeactivateAsset.InvokeMethod (&quot;DisconnectMNPOrder&quot;, psWFInputs, psWFOutputs);
+  					
+					// Jira: VFTRCBU-37061
+					psWFEhI.Reset();
+					psWFEhO.Reset();
+					psWFEhI.SetProperty(&quot;ProcessName&quot;,&quot;TELCO Error Handling Process WF&quot;);
+					psWFEhI.SetProperty(&quot;Object Id&quot;,strAssetId);
+					psWFEhI.SetProperty(&quot;Service Code&quot;,strMSISDN);	
+					psWFEhI.SetProperty(&quot;Error Object Type&quot;,&quot;Business Service&quot;);
+					psWFEhI.SetProperty(&quot;Error Object Name&quot;,&quot;ACS Order Portal.DisconnectMNPOrder&quot;);
+					psWFEhI.SetProperty(&quot;Order Id&quot;,psWFOutputs.GetProperty(&quot;OrderId&quot;));				
+					psWFEhI.SetProperty(&quot;Type&quot;,&quot;WA#18:MNPOutBatchDisconnect&quot;);
+					psWFEhI.SetProperty(&quot;Error Code&quot;,psWFOutputs.GetProperty(&quot;ErrorCode&quot;));
+					psWFEhI.SetProperty(&quot;Error Message&quot;,psWFOutputs.GetProperty(&quot;ErrorMessage&quot;));		
+					psWFEhI.SetProperty(&quot;ThrowError&quot;,&quot;N&quot;);									
+					WPREh.InvokeMethod(&quot;RunProcess&quot;,psWFEhI,psWFEhO);  	
+									
+				}
+
+				bcMSISDN.SetFieldValue(&quot;VF MNP OUT Processed&quot;, &quot;Elaborated&quot;);
+				booMSISDNExists = bcMSISDN.NextRecord ();
+			}
+			bcServiceRequest.SetFieldValue (&quot;VF MNP OUT Processed&quot;, &quot;Elaborated&quot;);
+  			bcServiceRequest.SetFieldValue (&quot;Status&quot;, TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;SR_STATUS&quot;,&quot;Closed&quot;));
+  			bcServiceRequest.SetFieldValue (&quot;Sub-Status&quot;, TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;SR_SUB_STATUS&quot;,&quot;Resolved&quot;));
+   			bcServiceRequest.WriteRecord ();
+		}
+	}
+	catch (e)
+	{
+			// Jira: VFTRCBU-37061
+			psWFEhI.Reset();
+			psWFEhO.Reset();
+			psWFEhI.SetProperty(&quot;ProcessName&quot;,&quot;TELCO Error Handling Process WF&quot;);
+			psWFEhI.SetProperty(&quot;Object Id&quot;,strAssetId);
+			psWFEhI.SetProperty(&quot;Service Code&quot;,strMSISDN);	
+			psWFEhI.SetProperty(&quot;Error Object Type&quot;,&quot;Business Service&quot;);
+			psWFEhI.SetProperty(&quot;Error Object Name&quot;,&quot;VF MNP Disconnect Order.DisconnectMNPOutAsyncOrderCreation&quot;);
+			psWFEhI.SetProperty(&quot;Order Id&quot;,psWFOutputs.GetProperty(&quot;OrderId&quot;));				
+			psWFEhI.SetProperty(&quot;Type&quot;,&quot;WA#18:MNPOutBatchDisconnect&quot;);
+			psWFEhI.SetProperty(&quot;Error Code&quot;,e.errCode);
+			psWFEhI.SetProperty(&quot;Error Message&quot;,e.errText);		
+			psWFEhI.SetProperty(&quot;ThrowError&quot;,&quot;N&quot;);						
+			WPREh.InvokeMethod(&quot;RunProcess&quot;,psWFEhI,psWFEhO);  	
+	}	
+	finally
+	{
+		// Jira: VFTRCBU-37061
+		psWFEhI =null;
+		psWFEhO =null;
+		WPREh =null;
+
+		psWFInputs = null;
+		psWFOutputs = null;
+		bcAsset = null;
+		bsDeactivateAsset = null;
+		bcServiceRequest = null;
+		bcMSISDN         = null;
+		boServiceRequest = null;
+		boAsset = null;
+	}
+}"
+			   SEQUENCE="4"
+			   UPDATED="04/04/2017 00:07:22"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/31/2016 09:21:26"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	if (MethodName == &quot;DisconnectMNPOut&quot;)
+	{  
+		if(TheApplication ().InvokeMethod(&quot;LookupValue&quot;,&quot;VFTRCBU_MNP_DISCONNECT_ASYNC&quot;,&quot;Mode&quot;) == &quot;Y&quot;)
+			//Method to Disconnect assync regarding the LOV value
+			DisconnectMNPOutAsync(Inputs,Outputs);
+		else
+			DisconnectMNPOut (Inputs, Outputs);
+		return (CancelOperation);
+	} 
+	
+	if (MethodName == &quot;DisconnectMNPOutAsync&quot;)
+	{  
+		DisconnectMNPOutAsync (Inputs, Outputs);
+		return (CancelOperation);
+	}  
+	
+	if (MethodName == &quot;DisconnectMNPOutAsyncOrderCreation&quot;)
+	{  
+		DisconnectMNPOutAsyncOrderCreation (Inputs, Outputs);
+		return (CancelOperation);
+	} 
+	
+	return (ContinueOperation);
+}"
+			   SEQUENCE="5"
+			   UPDATED="03/29/2018 12:30:04"
+			   UPDATED_BY="IBM_GFIGUEIREDO"
+			   CREATED="03/09/2010 09:06:06"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

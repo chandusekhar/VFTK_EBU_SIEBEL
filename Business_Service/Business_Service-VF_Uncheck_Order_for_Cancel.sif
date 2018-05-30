@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VF TR Poc"
+	   UI_FREEZE="N"
+	   UPDATED="02/23/2017 17:25:18"
+	   UPDATED_BY="JCARVALHO"
+	   CREATED="08/24/2011 19:43:14"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   COMMENTS="Created by DM on 17/10/2011"
+		   EXTERNAL_USE="Y"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VF Uncheck Order for Cancel"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="02/23/2017 17:05:44"
+		   SERVER_ENABLED="Y"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   OBJECT_LOCKED_BY_NAME="JCARVALHO"
+		   UPDATED="02/23/2017 17:22:52"
+		   UPDATED_BY="JCARVALHO"
+		   CREATED="10/20/2011 20:32:49"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="CancelTask"
+			   UPDATED="06/01/2012 15:17:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/20/2011 20:32:49"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="CancelTask_Activation"
+			   UPDATED="06/01/2012 15:17:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/19/2012 08:29:25"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="PauseTask"
+			   UPDATED="06/01/2012 15:17:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/20/2011 20:32:49"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="PauseTask_Activation"
+			   UPDATED="06/01/2012 15:17:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/13/2012 07:57:42"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CancelTask_Activation"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CancelTask_Activation(Inputs,Outputs)
+{
+	try
+	{
+		var TaskType = TheApplication().GetProfileAttr(&quot;VFPA_TaskInitiated&quot;); 
+		var OrderId = TheApplication().GetProfileAttr(&quot;VFPA_OrderId&quot;);
+		var flag;
+		
+		var BO:BusObject;
+		var BCOrder:BusComp;
+		var BCOli:BusComp;
+			
+		if ((OrderId != null) || (OrderId != &quot;&quot;))
+		{
+			BO = TheApplication().GetBusObject(&quot;HP Order Entry&quot;);
+			BCOrder = BO.GetBusComp(&quot;HP Order Entry - Orders&quot;);
+			BCOli = BO.GetBusComp(&quot;HP Order Entry - Line Items&quot;);
+			
+			with(BCOrder)
+			{
+				ClearToQuery();
+				SetViewMode(AllView);
+				ActivateField(&quot;Status&quot;);
+				SetSearchSpec(&quot;Id&quot;,OrderId);//VFTK Venkata 12052012 : No changes for OracleScript 15 review since NullCheck already exist
+				//Venkata 14/05/2012: Moved child query as per oracle review31-Start */
+				BCOli.ClearToQuery();
+				BCOli.SetViewMode(AllView);
+				BCOli.ActivateField(&quot;Status&quot;);
+				BCOli.SetSearchSpec(&quot;Order Header Id&quot;,OrderId);
+				//Venkata 14/05/2012: Moved child query as per oracle review31-End */
+				ExecuteQuery(ForwardOnly);
+				if (FirstRecord())
+				{
+					SetFieldValue(&quot;Status&quot;,TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;FS_ORDER_STATUS&quot;,&quot;Cancelled&quot;));
+					WriteRecord();
+				}//if exist
+			}//end with
+			
+			with(BCOli)
+			{
+			flag = FirstRecord();
+				
+				while(flag)
+				{
+					SetFieldValue(&quot;Status&quot;,TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;FS_ORDER_STATUS&quot;,&quot;Cancelled&quot;));
+					WriteRecord();
+					flag = NextRecord();
+				}
+			}
+		}
+		return(CancelOperation);
+	}
+	finally
+	{
+		BCOli = null;
+		BCOrder = null;
+		BO = null;
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="07/01/2012 18:53:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/19/2012 08:29:25"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="PauseTask_Activation"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function PauseTask_Activation(Inputs,Outputs)
+{
+	if (TheApplication().GetProfileAttr(&quot;Siebel eChannel WebLogout&quot;) == &quot;IN PROGRESS&quot;)
+	{
+		return;
+	}
+
+	var OrderPaused = TheApplication().GetProfileAttr(&quot;VFPA_OrderId&quot;)+&quot;Paused&quot;;
+	TheApplication().SetProfileAttr(&quot;OrderPaused&quot;,OrderPaused);
+	var sToday =  new Date();
+	sToday = sToday.toSystem();
+	TheApplication().SetProfileAttr(&quot;PauseTiming&quot;,sToday);//VFTK Venkata 12052012 : No changes for OracleScript 15 review since No ExecuteQuery exist
+}"
+			   SEQUENCE="2"
+			   UPDATED="02/23/2017 17:22:52"
+			   UPDATED_BY="JCARVALHO"
+			   CREATED="02/13/2012 07:57:42"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	switch (MethodName)
+	{ 
+		case &quot;CancelTask_Activation&quot;:
+			CancelTask_Activation(Inputs,Outputs);
+			return (CancelOperation);
+		case &quot;PauseTask_Activation&quot;:
+			PauseTask_Activation(Inputs,Outputs);
+			return (CancelOperation);	
+		default:
+			return (ContinueOperation);
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="3"
+			   UPDATED="07/01/2012 18:54:05"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/20/2011 20:32:49"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

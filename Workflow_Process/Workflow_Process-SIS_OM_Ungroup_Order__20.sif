@@ -1,0 +1,852 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LANGUAGE_LOCKED="ENU"
+	   LOCKED="Y"
+	   LOCKED_DATE="01/08/2018 14:56:53"
+	   NAME="SIS OM Base Architecture"
+	   UI_FREEZE="N"
+	   LOCKED_BY_NAME="IBM_RCATITA"
+	   UPDATED="01/08/2018 15:01:24"
+	   UPDATED_BY="IBM_RCATITA"
+	   CREATED="10/27/2001 11:50:11"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<WORKFLOW_PROCESS
+		   BUSINESS_OBJECT="Order Entry (Sales)"
+		   CACHE_LOCALE="N"
+		   DESCRIPTION="Explode any components of the current order line item with Qty &gt; 1 and Explode Flag = &quot;Y&quot;."
+		   EDIT="N"
+		   GROUP="Asset Based Ordering"
+		   INACTIVE="N"
+		   NAME="SIS OM Ungroup Order: 20"
+		   OBJECT_LOCKED="N"
+		   PASS_BY_REF_HIERARCHY_ARGUMENT="N"
+		   PROCESS_NAME="SIS OM Ungroup Order"
+		   REPLICATION_LEVEL="None"
+		   RUNNABLE="Y"
+		   STATE_MANAGEMENT_TYPE="STATEFUL"
+		   STATUS="NOT_IN_USE"
+		   VERSION="20"
+		   WEB_SERVICE_ENABLED="N"
+		   WORKFLOW_MODE="Service Flow"
+		   UPDATED="01/08/2018 15:47:28"
+		   UPDATED_BY="IBM_RCATITA"
+		   CREATED="01/18/2015 16:00:25"
+		   CREATED_BY="SADMIN">
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Account Market Class"
+			   INOUT="NONE"
+			   NAME="Account Market Class"
+			   UPDATED="01/18/2015 16:00:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/18/2015 16:00:25"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   ACCESS_MODE="RW"
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Consumer Market Class"
+			   INOUT="NONE"
+			   NAME="Consumer Market Class"
+			   UPDATED="01/18/2015 16:00:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/18/2015 16:00:25"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Object Id"
+			   INOUT="IN"
+			   NAME="Object Id"
+			   UPDATED="01/18/2015 16:00:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/18/2015 16:00:25"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_PROCESS_PROP
+			   CORRELATOR_FLAG="N"
+			   DATA_TYPE="VARCHAR"
+			   DISPLAY_NAME="Root Level Item Id"
+			   INOUT="IN"
+			   NAME="Root Level Item Id"
+			   UPDATED="01/18/2015 16:00:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/18/2015 16:00:25"
+			   CREATED_BY="SADMIN">
+			</WF_PROCESS_PROP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*168 120 264 1689*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME=" Consumer?"
+			   TYPE="DECISION_POINT"
+			   UPDATED="01/18/2015 16:00:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/18/2015 16:00:25"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*216 2044*NPts1*22*P07*216 1684*ToHS1*18*ArrowEnd1*4"
+				   NAME="N"
+				   TO_STEP_NAME="Refresh Applet"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="01/18/2015 16:00:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:25"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME=" Consumer?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*216 2044*NPts1*22*P07*216 1684*ToHS1*18*ArrowEnd1*4"
+					   NAME="N"
+					   TO_STEP_NAME="Refresh Applet"
+					   UPDATED="01/18/2015 16:00:25"
+					   UPDATED_BY="SADMIN"
+					   CREATED="01/18/2015 16:00:25"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="( This Must Match(&apos;[&amp;Account Market Class]=[&amp;Consumer Market Class]&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*02*P17*132 1444*NPts1*22*P07*168 1444*ToHS1*28*ArrowEnd1*4"
+				   NAME="Y"
+				   TO_STEP_NAME="Set SingleOrMultipleBA"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="01/18/2015 16:00:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:25"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME=" Consumer?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*02*P17*132 1444*NPts1*22*P07*168 1444*ToHS1*28*ArrowEnd1*4"
+					   NAME="Y"
+					   TO_STEP_NAME="Set SingleOrMultipleBA"
+					   UPDATED="01/18/2015 16:00:25"
+					   UPDATED_BY="SADMIN"
+					   CREATED="01/18/2015 16:00:25"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="EXPRESSION"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="Y4"
+					   OPERATION="EQ_THIS"
+					   SEQUENCE="4"
+					   UPDATED="01/18/2015 16:00:25"
+					   UPDATED_BY="SADMIN"
+					   CREATED="01/18/2015 16:00:25"
+					   CREATED_BY="SADMIN">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR5="[&amp;Account Market Class]=[&amp;Consumer Market Class]"
+						   NAME="Y42"
+						   SEQUENCE="2"
+						   UPDATED="01/18/2015 16:00:25"
+						   UPDATED_BY="SADMIN"
+						   CREATED="01/18/2015 16:00:25"
+						   CREATED_BY="SADMIN">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*300 36 396 849*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Consumer?"
+			   TYPE="DECISION_POINT"
+			   UPDATED="01/18/2015 16:00:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/18/2015 16:00:25"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*348 1204*NPts1*22*P06*348 844*ToHS1*18*ArrowEnd1*4"
+				   NAME="N"
+				   TO_STEP_NAME="Explode Order Item"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="01/18/2015 16:00:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:25"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Consumer?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*348 1204*NPts1*22*P06*348 844*ToHS1*18*ArrowEnd1*4"
+					   NAME="N"
+					   TO_STEP_NAME="Explode Order Item"
+					   UPDATED="01/18/2015 16:00:25"
+					   UPDATED_BY="SADMIN"
+					   CREATED="01/18/2015 16:00:25"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   EXPRESSION="( This Must Match(&apos;[&amp;Account Market Class]=[&amp;Consumer Market Class]&apos;))"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*432 604*NPts1*22*P06*396 604*ToHS1*08*ArrowEnd1*4"
+				   NAME="Y"
+				   TO_STEP_NAME="Set LI Data before Ungroup"
+				   TYPE="DECISION"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="01/18/2015 16:00:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:25"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Consumer?"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*432 604*NPts1*22*P06*396 604*ToHS1*08*ArrowEnd1*4"
+					   NAME="Y"
+					   TO_STEP_NAME="Set LI Data before Ungroup"
+					   UPDATED="01/18/2015 16:00:25"
+					   UPDATED_BY="SADMIN"
+					   CREATED="01/18/2015 16:00:25"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+					<WF_BRANCH_CRITERIA
+					   COMPARE_TO="EXPRESSION"
+					   EDIT="Y"
+					   INACTIVE="N"
+					   NAME="Y2"
+					   OPERATION="EQ_THIS"
+					   SEQUENCE="2"
+					   UPDATED="01/18/2015 16:00:25"
+					   UPDATED_BY="SADMIN"
+					   CREATED="01/18/2015 16:00:25"
+					   CREATED_BY="SADMIN">
+						<WF_BRANCH_CRITERIA_VALUE
+						   EDIT="N"
+						   INACTIVE="N"
+						   LO_CHAR5="[&amp;Account Market Class]=[&amp;Consumer Market Class]"
+						   NAME="Y21"
+						   SEQUENCE="1"
+						   UPDATED="01/18/2015 16:00:25"
+						   UPDATED_BY="SADMIN"
+						   CREATED="01/18/2015 16:00:25"
+						   CREATED_BY="SADMIN">
+						</WF_BRANCH_CRITERIA_VALUE>
+					</WF_BRANCH_CRITERIA>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="AssociateBAtoLI"
+			   BUSINESS_SERVICE_NAME="VF TRK PRM Copy BA"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*36 204 132 2529*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Copy and Associate BA"
+			   TYPE="TASK"
+			   UPDATED="01/18/2015 16:00:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/18/2015 16:00:26"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*168 2284*NPts1*22*P07*132 2284*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 1"
+				   TO_STEP_NAME="Refresh Applet"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Copy and Associate BA"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*168 2284*NPts1*22*P07*132 2284*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 1"
+					   TO_STEP_NAME="Refresh Applet"
+					   UPDATED="01/18/2015 16:00:26"
+					   UPDATED_BY="SADMIN"
+					   CREATED="01/18/2015 16:00:26"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Root Level Item Id"
+				   PROPERTY_NAME="Root Level Item Id"
+				   SEQUENCE="4"
+				   TYPE="PROPERTY"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*300 204 396 2529*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="End"
+			   TYPE="END"
+			   UPDATED="01/18/2015 16:00:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/18/2015 16:00:26"
+			   CREATED_BY="SADMIN">
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Ungroup"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*300 120 396 1689*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Explode Order Item"
+			   TYPE="TASK"
+			   UPDATED="01/18/2015 16:00:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/18/2015 16:00:26"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*02*P17*264 1444*NPts1*22*P07*300 1444*ToHS1*28*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME=" Consumer?"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Explode Order Item"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*02*P17*264 1444*NPts1*22*P07*300 1444*ToHS1*28*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME=" Consumer?"
+					   UPDATED="01/18/2015 16:00:26"
+					   UPDATED_BY="SADMIN"
+					   CREATED="01/18/2015 16:00:26"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Condition Field Names"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Auto Explode Flag"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Condition Values"
+				   SEQUENCE="0"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="&apos;Y&apos;"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Extended Attribute BC Name"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Order Item XA (No Link)"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Header Id"
+				   PROPERTY_NAME="Object Id"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Header Id Field"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Order Header Id"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Line Item BC Name"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Order Entry - Line Items (Simple)"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Line Number Field"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Line Number"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Number Fields to Split"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="MRC CxTotal,NRC CxTotal"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Parent Item Id Field"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Parent Order Item Id"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Quantity Field"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Quantity Requested"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Root Item Id"
+				   PROPERTY_NAME="Root Level Item Id"
+				   SEQUENCE="0"
+				   TYPE="PROPERTY"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Root Item Id Field"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Root Order Item Id"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="XA Header Id Field"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Order Id"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="XA Line Item Id"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Object Id"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="XA Parent Root Id Field"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Parent Root Item Id"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Echo"
+			   BUSINESS_SERVICE_NAME="Workflow Utilities"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*168 36 264 849*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Order Data"
+			   TYPE="TASK"
+			   UPDATED="01/18/2015 16:00:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/18/2015 16:00:26"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*300 604*NPts1*22*P06*264 604*ToHS1*08*ArrowEnd1*4"
+				   NAME="Connector 3"
+				   TO_STEP_NAME="Consumer?"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Get Order Data"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*300 604*NPts1*22*P06*264 604*ToHS1*08*ArrowEnd1*4"
+					   NAME="Connector 3"
+					   TO_STEP_NAME="Consumer?"
+					   UPDATED="01/18/2015 16:00:26"
+					   UPDATED_BY="SADMIN"
+					   CREATED="01/18/2015 16:00:26"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   BUSINESS_COMPONENT="Order Entry - Orders"
+				   BUSINESS_COMPONENT_FIELD="Account Market Class"
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Get Order Data10"
+				   PROPERTY_NAME="Account Market Class"
+				   SEQUENCE="1"
+				   TYPE="BUSCOMP"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="O"
+				   NAME="O:Get Order Data20"
+				   PROPERTY_NAME="Consumer Market Class"
+				   SEQUENCE="2"
+				   TYPE="EXPRESSION"
+				   VALUE_SEARCH_SPECIFICATION="LookupValue(&quot;ACCOUNT_TYPE&quot;, &quot;102&quot;)"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Refresh Business Component"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*168 204 264 2529*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Refresh Applet"
+			   TYPE="TASK"
+			   UPDATED="01/18/2015 16:00:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/18/2015 16:00:26"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*300 2284*NPts1*22*P07*264 2284*ToHS1*08*ArrowEnd1*4"
+				   NAME="Default.CONNECTOR"
+				   TO_STEP_NAME="End"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Refresh Applet"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*300 2284*NPts1*22*P07*264 2284*ToHS1*08*ArrowEnd1*4"
+					   NAME="Default.CONNECTOR"
+					   TO_STEP_NAME="End"
+					   UPDATED="01/18/2015 16:00:26"
+					   UPDATED_BY="SADMIN"
+					   CREATED="01/18/2015 16:00:26"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Business Component Name"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Order Entry - Line Items"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Business Object Name"
+				   SEQUENCE="0"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Order Entry (Sales)"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="BeginUngroup"
+			   BUSINESS_SERVICE_NAME="VF TRK PRM Copy BA"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*432 36 528 849*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Set LI Data before Ungroup"
+			   TYPE="TASK"
+			   UPDATED="01/18/2015 16:00:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/18/2015 16:00:26"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*396 1444*FrHS1*32*P17*480 1444*NPts1*32*P06*480 844*ToHS1*28*ArrowEnd1*4"
+				   NAME="Connector 2"
+				   TO_STEP_NAME="Explode Order Item"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set LI Data before Ungroup"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*396 1444*FrHS1*32*P17*480 1444*NPts1*32*P06*480 844*ToHS1*28*ArrowEnd1*4"
+					   NAME="Connector 2"
+					   TO_STEP_NAME="Explode Order Item"
+					   UPDATED="01/18/2015 16:00:26"
+					   UPDATED_BY="SADMIN"
+					   CREATED="01/18/2015 16:00:26"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Root Level Item Id"
+				   PROPERTY_NAME="Root Level Item Id"
+				   SEQUENCE="1"
+				   TYPE="PROPERTY"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   BUSINESS_SERVICE_METHOD="Set Profile Attribute"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   EDIT="Y"
+			   EVALUATE_ALL="Y"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*36 120 132 1689*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Set SingleOrMultipleBA"
+			   TYPE="TASK"
+			   UPDATED="01/18/2015 16:00:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/18/2015 16:00:26"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*84 2044*NPts1*22*P06*84 1684*ToHS1*18*ArrowEnd1*4"
+				   NAME="Connector 0"
+				   TO_STEP_NAME="Copy and Associate BA"
+				   TYPE="CONNECTOR"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Set SingleOrMultipleBA"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P16*84 2044*NPts1*22*P06*84 1684*ToHS1*18*ArrowEnd1*4"
+					   NAME="Connector 0"
+					   TO_STEP_NAME="Copy and Associate BA"
+					   UPDATED="01/18/2015 16:00:26"
+					   UPDATED_BY="SADMIN"
+					   CREATED="01/18/2015 16:00:26"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Profile Attribute Name"
+				   SEQUENCE="1"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="SingleOrMultipleBA"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+				<WF_STEP_I_O_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_FLAG="I"
+				   NAME="Profile Attribute Value"
+				   SEQUENCE="2"
+				   TYPE="LITERAL"
+				   VALUE_SEARCH_SPECIFICATION="Multiple"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+				</WF_STEP_I_O_ARGUMENT>
+			</WF_STEP>
+			<WF_STEP
+			   ALLOW_RETRY_FLAG="N"
+			   EDIT="Y"
+			   EVALUATE_ALL="N"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r12*36 36 132 849*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="Start"
+			   TYPE="START"
+			   UPDATED="01/18/2015 16:00:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/18/2015 16:00:26"
+			   CREATED_BY="SADMIN">
+				<WF_STEP_BRANCH
+				   EDIT="Y"
+				   EVENT_CANCEL_FLAG="N"
+				   EVENT_VISIBILITY="Enterprise"
+				   INACTIVE="N"
+				   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*168 604*NPts1*22*P06*120 604*ToHS1*08*ArrowEnd1*4"
+				   NAME="Go"
+				   TO_STEP_NAME="Get Order Data"
+				   TYPE="DEFAULT"
+				   USER_EVENT_TIMEOUT="0"
+				   UPDATED="01/18/2015 16:00:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/18/2015 16:00:26"
+				   CREATED_BY="SADMIN">
+					<WF_BRANCH_CONNECTOR
+					   FROM_STEP_NAME="Start"
+					   INACTIVE="N"
+					   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*168 604*NPts1*22*P06*120 604*ToHS1*08*ArrowEnd1*4"
+					   NAME="Go"
+					   TO_STEP_NAME="Get Order Data"
+					   UPDATED="01/18/2015 16:00:26"
+					   UPDATED_BY="SADMIN"
+					   CREATED="01/18/2015 16:00:26"
+					   CREATED_BY="SADMIN">
+					</WF_BRANCH_CONNECTOR>
+				</WF_STEP_BRANCH>
+			</WF_STEP>
+		</WORKFLOW_PROCESS>
+	</PROJECT>
+</REPOSITORY>
+
+
+

@@ -1,0 +1,889 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="11/24/2016 17:14:00"
+   UPDATED_BY="SADMIN"
+   CREATED="11/24/2016 14:49:11"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="Created by C.M."
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="Vod Tk Proj"
+	   UI_FREEZE="N"
+	   UPDATED="03/27/2017 17:59:03"
+	   UPDATED_BY="JFONSECA"
+	   CREATED="09/28/2009 13:00:37"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   EXTERNAL_USE="Y"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VF Get Campaign List"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="03/27/2017 16:46:45"
+		   SERVER_ENABLED="Y"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="Y"
+		   OBJECT_LOCKED_BY_NAME="JFONSECA"
+		   UPDATED="03/27/2017 17:54:16"
+		   UPDATED_BY="JFONSECA"
+		   CREATED="05/31/2010 15:40:04"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="VF Get Campaign List Process"
+			   UPDATED="05/31/2010 15:40:04"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/31/2010 15:40:04"
+			   CREATED_BY="SADMIN">
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="Integration Object"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   INTEGRATION_OBJECT="VFGetCampaignList_input"
+				   NAME="Inputs"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Hierarchy"
+				   TYPE="Input"
+				   UPDATED="05/31/2010 15:40:04"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/31/2010 15:40:04"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="Integration Object"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   INTEGRATION_OBJECT="VFGetCampaignList_output"
+				   NAME="Output"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Hierarchy"
+				   TYPE="Output"
+				   UPDATED="05/31/2010 15:40:04"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/31/2010 15:40:04"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="(declarations)"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="var gsE = &quot;&quot;;
+var gsErrorCode = &quot;&quot;;
+var gsErrorDesc = &quot;&quot;;
+var gsStatusCode = &quot;0&quot;;"
+			   SEQUENCE="1"
+			   UPDATED="05/15/2012 16:36:09"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/31/2010 15:40:04"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CheckCampaignActiveFlag"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CheckCampaignActiveFlag(Inputs,Outputs){
+//Created		11.3.2010
+//Created by	Martin Matias
+//Description	
+	try{
+//Get Inputs
+		var	sCampaignIds 		= Inputs.GetProperty(&quot;Campaign Ids List&quot;);
+		var	sInput_MSISDN 		= Inputs.GetProperty(&quot;MSISDN&quot;);
+		var	sInput_ActiveFlag	= Inputs.GetProperty(&quot;Active Flag&quot;);
+//Get objects
+		var oCampConBO 			: BusObject = TheApplication().GetBusObject(&quot;Campaign&quot;);
+		var oCampConBO_limit 	: BusObject = TheApplication().GetBusObject(&quot;Campaign&quot;);
+		var oCampConBC 			: BusComp = oCampConBO.GetBusComp(&quot;Campaign List Contact&quot;);
+		var oCampConBC_limit 	: BusComp = oCampConBO_limit.GetBusComp(&quot;Campaign List Contact&quot;);
+	
+//Set variables and constants
+		var sActiveCampaignList = &quot;&quot;;
+		var sInactiveCampaignList = &quot;&quot;;
+		var aActiveCampaignIds;
+		var aInactiveCampaignIds
+		var sDefaultQuery 	= &quot;&quot;;
+		var sProcessCampId	= &quot;&quot;;
+		var i;
+		var bIsCampRecord	= false;
+		var bIsRespRecord	= false;
+		var sCampaignList	= &quot;&quot;;
+		var sGroupLimit		= &quot;&quot;;
+		var bActiveFlag		= true;
+		var CampStartDate	= new Date();
+		var CampEndDate		= new Date();
+		var CurrDate		= new Date();
+		var ParOfferStartDate = new Date();
+		var ParOfferEndDate = new Date();
+		var sCampaignCategory = &quot;&quot;;
+		var iCountRecords	= 0;
+		var	aCampaignIds;
+		var sParentOfferId = &quot;&quot;;
+		var sParCampId	= &quot;&quot;;
+		
+		aCampaignIds = sCampaignIds.split(&quot;,&quot;);
+		Clib.strftime(CurrDate, &quot;%m/%d/%Y %H:%M:%S&quot;, Clib.localtime(Clib.time()));
+		CurrDate = new Date (CurrDate);
+		
+		for(i=0;i&lt;aCampaignIds.length;i++){
+			sProcessCampId = aCampaignIds[i];
+			bActiveFlag	= true;
+//check campaign &amp; offer period
+			with(oCampConBC)
+			{
+				ClearToQuery();
+				SetViewMode(AllView);
+				ActivateField(&quot;Campaign Id&quot;);
+				ActivateField(&quot;Offer Start Date&quot;);
+				ActivateField(&quot;Offer End Date&quot;);
+				ActivateField(&quot;Campaign Start Date&quot;);
+				ActivateField(&quot;Campaign End Date&quot;);
+				ActivateField(&quot;Campaign Category&quot;);
+				ActivateField(&quot;VF Campaign Group Limit&quot;);
+				SetSearchSpec(&quot;Id&quot;,&quot;&apos;&quot;+sProcessCampId+&quot;&apos;&quot;);
+				ExecuteQuery(ForwardOnly);
+				bIsCampRecord=FirstRecord();
+					if(bIsCampRecord){
+						sParCampId = GetFieldValue(&quot;Campaign Id&quot;);
+						sCampaignCategory = GetFieldValue(&quot;Campaign Category&quot;);
+						sGroupLimit = GetFieldValue(&quot;VF Campaign Group Limit&quot;);
+						CampStartDate = new Date (GetFieldValue(&quot;Campaign Start Date&quot;));
+						CampEndDate = new Date (GetFieldValue(&quot;Campaign End Date&quot;));
+						ParOfferEndDate = new Date (GetFieldValue(&quot;Offer End Date&quot;));
+						ParOfferStartDate = new Date (GetFieldValue(&quot;Offer Start Date&quot;));
+					}//if
+//check campaign period
+				if ((CampStartDate.getTime() &gt; CurrDate.getTime()) || (CampEndDate.getTime() &lt; CurrDate.getTime()))
+					bActiveFlag =false;
+//check parent offer period
+				if ((ParOfferStartDate.getTime() &gt; CurrDate.getTime()) || (ParOfferEndDate.getTime() &lt; CurrDate.getTime()))
+					bActiveFlag =false;
+			}//with oCampConBC		
+
+//check existing response
+			if(bActiveFlag){
+				with(oCampConBC){
+					ClearToQuery();
+					SetViewMode(AllView);
+					ActivateField(&quot;Campaign Id]&quot;);
+					ActivateField(&quot;Contact MSISDN&quot;);
+					ActivateField(&quot;Prospect MSISDN&quot;);
+					ActivateField(&quot;Contact Activation Status&quot;);
+					if(sCampaignCategory==TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_CATEGORY&quot;,&quot;Response Collection&quot;))
+// ***	canceled due to performance issue - consider only contacts	SetSearchExpr(&quot;[Campaign Id]=&apos;&quot;+sParCampId+&quot;&apos; AND ([Contact MSISDN]=&apos;&quot;+sInput_MSISDN+&quot;&apos; OR [Prospect MSISDN]=&apos;&quot;+sInput_MSISDN+&quot;&apos;) AND ([Contact Activation Status]=&apos;&quot;+TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PROV_FUL_STAT&quot;,&quot;Response Accepted&quot;)+&quot;&apos; OR [Contact Activation Status]=&apos;&quot;+TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PROV_FUL_STAT&quot;,&quot;Response Rejected&quot;)+&quot;&apos;)&quot;);
+						SetSearchExpr(&quot;[Campaign Id]=&apos;&quot;+sParCampId+&quot;&apos; AND [Contact MSISDN]=&apos;&quot;+sInput_MSISDN+&quot;&apos; AND ([Contact Activation Status]=&apos;&quot;+TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PROV_FUL_STAT&quot;,&quot;Response Accepted&quot;)+&quot;&apos; OR [Contact Activation Status]=&apos;&quot;+TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PROV_FUL_STAT&quot;,&quot;Response Rejected&quot;)+&quot;&apos;)&quot;);
+					else
+// ***	canceled due to performance issue - consider only contacts	SetSearchExpr(&quot;[Campaign Id]=&apos;&quot;+sParCampId+&quot;&apos; AND ([Contact MSISDN]=&apos;&quot;+sInput_MSISDN+&quot;&apos; OR [Prospect MSISDN]=&apos;&quot;+sInput_MSISDN+&quot;&apos;) AND ([Contact Activation Status]=&apos;&quot;+TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PROV_FUL_STAT&quot;,&quot;Fulfilled&quot;)+&quot;&apos; OR [Contact Activation Status]=&apos;&quot;+TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PROV_FUL_STAT&quot;,&quot;Sent to Provisioning&quot;)+&quot;&apos; OR [Contact Activation Status]=&apos;&quot;+TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PROV_FUL_STAT&quot;,&quot;Provisioned&quot;)+&quot;&apos; OR [Contact Activation Status]=&apos;&quot;+TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PROV_FUL_STAT&quot;,&quot;Response Rejected&quot;)+&quot;&apos;)&quot;);
+						SetSearchExpr(&quot;[Campaign Id]=&apos;&quot;+sParCampId+&quot;&apos; AND [Contact MSISDN]=&apos;&quot;+sInput_MSISDN+&quot;&apos; AND ([Contact Activation Status]=&apos;&quot;+TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PROV_FUL_STAT&quot;,&quot;Fulfilled&quot;)+&quot;&apos; OR [Contact Activation Status]=&apos;&quot;+TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PROV_FUL_STAT&quot;,&quot;Sent to Provisioning&quot;)+&quot;&apos; OR [Contact Activation Status]=&apos;&quot;+TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PROV_FUL_STAT&quot;,&quot;Provisioned&quot;)+&quot;&apos; OR [Contact Activation Status]=&apos;&quot;+TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PROV_FUL_STAT&quot;,&quot;Response Rejected&quot;)+&quot;&apos;)&quot;);
+					ExecuteQuery(ForwardOnly);
+					bIsRespRecord=FirstRecord();
+						if(bIsRespRecord)
+							bActiveFlag =false;
+				}//with oCampConBC
+			}//if bActiveFlag
+
+//check limit exceed
+			if(bActiveFlag&amp;&amp;sGroupLimit!=&quot;&quot;){
+				with(oCampConBC_limit){
+					ClearToQuery();
+					SetViewMode(AllView);
+					ActivateField(&quot;Campaign Id&quot;);
+					ActivateField(&quot;Contact Activation Status&quot;);
+					if(sCampaignCategory==TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_CATEGORY&quot;,&quot;Response Collection&quot;))
+						SetSearchExpr(&quot;[Campaign Id]=&apos;&quot;+sParCampId+&quot;&apos; AND ([Contact Activation Status]=&apos;&quot;+TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PROV_FUL_STAT&quot;,&quot;Response Accepted&quot;)+&quot;&apos; OR [Contact Activation Status]=&apos;&quot;+TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PROV_FUL_STAT&quot;,&quot;Response Rejected&quot;)+&quot;&apos;)&quot;);
+					else
+						SetSearchExpr(&quot;[Campaign Id] =&apos;&quot;+sParCampId+&quot;&apos; AND ( [Contact Activation Status] = &apos;&quot;+TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PROV_FUL_STAT&quot;,&quot;Provisioned&quot;)+&quot;&apos; OR [Contact Activation Status] = &apos;&quot;+TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PROV_FUL_STAT&quot;,&quot;Fulfilled&quot;)+&quot;&apos; OR [Contact Activation Status] = &apos;&quot;+TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PROV_FUL_STAT&quot;,&quot;Sent to Provisioning&quot;)+&quot;&apos; )&quot;);
+					
+					iCountRecords = CountRecords();//CountRecords shudn&apos;t be removed since it&apos;s used for some purpose
+						if(iCountRecords &gt;= ToInteger(sGroupLimit))
+							bActiveFlag =false;
+				}//with oCampConBC_limit
+			}//if bActiveFlag
+
+			if(bActiveFlag){
+				if(sActiveCampaignList==&quot;&quot;)
+					sActiveCampaignList = sProcessCampId;
+				else
+					sActiveCampaignList=sActiveCampaignList + &quot;,&quot; + sProcessCampId;
+			}//if
+			else{
+				if(sInactiveCampaignList==&quot;&quot;)
+					sInactiveCampaignList = sProcessCampId;
+				else
+					sInactiveCampaignList=sInactiveCampaignList + &quot;,&quot; + sProcessCampId;
+			}//else
+		}//for
+
+		if(sInput_ActiveFlag==&quot;Y&quot;)
+			sInactiveCampaignList = &quot;&quot;;
+		if(sInput_ActiveFlag==&quot;N&quot;)
+			sActiveCampaignList = &quot;&quot;;
+	}//try
+	catch(e){
+		gsE =&quot;CheckCampaignActiveFlag &quot; + e.toString();
+		gsErrorCode = &quot;SBL-EXC-100&quot;;
+		gsStatusCode = &quot;1&quot;;
+		gsErrorDesc = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_NOT_MSG&quot;,&quot;SBL-EXC-100&quot;);
+	}//catch
+	finally{
+		Outputs.SetProperty(&quot;Inactive Campaign List&quot;,sInactiveCampaignList);
+		Outputs.SetProperty(&quot;Active Campaign List&quot;,sActiveCampaignList);
+		oCampConBC 			= null;
+		oCampConBC_limit 	= null;
+		oCampConBO 			= null;
+		oCampConBO_limit 	= null;
+	}//finally
+}"
+			   SEQUENCE="2"
+			   UPDATED="08/03/2012 20:03:02"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/31/2010 15:40:04"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CheckResponses"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CheckResponses(Inputs,Outputs)
+{
+//Created		11.3.2010
+//Created by	Martin Matias
+//Description	
+	try{
+//Get Inputs
+		var	sCampaignIds 			= Inputs.GetProperty(&quot;Campaign Ids List&quot;);
+		var	sInput_MSISDN 			= Inputs.GetProperty(&quot;MSISDN&quot;);
+		var	sInput_FromResponseDate = Inputs.GetProperty(&quot;From Date&quot;);
+		var	sInput_ToResponseDate 	= Inputs.GetProperty(&quot;To Date&quot;);
+		var	sInput_ResponseType 	= Inputs.GetProperty(&quot;Response Type&quot;);
+//Get objects
+		var oResponseBO				= TheApplication().GetBusObject(&quot;Response&quot;);
+		var oResponseBC				= oResponseBO.GetBusComp(&quot;Response&quot;);
+		var oCampConBO 				= TheApplication().GetBusObject(&quot;Campaign&quot;);
+		var oCampConBC 				= oCampConBO.GetBusComp(&quot;Campaign List Contact&quot;);
+//Set variables and constants
+		var sDefaultQuery 			= &quot;&quot;;
+		var sRespTypeQuery 			= &quot;&quot;;
+		var sProcessCampId			= &quot;&quot;;
+		var i;
+		var iIsRecord				= false;
+		var sCampaignList			= &quot;&quot;;
+		var CurrDate				= new Date();
+		var	aCampaignIds;
+		var sParCampId				= &quot;&quot;;
+		var sParRespId				= &quot;&quot;;
+		aCampaignIds = sCampaignIds.split(&quot;,&quot;);
+		Clib.strftime(CurrDate, &quot;%m/%d/%Y %H:%M:%S&quot;, Clib.localtime(Clib.time()));
+		sDefaultQuery = &quot; AND [Contact MSISDN]=&apos;&quot;+sInput_MSISDN+&quot;&apos;&quot;;
+	
+		switch(sInput_ResponseType)
+		{
+			case &quot;NoResponse&quot;:
+//exclude not matching campaigns from list
+				for(i=0;i&lt;aCampaignIds.length;i++)
+				{
+					sProcessCampId = aCampaignIds[i];
+					if(sProcessCampId != &quot;&quot;)//Scripting 15: Added null check
+					{
+						with(oCampConBC)
+						{
+							ClearToQuery();
+							SetViewMode(AllView);
+							ActivateField(&quot;Campaign Id&quot;);
+							SetSearchSpec(&quot;Id&quot;,&quot;&apos;&quot;+sProcessCampId+&quot;&apos;&quot;);
+							ExecuteQuery(ForwardOnly);
+								if(FirstRecord())
+									sParCampId = GetFieldValue(&quot;Campaign Id&quot;);
+						}//with oCampConBC
+					
+						with(oResponseBC)
+						{
+							ClearToQuery();
+							SetViewMode(AllView);
+							SetSearchExpr(&quot;[SRC_ID]=&apos;&quot;+sParCampId+&quot;&apos;&quot;+sDefaultQuery);
+							ExecuteQuery(ForwardOnly);
+							iIsRecord=FirstRecord();
+								if(!iIsRecord){
+									if(sCampaignList==&quot;&quot;)
+										sCampaignList = sProcessCampId;
+									else
+										sCampaignList=sCampaignList + &quot;,&quot; + sProcessCampId;
+								}//if
+						}//with sResponseBC
+					}
+				}//for
+			break;
+			case &quot;All&quot;:
+//exclude not matching campaigns from list
+				for(i=0;i&lt;aCampaignIds.length;i++)
+				{
+					sProcessCampId = aCampaignIds[i];
+					if(sProcessCampId != &quot;&quot;)
+					{
+						with(oResponseBC)
+						{
+							ClearToQuery();
+							SetViewMode(AllView);
+							SetSearchSpec(&quot;S_CAMP_CON_ID&quot;,&quot;&apos;&quot;+sProcessCampId+&quot;&apos;&quot;);
+							ExecuteQuery(ForwardOnly);
+							iIsRecord=FirstRecord();
+								if(iIsRecord){
+									if(sCampaignList==&quot;&quot;)
+										sCampaignList = sProcessCampId;
+									else
+										sCampaignList=sCampaignList + &quot;,&quot; + sProcessCampId;
+								}//if
+						}//with sResponseBC
+					}
+				}//for
+			break;
+			default:
+//Set search expression
+				sRespTypeQuery = &quot; AND [Response Type] = &apos;&quot;+sInput_ResponseType+&quot;&apos;&quot;;
+//exclude not matching campaigns from list
+				for(i=0;i&lt;aCampaignIds.length;i++)
+				{
+					sProcessCampId = aCampaignIds[i];
+					if(sProcessCampId != &quot;&quot;)
+					{
+						with(oCampConBC)
+						{
+							ClearToQuery();
+							SetViewMode(AllView);
+							ActivateField(&quot;Response Id&quot;);
+							SetSearchSpec(&quot;Id&quot;,&quot;&apos;&quot;+sProcessCampId+&quot;&apos;&quot;);
+							ExecuteQuery(ForwardOnly);
+								if(FirstRecord())
+									sParRespId = GetFieldValue(&quot;Response Id&quot;);
+						}//with oCampConBC
+						
+						with(oResponseBC)
+						{
+							ClearToQuery();
+							SetViewMode(AllView);
+							ActivateField(&quot;Created&quot;);
+							SetSortSpec(&quot;Created(DESCENDING)&quot;);
+							SetSearchExpr(&quot;[S_CAMP_CON_ID]=&apos;&quot;+sProcessCampId+&quot;&apos;&quot;+sRespTypeQuery);
+							ExecuteQuery(ForwardOnly);
+							iIsRecord=FirstRecord();
+								if(iIsRecord &amp;&amp; GetFieldValue(&quot;Id&quot;)==sParRespId){
+									if(sCampaignList==&quot;&quot;)
+										sCampaignList=sProcessCampId;
+									else
+										sCampaignList=sCampaignList + &quot;,&quot; + sProcessCampId;
+								}//if
+						}//with sResponseBC
+					}
+				}//for
+			break;
+		}//switch
+	}//try
+	catch(e)
+	{
+		gsE =&quot;CheckResponses &quot; + e.toString();
+		gsErrorCode = &quot;SBL-EXC-100&quot;;
+		gsStatusCode = &quot;1&quot;;
+		gsErrorDesc = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_NOT_MSG&quot;,&quot;SBL-EXC-100&quot;);
+	}//catch
+	finally
+	{
+		aCampaignIds=null;
+		aCampaignIds = sCampaignList.split(&quot;,&quot;);
+		Outputs.SetProperty(&quot;Campaign Ids Array&quot;,aCampaignIds);
+		Outputs.SetProperty(&quot;Campaign Ids List&quot;,sCampaignList);
+		oResponseBC	= null;
+		oResponseBO	= null;
+		oCampConBC = null;
+		oCampConBO = null;
+	}//finally
+}"
+			   SEQUENCE="3"
+			   UPDATED="06/30/2012 17:34:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/31/2010 15:40:04"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="FormatDate"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function FormatDate(oDate)
+{
+	return (oDate.getMonth() + 1) + &quot;/&quot; + oDate.getDate() + &quot;/&quot; + oDate.getFullYear() + &quot; &quot; + oDate.getHours() + &quot;:&quot; + oDate.getMinutes() + &quot;:&quot; + oDate.getSeconds();
+}"
+			   SEQUENCE="4"
+			   UPDATED="05/31/2010 15:40:04"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/31/2010 15:40:04"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SearchForCampList"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SearchForCampList(Inputs, Outputs){
+//Created		11.3.2010
+//Created by	Martin Matias
+//Description	
+//
+	try{
+		var oCampConBO 				: BusObject = TheApplication().GetBusObject(&quot;VF Campaign List Contact Performance&quot;);
+		var oCampConBC 				: BusComp = oCampConBO.GetBusComp(&quot;VF Campaign List Contact Performance&quot;);
+		var oCampConBC2				: BusComp = oCampConBO.GetBusComp(&quot;VF Campaign List Prospect Contact Performance&quot;); //added for CCB240
+		var bsInputs 				: PropertySet = TheApplication().NewPropertySet();
+		var bsOutputs 				: PropertySet = TheApplication().NewPropertySet();
+		var XML_Inputs				: PropertySet = TheApplication().NewPropertySet();
+		var psUTCToLocalInputs 		: PropertySet = TheApplication().NewPropertySet();
+		var psUTCToLocalOutputs 	: PropertySet = TheApplication().NewPropertySet();
+		var svcVFCustomServices 	: Service = TheApplication().GetService(&quot;VF Custom Services&quot;);
+		XML_Inputs					= Inputs.GetChild(0).GetChild(0).GetChild(0);	
+		var sInput_MSISDN 			= XML_Inputs.GetProperty(&quot;MSISDN&quot;);				// CAMP_CON related
+		//VFTK Junaid 20120519 - Added for Oracle Review 15
+		var inProp :PropertySet     = TheApplication().NewPropertySet();
+		var outProp :PropertySet    = TheApplication().NewPropertySet();
+		var BS :Service 			= TheApplication().GetService(&quot;VF TRK Utilities&quot;);
+		inProp.SetProperty(&quot;sInput_MSISDN&quot;, sInput_MSISDN); 
+		BS.InvokeMethod(&quot;Input Validation&quot;,inProp, outProp); 
+		//End
+		var sInput_FromResponseDate = XML_Inputs.GetProperty(&quot;FromResponseDate&quot;); // response related
+			var sInput_FromResponseDate = &apos;&apos;
+		var sInput_ToResponseDate 	= XML_Inputs.GetProperty(&quot;ToResponseDate&quot;);	// response related
+		var sInput_ResponseType 	= XML_Inputs.GetProperty(&quot;ResponseType&quot;);		// response related
+		var sInput_ActiveFlag 		= XML_Inputs.GetProperty(&quot;ActiveFlag&quot;);		// validation set related
+		var sInput_ChannelType 		= XML_Inputs.GetProperty(&quot;ChannelType&quot;);		// CAMP_CON related
+		var sInput_CampConId 		= XML_Inputs.GetProperty(&quot;CampConId&quot;);		// Campaign Contact Id
+		var sInput_CampSubType		= XML_Inputs.GetProperty(&quot;CampaignSubType&quot;);		// campaign related
+		
+		var bCampConRecord 			= false;
+		var sQuery_Default 			= &quot;&quot;;
+		var sQuery_Lauched			= &quot;&quot;; //jmarques
+		var sQuery_by_Channel 		= &quot;&quot;;
+		var sQuery_by_CampSubType	= &quot;&quot;;
+		var sQuery_by_FromDate		= &quot;&quot;;
+		var sQuery_by_ToDate		= &quot;&quot;;
+		var sCampaignId 			= &quot;&quot;;
+		var sFromResponseDate 		= &quot;&quot;;
+		var sToResponseDate 		= &quot;&quot;;
+		var sCampaignList 			= &quot;&quot;;
+		var aCampaignIds;
+		var oInput_ToResponseDate;
+		var oInput_FromResponseDate;
+		var iYearDelay = 0;
+		var iMonthCursor;
+		var iMonthDelay;
+
+//Format dates
+		if(sInput_FromResponseDate==&quot;&quot; || sInput_ResponseType==&quot;NoResponse&quot;){
+			Clib.strftime(sInput_FromResponseDate, &quot;%m/%d/%Y %H:%M:%S&quot;, Clib.localtime(Clib.time()));
+			oInput_FromResponseDate = new Date(sInput_FromResponseDate);
+//delay 1 year
+			sInput_FromResponseDate = (oInput_FromResponseDate.getMonth()+1) + &quot;/&quot; + oInput_FromResponseDate.getDate() + &quot;/&quot; + (oInput_FromResponseDate.getFullYear()-1) + &quot; &quot; + oInput_FromResponseDate.getHours() + &quot;:&quot; + oInput_FromResponseDate.getMinutes() + &quot;:&quot; + oInput_FromResponseDate.getSeconds();
+		}//if
+		else{
+			psUTCToLocalInputs.SetProperty(&quot;UTCTime&quot;, sInput_FromResponseDate);
+			svcVFCustomServices.InvokeMethod(&quot;VF_UTCToLocal&quot;, psUTCToLocalInputs, psUTCToLocalOutputs);
+			oInput_FromResponseDate = new Date(psUTCToLocalOutputs.GetProperty(&quot;LocalTime&quot;));
+			sInput_FromResponseDate = FormatDate(oInput_FromResponseDate);
+		}//else
+
+		if(sInput_ToResponseDate!=&quot;&quot;){
+			psUTCToLocalInputs.SetProperty(&quot;UTCTime&quot;, sInput_ToResponseDate);
+			svcVFCustomServices.InvokeMethod(&quot;VF_UTCToLocal&quot;, psUTCToLocalInputs, psUTCToLocalOutputs);
+			oInput_ToResponseDate = new Date(psUTCToLocalOutputs.GetProperty(&quot;LocalTime&quot;));
+			sInput_ToResponseDate = FormatDate(oInput_ToResponseDate);
+		}//if
+
+//Set Search Expression
+		// 27.5.2010, MZ: sQuery_Default = &quot;([Contact MSISDN]=&apos;&quot;+sInput_MSISDN+&quot;&apos; OR [Prospect MSISDN]=&apos;&quot;+sInput_MSISDN+&quot;&apos;)&quot;;
+		if (sInput_CampConId == &quot;&quot;)
+// ***canceled due to performance issue - join to prospects table was inactivated on custom BC, only contacts are considered***			sQuery_Default = &quot;([Contact MSISDN]=&apos;&quot;+sInput_MSISDN+&quot;&apos; OR [Prospect MSISDN]=&apos;&quot;+sInput_MSISDN+&quot;&apos;)&quot;;
+			sQuery_Default = &quot;[Contact MSISDN]=&apos;&quot;+sInput_MSISDN+&quot;&apos;&quot;;
+		else
+			sQuery_Default = &quot;[Id] = &apos;&quot; + sInput_CampConId + &quot;&apos;&quot;;
+		if ((sInput_ChannelType != &quot;&quot;) &amp;&amp; (sInput_ChannelType != &quot;All&quot;))
+			sQuery_by_Channel = &quot;AND [Treatment Type] = &apos;&quot;+sInput_ChannelType+&quot;&apos;&quot;;
+		if(sInput_CampSubType!=&quot;&quot;)//performance issue possible - if query is slow, better to split to separate query and exclude not matching ccampaigns
+			sQuery_by_CampSubType = &quot;AND [Campaign Sub Type] = &apos;&quot;+sInput_CampSubType+&quot;&apos;&quot;;
+	//	if(sInput_ResponseType!=&quot;NoResponse&quot; &amp;&amp; sInput_ResponseType!=&quot;&quot;)
+	//		sQuery_by_FromDate = &quot; AND [VF Response Date] &gt; &apos;&quot;+sInput_FromResponseDate+&quot;&apos;&quot;;
+		if(sInput_ResponseType==&quot;NoResponse&quot; || sInput_ResponseType==&quot;&quot;)
+			sQuery_by_FromDate = &quot; AND [Offer Start Date] &gt; &apos;&quot;+sInput_FromResponseDate+&quot;&apos;&quot;;
+	//	if(sInput_ToResponseDate!=&quot;&quot; &amp;&amp; sInput_ResponseType!=&quot;NoResponse&quot;)
+	//		sQuery_by_ToDate = &quot; AND [VF Response Date] &lt; &apos;&quot;+sInput_ToResponseDate+&quot;&apos;&quot;;
+
+		sQuery_Lauched = &quot; AND [Wave Status] =&apos;Launched&apos;&quot;;
+
+//get all campaigns for Contact MSISDN
+		with(oCampConBC){
+			ClearToQuery();
+			SetViewMode(AllView);
+			ActivateField(&quot;Campaign Id&quot;);
+			ActivateField(&quot;Treatment Type&quot;);
+			SetSearchExpr(sQuery_Default+sQuery_by_Channel+sQuery_by_CampSubType+sQuery_by_FromDate+sQuery_Lauched);
+			ExecuteQuery(ForwardOnly);
+			bCampConRecord = FirstRecord();
+				while(bCampConRecord){
+					sCampaignId = GetFieldValue(&quot;Id&quot;);
+//Get distinct Campaign List in comma separated string - changed to get campaign list contacts
+					if(sCampaignList==&quot;&quot;)
+					{
+						sCampaignList = sCampaignId;
+					}	
+					else
+					{
+							sCampaignList=sCampaignList + &quot;,&quot; + sCampaignId;
+					}
+					bCampConRecord = NextRecord();
+				}//while
+		}//with CampConBC
+		
+//Get All campaigns for Prospect MSISDN
+		with(oCampConBC2){
+			sQuery_Default = &quot;([Prospect MSISDN]=&apos;&quot;+sInput_MSISDN+&quot;&apos;)&quot;;
+			ClearToQuery();
+			SetViewMode(AllView);
+			ActivateField(&quot;Campaign Id&quot;);
+			ActivateField(&quot;Treatment Type&quot;);
+			SetSearchExpr(sQuery_Default+sQuery_by_Channel+sQuery_by_CampSubType+sQuery_by_FromDate+sQuery_Lauched);
+			ExecuteQuery(ForwardOnly);
+			bCampConRecord = FirstRecord();
+				while(bCampConRecord){
+					sCampaignId = GetFieldValue(&quot;Id&quot;);
+//Get distinct Campaign List in comma separated string - changed to get campaign list contacts
+					if(sCampaignList==&quot;&quot;)
+					{
+						sCampaignList = sCampaignId;
+					}	
+					else
+					{
+							sCampaignList=sCampaignList + &quot;,&quot; + sCampaignId;
+					}
+					bCampConRecord = NextRecord();
+				}//while
+		}//with CampConBC
+		
+		
+		
+		
+//split sCampaignList into array
+		aCampaignIds = sCampaignList.split(&quot;,&quot;);
+
+//validete campaigns by response criteria - not matched records will be throwed out from array
+//			bsInputs.SetProperty(&quot;Campaign Ids Array&quot;,aCampaignIds);
+			bsInputs.SetProperty(&quot;Campaign Ids List&quot;,sCampaignList);
+			bsInputs.SetProperty(&quot;MSISDN&quot;,sInput_MSISDN);
+			bsInputs.SetProperty(&quot;CampConId&quot;,sInput_CampConId);
+			bsInputs.SetProperty(&quot;Response Type&quot;,sInput_ResponseType);
+			bsInputs.SetProperty(&quot;Active Flag&quot;,sInput_ActiveFlag);
+			bsInputs.SetProperty(&quot;ChannelType&quot;,sInput_ChannelType);
+
+			if(sInput_ResponseType!=&quot;&quot;){
+				CheckResponses(bsInputs,bsOutputs);
+				sCampaignList = bsOutputs.GetProperty(&quot;Campaign Ids List&quot;);
+				bsInputs.SetProperty(&quot;Campaign Ids List&quot;,sCampaignList);
+			}//if
+//validete campaigns by active flag criteria - not matched records will be throwed out from array
+			CheckCampaignActiveFlag(bsInputs,bsOutputs);
+			
+//call EAI Siebel Adapter - Query and prepare message
+			bsInputs.SetProperty(&quot;Query Active Camp List&quot;,bsOutputs.GetProperty(&quot;Active Campaign List&quot;))
+			bsInputs.SetProperty(&quot;Query Inactive Camp List&quot;,bsOutputs.GetProperty(&quot;Inactive Campaign List&quot;));
+			SetCampaignListData(bsInputs,Outputs);
+	}//try
+	catch(e){
+		gsE =&quot;SearchForCampList &quot; + e.toString();
+		gsErrorCode = &quot;SBL-EXC-100&quot;;
+		gsStatusCode = &quot;1&quot;;
+		gsErrorDesc = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_NOT_MSG&quot;,&quot;SBL-EXC-100&quot;);
+	}//catch
+	finally{
+		oCampConBC 	= null;
+		oCampConBO 	= null;
+		bsInputs 	= null;
+		bsOutputs 	= null;
+		inProp 		= null;
+		outProp 	= null;
+		BS 			= null;
+		XML_Inputs 	= null;
+		psUTCToLocalInputs = null;
+		psUTCToLocalOutputs = null;
+		svcVFCustomServices = null;
+	}//finally 
+}"
+			   SEQUENCE="5"
+			   UPDATED="03/27/2017 17:54:16"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="05/31/2010 15:40:04"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	switch(MethodName)
+	{
+		case &quot;VF Get Campaign List Process&quot;:
+			SearchForCampList(Inputs, Outputs);			
+			return(CancelOperation);
+			break;
+	}//switch
+	
+	return (ContinueOperation);
+}"
+			   SEQUENCE="8"
+			   UPDATED="05/17/2012 12:09:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/31/2010 15:40:04"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SetCampaignData"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SetCampaignData(fpsNodeListOfCampaign, fsCampId, fsMSISDN, fsCampConId, fsChannelType, fsActiveFlag)
+{
+	try
+	{
+		var boCampaign : BusObject;
+		var bcCampaignListContact : BusComp;
+		var psNodeCampaign : PropertySet;
+		var sSearchExpr = &quot;&quot;;
+		var I1 = 0;
+		var oOfferStartDate;
+		var oOfferEndDate;
+		var sOfferStartDate;
+		var sOfferEndDate;
+		var sProductName = &quot;&quot;;
+		
+		// init	
+		var boProductInternal 	: BusObject = TheApplication().GetBusObject(&quot;Internal Product&quot;);
+		var bcProductInternal 	: BusComp = boProductInternal.GetBusComp(&quot;Internal Product - ISS Admin&quot;);	
+		boCampaign 				 = TheApplication().GetBusObject(&quot;Campaign&quot;);
+		bcCampaignListContact 	= boCampaign.GetBusComp(&quot;Campaign List Contact&quot;);
+		
+		//Begin - Scripting 15 - Input validation
+		var inProp 	:PropertySet = TheApplication().NewPropertySet();
+		var outProp	:PropertySet = TheApplication().NewPropertySet();
+		var BS		:Service	 = TheApplication().GetService(&quot;VF TRK Utilities&quot;);
+		inProp.SetProperty(&quot;fsCampId&quot;,fsCampId);
+		BS.InvokeMethod(&quot;Input Validation&quot;,inProp, outProp);
+		//End - Scripting 15
+		
+		// search for the Campaign List Contact
+		with (bcCampaignListContact)
+		{
+			ClearToQuery();
+			SetViewMode(AllView);
+			ActivateField(&quot;Campaign Sub Type&quot;);
+			ActivateField(&quot;Campaign Id&quot;);
+			ActivateField(&quot;Campaign Name&quot;);
+			ActivateField(&quot;Treatment Type&quot;);
+			ActivateField(&quot;Contact Activation Status&quot;);
+			ActivateField(&quot;Contact Date&quot;);
+			ActivateField(&quot;Status Last Update&quot;);
+			ActivateField(&quot;Treatment Inform Agent&quot;);
+			ActivateField(&quot;Contact MSISDN&quot;);
+			ActivateField(&quot;Prospect MSISDN&quot;);
+			ActivateField(&quot;Calculated MSISDN&quot;);
+			ActivateField(&quot;Offer End Date&quot;);
+			ActivateField(&quot;Offer Id&quot;);
+			ActivateField(&quot;Offer Name&quot;);
+			ActivateField(&quot;Offer Start Date&quot;);
+			ActivateField(&quot;Product Id&quot;);
+			ActivateField(&quot;VF Response Date&quot;);
+			ActivateField(&quot;VF Response Type&quot;);
+			ActivateField(&quot;Treatment Id&quot;);			
+			SetSearchSpec(&quot;Id&quot;, &quot;&apos;&quot;+fsCampId+&quot;&apos;&quot;);
+			SetSearchSpec(&quot;Control Group Flag&quot;,&quot;N&quot;);
+			ExecuteQuery(ForwardOnly);
+				if(FirstRecord())
+				{
+					if (GetFieldValue(&quot;Product Id&quot;)!=&quot;&quot;)
+					{
+						with(bcProductInternal)
+						{
+							ClearToQuery();
+							SetViewMode(AllView);
+							ActivateField(&quot;Name&quot;);
+							SetSearchSpec(&quot;Id&quot;,&quot;&apos;&quot;+bcCampaignListContact.GetFieldValue(&quot;Product Id&quot;)+&quot;&apos;&quot;);
+							ExecuteQuery(ForwardOnly);
+								if(FirstRecord())
+									sProductName = GetFieldValue(&quot;Name&quot;);
+						}//with bcProductInternal
+					}//if
+					
+					// create new node for the Campaign/Contact
+					psNodeCampaign = TheApplication().NewPropertySet(); // IC
+					psNodeCampaign.SetType(&quot;ListOfCampaigns&quot;);
+				
+					// set Campaign/Contact properties
+					psNodeCampaign.SetProperty(&quot;ActiveFlag&quot;, fsActiveFlag);
+					psNodeCampaign.SetProperty(&quot;CampConId&quot;, bcCampaignListContact.GetFieldValue(&quot;Id&quot;));
+					psNodeCampaign.SetProperty(&quot;CampSubType&quot;, bcCampaignListContact.GetFieldValue(&quot;Campaign Sub Type&quot;));
+					psNodeCampaign.SetProperty(&quot;CampaignId&quot;, bcCampaignListContact.GetFieldValue(&quot;Campaign Id&quot;));
+					psNodeCampaign.SetProperty(&quot;CampaignName&quot;, bcCampaignListContact.GetFieldValue(&quot;Campaign Name&quot;));
+					psNodeCampaign.SetProperty(&quot;ChannelType&quot;, bcCampaignListContact.GetFieldValue(&quot;Treatment Type&quot;));
+					psNodeCampaign.SetProperty(&quot;ContactActStat&quot;, bcCampaignListContact.GetFieldValue(&quot;Contact Activation Status&quot;));
+					psNodeCampaign.SetProperty(&quot;ContactDate&quot;, bcCampaignListContact.GetFieldValue(&quot;Contact Date&quot;));
+					psNodeCampaign.SetProperty(&quot;CotactActDate&quot;, bcCampaignListContact.GetFieldValue(&quot;Status Last Update&quot;));
+					psNodeCampaign.SetProperty(&quot;InformAgent&quot;, bcCampaignListContact.GetFieldValue(&quot;Treatment Inform Agent&quot;));
+					psNodeCampaign.SetProperty(&quot;MSISDN&quot;, bcCampaignListContact.GetFieldValue(&quot;Calculated MSISDN&quot;));
+					psNodeCampaign.SetProperty(&quot;OfferEndDate&quot;, bcCampaignListContact.GetFieldValue(&quot;Offer End Date&quot;) + &quot; 00:00:00&quot;);
+					psNodeCampaign.SetProperty(&quot;OfferId&quot;, bcCampaignListContact.GetFieldValue(&quot;Offer Id&quot;));
+					psNodeCampaign.SetProperty(&quot;OfferName&quot;, bcCampaignListContact.GetFieldValue(&quot;Offer Name&quot;));
+					psNodeCampaign.SetProperty(&quot;OfferStartDate&quot;, bcCampaignListContact.GetFieldValue(&quot;Offer Start Date&quot;) + &quot; 00:00:00&quot;);
+					psNodeCampaign.SetProperty(&quot;ProvisionedProduct&quot;, sProductName);
+					psNodeCampaign.SetProperty(&quot;ResponseDate&quot;, bcCampaignListContact.GetFieldValue(&quot;VF Response Date&quot;));
+					psNodeCampaign.SetProperty(&quot;ResponseType&quot;, bcCampaignListContact.GetFieldValue(&quot;VF Response Type&quot;));
+					psNodeCampaign.SetProperty(&quot;TreatmentId&quot;, bcCampaignListContact.GetFieldValue(&quot;Treatment Id&quot;));
+					
+					// add the Campaign/Contact node to the response
+					fpsNodeListOfCampaign.AddChild(psNodeCampaign);
+				} // end if
+		} // end with
+	} // end try	
+	finally
+	{
+		bcCampaignListContact = null;		
+		psNodeCampaign = null;
+		bcProductInternal = null;
+		boProductInternal = null;
+		boCampaign = null;
+		inProp 	= null;
+		outProp = null;
+		BS 		= null;
+	} // end finally
+}"
+			   SEQUENCE="6"
+			   UPDATED="06/30/2012 17:38:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/31/2010 15:40:04"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SetCampaignListData"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SetCampaignListData(Inputs, Outputs)
+{
+	try
+	{
+		var psNodeRoot : PropertySet;
+		var psNodeIO : PropertySet;
+		var psNodeVFGetCampaignList_output : PropertySet;
+		var psNodeListOfCampaign : PropertySet;				
+		var aActiveCampIDs = null;
+		var aInactiveCampIDs = null;
+		var sActiveCampIDs = &quot;&quot;;
+		var sInactiveCampIDs = &quot;&quot;;
+		var sMSISDN = &quot;&quot;;
+		var sCampConId = &quot;&quot;;
+		var sChannelType = &quot;&quot;;		
+		var I1 = 0;
+		
+		// init
+				
+		psNodeRoot = TheApplication().NewPropertySet(); // BS Output Argument
+		psNodeRoot.SetType(&quot;Output&quot;);
+		psNodeIO = TheApplication().NewPropertySet(); // IO
+		psNodeIO.SetType(&quot;ListOfVFGetCampaignList_output&quot;);
+		psNodeVFGetCampaignList_output = TheApplication().NewPropertySet(); // IC
+		psNodeVFGetCampaignList_output.SetType(&quot;VFGetCampaignList_output&quot;);
+		psNodeListOfCampaign = TheApplication().NewPropertySet(); // IC
+		psNodeListOfCampaign.SetType(&quot;ListOfListOfCampaigns&quot;);
+		
+		sActiveCampIDs 		= Inputs.GetProperty(&quot;Query Active Camp List&quot;);
+		sInactiveCampIDs 	= Inputs.GetProperty(&quot;Query Inactive Camp List&quot;);
+		sMSISDN 			= Inputs.GetProperty(&quot;MSISDN&quot;);
+		sCampConId 			= Inputs.GetProperty(&quot;CampConId&quot;);
+		sChannelType 		= Inputs.GetProperty(&quot;ChannelType&quot;);		
+		aActiveCampIDs 		= sActiveCampIDs.split(&quot;,&quot;);
+		aInactiveCampIDs 	= sInactiveCampIDs.split(&quot;,&quot;);
+
+
+		if ((sActiveCampIDs == &quot;&quot;) &amp;&amp; (sInactiveCampIDs == &quot;&quot;))
+		{
+			// set error status - no Campaign was found
+			gsStatusCode = &quot;1&quot;;
+			gsErrorCode = &quot;SBL-LIST-001&quot;;
+			gsErrorDesc = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;X_NOT_MSG&quot;, gsErrorCode);
+		}
+		else
+		{
+			// iterate through all active Campaign IDs
+			if (sActiveCampIDs != &quot;&quot;)
+			{
+				for (I1 = 0; I1 &lt; aActiveCampIDs.length; I1++)
+				{					
+					SetCampaignData(psNodeListOfCampaign, aActiveCampIDs[I1], sMSISDN, sCampConId, sChannelType, &quot;Y&quot;);
+				} // end for
+			} // end if
+			
+			// iterate through all inactive Campaign IDs
+			if (sInactiveCampIDs != &quot;&quot;)
+			{
+				for (I1 = 0; I1 &lt; aInactiveCampIDs.length; I1++)
+				{
+					SetCampaignData(psNodeListOfCampaign, aInactiveCampIDs[I1], sMSISDN, sCampConId, sChannelType, &quot;N&quot;);
+				} // end for
+			} // end if
+
+			// set error status
+			gsStatusCode = &quot;0&quot;;
+			gsErrorCode = &quot;&quot;;
+			gsErrorDesc = &quot;&quot;;
+		} // end if
+	} // end try
+	catch (e)
+	{
+		gsStatusCode = &quot;1&quot;;
+		gsErrorCode = &quot;SBL-EXC-100&quot;;	
+		gsErrorDesc = &quot;SetCampaignListData: &quot; + e.toString();
+	} // end catch
+	finally
+	{
+		// set error status in Output object
+		psNodeVFGetCampaignList_output.SetProperty(&quot;StatusCode&quot;, gsStatusCode);
+		if (gsStatusCode == &quot;1&quot;)
+		{
+			psNodeVFGetCampaignList_output.SetProperty(&quot;ErrorCode&quot;, gsErrorCode);
+			psNodeVFGetCampaignList_output.SetProperty(&quot;ErrorDesc&quot;, gsErrorDesc);
+		} // end if
+	
+		// create Output object
+		psNodeVFGetCampaignList_output.AddChild(psNodeListOfCampaign);
+		psNodeIO.AddChild(psNodeVFGetCampaignList_output);
+		psNodeRoot.AddChild(psNodeIO);
+		Outputs.AddChild(psNodeRoot);	
+
+		psNodeRoot = null;
+		psNodeIO = null;
+		psNodeVFGetCampaignList_output = null;
+		psNodeListOfCampaign = null;
+		aActiveCampIDs = null;
+		aInactiveCampIDs = null;
+	} // end finally
+}"
+			   SEQUENCE="7"
+			   UPDATED="06/30/2012 17:39:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/31/2010 15:40:04"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

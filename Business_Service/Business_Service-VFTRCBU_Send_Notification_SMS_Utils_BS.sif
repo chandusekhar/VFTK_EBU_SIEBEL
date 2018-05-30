@@ -1,0 +1,266 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="11/24/2016 17:14:00"
+   UPDATED_BY="SADMIN"
+   CREATED="11/24/2016 14:49:11"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="WA#39  DG - 3/7/14"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="TELCO Order Management"
+	   UI_FREEZE="N"
+	   UPDATED="04/18/2017 11:26:28"
+	   UPDATED_BY="JMARQUES"
+	   CREATED="08/14/2014 20:13:30"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="Y"
+		   CLASS="CSSService"
+		   EXTERNAL_USE="Y"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VFTRCBU Send Notification SMS Utils BS"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="04/18/2017 11:03:42"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   OBJECT_LOCKED_BY_NAME="JMARQUES"
+		   UPDATED="04/18/2017 11:26:28"
+		   UPDATED_BY="JMARQUES"
+		   CREATED="10/31/2014 13:35:13"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="AddListOfToken2NotificationMessage"
+			   UPDATED="10/31/2014 13:35:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/31/2014 13:35:13"
+			   CREATED_BY="SADMIN">
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="ExpandedTemplateMessage"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="10/31/2014 13:35:13"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/31/2014 13:35:13"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="Hierarchy"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="SiebelMessageRequest"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Hierarchy"
+				   TYPE="Input"
+				   UPDATED="10/31/2014 13:35:14"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/31/2014 13:35:14"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_LOCALE
+				   APPLICATION_CODE="STD"
+				   DISPLAY_NAME="AddListOfToken2NotificationMessage"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="10/31/2014 13:35:14"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/31/2014 13:35:14"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_LOCALE>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="BuildListOfTokenPropertySet_2"
+			   UPDATED="10/31/2014 13:35:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/31/2014 13:35:14"
+			   CREATED_BY="SADMIN">
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="ExpandedTemplateMessage"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="10/31/2014 13:35:14"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/31/2014 13:35:14"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="Hierarchy"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="SiebelMessageRequest"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Hierarchy"
+				   TYPE="Input / Output"
+				   UPDATED="10/31/2014 13:35:14"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/31/2014 13:35:14"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_LOCALE
+				   APPLICATION_CODE="STD"
+				   DISPLAY_NAME="BuildListOfTokenPropertySet_2"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="10/31/2014 13:35:14"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/31/2014 13:35:14"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_LOCALE>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="AddListOfToken2NotificationMessage"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function AddListOfToken2NotificationMessage(Inputs:PropertySet, Outputs:PropertySet)
+{
+
+/* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ *  Description:
+ *      This function does the following:
+ * 		1) Receives a string made up of pairs BC Fields name/BC Field instantiations value.
+ *        These pairs are separated by &quot;:::&quot;. Within each pair BC Field name/instantiation value, the 
+ *        BC Field name is enclosed in &quot;&lt;&lt;&quot; and &quot;&gt;&gt;&quot;. This is as defined in the communications templates, 
+ *        configured in Site Map &gt; Administration Communication &gt; All Templates.Each pair will be split, 
+ *        inserted in a property set with type &quot;Token&quot; and embedded in a property set named ListOfToken. 
+ *      2) The container property set ListOfToken is inserted at an appropriate location inside the input 
+ *        property set SiebelMessageRequest
+ * 
+ *  Arguments:
+ * 		In:      ExpandedTemplateMessage	(String)
+ *	    In/Out:  SiebelMessageRequest   	(Hierarchy) 
+ *
+ *  History:
+ *        Date         Who         Comments
+ *      ------------------------------------
+ *      2014-08-25    Celfocus    First version
+ *
+ *        Date         Who         Comments
+ *      ------------------------------------
+ *      2015-11-19    Celfocus    VFTRCBU-20712 (replace &quot;&lt;&lt;&quot; and &quot;&gt;&gt;&quot; to &quot;«&quot; and &quot;»&quot;)
+* **************************************************************************/
+
+  try
+  {
+
+    var sExpandedTemplateMessage:String = Inputs.GetProperty(&quot;ExpandedTemplateMessage&quot;);
+    var psToken : PropertySet;
+    var psTokensList : PropertySet = TheApplication().NewPropertySet();
+    var sChildNumber = 0;
+
+    psTokensList.SetType(&quot;ListOfToken&quot;);
+        
+    // The character &quot;:::&quot; is the separator between multiple pairs Siebel BC Field name/BC Field instantiation value 
+    var aFieldsArray = sExpandedTemplateMessage.split(&quot;:::&quot;); 
+    for (var i = 0; i &lt; aFieldsArray.length; i++)
+    {
+      // The character &quot;»&quot; is the separator between each pair Siebel BC Field name/BC Field instantiation value 
+      var aNameValueArray = aFieldsArray[i].split(&quot;»&quot;);       
+      psToken = TheApplication().NewPropertySet();
+      psToken.SetType(&quot;Token&quot;);
+
+	  // Remove the Siebel BC Field name left enclosure characters &quot;«&quot;     
+      aNameValueArray[0] = aNameValueArray[0].replace(/«/g,&quot;&quot;);
+	  // Remove new lines from instantiation. They usually (frequently) come from the template body
+      aNameValueArray[1] = aNameValueArray[1].replace(/[\n\r]/g,&quot;&quot;);
+      
+      psToken.SetProperty(&quot;Name&quot;, aNameValueArray[0]);
+      psToken.SetProperty(&quot;Value&quot;, aNameValueArray[1]);
+	  psTokensList.AddChild(psToken);
+    }
+
+
+	// Get the SiebelMessageRequest PropertySet
+	if (Inputs.GetChildCount() &gt; 0){
+		var psParent : PropertySet = Inputs.GetChild(0);	
+	// Get the PropertySet Template, parent of the existent and to-be-replaced property set ListOfToken
+	
+		if (psParent.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChildCount() &gt; 0)
+		{
+			var psTemplateL10 = psParent.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0);  // Template
+ 
+		    var j:PropertySet;  
+		    var sType;  
+			sChildNumber = psTemplateL10.GetChildCount();
+		    for (var k = 0; k &lt; sChildNumber; k++)
+			{
+		  	  j = psTemplateL10.GetChild(k);
+			  sType=j.GetType();
+			  if (sType==&quot;ListOfToken&quot;)
+			  {
+			    // Remove the existent and to-be-replaced property set ListOfToken
+				psTemplateL10.RemoveChild(k);  
+				// Add the new property set ListOfToken
+				psTemplateL10.AddChild(psTokensList);
+			  }  
+			}
+		
+		    Outputs.AddChild(psParent);
+		}
+	}
+ 
+  }
+  
+  finally
+  {
+    psToken = null;
+    psTokensList = null;
+  }
+
+}//! function BuildListOfTokenPropertySet"
+			   SEQUENCE="1"
+			   UPDATED="04/18/2017 11:26:28"
+			   UPDATED_BY="JMARQUES"
+			   CREATED="10/31/2014 13:35:14"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName:chars, Inputs:PropertySet, Outputs:PropertySet)
+{
+	switch(MethodName)
+	{	
+		case &quot;AddListOfToken2NotificationMessage&quot;:
+			AddListOfToken2NotificationMessage(Inputs,Outputs);
+			break;	
+		default: 
+			return (ContinueOperation);
+	}
+	return (CancelOperation);
+}"
+			   SEQUENCE="2"
+			   UPDATED="10/31/2014 13:35:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/31/2014 13:35:14"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

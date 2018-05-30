@@ -1,0 +1,326 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="R142-WP15: Created by Parasuram on 04/May/2011."
+	   INACTIVE="N"
+	   LOCKED="N"
+	   LOCKED_DATE="08/11/2017 16:04:06"
+	   NAME="VF WP 15 Billing Inquiry"
+	   UI_FREEZE="N"
+	   UPDATED="11/16/2017 14:26:54"
+	   UPDATED_BY="IBM_FIGENB"
+	   CREATED="05/06/2011 10:54:52"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   COMMENTS="VF Diva R1.4.2 20110504: Created new for WP15"
+		   EXTERNAL_USE="N"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VF Invoice Details VBC Service"
+		   OBJECT_LOCKED="N"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   UPDATED="11/28/2017 09:50:41"
+		   UPDATED_BY="IBM_FIGENB"
+		   CREATED="06/22/2011 13:17:20"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_LOCALE
+			   APPLICATION_CODE="STD"
+			   DISPLAY_NAME="VF Invoice Details VBC"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   TRANSLATE="Y"
+			   UPDATED="06/22/2011 13:17:20"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/22/2011 13:17:20"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_LOCALE>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Init"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Init(Inputs,Outputs)
+{
+	try
+	{
+		var svcParms = Inputs.GetProperty(&quot;Parameters&quot;);
+		var svcSource = Inputs.GetProperty(&quot;Remote Source&quot;);
+		var vbcParms = svcParms + &quot;,&quot; + svcSource;
+		var search = Inputs.GetProperty(&quot;Business Component Name&quot;);
+		var busObj : BusObject = TheApplication().GetBusObject(&quot;Account&quot;);
+		var busComp : BusComp = busObj.GetBusComp(&quot;SRF Field&quot;);
+		var record;
+		busComp.ClearToQuery();
+		//VFTK Junaid 20120519 - Scripting 15: Null check is not required since it&apos;s a vanilla behaviour that BC name will be passed always to VBC &apos;Init&apos; method
+		busComp.ActivateField(&quot;Name&quot;);
+		busComp.SetSearchSpec(&quot;Business Component&quot;,search);
+		busComp.ExecuteQuery(ForwardOnly);
+	
+		record = busComp.FirstRecord();
+	
+		while (record != &quot;0&quot;)
+		{
+			var fName = busComp.GetFieldValue(&quot;Name&quot;);
+			if (fName != &quot;SSA Primary Field&quot;)
+			{
+				Outputs.SetProperty(fName, &quot;&quot;);
+			}
+			record = busComp.NextRecord();
+		}
+		return (CancelOperation);
+	}
+	finally
+	{
+		busComp = null;
+		busObj	= null;
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="04/15/2013 19:56:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/22/2011 13:17:20"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Query"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Query(Inputs, Outputs)
+{
+//**TIMESTAMP	Format :MM/DD/YYYY HH:MM:SS	String	M
+//**CHANNEL	The channel will be send as “Siebel”	String	M
+//**TRANSACTION_ID	The following information will be provided in the following format. &lt;CHANNEL&gt; -&lt;SEQUENCE&gt;
+//**Example: SIEBEL -1488639751	String	M
+//**INVOICE_NUMBER	The invoice number of the invoice that the payments are queried for.	String	M
+try
+{
+	var strInvoiceNumber 		= &quot;&quot;;
+	var strInvSummaryView 		= &quot;&quot;;
+	var strBillingAccount 		= &quot;&quot;;
+	var strMSISDN 				= &quot;&quot;;
+	var strBC 					= &quot;&quot;;
+	var strInvoiceSubscriber 	= &quot;&quot;;
+	var sWfName 				= &quot;&quot;;
+	var SummaryDescUOM 			= &quot;&quot;;
+	var tempDescr 				= &quot;&quot;;
+	var PropName 				= &quot;&quot;;
+	var PropValue 				= &quot;&quot;;
+	var tempDescrVal 			= &quot;&quot;;
+	var sFromButton             = &quot;&quot;;  //VFTRADM-1972
+	var oApp 					= TheApplication();
+	var strFormat1 				: PropertySet = oApp.NewPropertySet();
+	var strFormat2 				: PropertySet = oApp.NewPropertySet();
+	var psInputs 				: PropertySet;
+	var psOutputs 				: PropertySet;
+	var svcWF					: Service;
+
+	strInvoiceNumber  = oApp.GetProfileAttr(&quot;ID_InvoiceNumber&quot;);
+	strInvSummaryView = oApp.GetProfileAttr(&quot;ID_InvSummaryView&quot;);
+	strBillingAccount = oApp.GetProfileAttr(&quot;ID_BillingAccount&quot;);
+	strMSISDN = oApp.GetProfileAttr(&quot;ID_MSISDN&quot;);
+	strInvoiceSubscriber = oApp.GetProfileAttr(&quot;VFTRCBUInvoiceSubscriber&quot;);
+	strBC = oApp.GetProfileAttr(&quot;ID_BC&quot;);
+	var sAppName = TheApplication().GetProfileAttr(&quot;ApplicationName&quot;); //VFTRADM-1972
+	
+	
+	sFromButton  = oApp.GetProfileAttr(&quot;VFTRADInquirySkip&quot;);   //VFTRADM-1972
+	
+	
+	if(strInvoiceNumber != &quot;&quot;)
+	{
+		psInputs 	= oApp.NewPropertySet();
+		psOutputs 	= oApp.NewPropertySet();
+		svcWF 		= oApp.GetService(&quot;Workflow Process Manager&quot;);
+		var i;
+		var j;
+		var strTranactionId = Clib.rand() + &quot;&quot; + new Date().getTime();
+		strTranactionId = &quot;Siebel-&quot; + strTranactionId.substring(0,10);
+		if(strInvSummaryView == &quot;Y&quot;)
+		{
+
+			sWfName = &quot;VF Invoice Summary WF&quot;;
+			oApp.SetProfileAttr(&quot;ID_InvSummaryView&quot;, &quot;&quot;);
+			
+			
+			if(strInvoiceSubscriber == &quot;Y&quot;)
+			{
+				if(strMSISDN == &quot;&quot; || strMSISDN == null)
+				{
+					psInputs.SetProperty(&quot;BILLING_ACCOUNT&quot;, strBillingAccount);
+				}
+				else
+				{
+					psInputs.SetProperty(&quot;MSISDN&quot;, strMSISDN);
+				}
+			}
+			else
+			{
+				//psInputs.SetProperty(&quot;BILLING_ACCOUNT&quot;, strBillingAccount);
+				if(strBC == &quot;VFTRCBU Invoice Details Summary Subscriber VBC&quot;)
+				{
+				return (CancelOperation);
+				}
+			}
+		}
+		else
+		{
+		
+			if (sFromButton != &quot;Y&quot; &amp;&amp; sAppName == &quot;Siebel eChannel&quot; )  //VFTRADM-1972
+				return (CancelOperation);
+				
+			sWfName = &quot;VF Invoice Details WF&quot;;
+		}
+		psInputs.SetProperty(&quot;ProcessName&quot;, sWfName);
+		psInputs.SetProperty(&quot;INVOICE_NUMBER&quot;, strInvoiceNumber);
+		psInputs.SetProperty(&quot;TRANSACTION_ID&quot;, strTranactionId);
+		svcWF.InvokeMethod(&quot;RunProcess&quot;, psInputs, psOutputs);
+		
+		
+		if(psOutputs.GetProperty(&quot;Status Code&quot;) == 0)
+		{
+			var cnt = psOutputs.GetChild(0).GetChild(0).GetChildCount();			
+			for ( i=0; i&lt; cnt ;i++)
+			{
+				//PROD00028389 ...Paolo Canaletti
+				strFormat1 = psOutputs.GetChild(0).GetChild(0).GetChild(i);
+				if(strInvSummaryView == &quot;Y&quot;)
+				{	
+					tempDescr = strFormat1.GetProperty(&quot;SUMMARY_DESC&quot;);
+				}else{
+					
+					tempDescr = strFormat1.GetProperty(&quot;DETAIL_DESCRIPTION&quot;);
+				}
+				if (tempDescr != &quot;&quot;) {
+					SummaryDescUOM = tempDescr.substring(tempDescr.lastIndexOf(&quot;(&quot;), tempDescr.lastIndexOf(&quot;)&quot;)+1); //get the UoM
+					PropName 	= strFormat1.GetFirstProperty();
+					while (PropName != &quot;&quot;) {
+						PropValue = strFormat1.GetProperty(PropName);
+						if (PropValue != &quot;&quot;) {
+							if(strInvSummaryView == &quot;Y&quot;) { 
+	//Invoice Summary
+								if (PropName != &quot;BILLING_ACCOUNT_NO&quot;
+								 &amp;&amp; PropName != &quot;INVOICE_NUMBER&quot;
+								 &amp;&amp; PropName != &quot;SUMMARY_DESC&quot;
+								 &amp;&amp; PropName != &quot;MSISDN&quot;         /*JIRA-24050:Added this line for the MSISDN not to be formatted*/
+								 &amp;&amp; PropName != &quot;SUMMARY_ID&quot;) {
+								 	tempDescrVal = ToNumber(PropValue);
+								 	if(tempDescrVal &gt; 0 &amp;&amp; tempDescrVal != &quot;NaN&quot;) {
+										switch(SummaryDescUOM) { // We can apply a different operation for each UoM
+											case &quot;(TL)&quot;:
+												Clib.sprintf(PropValue, &quot;%.2f&quot;, tempDescrVal / 100);
+											break;
+											case &quot;(min.)&quot;:
+											case &quot;(dak.)&quot;:
+											case &quot;(MB)&quot;:
+											case &quot;(Adet)&quot;:
+											case &quot;(unit)&quot;:
+											break;
+											default:
+												Clib.sprintf(PropValue, &quot;%.2f&quot;, tempDescrVal / 100);
+											break;
+										}
+									}
+								}
+							} else { 
+	//Invoice Details
+								if (PropName == &quot;AMOUNT_EXC_TAX&quot;
+								 || PropName == &quot;AMOUNT_INCL_TAX&quot;) {
+								 	tempDescrVal = ToNumber(PropValue);
+								 	if(tempDescrVal &gt; 0 &amp;&amp; tempDescrVal != &quot;NaN&quot;) {
+										Clib.sprintf(PropValue, &quot;%.2f&quot;, tempDescrVal / 100);
+									}
+								}
+							}
+						}
+						strFormat1.SetProperty(PropName, PropValue);
+						PropName = strFormat1.GetNextProperty();
+					}
+					strFormat2 = strFormat1.Copy();
+					
+					if(strFormat1.GetProperty(&quot;AMOUNT_EXC_TAX&quot;) != &quot;0&quot; || strFormat1.GetProperty(&quot;AMOUNT_INCL_TAX&quot;) != &quot;0&quot;)//DEF-23560 IBM_FIGENB
+						Outputs.AddChild(strFormat2);
+				}
+			}
+			//...PROD00028389
+		}
+	}
+}
+finally
+{
+	oApp.SetProfileAttr(&quot;ID_InvoiceNumber&quot;, &quot;&quot;);
+	TheApplication().SetProfileAttr(&quot;VFTRADInquirySkip&quot;,&quot;&quot;);   //VFTRADM-1972
+	psInputs = null;
+	psOutputs = null;
+	strFormat1 = null;
+	strFormat2 = null;
+	svcWF = null;
+	oApp = null;
+	strInvoiceSubscriber = null;
+}
+}"
+			   SEQUENCE="2"
+			   UPDATED="11/16/2017 14:26:54"
+			   UPDATED_BY="IBM_FIGENB"
+			   CREATED="06/22/2011 13:17:20"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+//*****************************************************
+//** Function: Service_PreInvokeMethod
+//** Purpose:  Added to invoke Invoice Details/Billed Summary Inquiry Web Service.
+//** Inputs :  MethodName, Inputs
+//** Outputs:  Outputs
+//** Returns:  None.wl
+//*****************************************************
+//** Revision History:
+//** 01 - 05/28/2011 - Parasuram Mainam
+//**    VFTK Project R142-WP15 Release - Created New.
+//*****************************************************
+try
+{
+	var oApp=TheApplication();
+	switch(MethodName)
+	{
+		case &quot;Init&quot;:
+			Init (Inputs, Outputs);
+			return(CancelOperation);
+		case &quot;Query&quot;:
+			Query (Inputs, Outputs);
+			return(CancelOperation);
+	}
+	return (ContinueOperation);
+}
+finally
+{
+	oApp=null;
+}
+}"
+			   SEQUENCE="3"
+			   UPDATED="07/01/2012 11:46:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/22/2011 13:17:20"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

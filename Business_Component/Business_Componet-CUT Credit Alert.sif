@@ -1,0 +1,3641 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="CUT Credit Alert"
+	   UI_FREEZE="N"
+	   UPDATED="01/02/2018 14:23:50"
+	   UPDATED_BY="IBM_TFERREIRA"
+	   CREATED="06/03/2003 01:15:35"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="Y"
+		   CLASS="CSSBCBase"
+		   COMMENTS="replace &quot;CUT Admin - Credit Alert Data&quot; EFang: IDC changed the sort spect (Priority, Created (DESCENDING)) as per ST Defect PROD00021946"
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MULTI_RECIPIENT_SELECT="N"
+		   NAME="CUT Credit Alert"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="01/02/2018 14:18:43"
+		   OWNER_DELETE="N"
+		   POPUP_VISIBILITY_AUTO_ALL="Y"
+		   POPUP_VISIBILITY_TYPE="Organization"
+		   SCRIPTED="Y"
+		   SORT_SPECIFICATION="Statement Date"
+		   TABLE="S_ALERT_CUT"
+		   TYPE="Non-Transient"
+		   OBJECT_LOCKED_BY_NAME="IBM_TFERREIRA"
+		   UPDATED="01/02/2018 14:23:50"
+		   UPDATED_BY="IBM_TFERREIRA"
+		   CREATED="06/04/2003 00:13:57"
+		   CREATED_BY="SADMIN">
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="(declarations)"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="var strBehavr = &quot;&quot;;
+var strGconsistency = &quot;&quot;;
+var strSetType = &quot;&quot;;
+var strSetArea = &quot;&quot;;
+var strSetSubArea = &quot;&quot;;"
+			   SEQUENCE="1"
+			   UPDATED="05/31/2012 13:45:22"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/26/2012 18:35:20"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreInvokeMethod (MethodName)
+{   
+ try {
+ 		var psInputs : PropertySet;
+		var psOutputs : PropertySet;
+		var oWF : Service;
+		var strBS : Service;
+		var obj_Lov_Bo : BusObject;
+		var obj_Lov_Bc : BusComp;
+		var strBC : BusComp;
+		var svcWF : Service;
+		var strdatedue = &quot;&quot;;
+		var ptpDate=&quot;&quot;;
+		
+ 		if(MethodName == &quot;TotalDebtBA&quot;)
+		{
+			if(this.FirstRecord())
+			{
+				var strBACode = this.GetFieldValue(&quot;Billing Account By Id&quot;);
+				var strCustCode = this.GetFieldValue(&quot;Account Number&quot;);
+				psInputs= TheApplication().NewPropertySet();
+				psOutputs=TheApplication().NewPropertySet();
+				oWF= TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+				psInputs.SetProperty(&quot;ProcessName&quot;, &quot;VF Retrieve Outstanding Balance WF&quot;);
+				psInputs.SetProperty(&quot;BILLING_ACCOUNT_CODE&quot;, strBACode);//Lilanath 20/04/2012 :C_MSP0001182: Replaced BILLING_ACCOUNT_NO with BILLING_ACCOUNT_CODE as the Property Name
+				psInputs.SetProperty(&quot;CUSTOMER_CODE&quot;, strCustCode);
+				psInputs.SetProperty(&quot;sOutBalVBCReq&quot;, &quot;N&quot;);	
+				oWF.InvokeMethod(&quot;RunProcess&quot;, psInputs, psOutputs);
+				if(psOutputs.GetProperty(&quot;Error Code&quot;)==0)
+				{
+					var sOutBalance = psOutputs.GetProperty(&quot;sOutBalance&quot;);
+					if(sOutBalance &gt; 0)
+						sOutBalance = sOutBalance/100;
+					this.SetFieldValue(&quot;VF Total Debt of the Billing Account&quot;,sOutBalance); //Oracle Review October 2011 - Client Request
+					this.WriteRecord();				
+				}
+			}
+			return (CancelOperation);			
+		}
+		
+		if(MethodName == &quot;PromiseToPay&quot;)
+		{								
+		
+			ptpDate = TheApplication().GetService(&quot;TELCO DateTime Utils&quot;).AddDays(&quot;&quot;,2,&quot;&quot;,&quot;&quot;,&quot;N&quot;);
+			
+			
+			var strErr = TheApplication().GetProfileAttr(&quot;PTPMsg&quot;);
+			var strSuccess = TheApplication().GetProfileAttr(&quot;SuccesPTP&quot;);
+			var strCheckPTP = &quot;&quot;;
+			var strActionType = &quot;&quot;;
+			if(strErr != &quot;&quot;)
+			{
+				TheApplication().SetProfileAttr(&quot;PTPMsg&quot;,&quot;&quot;);
+				TheApplication().RaiseErrorText(strErr);
+			}
+			else if(strSuccess != &quot;&quot;)
+			{
+				var strActionTypeLook		= this.GetFieldValue(&quot;VF Action Type&quot;);
+				obj_Lov_Bo = TheApplication().GetBusObject(&quot;List Of Values&quot;);
+		     	obj_Lov_Bc = obj_Lov_Bo.GetBusComp(&quot;List Of Values&quot;);
+				with(obj_Lov_Bc)
+				{
+					var strCallSrcExpr = &quot;[Type] = &apos;VF_CUT_FRAUD_TYPE&apos; AND [Value]=&apos;&quot;+strActionTypeLook+&quot;&apos; AND [Active]=&apos;Y&apos;&quot;;
+					SetViewMode(AllView);
+					ActivateField(&quot;Name&quot;);
+					ClearToQuery();					
+					SetSearchExpr(strCallSrcExpr);
+					ExecuteQuery(ForwardOnly);
+					if(FirstRecord())
+					{
+						strActionType = GetFieldValue(&quot;Name&quot;);
+					}
+				}
+				
+				//Start Retrofits - VFTRCBU-4990 - 06012015 - RCRISPIM
+				strBC = this.BusObject().GetBusComp (&quot;Activity Plan&quot;);
+				var isSkipped = &quot;N&quot;;    //Retrofit DEF-1455
+				with(strBC)
+				{
+					ClearToQuery ();
+					SetViewMode (AllView);
+					ActivateField(&quot;Alert Id&quot;);
+					
+					SetSearchSpec (&quot;Alert Id&quot;, this.GetFieldValue(&quot;Id&quot;));
+		 			ExecuteQuery(ForwardOnly);
+					var ItemBCExists     = FirstRecord();
+		            var strDunSkipStat = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_DUN_ACTION_STATUS&quot;,&quot;Skipped&quot;);   //Retrofit DEF-1455
+					while(ItemBCExists){
+			   	    	var dueDate = GetFieldValue(&quot;Due&quot;);
+			   	    	var strtoday = new Date();
+			   	    	var actStat = GetFieldValue(&quot;VF Dunning Action Status&quot;);   //Retrofit DEF-1455
+			   	    	var strdate = (strtoday.getMonth()+1) + &apos;/&apos; + strtoday.getDate() +&apos;/&apos; + strtoday.getFullYear()+&apos; &apos;+ strtoday.getHours()+&apos;:&apos;+strtoday.getMinutes()+&apos;:&apos;+strtoday.getSeconds();
+			   	    	
+			   	    	if (actStat == strDunSkipStat) { //Retrofit DEF-1455
+			   	    		isSkipped = &quot;Y&quot;;
+			   	    	}
+			   	    	
+			   	    	if (Date.parse(dueDate) &gt;= Date.parse(strdate) &amp;&amp; isSkipped != &quot;Y&quot;) //Retrofit DEF-1455
+						{
+							//Hata mesajı basılacak
+							var strMessageCategory 	= &quot;VF Message Category&quot;;
+							var strCode				= &quot;X_VALID_DUE_DATE&quot;;
+							var sMsg				= TheApplication().LookupMessage(strMessageCategory, strCode);
+							TheApplication().RaiseErrorText(sMsg);					
+							return (CancelOperation);
+							
+						}
+						else if (Date.parse (strdate) &gt; Date.parse (dueDate))
+						{
+							// the second date is greater
+						}
+							
+				   		ItemBCExists = NextRecord();
+			    	}
+					
+				}
+				//End Retrofits - VFTRCBU-4990 - 06012015 - RCRISPIM
+				
+			    strCheckPTP = fnCheckEnablePTP(isSkipped); //Retrofit DEF-1455
+				if(strCheckPTP == true) // VFTK Prateek 201111214 R2.1: Added for CR291
+				{
+					var strStatementNumber  = this.GetFieldValue(&quot;Statement Id&quot;);
+					var strAccountId		= this.GetFieldValue(&quot;Account By Id&quot;);
+					var strAccCode			= this.GetFieldValue(&quot;Account Number&quot;);
+					var strBillAccCode		= this.GetFieldValue(&quot;Billing Account By Id&quot;);
+					var strtoday = new Date();
+			    	var strdate = (strtoday.getMonth()+1) + &apos;/&apos; + strtoday.getDate() +&apos;/&apos; + strtoday.getFullYear()+&apos; &apos;+ strtoday.getHours()+&apos;:&apos;+strtoday.getMinutes()+&apos;:&apos;+strtoday.getSeconds();
+					if ((TheApplication().GetProfileAttr(&quot;strDunStat&quot;)==&quot;2&quot;)||(TheApplication().GetProfileAttr(&quot;strDunStat&quot;)==&quot;3&quot;))
+						strdatedue = (strtoday.getMonth()+1) + &apos;/&apos; + (strtoday.getDate()+2) +&apos;/&apos; + strtoday.getFullYear()+&apos; &apos;+ strtoday.getHours()+&apos;:&apos;+strtoday.getMinutes()+&apos;:&apos;+strtoday.getSeconds();
+					else
+					    strdatedue = (strtoday.getMonth()+1) + &apos;/&apos; + (strtoday.getDate()+1) +&apos;/&apos; + strtoday.getFullYear()+&apos; &apos;+ strtoday.getHours()+&apos;:&apos;+strtoday.getMinutes()+&apos;:&apos;+strtoday.getSeconds();
+					var strlogin = TheApplication().LoginName();
+					var strCategory = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_TODO_TYPE&quot;,&quot;ContactLog&quot;);
+					//strBC = this.BusObject().GetBusComp (&quot;Activity Plan&quot;); 	//Retrofits - VFTRCBU-4990 - 06012015 - RCRISPIM
+					var strDunSkipStatus = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_DUN_ACTION_STATUS&quot;,&quot;Skipped&quot;);
+					var strActId = &quot;&quot;;
+					var strTimeStamp = Clib.time();
+					
+					fnSetTypeArea(); // VFTK Prateek 20111215 R2.1: Added for CR-291
+					
+					if(this.GetUserProperty(&quot;PromiseToPayFromWS&quot;) != &quot;Y&quot;)
+					{
+						with(strBC)
+						{
+							NewRecord (NewAfter);
+							SetFieldValue(&quot;VF Dunning Action Status&quot;,strDunSkipStatus);//Oracle Review October 2011 - Client Request
+							SetFieldValue(&quot;VF User Id&quot;,strlogin);//Oracle Review October 2011 - Client Request
+							SetFieldValue(&quot;Dunning Step&quot;,TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_DUNNING_STEP&quot;,&quot;PromiseCreated&quot;));//Oracle Review October 2011 - Client Request
+							SetFieldValue(&quot;Type&quot;, strActionType);//Oracle Review October 2011 - Client Request
+							SetFieldValue(&quot;SR Type&quot;, strSetType); //Oracle Review October 2011 - Client Request
+							strSetType = &quot;&quot;;
+							SetFieldValue(&quot;Area&quot;, strSetArea);//Oracle Review October 2011 - Client Request
+							strSetArea = &quot;&quot;;
+							SetFieldValue(&quot;Category&quot;, strSetSubArea); //Oracle Review October 2011 - Client Request
+							strSetSubArea = &quot;&quot;;
+							SetFieldValue(&quot;VF Scheduled Date&quot;,strdate);//Oracle Review October 2011 - Client Request
+							SetFieldValue(&quot;VF Invoice No&quot;,strStatementNumber);//Oracle Review October 2011 - Client Request
+							SetFieldValue(&quot;Due&quot;,strdatedue);//Oracle Review October 2011 - Client Request
+							SetFieldValue(&quot;VF Category&quot;,strCategory);//Oracle Review October 2011 - Client Request
+							SetFieldValue(&quot;Planned&quot;,strdate);//Oracle Review October 2011 - Client Request
+							WriteRecord();
+							strActId = GetFieldValue(&quot;Id&quot;);
+						} // GEN_REQ_568: IDC-AS :21/11/2012: Commented out as in TD, &quot;VF_GP_STA_Drop_2_CRM_CROSS_TD_v2.0.docx&quot;	
+						
+						
+						
+						psInputs  = TheApplication().NewPropertySet ();
+						psOutputs = TheApplication().NewPropertySet ();
+						svcWF		= TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+						TheApplication().SetProfileAttr(&quot;strDate&quot;,&quot;&quot;);
+						var sDunStat = TheApplication().GetProfileAttr(&quot;strDunStat&quot;);
+						TheApplication().SetProfileAttr(&quot;strDunStat&quot;,&quot;&quot;);
+						psInputs.SetProperty(&quot;ProcessName&quot;, &quot;VF Promise To Pay Request&quot;);
+						psInputs.SetProperty(&quot;BILLING_ACCOUNT_CODE&quot;, strBillAccCode);
+						psInputs.SetProperty(&quot;CHANNEL&quot;, &quot;SIEBEL&quot;);
+			      		psInputs.SetProperty(&quot;DUNNING_STATUS&quot;, sDunStat);
+			      		psInputs.SetProperty(&quot;TRANSACTION_ID&quot;,&quot;SIEBEL-&quot;+strTimeStamp);
+			      		psInputs.SetProperty(&quot;PROMISE_TO_PAY_DATE&quot;,ptpDate)
+			        	svcWF.InvokeMethod(&quot;RunProcess&quot;, psInputs, psOutputs);
+			        	TheApplication().SetProfileAttr(&quot;PTPErr&quot;,psOutputs.GetProperty(&quot;Error Message&quot;));
+					
+						if(psOutputs.GetProperty(&quot;Error Message&quot;) == &quot;&quot;)
+						{
+							//VFTRCBU-34285 -- START
+							this.SetFieldValue(&quot;VFTRCBU PTP Next Date&quot;, ptpDate);
+							this.WriteRecord();
+						/*
+							with (sBA) {
+						
+								var strCallSrcExpr = &quot;[Account Code] = &apos;&quot; + TheApplication().GetProfileAttr(&quot;AccountCode&quot;)+&quot;&apos;&quot;;
+								SetViewMode(AllView);
+								ActivateField(&quot;VFTRCBU PTP Next Date&quot;);
+								ClearToQuery();					
+								SetSearchExpr(strCallSrcExpr);
+								ExecuteQuery(ForwardOnly);
+								if(FirstRecord())
+								{
+									SetFieldValue(&quot;VFTRCBU PTP Next Date&quot;, ptpDate);
+									WriteRecord();	
+								}
+							}	
+							*/
+							//VFTRCBU-34285 -- END
+						
+						
+							SetStatus(strActId);
+							psInputs  = TheApplication().NewPropertySet ();
+							psOutputs = TheApplication().NewPropertySet ();
+							strBS	  = TheApplication().GetService(&quot;VF Dunning BS&quot;);
+							psInputs.SetProperty (&quot;DunningStep&quot;, TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_DUNNING_STEP&quot;,&quot;PromiseCreated&quot;));
+							psInputs.SetProperty (&quot;Account Id&quot;, strAccountId);
+							psInputs.SetProperty (&quot;BA Code&quot;, strBillAccCode);
+							psInputs.SetProperty (&quot;AccountCode&quot;,strAccCode);
+							psInputs.SetProperty (&quot;InpActionType&quot;,strActionType);
+							//CR172b
+							if(sDunStat == &quot;3&quot;)
+							{
+								psInputs.SetProperty (&quot;InpOrderReason&quot;,&quot;Resume from Frozen due to PTP&quot;);
+							}	
+								//end of CR172b
+							else
+							{					
+								psInputs.SetProperty (&quot;InpOrderReason&quot;,&quot;Resume from Limited with PTP&quot;);
+							}	
+							psInputs.SetProperty (&quot;InpCategory&quot;,strCategory);
+							//TLG-6472
+							//strBS.InvokeMethod (&quot;CreateOrder&quot;, psInputs, psOutputs);
+						}
+						// GEN_REQ_568: IDC-AS :21/11/2012: Commented out as in TD, &quot;VF_GP_STA_Drop_2_CRM_CROSS_TD_v2.0.docx&quot;
+					}
+				}//if(strCheck..
+			}
+			return (CancelOperation);	
+		}
+		return (ContinueOperation);
+	}//try..
+	catch(e)
+	{
+		TheApplication().SetProfileAttr(&quot;PTPMsg&quot;,&quot;&quot;);
+		TheApplication().SetProfileAttr(&quot;strDunStat&quot;,&quot;&quot;);
+		throw(e);
+	}
+	finally
+	{
+		strBS = null;
+		psInputs = null;
+		svcWF = null;
+		strBC = null;
+		strtoday = null;
+		psOutputs = null;
+		obj_Lov_Bc = null;
+		obj_Lov_Bo = null;
+		oWF = null;
+	}
+}"
+			   SEQUENCE="5"
+			   UPDATED="11/10/2016 00:36:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/26/2012 18:35:20"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreSetFieldValue"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreSetFieldValue (FieldName, FieldValue)
+{
+	
+		if (FieldName==&quot;Amount Owed&quot;)
+			{	
+		
+			var insertAlert = 	TheApplication().GetProfileAttr(&quot;InsertAlert&quot;);	
+			
+			if(insertAlert != &quot;Y&quot;){
+			
+			var strAmountOwed = ToNumber(FieldValue);
+			if(strAmountOwed &lt;= 0){
+			
+			var strerror = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;NM_011&quot;);
+			TheApplication().RaiseErrorText(strerror);
+			
+			}
+			}	
+				
+			}
+	
+	return (ContinueOperation);
+	
+	
+}"
+			   SEQUENCE="6"
+			   UPDATED="01/29/2014 13:31:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/29/2014 13:31:38"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_SetFieldValue"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_SetFieldValue (FieldName)
+{
+	try
+	{
+		var sBillAccntId 		= &quot;&quot;;
+		var sBillAccntCurrCode	= &quot;&quot;;
+		var boBillingAccount : BusObject;
+		var bcBillingAccount : BusComp;
+		
+		if(FieldName == &quot;Amount Owed&quot;)
+		{
+		
+	
+		
+			boBillingAccount = TheApplication().GetBusObject(&quot;PLW Bill Inquiry&quot;);
+			bcBillingAccount = boBillingAccount.GetBusComp(&quot;Billing Account&quot;);
+			sBillAccntId = this.GetFieldValue(&quot;Billing Account By Id&quot;);
+			with(bcBillingAccount){			
+				ClearToQuery();
+				ActivateField (&quot;Currency Code&quot;);
+				SetViewMode(AllView);
+				SetSearchSpec(&quot;Id&quot;,sBillAccntId);
+				ExecuteQuery(ForwardOnly);
+				if(FirstRecord())
+				{
+					sBillAccntCurrCode = GetFieldValue(&quot;Currency Code&quot;);				
+					if (sBillAccntCurrCode != &quot;&quot;)
+					{
+						this.SetFieldValue(&quot;Currency Code&quot;,sBillAccntCurrCode);//Oracle Review October 2011 - SetFieldValue in this BC
+					}
+				}
+			}
+		}
+	}	
+	finally
+	{
+		bcBillingAccount    = null;
+		boBillingAccount    = null;
+	}	
+}"
+			   SEQUENCE="7"
+			   UPDATED="01/29/2014 13:31:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/19/2012 14:22:08"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SetStatus"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SetStatus(strActId)
+{
+//Oracle Review October 2011 - Call from PreInvokeMethod
+	try
+	{
+		var strBC : BusComp = this.BusObject().GetBusComp (&quot;Activity Plan&quot;);
+		with(strBC)
+		{
+			SetViewMode(AllView);
+			ClearToQuery();
+			ActivateField(&quot;VF Dunning Action Status&quot;);
+			SetSearchSpec(&quot;Id&quot;, strActId);
+			ExecuteQuery(ForwardOnly);
+			if(FirstRecord())
+				SetFieldValue(&quot;VF Dunning Action Status&quot;,TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_DUN_ACTION_STATUS&quot;,&quot;Completed&quot;));
+				WriteRecord();
+		}
+	}
+	finally
+	{
+		strBC = null;
+	}
+}"
+			   SEQUENCE="4"
+			   UPDATED="09/03/2012 17:41:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/26/2012 18:35:20"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="fnCheckEnablePTP"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function fnCheckEnablePTP(isSkipped)
+{
+//Oracle Review October 2011 - Call from PreCanInvoke
+	try
+	{
+		var oBOAccount : BusObject;
+		var oBCBillingAccount : BusComp;
+		var oBCAssetMgmtHeader : BusComp;
+		var strCheckConsistency1 = &quot;&quot;;
+		var strCheckConsistency2 = &quot;&quot;;
+		var strCheckBehaviour = &quot;&quot;;
+		var strCurrentBACode = &quot;&quot;;
+		var strOldInvoiceCreditLevel = &quot;&quot;;
+		var strCheckActiveCounter = 0;
+		var strCheckLFCounter = 0;
+		var strCheckUCounter = 0;
+		var strSearchExpr = &quot;&quot;;
+		//ACAMBAS - 2014-08-29: VFTRCBU WA#27 ------------
+		var strCustomerType = &quot;&quot;;
+		var strBusinessType = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;ACCOUNT_TYPE&quot;, &quot;101&quot;);
+		var strConsumerType = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;ACCOUNT_TYPE&quot;, &quot;102&quot;);
+		//------------------------------------------------
+		
+		
+		strCurrentBACode = this.GetFieldValue(&quot;Billing Account By Id&quot;);
+		strOldInvoiceCreditLevel = this.GetFieldValue(&quot;Statement Id&quot;);
+		
+		oBOAccount = TheApplication().GetBusObject(&quot;Account&quot;);
+		oBCBillingAccount = oBOAccount.GetBusComp(&quot;Billing Account&quot;);
+		oBCAssetMgmtHeader = oBOAccount.GetBusComp(&quot;HP Submit - Asset Mgmt - Asset - Header&quot;);
+		var strInactive	= TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;IMPL_PHASE&quot;, &quot;Inactive&quot;);//VFTK Venkata 20120406:PROD00030252
+	
+			with(oBCAssetMgmtHeader)
+			{
+				ActivateField(&quot;VF Dunning Status&quot;);
+				ActivateField(&quot;Owner Account Type&quot;);	//ACAMBAS - 2014-08-29: VFTRCBU WA#27
+				ClearToQuery();
+				SetViewMode(AllView);
+				strSearchExpr = &quot;([Product Part Number] = &apos;1000&apos; OR [Product Part Number] = &apos;18400&apos; OR [Product Part Number] = &apos;70000&apos;) AND [Status] &lt;&gt; &apos;&quot;+strInactive+&quot;&apos; AND [Billing Account Code] = &apos;&quot;+strCurrentBACode+&quot;&apos; AND [Root Asset Id] = [Id]&quot;; //VFTK Venkata Added Status &lt;&gt; Inactive in Search 20120406:PROD00030252
+				SetSearchExpr(strSearchExpr);
+				ExecuteQuery(ForwardOnly);
+				
+				var iRecordExists = FirstRecord();
+				while(iRecordExists)
+				{
+
+					strCheckConsistency1 = GetFieldValue(&quot;VF Dunning Status&quot;);
+					strCustomerType = GetFieldValue(&quot;Owner Account Type&quot;);	//ACAMBAS - 2014-08-29: VFTRCBU WA#27
+									 
+					if(strCheckConsistency2 == &quot;&quot;)
+					{
+						strCheckConsistency2 = strCheckConsistency1;
+						iRecordExists = NextRecord();
+					}
+					
+					else if(strCheckConsistency2 != &quot;&quot; &amp;&amp; strCheckConsistency2 == strCheckConsistency1)
+					{
+						strCheckConsistency2 = strCheckConsistency1;
+						iRecordExists = NextRecord();
+					}						
+						
+					else 
+					{
+						strCheckBehaviour = &quot;INCOHERENT&quot;;
+						strBehavr = strCheckBehaviour;
+						break;
+					}
+				}//End of while
+					if(strCheckConsistency2 == strCheckConsistency1)
+					{
+						strCheckBehaviour = &quot;COHERENT&quot;;
+						strBehavr = strCheckBehaviour;
+					}
+					
+			}// with(oBCAsset..
+
+			
+		if(strCheckBehaviour ==&quot;COHERENT&quot;)
+		{	
+			//ACAMBAS - 2014-08-29: VFTRCBU WA#27 ------------
+			
+			//(Customer Status = &quot;Business&quot; AND Dunning Status in (&apos;Limited-Dunning&apos;, &apos;Frozen-Dunning&apos;, 
+			//&apos;Limited-Credit for Broken PTP&apos;, &apos;Frozen-Credit due to BrokenPTP&apos;)) OR (Customer Status = &quot;Consumer&quot; AND 
+			//Dunning Status in (&apos;Limited-Dunning&apos;, &apos;Limited-Credit for Broken PTP&apos;))
+		
+			//if(strCheckConsistency1 == &quot;204&quot; || strCheckConsistency1 == &quot;209&quot; || strCheckConsistency1 == &quot;1503&quot;  || strCheckConsistency1 == &quot;222&quot;)
+		
+			if((strCustomerType == strBusinessType &amp;&amp; (strCheckConsistency1 == &quot;204&quot; || strCheckConsistency1 == &quot;209&quot; || strCheckConsistency1 == &quot;1503&quot;  || strCheckConsistency1 == &quot;222&quot;)) || 
+			   (strCustomerType == strConsumerType &amp;&amp; (strCheckConsistency1 == &quot;204&quot; || strCheckConsistency1 == &quot;1503&quot;)))
+			{
+			//------------------------------------------------
+			
+				strGconsistency = strCheckConsistency1;
+				
+					with(oBCBillingAccount)
+					{
+						ActivateField(&quot;VF PTP Counter Active&quot;);
+						ActivateField(&quot;VF PTP Old Invoice Associated&quot;);
+						ActivateField(&quot;VF PTP Counter LF&quot;);	
+						ClearToQuery();										
+						SetViewMode(AllView);
+						SetSearchSpec(&quot;Account Code&quot; , strCurrentBACode);
+						ExecuteQuery(ForwardOnly);
+					
+						if(FirstRecord())
+						{
+							strCheckActiveCounter = 1;
+							SetFieldValue(&quot;VF PTP Counter Active&quot;, strCheckActiveCounter);
+							WriteRecord();
+							var strOldInvoiceAssoc = &quot;&quot;;
+							strOldInvoiceAssoc = GetFieldValue(&quot;VF PTP Old Invoice Associated&quot;);
+							strCheckLFCounter = GetFieldValue(&quot;VF PTP Counter LF&quot;);	
+							
+							if(strOldInvoiceAssoc == strOldInvoiceCreditLevel)
+							{
+									if(strCheckLFCounter &gt;= 3)
+									{
+										TheApplication().SetProfileAttr(&quot;CustomErrorCode&quot;,&quot;SBL-20002&quot;);
+										TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;VF Message Category&quot;, &quot;R21_181&quot;));
+										return(CancelOperation);
+									}
+									else
+									{
+									
+										if (isSkipped != &quot;Y&quot;) //Retrofit DEF-1455
+								 		{
+											strCheckLFCounter++;
+											SetFieldValue(&quot;VF PTP Counter LF&quot;, strCheckLFCounter);
+											WriteRecord();
+											return true; //IBM_TFERREIRA - 20180102 DEF-21456
+										}
+									}
+							}
+							else
+							{
+								strOldInvoiceAssoc = strOldInvoiceCreditLevel;
+								strCheckLFCounter = 0; //VFTK Diva 20120403: Resetting the value to 0 - PROD00030251.
+								strCheckLFCounter++;
+								SetFieldValue(&quot;VF PTP Old Invoice Associated&quot;, strOldInvoiceAssoc);							 	
+								SetFieldValue(&quot;VF PTP Counter LF&quot;, strCheckLFCounter);
+								WriteRecord();
+								return true;
+							}								 	
+						}//if(First..	
+					}//with(oBC..
+			}//if(strCheckConsi..
+			else {// User is blocked if it is coherent and not all the line are in Limited Dunning status in dunning status
+				
+				TheApplication().SetProfileAttr(&quot;CustomErrorCode&quot;,&quot;SBL-20003&quot;);
+				var error = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;R21_215&quot;); 
+				TheApplication().RaiseErrorText(error);
+			}
+				
+		}//if(strCheckBehaviour..
+		else if (strCheckBehaviour == &quot;INCOHERENT&quot;)
+		{
+				with(oBCBillingAccount)
+					{
+						ActivateField(&quot;VF PTP Counter U&quot;);
+						ActivateField(&quot;VF PTP Old Invoice Associated&quot;);	
+						ClearToQuery();				
+						SetViewMode(AllView);
+						SetSearchSpec(&quot;Account Code&quot; , strCurrentBACode);
+						ExecuteQuery(ForwardOnly);
+						if(FirstRecord())
+						{
+							strOldInvoiceAssoc = &quot;&quot;;
+							strOldInvoiceAssoc = GetFieldValue(&quot;VF PTP Old Invoice Associated&quot;);
+							strCheckUCounter = GetFieldValue(&quot;VF PTP Counter U&quot;);
+							if(strOldInvoiceAssoc == strOldInvoiceCreditLevel)
+							{
+								if(strCheckUCounter &gt;= 1)
+								{
+									TheApplication().SetProfileAttr(&quot;CustomErrorCode&quot;,&quot;SBL-20001&quot;);
+									TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;VF Message Category&quot;, &quot;R21_180&quot;));
+									return(CancelOperation);
+								}
+								else
+								{
+							 		strCheckUCounter++;
+									SetFieldValue(&quot;VF PTP Counter U&quot;, strCheckUCounter);
+									WriteRecord();
+									return true;
+								}
+							}//if(strOld..
+							else
+							{
+								strOldInvoiceAssoc = strOldInvoiceCreditLevel;
+								strCheckUCounter++;
+								SetFieldValue(&quot;VF PTP Old Invoice Associated&quot;, strOldInvoiceAssoc);						 		
+								SetFieldValue(&quot;VF PTP Counter U&quot;, strCheckUCounter);
+								WriteRecord();
+								return true;
+							}								 	
+					}//if(First..	
+				}//with(oBC..
+		}//else if(strCheckBehaviour..
+	}//END of try
+	finally
+	{
+		oBCAssetMgmtHeader = null;
+		oBCBillingAccount = null;
+		oBOAccount = null;	
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="01/02/2018 14:23:50"
+			   UPDATED_BY="IBM_TFERREIRA"
+			   CREATED="04/26/2012 18:35:20"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="fnSetTypeArea"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function fnSetTypeArea()
+{
+ try
+ {
+ 	var strBehaviour = strBehavr;
+ 	var strConstncy = strGconsistency;
+	var boParameters : BusObject = TheApplication ().GetBusObject (&quot;ACS NI Parameter&quot;);
+	var bcParameters : BusComp = boParameters.GetBusComp (&quot;ACS NI Parameter&quot;);
+	var strParamSearchExpr = &quot;&quot;;
+
+ 	
+ 		if(strBehaviour == &quot;INCOHERENT&quot;)
+ 		{
+ 			strParamSearchExpr = &quot;[Function] = &apos;PTPActivity&apos; AND [Name] = &apos;INCOHERENT&apos; AND [Value] = &apos;INCOHERENT&apos;&quot;;
+ 		}//if
+ 	
+ 		else if (strBehaviour = &quot;COHERENT&quot;)
+ 		{
+ 			switch(strConstncy)
+ 			{	
+ 				case &quot;000&quot;:
+				strParamSearchExpr = &quot;[Function] = &apos;PTPActivity&apos; AND [Name] = &apos;000&apos; AND [Value] = &apos;000&apos;&quot;;
+ 				break;
+ 		
+ 				case &quot;204&quot;:
+ 				strParamSearchExpr = &quot;[Function] = &apos;PTPActivity&apos; AND [Name] = &apos;204&apos; AND [Value] = &apos;204&apos;&quot;;
+ 				break;
+ 		
+ 				case &quot;209&quot;:
+ 				strParamSearchExpr = &quot;[Function] = &apos;PTPActivity&apos; AND [Name] = &apos;209&apos; AND [Value] = &apos;209&apos;&quot;;
+				break; 	
+				
+				case &quot;222&quot;:
+ 				strParamSearchExpr = &quot;[Function] = &apos;PTPActivity&apos; AND [Name] = &apos;222&apos; AND [Value] = &apos;222&apos;&quot;;
+				break; 	
+				
+				case &quot;1503&quot;:
+ 				strParamSearchExpr = &quot;[Function] = &apos;PTPActivity&apos; AND [Name] = &apos;1503&apos; AND [Value] = &apos;1503&apos;&quot;;
+				break; 		 		
+ 		
+ 				default:
+ 				break;
+ 			}//Switch			
+ 		}
+ 	
+ 			with(bcParameters)
+ 			{
+				ClearToQuery();
+				SetViewMode(AllView);
+				SetSearchExpr(strParamSearchExpr);
+				ExecuteQuery(ForwardOnly); //DIVA 20120315 - Oracle review comments: ForwardOnly
+		
+					if(FirstRecord())
+					{
+						strSetType = GetFieldValue(&quot;Condition1&quot;);
+						strSetArea = GetFieldValue(&quot;Condition2&quot;);
+						strSetSubArea = GetFieldValue(&quot;Condition3&quot;);
+  					}
+  			}//with
+ }
+ finally
+ {
+ 	bcParameters = null;
+ 	boParameters = null;
+ }
+}"
+			   SEQUENCE="3"
+			   UPDATED="06/21/2012 20:44:49"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/26/2012 18:35:20"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_VIEW_MODE
+			   INACTIVE="N"
+			   NAME="Personal"
+			   OWNER_TYPE="Person"
+			   VISIBILITY_FIELD="Owned By Id"
+			   UPDATED="06/04/2003 04:44:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 04:44:47"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_VIEW_MODE>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="All Mode Sort"
+			   VALUE="FALSE"
+			   UPDATED="08/04/2003 18:30:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/04/2003 18:25:01"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Billing Profile Name:ProfileAttributeName1"
+			   VALUE="Service Account Id"
+			   UPDATED="06/03/2014 22:34:49"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 22:34:49"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Billing Profile Name:ProfileAttributeName2"
+			   VALUE="Service Account"
+			   UPDATED="06/03/2014 22:34:49"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 22:34:49"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Billing Profile Name:ProfileAttributeValue1"
+			   VALUE="Account By Id"
+			   UPDATED="06/03/2014 22:34:49"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 22:34:49"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Billing Profile Name:ProfileAttributeValue2"
+			   VALUE="Account"
+			   UPDATED="06/03/2014 22:34:49"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 22:34:49"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="DrilldownObject0"
+			   VALUE="Billing Profile Name"
+			   UPDATED="06/03/2014 22:34:49"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 22:34:49"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: Billing Profile Name"
+			   VALUE="Billing Profile Read Only Flag"
+			   UPDATED="06/03/2014 22:34:49"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 22:34:49"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Named Method 1"
+			   VALUE="&quot;CreditAlertUpdateWebService&quot;, &quot;INVOKESVC&quot;, &quot;CUT Credit Alert&quot;, &quot;Workflow Process Manager&quot;, &quot;RunProcess&quot;, &quot;&apos;ProcessName&apos;&quot;, &quot;CMU Credit Alert Status Sync&quot;, &quot;&apos;PrimaryRowId&apos;&quot;, &quot;[Id]&quot;"
+			   UPDATED="06/04/2014 18:30:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/01/2009 03:00:06"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="No Change Field"
+			   VALUE="Amount Owed"
+			   UPDATED="08/10/2010 16:41:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 04:55:23"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="No Change Field 1"
+			   VALUE="Statement Date"
+			   UPDATED="08/04/2010 14:03:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 04:55:23"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="No Change Field 2"
+			   VALUE="Statement Number"
+			   UPDATED="08/10/2010 16:41:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 04:55:23"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="No Change Field 3"
+			   VALUE="Account"
+			   UPDATED="08/10/2010 16:41:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 04:55:23"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="On Field Update Set"
+			   VALUE="&quot;VF Priority&quot;, &quot;Owner&quot;, &quot;IIf([Owner] IS NULL, LoginName(), [Owner])&quot;"
+			   UPDATED="08/10/2010 16:41:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 04:55:23"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="On Field Update Set 1"
+			   VALUE="&quot;Account&quot;, &quot;Owner&quot;, &quot;IIf([Owner] IS NULL, LoginName(), [Owner])&quot;"
+			   UPDATED="06/04/2003 04:55:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 04:55:23"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="On Field Update Set 2"
+			   VALUE="&quot;Amount Owed&quot;, &quot;Owner&quot;, &quot;IIf([Owner] IS NULL, LoginName(), [Owner])&quot;"
+			   UPDATED="06/04/2003 04:55:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 04:55:23"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="On Field Update Set 3"
+			   VALUE="&quot;Comments&quot;, &quot;Owner&quot;, &quot;IIf([Owner] IS NULL, LoginName(), [Owner])&quot;"
+			   UPDATED="06/04/2003 04:55:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 04:55:23"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="On Field Update Set 4"
+			   VALUE="&quot;VF Action Type&quot;, &quot;Owner&quot;, &quot;IIf([Owner] IS NULL, LoginName(), [Owner])&quot;"
+			   UPDATED="08/10/2010 16:41:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 04:55:24"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="On Field Update Set 5"
+			   VALUE="&quot;Statement Number&quot;, &quot;Owner&quot;, &quot;IIf([Owner] IS NULL, LoginName(), [Owner])&quot;"
+			   UPDATED="06/04/2003 04:55:24"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 04:55:24"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="On Field Update Set 6"
+			   VALUE="&quot;Statement Date&quot;, &quot;Owner&quot;, &quot;IIf([Owner] IS NULL, LoginName(), [Owner])&quot;"
+			   UPDATED="06/04/2003 04:55:24"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 04:55:24"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="On Field Update Set 7"
+			   VALUE="&quot;Contract Name&quot;, &quot;Owner&quot;, &quot;IIf([Owner] IS NULL, LoginName(), [Owner])&quot;"
+			   UPDATED="06/04/2003 04:55:24"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 04:55:24"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="On Field Update Set 8"
+			   VALUE="&quot;VF Status&quot;, &quot;Owner&quot;, &quot;IIf([Owner] IS NULL, LoginName(), [Owner])&quot;"
+			   UPDATED="08/10/2010 16:41:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 04:55:24"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="On Field Update Set 9"
+			   VALUE="&quot;Contact Last Name&quot;, &quot;Owner&quot;, &quot;IIf([Owner] IS NULL, LoginName(), [Owner])&quot;"
+			   UPDATED="06/04/2003 04:55:24"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 04:55:24"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="State Model"
+			   VALUE="Y"
+			   UPDATED="06/03/2014 22:34:49"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 22:34:49"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   COMMENTS="TK 2006/7/3: Required flag set to N for Credit management enhancements"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_ORG_EXT"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Account"
+			   NO_COPY="N"
+			   PICKLIST="Com PickList Invoice Account"
+			   PRE_DEFAULT_VALUE="Parent: &quot;Account.Name&quot;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/01/2009 02:33:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:04"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Account"
+				   INACTIVE="N"
+				   NAME="Account"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="06/04/2003 03:34:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:34:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Account By Id"
+				   INACTIVE="N"
+				   NAME="Account By Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="06/04/2003 03:34:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:34:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Account Main Phone Number"
+				   INACTIVE="N"
+				   NAME="Account Main Phone Number"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Main Phone Number"
+				   UPDATED="06/04/2003 03:34:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:34:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Account Number"
+				   INACTIVE="N"
+				   NAME="Account Number"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Account Number"
+				   UPDATED="06/04/2003 03:34:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:34:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Contact Business Phone"
+				   INACTIVE="N"
+				   NAME="Contact Business Phone"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Primary Contact Work Phone"
+				   UPDATED="06/04/2003 03:34:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:34:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Contact By Id"
+				   INACTIVE="N"
+				   NAME="Contact By Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Primary Contact Id"
+				   UPDATED="06/04/2003 03:34:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:34:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Contact First Name"
+				   INACTIVE="N"
+				   NAME="Contact First Name"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Primary Contact First Name"
+				   UPDATED="06/04/2003 03:34:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:34:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Contact Last Name"
+				   INACTIVE="N"
+				   NAME="Contact Last Name"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Primary Contact Last Name"
+				   UPDATED="06/04/2003 03:34:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:34:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="LC(4/23/02): Inactive because &apos;Contact Pick List Field&apos; is duplicate of &apos;Contact Last Name&apos; field and &apos;Contact Pick List Field&apos; has been inactivated in the BC."
+				   FIELD="Contact Pick List Field"
+				   INACTIVE="Y"
+				   NAME="Contact Pick List Field"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Primary Contact Last Name"
+				   UPDATED="06/04/2003 03:34:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:34:59"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Contract Id"
+				   INACTIVE="N"
+				   NAME="Contract Id"
+				   NO_CLEAR="N"
+				   UPDATED="06/04/2003 03:35:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:00"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Contract Name"
+				   INACTIVE="N"
+				   NAME="Contract Name"
+				   NO_CLEAR="N"
+				   UPDATED="06/04/2003 03:35:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:00"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="Q. Lu: Inactive because already has account constrain in Field &quot;Statement Number&quot;s Pick Map."
+				   FIELD="Statement Date"
+				   INACTIVE="Y"
+				   NAME="Statement Date"
+				   NO_CLEAR="N"
+				   UPDATED="06/04/2003 03:35:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:00"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   COMMENTS="Q. Lu: Inactive because already has account constrain in Field &quot;Statement Number&quot;s Pick Map."
+				   FIELD="Statement Number"
+				   INACTIVE="Y"
+				   NAME="Statement Number"
+				   NO_CLEAR="N"
+				   UPDATED="06/04/2003 03:35:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:00"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="ACCNT_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Account By Id"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Parent: &quot;Account.Id&quot;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:04"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:04"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="INTEGRATION_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_ORG_EXT"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Account Integration Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:04"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:04"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="MAIN_PH_NUM"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_ORG_EXT"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Account Main Phone Number"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="40"
+			   TYPE="DTYPE_PHONE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:04"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:04"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="OU_NUM"
+			   COMMENTS="TK 2006/7/3: Required flag set to Y for Credit management enhancements (Picklist moved)"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_ORG_EXT"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Account Number"
+			   NO_COPY="N"
+			   PICKLIST="Com PickList Invoice Account"
+			   PRE_DEFAULT_VALUE="Parent: &quot;Account.Account Number&quot;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/03/2012 18:45:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:04"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Account"
+				   INACTIVE="N"
+				   NAME="Account"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="02/01/2009 02:53:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 02:53:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Account By Id"
+				   INACTIVE="N"
+				   NAME="Account By Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="02/01/2009 02:53:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 02:53:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Account Main Phone Number"
+				   INACTIVE="N"
+				   NAME="Account Main Phone Number"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Main Phone Number"
+				   UPDATED="02/01/2009 02:53:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 02:53:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Account Number"
+				   INACTIVE="N"
+				   NAME="Account Number"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Account Number"
+				   UPDATED="02/01/2009 02:53:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 02:53:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Contact Business Phone"
+				   INACTIVE="N"
+				   NAME="Contact Business Phone"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Primary Contact Work Phone"
+				   UPDATED="02/01/2009 02:53:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 02:53:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Contact By Id"
+				   INACTIVE="N"
+				   NAME="Contact By Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Primary Contact Id"
+				   UPDATED="02/01/2009 02:53:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 02:53:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Contact First Name"
+				   INACTIVE="N"
+				   NAME="Contact First Name"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Primary Contact First Name"
+				   UPDATED="02/01/2009 02:53:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 02:53:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Contact Last Name"
+				   INACTIVE="N"
+				   NAME="Contact Last Name"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Primary Contact Last Name"
+				   UPDATED="02/01/2009 02:53:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 02:53:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Contract Id"
+				   INACTIVE="N"
+				   NAME="Contract Id"
+				   NO_CLEAR="N"
+				   UPDATED="02/01/2009 02:53:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 02:53:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Contract Name"
+				   INACTIVE="N"
+				   NAME="Contract Name"
+				   NO_CLEAR="N"
+				   UPDATED="02/01/2009 02:53:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 02:53:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Statement Date"
+				   INACTIVE="Y"
+				   NAME="Statement Date"
+				   NO_CLEAR="N"
+				   UPDATED="02/01/2009 02:53:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 02:53:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Statement Number"
+				   INACTIVE="Y"
+				   NAME="Statement Number"
+				   NO_CLEAR="N"
+				   UPDATED="02/01/2009 02:53:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 02:53:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SPEC_TYPE_CD"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Action Type"
+			   NO_COPY="N"
+			   PICKLIST="CUT Alert Sub-Type Pick List"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/10/2010 16:42:27"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:04"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Action Type"
+				   INACTIVE="N"
+				   NAME="Action Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="06/04/2003 03:35:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:00"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Alert Type Code"
+				   INACTIVE="N"
+				   NAME="Alert Type Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Parent"
+				   UPDATED="06/04/2003 03:35:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:00"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="EXT_ALERT_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Alert Number"
+			   NO_COPY="Y"
+			   PRE_DEFAULT_VALUE="Field: &apos;Id&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/18/2014 22:16:43"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:04"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="TYPE_CD"
+			   COMMENTS="VF MC R1.3 20100806 - Made Required for Dunning."
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Alert Type Code"
+			   NO_COPY="N"
+			   PICKLIST="CUT Alert Type Pick List"
+			   PRE_DEFAULT_VALUE="Expr: &quot;LookupValue(&quot;&quot;CUT_FRAUD_TYPE&quot;&quot;, &quot;&quot;Credit&quot;&quot;)&quot;"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/10/2010 16:41:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:04"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Alert Type Code"
+				   INACTIVE="N"
+				   NAME="Alert Type Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   SEQUENCE="1"
+				   UPDATED="08/10/2010 16:41:57"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/10/2010 16:41:57"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;CUT_FRAUD_TYPE&quot;, &quot;Credit&quot;)"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Alert Type Code Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:05"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:05"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="AMT_DUE"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Amount Owed"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_CURRENCY"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/29/2014 13:31:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:05"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SO_INST_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Asset By Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:05"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:05"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="ASSET_NUM"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="Service Point"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Asset Number"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:05"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:05"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_BILLACC_ID"
+			   COMMENTS="TK 2006/7/3: Column added for Credit management enhancerments"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Billing Account By Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/03/2012 18:45:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/01/2009 02:33:35"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Billing Account Code"
+				   INACTIVE="N"
+				   NAME="Billing Account Code"
+				   NO_CLEAR="N"
+				   UPDATED="02/01/2009 02:53:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 02:53:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   COMMENTS="VFTK Mamta R2.1 20110912 - Made Force Active True for WP07."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="Billing Account"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Billing Account Code"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/18/2012 16:35:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/01/2009 02:33:35"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Account By Id"
+				   INACTIVE="N"
+				   NAME="Account By Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Parent Account Id"
+				   UPDATED="02/01/2009 02:53:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 02:53:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Billing Account By Id"
+				   INACTIVE="N"
+				   NAME="Billing Account By Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="02/01/2009 02:53:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 02:53:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Billing Account Code"
+				   INACTIVE="N"
+				   NAME="Billing Account Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Account Code"
+				   UPDATED="02/01/2009 02:53:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 02:53:39"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="BILL_PROFILE_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Billing Profile Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/17/2014 01:30:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 22:26:21"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="Billing Profile"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Billing Profile Name"
+			   NO_COPY="N"
+			   PICKLIST="CMU Billing Profile PickList"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/17/2014 01:30:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 22:26:21"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Account By Id"
+				   INACTIVE="N"
+				   NAME="Account By Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Account Id"
+				   UPDATED="06/03/2014 22:33:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2014 22:33:11"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Billing Profile Id"
+				   INACTIVE="N"
+				   NAME="Billing Profile Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="06/03/2014 22:33:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2014 22:33:11"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Billing Profile Name"
+				   INACTIVE="N"
+				   NAME="Billing Profile Name"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="06/03/2014 22:33:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2014 22:33:11"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF ([Integration Id] IS NOT NULL, &apos;Y&apos;, &apos;N&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Billing Profile Read Only Flag"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/03/2014 22:26:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 22:26:21"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="COMMENTS"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Comments"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="255"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:05"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:05"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="WORK_PH_NUM"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_CONTACT"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Contact Business Phone"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="25"
+			   TYPE="DTYPE_PHONE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:05"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:05"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="CONTACT_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Contact By Id"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Parent: &apos;Account.Primary Contact Id&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/04/2003 21:57:43"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:05"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FST_NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_CONTACT"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Contact First Name"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Parent: &apos;Account.Primary Contact First Name&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:05"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:05"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="LAST_NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_CONTACT"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Contact Last Name"
+			   NO_COPY="N"
+			   PICKLIST="Com PickList Account Contact"
+			   PRE_DEFAULT_VALUE="Parent: &apos;Account.Primary Contact Last Name&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 03:35:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:05"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Account By Id"
+				   INACTIVE="N"
+				   NAME="Account By Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Account Id"
+				   UPDATED="06/04/2003 03:35:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:00"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Contact Business Phone"
+				   INACTIVE="N"
+				   NAME="Contact Business Phone"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Work Phone #"
+				   UPDATED="06/04/2003 03:35:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:00"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Contact By Id"
+				   INACTIVE="N"
+				   NAME="Contact By Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Contact Id"
+				   UPDATED="06/04/2003 03:35:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:00"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Contact First Name"
+				   INACTIVE="N"
+				   NAME="Contact First Name"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="First Name"
+				   UPDATED="06/04/2003 03:35:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Contact Last Name"
+				   INACTIVE="N"
+				   NAME="Contact Last Name"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Last Name"
+				   UPDATED="06/04/2003 03:35:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="CONTRACT_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Contract Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:05"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:05"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_DOC_AGREE"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Contract Name"
+			   NO_COPY="N"
+			   PICKLIST="CUT PickList Agreement Account"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 03:35:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:06"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Account By Id"
+				   INACTIVE="N"
+				   NAME="Account By Id"
+				   NO_CLEAR="Y"
+				   PICK_LIST_FIELD="Account Id"
+				   UPDATED="06/04/2003 03:35:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Contract Id"
+				   INACTIVE="N"
+				   NAME="Contract Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="06/04/2003 03:35:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Contract Name"
+				   INACTIVE="N"
+				   NAME="Contract Name"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="06/04/2003 03:35:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="LOGIN"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="Created By Id"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Created By Login"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="System: Creator"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:06"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:06"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="CURCY_CD"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Currency Code"
+			   NO_COPY="N"
+			   PICKLIST="PickList Currency"
+			   PRE_DEFAULT_VALUE="System: Currency"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 03:35:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:06"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Currency Code"
+				   INACTIVE="N"
+				   NAME="Currency Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Currency Code"
+				   UPDATED="06/04/2003 03:35:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="CLOSE_DT"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Date Closed"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:06"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:06"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="LAST_UPD"
+			   COMMENTS="GS: 2/20/03 Shouldn&apos;t specifically map system fields in a BC. Don&apos;t think field is used."
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Date Modified"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:06"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:06"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="OPEN_DT"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Date Open"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="System: Today"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:06"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:06"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="ACTION_DUE_DT"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Due Date"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="System: Today"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   VALIDATION="[Due Date] &gt;= Today()"
+			   UPDATED="06/03/2014 22:26:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 22:26:21"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="EXCH_DT"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Exchange Date"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="System: Timestamp"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:06"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:06"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf (GetProfileAttr(&quot;ApplicationName&quot;) = &quot;Siebel eChannel for CME&quot;, &quot;Y&quot;,&quot;N&quot;)"
+			   COMMENTS="Drive dynamic drilldown for Account Name in Account List Applet (SCW)"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="GoToeChannel"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:06"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:06"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="INTEGRATION_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Integration Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/18/2014 22:16:43"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:06"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF ([Integration Id] IS NOT NULL, &apos;TRUE&apos;, &apos;FALSE&apos;)"
+			   COMMENTS="If Integration Id NULL then its created by CSR else by external application."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Integration Id Not NULL"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/03/2014 22:26:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 22:26:21"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/01/2009 02:33:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/01/2009 02:33:35"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_ORDER_REASON_CODE"
+			   COMMENTS="Added Picklist For Dunning."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Order Reason Code"
+			   NO_COPY="N"
+			   PICKLIST="VF Credit Order Reason Code Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/10/2010 16:42:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/02/2010 15:46:37"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Order Reason Code"
+				   INACTIVE="N"
+				   NAME="Order Reason Code"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   SEQUENCE="1"
+				   UPDATED="08/10/2010 16:41:57"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/10/2010 16:41:57"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="BILL_DT"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="Bill Statement"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Original Due Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   VALIDATION="[Original Due Date] &lt;= Today()"
+			   UPDATED="06/04/2003 00:45:06"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:06"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="OWNER_OU_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Owned By Group Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:07"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="OWNER_EMP_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Owned By Id"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Field: &apos;Created By&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:07"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="LOGIN"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="Owned By Id"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Owner"
+			   NO_COPY="N"
+			   PICKLIST="PickList SR Owner"
+			   PRE_DEFAULT_VALUE="System: Creator"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="255"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 03:35:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:07"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Owned By Id"
+				   INACTIVE="N"
+				   NAME="Owned By Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="06/04/2003 03:35:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Owner"
+				   INACTIVE="N"
+				   NAME="Owner"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Login Name"
+				   UPDATED="06/04/2003 03:35:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   COMMENTS="PR: changed Text length as per CR#12-HIBSTQ"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_ORG_INT"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Owner Group"
+			   NO_COPY="N"
+			   PICKLIST="PickList SR Owner Group"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/14/2003 21:36:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:07"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Owned By Group Id"
+				   INACTIVE="N"
+				   NAME="Owned By Group Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="06/04/2003 03:35:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Owner Group"
+				   INACTIVE="N"
+				   NAME="Owner Group"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="06/04/2003 03:35:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:01"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="PRIORITY_CD"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Priority"
+			   NO_COPY="N"
+			   PICKLIST="CUT CA Priority Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/10/2010 16:41:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:07"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Priority"
+				   INACTIVE="N"
+				   NAME="Priority"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="06/04/2003 03:35:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:02"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SOURCE_CD"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Source"
+			   NO_COPY="N"
+			   PICKLIST="CUT CA Source Picklist"
+			   PRE_DEFAULT_VALUE="Expr: &quot;LookupValue(&quot;&quot;CUT_CA_SOURCE&quot;&quot;, &quot;&quot;Customer&quot;&quot;)&quot;"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/10/2010 16:41:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:07"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Source"
+				   INACTIVE="N"
+				   NAME="Source"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="06/04/2003 03:35:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:02"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="STATEMENT_DT"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Statement Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:07"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="STATEMENT_NUM"
+			   COMMENTS="12-CCCUNZ: Removed reqiured. Statement Number has Required"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Statement Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:07"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="INVC_NUM"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_INVOICE"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Statement Number"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/08/2010 08:47:04"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:07"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Account By Id"
+				   INACTIVE="N"
+				   NAME="Account By Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Account Id"
+				   UPDATED="06/04/2003 03:35:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:02"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Amount Owed"
+				   INACTIVE="N"
+				   NAME="Amount Owed"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Total Amount"
+				   UPDATED="06/04/2003 03:35:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:02"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Statement Date"
+				   INACTIVE="N"
+				   NAME="Statement Date"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Invoice Date"
+				   UPDATED="06/04/2003 03:35:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:02"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Statement Id"
+				   INACTIVE="N"
+				   NAME="Statement Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="06/04/2003 03:35:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:02"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Statement Number"
+				   INACTIVE="N"
+				   NAME="Statement Number"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Invoice Number"
+				   UPDATED="06/04/2003 03:35:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:02"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="STATUS_CD"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Status"
+			   NO_COPY="N"
+			   PICKLIST="CUT CA Status Picklist"
+			   PRE_DEFAULT_VALUE="Expr: &quot;LookupValue(&quot;&quot;CUT_CA_STATUS&quot;&quot;, &quot;&quot;Open&quot;&quot;)&quot;"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/03/2014 22:26:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:07"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="N"
+				   FIELD="Status"
+				   INACTIVE="N"
+				   NAME="Status"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="06/04/2003 03:35:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 03:35:02"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SUB_STATUS_CD"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Sub Status"
+			   NO_COPY="N"
+			   PICKLIST="Picklist Credit Alert Sub Status"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/03/2014 22:33:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 22:26:21"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Sub Status"
+				   INACTIVE="N"
+				   NAME="Sub Status"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="06/03/2014 22:33:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2014 22:33:11"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_TOTAL_AMOUNT_DUE"
+			   COMMENTS="TLG-2842"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Total Amount Due"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_CURRENCY"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/06/2013 23:11:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/26/2013 13:47:03"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_TOTAL_INV_AMOU"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Total Invoice Amount"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="20"
+			   TYPE="DTYPE_CURRENCY"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/10/2010 16:42:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/02/2010 15:47:31"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf([Total Invoice Amount] &gt; 0, [Total Invoice Amount]/100, &quot;0&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Total Invoice Amount Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/19/2012 08:23:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/19/2012 08:23:21"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="LOGIN"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="Updated By Id"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Updated By Login"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="System: Creator"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/04/2003 00:45:08"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 00:45:08"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_SPEC_TYPE_CD"
+			   COMMENTS="VF MC R1.3 20100806 - Added for Dunning Requirement."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Action Type"
+			   NO_COPY="N"
+			   PICKLIST="VF Credit Event Action Type  Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/10/2010 16:42:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/10/2010 16:41:57"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Action Type"
+				   INACTIVE="N"
+				   NAME="VF Action Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   SEQUENCE="1"
+				   UPDATED="08/10/2010 16:41:57"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/10/2010 16:41:57"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="ACTIVITY_UID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="Activity Plan"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Activity UID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/22/2011 17:53:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/22/2011 17:53:07"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_COLLECTABLE_ID"
+			   COMMENTS="VFTK Mamta R2.1 20110912 - Made Force Active True for WP07.VFTK AC 20110531: Created for WP09"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Collectable Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/12/2011 16:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/22/2011 17:53:07"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_CUTOFF_DT"
+			   COMMENTS="VFTK AC 20110531: Created for WP09"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Cutoff Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/22/2011 17:53:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/22/2011 17:53:07"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_DUNNING_SC"
+			   COMMENTS="VFTK AC 20110531: Created for WP09"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Dunning Scenario"
+			   NO_COPY="N"
+			   PICKLIST="VF Dunning Scenario Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/22/2011 17:53:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/22/2011 17:53:07"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Dunning Scenario"
+				   INACTIVE="N"
+				   NAME="VF Dunning Scenario"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="06/22/2011 17:53:07"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/22/2011 17:53:07"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="Today()+2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF PTP Today Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/22/2011 17:53:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/22/2011 17:53:07"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="TODO_PLAN_START_DT"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="Activity Plan"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Planned"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/22/2011 17:53:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/22/2011 17:53:07"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_PRIORITY_CD"
+			   COMMENTS="VF MC R1.3 20100806 - Added for Dunning Requirement."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Priority"
+			   NO_COPY="N"
+			   PICKLIST="VF Credit Event Priority Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/10/2010 16:41:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/10/2010 16:41:57"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Priority"
+				   INACTIVE="N"
+				   NAME="VF Priority"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   SEQUENCE="1"
+				   UPDATED="08/10/2010 16:41:57"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/10/2010 16:41:57"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_BILLACC_ROOT_ID"
+			   COMMENTS="TK 2006/7/3: Column added for Credit management enhancerments"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Root BA Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/18/2012 15:56:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/18/2012 15:55:57"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Billing Account Code"
+				   INACTIVE="N"
+				   NAME="Billing Account Code"
+				   NO_CLEAR="N"
+				   UPDATED="06/18/2012 15:55:57"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/18/2012 15:55:57"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_SOURCE_CD"
+			   COMMENTS="VF MC R1.3 20100806 - Added for Dunning Requirement."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Source"
+			   NO_COPY="N"
+			   PICKLIST="VF Credit Event Source Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/10/2010 16:41:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/10/2010 16:41:57"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Source"
+				   INACTIVE="N"
+				   NAME="VF Source"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   SEQUENCE="1"
+				   UPDATED="08/10/2010 16:41:57"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/10/2010 16:41:57"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_STATUS_CD"
+			   COMMENTS="VF MC R1.3 20100806 - Added for Dunning Requirement."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Status"
+			   NO_COPY="N"
+			   PICKLIST="VF Credit Event Status Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/10/2010 16:41:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/10/2010 16:41:57"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Status"
+				   INACTIVE="N"
+				   NAME="VF Status"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   SEQUENCE="1"
+				   UPDATED="08/10/2010 16:41:57"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/10/2010 16:41:57"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_TOTAL_DEBT_BA"
+			   COMMENTS="VFTK AC 20110531: Created for WP09"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Total Debt of the Billing Account"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/22/2011 17:53:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/22/2011 17:53:07"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[VF Total Debt of the Billing Account]/100"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Total Debt of the Billing Account Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/24/2011 19:30:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/24/2011 19:30:47"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[Total Invoice Amount]/100"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Total Invoice Amount Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/24/2011 19:30:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/24/2011 19:30:47"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_PTP_NEXT_DATE"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU PTP Next Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/10/2016 00:36:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/10/2016 00:36:21"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<JOIN
+			   COMMENTS="VFTK AC 20110531: Created for WP09"
+			   INACTIVE="N"
+			   NAME="Activity Plan"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_EVT_ACT"
+			   UPDATED="06/22/2011 17:53:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/22/2011 17:53:07"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="ALERT_ID"
+				   INACTIVE="N"
+				   NAME="Alert Id"
+				   SOURCE_FIELD="Alert Number"
+				   UPDATED="06/22/2011 17:53:07"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/22/2011 17:53:07"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="Bill Statement"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_BILL_MAINT"
+			   UPDATED="06/04/2003 05:33:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 05:17:13"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="STATEMENT_NUM"
+				   INACTIVE="N"
+				   NAME="Bill Statement"
+				   SOURCE_FIELD="Statement Number"
+				   UPDATED="06/04/2003 05:33:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 05:33:44"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="Billing Account"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_ORG_EXT"
+			   UPDATED="06/18/2012 15:56:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/01/2009 03:02:45"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Billing Account"
+				   SOURCE_FIELD="VF Root BA Id"
+				   UPDATED="06/18/2012 15:56:36"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 03:04:11"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="Billing Profile"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_INV_PROF"
+			   UPDATED="06/03/2014 22:36:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 22:35:56"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="Billing Profile Id"
+				   SOURCE_FIELD="Billing Profile Id"
+				   UPDATED="06/03/2014 22:36:15"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2014 22:36:15"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="Created By Id"
+			   OUTER_JOIN_FLAG="N"
+			   TABLE="S_USER"
+			   UPDATED="06/04/2003 05:33:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 05:17:14"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Created  By Id"
+				   SOURCE_FIELD="Created By"
+				   UPDATED="06/04/2003 05:33:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 05:33:44"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="Owned By Id"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_USER"
+			   UPDATED="06/04/2003 05:33:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 05:17:14"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Owned By Id"
+				   SOURCE_FIELD="Owned By Id"
+				   UPDATED="06/04/2003 05:33:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 05:33:44"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_CONTACT"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_CONTACT"
+			   UPDATED="06/04/2003 05:33:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 05:17:14"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Contact By Id"
+				   SOURCE_FIELD="Contact By Id"
+				   UPDATED="06/04/2003 05:33:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 05:33:44"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_DOC_AGREE"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_DOC_AGREE"
+			   UPDATED="06/04/2003 05:33:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 05:17:14"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="Agreement"
+				   SOURCE_FIELD="Contract Id"
+				   UPDATED="06/04/2003 05:33:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 05:33:44"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_INVOICE"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_INVOICE"
+			   UPDATED="06/04/2003 05:33:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 05:17:14"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="Statement"
+				   SOURCE_FIELD="Statement Id"
+				   UPDATED="06/04/2003 05:33:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 05:33:44"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_ORG_EXT"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_ORG_EXT"
+			   UPDATED="06/04/2003 05:33:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 05:17:14"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Account By Id"
+				   SOURCE_FIELD="Account By Id"
+				   UPDATED="06/04/2003 05:33:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 05:33:44"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_ORG_INT"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_ORG_EXT"
+			   UPDATED="06/04/2003 05:33:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 05:17:14"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Owned By Group Id"
+				   SOURCE_FIELD="Owned By Group Id"
+				   UPDATED="06/04/2003 05:33:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 05:33:45"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="Service Point"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_ASSET"
+			   UPDATED="06/04/2003 05:33:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 05:17:14"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="Asset By Id"
+				   SOURCE_FIELD="Asset By Id"
+				   UPDATED="06/04/2003 05:33:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 05:33:45"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="Updated By Id"
+			   OUTER_JOIN_FLAG="N"
+			   TABLE="S_USER"
+			   UPDATED="06/04/2003 05:33:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2003 05:17:14"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="Updated By Id"
+				   SOURCE_FIELD="Updated By"
+				   UPDATED="06/04/2003 05:33:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/04/2003 05:33:45"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

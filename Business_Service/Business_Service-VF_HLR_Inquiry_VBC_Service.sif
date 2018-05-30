@@ -1,0 +1,268 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="0-1"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="0-1"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LANGUAGE_LOCKED="ENU"
+	   LOCKED="Y"
+	   LOCKED_DATE="08/01/2016 18:38:58"
+	   NAME="VF - Order Management"
+	   UI_FREEZE="N"
+	   LOCKED_BY_NAME="MTERREIRO"
+	   UPDATED="08/19/2016 10:17:02"
+	   UPDATED_BY="NLAMEIRAS"
+	   CREATED="11/11/2009 12:19:26"
+	   CREATED_BY="0-1"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   COMMENTS="ACS NSWAMY 17Nov2009. Created for HLR Inquiry Service"
+		   EXTERNAL_USE="N"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VF HLR Inquiry VBC Service"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="08/18/2016 11:53:25"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   OBJECT_LOCKED_BY_NAME="NLAMEIRAS"
+		   UPDATED="08/18/2016 19:18:49"
+		   UPDATED_BY="NLAMEIRAS"
+		   CREATED="11/17/2009 11:33:17"
+		   CREATED_BY="0-1">
+			<BUSINESS_SERVICE_LOCALE
+			   APPLICATION_CODE="STD"
+			   DISPLAY_NAME="VF - Order Management"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   TRANSLATE="Y"
+			   UPDATED="11/17/2009 11:34:23"
+			   UPDATED_BY="0-1"
+			   CREATED="11/17/2009 11:34:23"
+			   CREATED_BY="0-1">
+			</BUSINESS_SERVICE_LOCALE>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Init"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Init(Inputs,Outputs)
+{
+	try
+	{
+		/* ACS AK 17Nov2009 Created.
+		The Below scirpt initialise the VBC Fields*/
+	   var svcParms = Inputs.GetProperty(&quot;Parameters&quot;);
+	   var svcSource = Inputs.GetProperty(&quot;Remote Source&quot;);
+	   var vbcParms = svcParms + &quot;,&quot; + svcSource;
+	   var search = Inputs.GetProperty(&quot;Business Component Name&quot;);
+	   var busObj : BusObject = TheApplication().GetBusObject(&quot;Account&quot;);
+	   var busComp : BusComp = busObj.GetBusComp(&quot;SRF Field&quot;);
+	   var record;
+	   
+	   busComp.ClearToQuery();
+	   busComp.SetSearchSpec(&quot;Business Component&quot;,search); //Scripting 15: Null check is not required since it&apos;s a vanilla behaviour that BC name will be passed always to VBC &apos;Init&apos; method 
+	   busComp.ActivateField(&quot;Name&quot;);
+	   busComp.ExecuteQuery(ForwardOnly);
+	   record = busComp.FirstRecord();
+	
+	   while (record != &quot;0&quot;)
+       {           
+           var fName = busComp.GetFieldValue(&quot;Name&quot;);
+           if (fName != &quot;SSA Primary Field&quot;)
+                   {
+                           Outputs.SetProperty(fName, &quot;&quot;);
+                   }
+           record = busComp.NextRecord();
+       }
+      }
+      catch(e)
+      {
+      }
+      finally
+      {
+      	busComp = null;
+      	busObj = null;
+      }
+  return (CancelOperation);
+}"
+			   SEQUENCE="1"
+			   UPDATED="07/19/2012 10:45:47"
+			   UPDATED_BY="0-1"
+			   CREATED="11/17/2009 11:41:49"
+			   CREATED_BY="0-1">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Query"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Query(Inputs, Outputs)
+{
+	try
+	{
+		var strMSISDN = TheApplication().GetProfileAttr(&quot;HLR MSISDN&quot;);
+		var strIMSI = TheApplication().GetProfileAttr(&quot;HLR IMSI&quot;);
+		var strLOGIN =TheApplication().GetProfileAttr(&quot;LOGIN&quot;);	
+		var strHLR = TheApplication().GetProfileAttr(&quot;HLRInquiry&quot;);
+		var strHLRMethod = TheApplication().GetProfileAttr(&quot;HLRMethod&quot;); //VFTRCBU WA#06
+		var strVLR = TheApplication().GetProfileAttr(&quot;VLRInquiry&quot;); //VFTRCBU WA#06
+		//++ITSL 2995.NLAMEIRAS.20160817
+		var strSGSN = TheApplication().GetProfileAttr(&quot;HLR_Reset_SGSN_&quot;); //Profile Set at VFTRCBU HLR Inquiry Form Applet.fGetIMSI()
+		//--ITSL 2995.NLAMEIRAS.20160817
+		var strP1;
+		var strP2 : PropertySet = TheApplication().NewPropertySet();
+		var strP3 : PropertySet = TheApplication().NewPropertySet();
+		var psInputs  : PropertySet;
+		var psOutputs : PropertySet;
+		var svcWF	  : Service;
+		
+		if(strMSISDN != &quot;&quot; &amp;&amp; strLOGIN!=&quot;&quot; &amp;&amp; strHLR ==&quot;Y&quot;)
+		{
+			psInputs  = TheApplication().NewPropertySet();
+			psOutputs = TheApplication().NewPropertySet();
+			svcWF	  = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+			
+			//VFTRCBU WA#06 START
+			if(strHLRMethod == &quot;HLRInquiry&quot;)
+			{
+				psInputs.SetProperty(&quot;ProcessName&quot;, &quot;VF HLR Inquiry&quot;);
+				psInputs.SetProperty(&quot;MSISDN&quot;, strMSISDN);
+				psInputs.SetProperty(&quot;user&quot;,strLOGIN);
+				svcWF.InvokeMethod(&quot;RunProcess&quot;, psInputs, psOutputs);
+				
+			if(psOutputs.GetProperty(&quot;Status Code&quot;) == 0)
+			{
+				strP1 = psOutputs.GetChild(0).GetChild(0).GetChild(0).GetType();
+				if (strP1 == &quot;VF HLR Enquiry&quot;)
+				{
+					
+					strP2 = psOutputs.GetChild(0).GetChild(0).GetChild(0);
+					strP3 = strP2.Copy();
+					Outputs.AddChild(strP3);
+				}
+			}
+			
+			
+			}
+			else if(strHLRMethod == &quot;VFTRCBUVLRReset&quot;)
+			{
+				psInputs.SetProperty(&quot;ProcessName&quot;, &quot;VFTRCBU VLR Reset WF&quot;);
+				psInputs.SetProperty(&quot;IMSI&quot;, strIMSI);
+				psInputs.SetProperty(&quot;VLR&quot;, strVLR);
+				psInputs.SetProperty(&quot;MSISDN&quot;, strMSISDN);
+				psInputs.SetProperty(&quot;user&quot;,strLOGIN);
+				svcWF.InvokeMethod(&quot;RunProcess&quot;, psInputs, psOutputs);
+				
+				if(psOutputs.GetProperty(&quot;Status Code&quot;) == 0)
+				{
+					strP1 = psOutputs.GetChild(0).GetChild(0).GetChild(0).GetType();
+					if (strP1 == &quot;VF HLR Enquiry&quot;)
+					{
+						
+						strP2 = psOutputs.GetChild(0).GetChild(0).GetChild(0);
+						strP3 = strP2.Copy();
+						Outputs.AddChild(strP3);
+					}
+				}
+			}
+			else if(strHLRMethod == &quot;VFTRCBUSGSNReset&quot;)
+			{
+				psInputs.SetProperty(&quot;ProcessName&quot;, &quot;VFTRCBU SGSN Reset WF&quot;);
+				psInputs.SetProperty(&quot;IMSI&quot;, strIMSI);
+				psInputs.SetProperty(&quot;MSISDN&quot;, strMSISDN);
+				psInputs.SetProperty(&quot;SGSN&quot;, strSGSN);
+				psInputs.SetProperty(&quot;user&quot;,strLOGIN);
+				svcWF.InvokeMethod(&quot;RunProcess&quot;, psInputs, psOutputs);
+				
+				if(psOutputs.GetProperty(&quot;Status Code&quot;) == 0)
+				{
+					strP1 = psOutputs.GetChild(0).GetChild(0).GetChild(0).GetType();
+					if (strP1 == &quot;VF HLR Enquiry&quot;)
+					{
+						
+						strP2 = psOutputs.GetChild(0).GetChild(0).GetChild(0);
+						strP3 = strP2.Copy();
+						Outputs.AddChild(strP3);
+					}
+				}
+			}
+			//VFTRCBU WA#06 END
+		
+		 }		
+	}
+	finally
+	{
+		svcWF = null;
+		psInputs = null;
+		psOutputs = null;
+		strP3	= null;
+		strP2 = null;
+		TheApplication().SetProfileAttr(&quot;HLR_Reset_SGSN_&quot;,&quot;&quot;); //++ITSL 2995.NLAMEIRAS.20160817
+	//	TheApplication().SetProfileAttr(&quot;HLR MSISDN&quot;,&quot;&quot;);
+	//	TheApplication().SetProfileAttr(&quot;LOGIN&quot;,&quot;&quot;);
+		TheApplication().SetProfileAttr(&quot;HLRInquiry&quot;,&quot;&quot;);
+		//TheApplication().SetProfileAttr(&quot;HLRMethod&quot;,&quot;&quot;);
+
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="08/18/2016 19:18:49"
+			   UPDATED_BY="NLAMEIRAS"
+			   CREATED="11/17/2009 11:42:16"
+			   CREATED_BY="0-1">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreCanInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreCanInvokeMethod (MethodName, &amp;CanInvoke)
+{
+	CanInvoke = &quot;True&quot;;
+	return (ContinueOperation);
+}"
+			   SEQUENCE="3"
+			   UPDATED="06/30/2012 18:31:30"
+			   UPDATED_BY="0-1"
+			   CREATED="11/19/2009 09:29:05"
+			   CREATED_BY="0-1">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	if (MethodName == &quot;Init&quot;)
+	{
+		Init (Inputs, Outputs);
+		return(CancelOperation);
+	}
+	else if (MethodName == &quot;Query&quot;)
+	{
+		Query (Inputs, Outputs);
+		return(CancelOperation);
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="4"
+			   UPDATED="06/30/2012 18:31:25"
+			   UPDATED_BY="0-1"
+			   CREATED="11/17/2009 11:42:37"
+			   CREATED_BY="0-1">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

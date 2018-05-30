@@ -1,0 +1,450 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="Project Cambaz 2"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VFTR Event Structure"
+	   UI_FREEZE="N"
+	   UPDATED="11/30/2017 17:38:30"
+	   UPDATED_BY="IBMDEVELOPER1"
+	   CREATED="05/09/2016 12:22:28"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="N"
+		   CLASS="CSSBusComp"
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MULTI_RECIPIENT_SELECT="N"
+		   NAME="VFTR Product Optin Management BC"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LOCKED="N"
+		   OWNER_DELETE="N"
+		   POPUP_VISIBILITY_AUTO_ALL="N"
+		   SCRIPTED="Y"
+		   TABLE="CX_VFTR_GSM_REG"
+		   TYPE="Non-Transient"
+		   UPDATED="01/12/2018 11:38:58"
+		   UPDATED_BY="IBM_OZGEK"
+		   CREATED="05/09/2016 15:02:24"
+		   CREATED_BY="SADMIN">
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreSetFieldValue"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreSetFieldValue (FieldName, FieldValue) 
+{ 
+	if(FieldName == &quot;VFTR GSM Number&quot; &amp;&amp; FieldValue != &quot;&quot; &amp;&amp; FieldValue != null)
+	{ 
+		var CheckString = FieldValue;
+
+		//if result is not null and length of result is non zero then the string is non numeric
+		//if(isNaN(CheckString))
+		var Pattern = /^[0-9]*$/; //numeric pattern search
+		var result = CheckString.match(Pattern); //Get all the values which are not numeric
+		
+		//If Validation fails
+		if(result == null)
+		{
+			var sError = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;X_CAMBAZ_15&quot;);
+			TheApplication().RaiseErrorText(sError);
+			return (CancelOperation); 
+		}
+	} 
+	
+	return (ContinueOperation); 
+}"
+			   SEQUENCE="1"
+			   UPDATED="05/09/2016 15:02:24"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/09/2016 15:02:24"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreWriteRecord"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreWriteRecord ()
+{
+	try
+	{
+		var partNum = this.GetFieldValue(&quot;VFTR Part No&quot;);
+		var region = this.GetFieldValue(&quot;VFTR Customer Region&quot;);
+		var gsm = this.GetFieldValue(&quot;VFTR GSM Number&quot;);
+		var TCID = this.GetFieldValue(&quot;VFTR TCID&quot;);
+		var service = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		var inputPS = TheApplication().NewPropertySet();
+		var outputPS = TheApplication().NewPropertySet();
+		
+		inputPS.SetProperty(&quot;ProcessName&quot;, &quot;VFTR Product Optin Management Validation WF&quot;);
+		inputPS.SetProperty(&quot;GSM&quot;, gsm);
+		inputPS.SetProperty(&quot;CustRegion&quot;, region);
+		inputPS.SetProperty(&quot;PartNumber&quot;,partNum);
+		inputPS.SetProperty(&quot;VFTRTCID&quot;,TCID);
+		service.InvokeMethod(&quot;RunProcess&quot;,inputPS,outputPS);
+		
+		
+	}
+	catch(e)
+	{
+		throw (e);
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="2"
+			   UPDATED="01/12/2018 10:13:35"
+			   UPDATED_BY="IBMDEVELOPER1"
+			   CREATED="05/09/2016 15:02:24"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: VFTR Customer Region"
+			   VALUE="VFTR Customer Region RO Calc"
+			   UPDATED="05/09/2016 15:02:24"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/09/2016 15:02:24"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: VFTR GSM Number"
+			   VALUE="VFTR GSM Number RO Calc"
+			   UPDATED="05/09/2016 15:02:24"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/09/2016 15:02:24"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="VFTR_CUST_REGION"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTR Customer Region"
+			   NO_COPY="N"
+			   PICKLIST="VF Province Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/09/2016 15:02:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/09/2016 15:02:25"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VFTR Customer Region"
+				   INACTIVE="N"
+				   NAME="VFTR Customer Region"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="05/09/2016 15:02:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/09/2016 15:02:25"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VFTR GSM Number] IS NOT NULL, &apos;Y&apos;, &apos;N&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTR Customer Region RO Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/09/2016 15:02:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/09/2016 15:02:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="VFTR_END_DATE"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTR End Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/29/2017 10:12:27"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/29/2017 10:12:27"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="VFTR_GSM_NUM"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTR GSM Number"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="10"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   VALIDATION="Len([VFTR GSM Number]) = 10"
+			   VALIDATION_MESSAGE_-_STRING_REFERENCE="X_VF_MSISDN_ERROR"
+			   UPDATED="05/09/2016 15:02:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/09/2016 15:02:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VFTR Customer Region] IS NOT NULL, &apos;Y&apos;, &apos;N&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTR GSM Number RO Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/09/2016 15:02:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/09/2016 15:02:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="VFTR_PART_NUM"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTR Part No"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/09/2016 15:02:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/09/2016 15:02:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="VFTR_PROD_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTR Product Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/09/2016 15:02:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/09/2016 15:02:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="VFTR_PROD_NAME"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTR Product Name"
+			   NO_COPY="N"
+			   PICKLIST="PickList Internal Orderable Product No Labeled Product"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="250"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/09/2016 15:02:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/09/2016 15:02:25"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VFTR Part No"
+				   INACTIVE="N"
+				   NAME="VFTR Part No"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Part #"
+				   UPDATED="05/09/2016 15:02:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/09/2016 15:02:25"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VFTR Product Id"
+				   INACTIVE="N"
+				   NAME="VFTR Product Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="05/09/2016 15:02:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/09/2016 15:02:25"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VFTR Product Name"
+				   INACTIVE="N"
+				   NAME="VFTR Product Name"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="05/09/2016 15:02:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/09/2016 15:02:25"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="VFTR_START_DATE"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTR Start Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/29/2017 10:12:27"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/29/2017 10:12:27"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="VFTR_TCID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTR TCID"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="11"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/29/2017 10:12:28"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/29/2017 10:12:28"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_PROD_INT"
+			   OUTER_JOIN_FLAG="N"
+			   TABLE="S_PROD_INT"
+			   UPDATED="05/09/2016 15:02:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/09/2016 15:02:25"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="S_PROD_INT"
+				   SOURCE_FIELD="VFTR Product Id"
+				   UPDATED="05/09/2016 15:02:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/09/2016 15:02:25"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

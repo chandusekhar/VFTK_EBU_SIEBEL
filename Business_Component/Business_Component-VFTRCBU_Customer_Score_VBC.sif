@@ -1,0 +1,1120 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   LOCKED_DATE="08/11/2017 16:04:06"
+	   NAME="VFTRCBU Products and Services"
+	   UI_FREEZE="N"
+	   UPDATED="09/28/2017 15:26:11"
+	   UPDATED_BY="IBM_FIGENB"
+	   CREATED="02/02/2015 22:35:32"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="N"
+		   CLASS="CSSBCVExtern"
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MULTI_RECIPIENT_SELECT="N"
+		   NAME="VFTRCBU Customer Score VBC"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LOCKED="N"
+		   OWNER_DELETE="N"
+		   POPUP_VISIBILITY_AUTO_ALL="N"
+		   SCRIPTED="Y"
+		   TYPE="Non-Transient"
+		   UPDATED="09/28/2017 15:43:20"
+		   UPDATED_BY="IBM_FIGENB"
+		   CREATED="07/19/2015 23:33:41"
+		   CREATED_BY="SADMIN">
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreInvokeMethod (MethodName)
+{
+	if(MethodName = &quot;VFTRCBURefresh&quot;)
+	{
+		return(CancelOperation);
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="2"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreQuery"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreQuery ()
+{
+	try
+	{
+		var sQueryBy = &quot;&quot;;
+		var sQueryValue = &quot;&quot;;
+		
+		if(TheApplication().GetProfileAttr(&quot;VFTRCBU Customer Score VBC.VFSkipQueryWF&quot;) == &quot;N&quot;){
+		
+			sQueryBy = GetSearchSpec(&quot;VFTRCBU CS Query By&quot;);
+			sQueryValue = GetSearchSpec(&quot;VFTRCBU CS Query Value&quot;);
+			sQueryValue = sQueryValue.replace(/[\D]/g, &quot;&quot;);
+			sQueryBy = sQueryBy.replace(/[\W]/g,&quot;&quot;);
+			
+			this.CheckTcId(sQueryBy, sQueryValue);			
+		}
+	}
+	catch (e)
+	{
+		throw e;
+	}
+	finally
+	{
+
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="3"
+			   UPDATED="02/14/2016 12:53:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CheckTcId"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CheckTcId(sQueryBy, Field)
+{
+	try {
+		/*tc id owns 11 numbers, the first one cannot be 0, the following regular exp check this property*/
+		var LIC = sQueryBy;
+		if(sQueryBy == &quot;TCKN&quot;)
+		{
+			var lstBO = TheApplication().GetBusObject(&quot;List Of Values&quot;);
+			var lstBC = lstBO.GetBusComp(&quot;List Of Values&quot;);
+						
+			lstBC.ActivateField(&quot;Type&quot;);
+			lstBC.ActivateField(&quot;Name&quot;);
+			lstBC.ActivateField(&quot;Value&quot;);
+			lstBC.ClearToQuery();
+			lstBC.SetViewMode(AllView);
+			lstBC.SetSearchSpec(&quot;Type&quot;, &quot;VFTRCBU_CS_QUERY_BY&quot;);
+			lstBC.SetSearchSpec(&quot;Value&quot;, sQueryBy);
+			lstBC.ExecuteQuery(ForwardOnly);
+			
+			if (lstBC.FirstRecord())
+			{
+				LIC = lstBC.GetFieldValue(&quot;Name&quot;);
+			}
+		}
+
+		var slookup = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VFTRCBU_CS_QUERY_BY&quot;,LIC);
+		
+		if(slookup == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VFTRCBU_CS_QUERY_BY&quot;,&quot;TCID&quot;) &amp;&amp; slookup != &quot;&quot;){
+		
+			var regRes = Field.match(/^[1-9][0-9]{10}$/);
+		
+			if (regRes != null) {
+				var tcIdNoLong = parseInt(Field, 10);
+				var tmp,
+				tmp1;
+				var oddSum,
+				evenSum,
+				total,
+				chkDigit1,
+				chkDigit2;
+				var array = new Array;
+		
+				tmp = Math.floor(tcIdNoLong / 100); //Assigning Temporary
+				tmp1 = Math.floor(tcIdNoLong / 100); //Assigning Temporary1
+		
+				for (var i = 9; i &gt; 0; i--) {
+					array[i] = (tmp1 % 10);
+					tmp1 = Math.floor(tmp1 / 10);
+				}
+				oddSum = array[1] + array[3] + array[5] + array[7] + array[9];
+				evenSum = array[2] + array[4] + array[6] + array[8];
+				total = oddSum * 3 + evenSum;
+				chkDigit1 = (10 - (total % 10)) % 10;
+				oddSum = chkDigit1 + array[8] + array[6] + array[4] + array[2];
+				evenSum = array[9] + array[7] + array[5] + array[3] + array[1];
+				total = oddSum * 3 + evenSum;
+				chkDigit2 = (10 - (total % 10)) % 10;
+				tmp = tmp * 100 + chkDigit1 * 10 + chkDigit2;
+		
+				if (tmp != tcIdNoLong) {
+					TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0348&quot;));
+					return (CancelOperation);
+				}
+			} else {
+				TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0348&quot;));
+				return (CancelOperation);
+			}
+		}
+	} catch (e) {
+		throw(e);
+	}
+	finally {
+		lstBC = null;
+		lstBO = null;		
+	}
+
+}"
+			   SEQUENCE="1"
+			   UPDATED="02/14/2016 12:53:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Service Name"
+			   VALUE="VF VBC Integration BS"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Service Parameters"
+			   VALUE="IOName=VFTRCBU Customer Score VBC IO;DataMapName=VFTRCBU Customer Score VBC Data Map;RequireContext=Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="Today()-[VFTRCBU KKB Control]"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="KKB Date Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/07/2016 10:53:06"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VFTRCBU KKB Valid Flg]=&apos;Y&apos; AND [VFTRCBU KKB Report Status]=&apos;0&apos;,&quot;Green&quot;,IIF([VFTRCBU KKB Valid Flg]=&apos;N&apos; AND [VFTRCBU KKB Report Status]=&apos;-1&apos;,&quot;Yellow&quot;,IIF([VFTRCBU KKB Valid Flg]=&apos;N&apos; AND [VFTRCBU KKB Report Status]=&apos;0&apos;,&quot;Red&quot;,&quot;Grey&quot;)))"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="KKB Status Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/07/2016 10:57:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VFTRCBU_CS_VALUE&quot;,&quot;Valid Score&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU CS Control"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU CS Information Messages"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU CS Last Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU CS Net Limit"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU CS Query By"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU CS Query By PickList"
+			   PRE_DEFAULT_VALUE="Expr: &apos;LookupValue (&quot;VFTRCBU_CS_QUERY_BY&quot;, &quot;TC ID&quot;)&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VFTRCBU CS Query By"
+				   INACTIVE="N"
+				   NAME="VFTRCBU CS Query By"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="07/19/2015 23:33:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/19/2015 23:33:41"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupName(&quot;VFTRCBU_CS_QUERY_BY&quot;,[VFTRCBU CS Query By])"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU CS Query By Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU CS Query Value"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU CS Receivables"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[VFTRCBU CS Receivables] + &quot; TL&quot;"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU CS Receivables TL Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VFTRCBU CS SIM Card Change Flg] IS NULL,&quot;Grey&quot;,IIF([VFTRCBU CS SIM Card Change Flg]=&apos;N&apos;,&quot;Green&quot;,&quot;Red&quot;))"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU CS SIM Card Change Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU CS SIM Card Change Flg"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU CS Special Conditions"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU CS Special Condition Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VFTRCBU CS Special Conditions"
+				   INACTIVE="N"
+				   NAME="VFTRCBU CS Special Conditions"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="VFTRCBU Value"
+				   SEQUENCE="1"
+				   UPDATED="07/19/2015 23:33:41"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/19/2015 23:33:41"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU CS TC Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/28/2017 15:26:11"
+			   UPDATED_BY="IBM_FIGENB"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="TimeStamp() - ([VFTRCBU CS Control]/1440)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU CS Valid Date Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf ([VFTRCBU CS Last Date]&gt;=[VFTRCBU CS Valid Date Calc],&quot;Y&quot;,&quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU CS Valid Flg"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU KKB BG Flg"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VFTRCBU KKB BG Flg] IS NULL,&quot;Grey&quot;,IIF([VFTRCBU KKB BG Flg]=&apos;N&apos;,&quot;Green&quot;,&quot;Red&quot;))"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU KKB BG Flg Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/21/2015 13:37:17"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VFTRCBU_KKB_VALUE&quot;,&quot;Valid KKB Report&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU KKB Control"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU KKB Report Last Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU KKB Report Status"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf ([VFTRCBU KKB Report Last Date]&gt;=[KKB Date Calc],&quot;Y&quot;,&quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU KKB Valid Flg"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/07/2016 10:56:50"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Mernis Status Flag"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/28/2016 16:29:09"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:29:09"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VFTRCBU Mernis Status Flag]=&apos;Y&apos;,&quot;Green&quot;,&quot;Red&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Mernis Status Flag Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/28/2016 16:29:09"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/28/2016 16:29:09"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VFTRCBU Net Limit RO Calc]=&apos;N&apos;,[VFTRCBU CS Net Limit],&quot; - &quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Net Limit Mask Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/19/2015 09:38:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF(InvokeServiceMethod(&quot;VF TRK Utilities&quot;,&quot;HasRolesLOV&quot;,&quot;Type=VFTRCBU_CS_ROLES,Name=Score,Value=Score&quot;,&quot;hasRole&quot;)=&quot;True&quot;,&quot;Y&quot;,&quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Net Limit RO Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VFTRCBU Receivables RO Calc]=&apos;N&apos;,[VFTRCBU CS Receivables TL Calc],&quot; - &quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Receivables Mask Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/19/2015 09:38:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF(InvokeServiceMethod(&quot;VF TRK Utilities&quot;,&quot;HasRolesLOV&quot;,&quot;Type=VFTRCBU_CS_ROLES,Name=Receivables,Value=Receivables&quot;,&quot;hasRole&quot;)=&quot;True&quot;,&quot;Y&quot;,&quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Receivables RO Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Total Handset Campaigns"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VFTRCBU Total Handset Campaigns] IS NULL,&quot;Grey&quot;,IIF([VFTRCBU Total Handset Campaigns]&gt;=Lookupvalue(&quot;VFTRCBU_CS_MAX_HANDSET&quot;,&quot;Handset&quot;),&quot;Red&quot;,IIF([VFTRCBU Total Handset Campaigns]&lt;Lookupvalue(&quot;VFTRCBU_CS_MAX_HANDSET&quot;,&quot;Handset&quot;),&quot;Green&quot;,&quot;Grey&quot;)))"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Total Handset Campaigns Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/27/2016 00:01:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Total Tablets Campaigns"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VFTRCBU Total Tablets Campaigns] IS NULL,&quot;Grey&quot;,IIF([VFTRCBU Total Tablets Campaigns]&gt;=Lookupvalue(&quot;VFTRCBU_CS_MAX_TABLET&quot;,&quot;Tablet&quot;),&quot;Red&quot;,IIF([VFTRCBU Total Tablets Campaigns]&lt;Lookupvalue(&quot;VFTRCBU_CS_MAX_TABLET&quot;,&quot;Tablet&quot;),&quot;Green&quot;,&quot;Grey&quot;)))"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Total Tablets Campaigns Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/27/2016 00:01:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Total Vodem Campaigns"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="07/19/2015 23:33:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([VFTRCBU Total Vodem Campaigns] IS NULL,&quot;Grey&quot;,IIF([VFTRCBU Total Vodem Campaigns]&gt;=Lookupvalue(&quot;VFTRCBU_CS_MAX_VODEM&quot;,&quot;Vodem&quot;),&quot;Red&quot;,IIF([VFTRCBU Total Vodem Campaigns]&lt;Lookupvalue(&quot;VFTRCBU_CS_MAX_VODEM&quot;,&quot;Vodem&quot;),&quot;Green&quot;,&quot;Grey&quot;)))"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Total Vodem Campaigns Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/27/2016 00:01:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[VFTRCBU Total Handset Campaigns] + &quot; / &quot; + LookupValue(&apos;VFTRCBU_CS_MAX_HANDSET&apos;,&apos;Handset&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Total vs Max Handset Campaigns"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/27/2016 00:01:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[VFTRCBU Total Tablets Campaigns] + &quot; / &quot; + LookupValue(&apos;VFTRCBU_CS_MAX_TABLET&apos;,&apos;Tablet&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Total vs Max Tablet Campaigns"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/27/2016 00:01:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[VFTRCBU Total Vodem Campaigns] + &quot; / &quot; + LookupValue(&apos;VFTRCBU_CS_MAX_VODEM&apos;,&apos;Vodem&apos;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Total vs Max Vodem Campaigns"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/27/2016 00:01:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/19/2015 23:33:41"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

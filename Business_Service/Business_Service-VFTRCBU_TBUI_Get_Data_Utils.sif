@@ -1,0 +1,503 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VFTRCBU Suspend-Resume Subscriber"
+	   UI_FREEZE="N"
+	   UPDATED="02/15/2017 18:40:55"
+	   UPDATED_BY="JCARVALHO"
+	   CREATED="10/20/2014 19:57:00"
+	   CREATED_BY="CJANEIRO"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   COMMENTS="CJANEIRO - WA#16"
+		   EXTERNAL_USE="Y"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VFTRCBU TBUI Get Data Utils"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="02/15/2017 17:28:13"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   OBJECT_LOCKED_BY_NAME="JCARVALHO"
+		   UPDATED="02/15/2017 18:39:22"
+		   UPDATED_BY="JCARVALHO"
+		   CREATED="11/03/2014 14:01:15"
+		   CREATED_BY="CJANEIRO">
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="CalcBillCycleDate"
+			   UPDATED="02/15/2017 17:28:48"
+			   UPDATED_BY="JCARVALHO"
+			   CREATED="11/03/2014 14:01:15"
+			   CREATED_BY="CJANEIRO">
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="BillingAccountId"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="11/03/2014 14:06:56"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="11/03/2014 14:01:15"
+				   CREATED_BY="CJANEIRO">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="CustomerType"
+				   OPTIONAL="Y"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="02/18/2015 16:38:41"
+				   UPDATED_BY="JSARMENTO"
+				   CREATED="02/18/2015 13:18:18"
+				   CREATED_BY="HRODRIGUES">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="Date"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="CycleDate"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Output"
+				   UPDATED="11/03/2014 17:50:55"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="11/03/2014 14:01:15"
+				   CREATED_BY="CJANEIRO">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="DueDate"
+				   OPTIONAL="Y"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="02/15/2017 17:28:48"
+				   UPDATED_BY="JCARVALHO"
+				   CREATED="02/15/2017 17:28:48"
+				   CREATED_BY="JCARVALHO">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   COMMENTS="VFTRCBU-31852"
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="isFDO"
+				   OPTIONAL="Y"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="02/15/2017 17:28:48"
+				   UPDATED_BY="JCARVALHO"
+				   CREATED="02/15/2017 17:28:48"
+				   CREATED_BY="JCARVALHO">
+				</BUSINESS_SERVICE_METHOD_ARG>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_METHOD
+			   COMMENTS="IMARTINS CA08 | VFTRCBU-15059 | 17082015"
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="SetCosbyMaxnumLimits"
+			   UPDATED="08/17/2015 14:03:21"
+			   UPDATED_BY="IMARTINS"
+			   CREATED="08/17/2015 13:30:13"
+			   CREATED_BY="IMARTINS">
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="TariffId"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="08/17/2015 14:03:13"
+				   UPDATED_BY="IMARTINS"
+				   CREATED="08/17/2015 14:03:13"
+				   CREATED_BY="IMARTINS">
+				</BUSINESS_SERVICE_METHOD_ARG>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CalcBillCycleDate"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CalcBillCycleDate(psInputs, psOutputs)
+{
+	try
+	{
+		var sOrderIsFD          = psInputs.GetProperty(&quot;isFDO&quot;); 
+		var sOrderDueDate       = psInputs.GetProperty(&quot;DueDate&quot;);
+		var sBillAccountId      = psInputs.GetProperty(&quot;BillingAccountId&quot;);
+		var sCustomerType       = psInputs.GetProperty(&quot;CustomerType&quot;); //VFTRCBU WA#20 Drop 3
+		var oTodayDate          = null;
+		var sTodayDay           = &quot;&quot;;
+		var iTodayMS            = 0;
+		var iTodayMSInc         = 0;
+		var sBillCycle          = &quot;&quot;;
+		var iBillCyclePlusOne   = &quot;&quot;;
+		var iNextBillCycleMonth = &quot;&quot;;
+		var iNextBillCycleYear  = &quot;&quot;;
+		var sBillCycleDate      = &quot;&quot;;
+		var oCycleDate          = null; //FSENDIM WA#17  - edited
+		var oDueDate            = null;
+		var iDueDateMS          = 0;
+		var sCycleDate          = &quot;&quot;;
+
+		var sConsumerType     = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;ACCOUNT_TYPE&quot;, &quot;102&quot;); //VFTRCBU WA#20 Drop 3
+		var sFDOExecutionTime = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;VFTRCBU_FDO_EXECUTION_TIME&quot;, &quot;Consumer&quot;); //VFTRCBU WA#20 Drop 3
+
+		//Start VFTRCBU-31852
+		if (sOrderIsFD == &quot;Y&quot; &amp;&amp; sOrderDueDate != null &amp;&amp; sOrderDueDate != &quot;&quot;)
+			oTodayDate = new Date(sOrderDueDate);
+		else
+			oTodayDate = GetCurrentDate();
+		//End VFTRCBU-31852
+
+		oCycleDate = GetCurrentDate();
+		oCycleDate.setMonth(0);
+
+		sTodayDay   = oTodayDate.getDate();
+		iTodayMS    = oTodayDate.getTime();
+		iTodayMSInc = iTodayMS + 60 * 60 * 1000; //VFTRCBU-21105 | TiagoRocha | 22-11-2015
+		sBillCycle  = GetBillCycle(sBillAccountId);
+
+		if (ToNumber(sBillCycle) != 1)
+			iBillCyclePlusOne = ToNumber(sBillCycle) + 1;
+		else
+			iBillCyclePlusOne = ToNumber(sBillCycle);
+
+		//VFTRCBU-21105 | TiagoRocha | 22-11-2015 | START
+		if (sTodayDay &gt; sBillCycle)
+		{
+			if (ToNumber(oTodayDate.getMonth()) == 11)
+			{
+				iNextBillCycleMonth = 1;
+				iNextBillCycleYear  = oTodayDate.getFullYear() + 1;
+			}
+			else if (ToNumber(oTodayDate.getMonth()) == 10)
+			{
+				iNextBillCycleMonth = 12;
+				iNextBillCycleYear  = oTodayDate.getFullYear();
+			}
+			else
+			{
+				iNextBillCycleMonth = oTodayDate.getMonth() + 2;
+				iNextBillCycleYear  = oTodayDate.getFullYear();
+			}
+
+			//FCARRIL - Keep this for non-FDOs
+			sBillCycleDate = FormatBillCycleDate(iNextBillCycleMonth, iBillCyclePlusOne, iNextBillCycleYear);
+			
+			oCycleDate.setYear(iNextBillCycleYear); //FSENDIM WA#17
+			oCycleDate.setDate(iBillCyclePlusOne);
+			oCycleDate.setMonth(iNextBillCycleMonth - 1);
+		}
+		// Synergy 39783
+		else if (sTodayDay == sBillCycle)
+		{
+			if (oTodayDate.getMonth() == 12)
+			{
+				iNextBillCycleMonth = 1;
+				iNextBillCycleYear  = oTodayDate.getFullYear() + 1;
+			}
+			else
+			{
+				iNextBillCycleMonth = oTodayDate.getMonth()+1;
+				iNextBillCycleYear  = oTodayDate.getFullYear();
+			}
+
+			//FCARRIL - Keep this for non-FDOs
+			sBillCycleDate = FormatBillCycleDate(iNextBillCycleMonth, iBillCyclePlusOne, iNextBillCycleYear);
+			
+			oCycleDate.setYear(iNextBillCycleYear); //FSENDIM WA#17
+			oCycleDate.setDate(iBillCyclePlusOne);
+			oCycleDate.setMonth(iNextBillCycleMonth - 1);
+		}	
+		//VFTRCBU-21105 | TiagoRocha | 22-11-2015 | END
+		else 
+		{
+			iNextBillCycleYear  = oTodayDate.getFullYear();
+			iNextBillCycleMonth = oTodayDate.getMonth() + 1;
+
+			//FCARRIL - Keep this line below for non-FDOs
+			sBillCycleDate = FormatBillCycleDate(iNextBillCycleMonth, iBillCyclePlusOne, iNextBillCycleYear);
+
+			oCycleDate.setYear(iNextBillCycleYear); //FSENDIM WA#17
+			oCycleDate.setDate(iBillCyclePlusOne);
+			oCycleDate.setMonth(iNextBillCycleMonth - 1);
+		}
+
+		if (oCycleDate != &quot;&quot;)
+		{
+			oDueDate   = new Date(oCycleDate);
+			iDueDateMS = oDueDate.getTime();
+
+			if (iDueDateMS &lt; iTodayMSInc)
+			{
+				if (ToNumber(oDueDate.getMonth()) == 11)
+				{
+					iNextBillCycleYear  = oDueDate.getFullYear() + 1;
+					iNextBillCycleMonth = 1;
+				}
+				else
+				{
+					iNextBillCycleYear  = oDueDate.getFullYear();
+					iNextBillCycleMonth = oDueDate.getMonth() + 2;
+				}
+
+				oCycleDate.setYear(iNextBillCycleYear); //FSENDIM WA#17
+				oCycleDate.setDate(iBillCyclePlusOne);
+				oCycleDate.setMonth(iNextBillCycleMonth - 1);
+			}
+		}
+
+		//WA#20 Drop 3 - Set due date hour to 22hr if is CBU
+		if (sCustomerType != &quot;&quot;)
+		{
+			if (sCustomerType == sConsumerType)
+				oCycleDate.setHours(sFDOExecutionTime);
+			else
+				oCycleDate.setHours(&quot;00&quot;);
+
+			oCycleDate.setMinutes(&quot;00&quot;, &quot;00&quot;, &quot;00&quot;);
+		}
+		// FCARRIL: To avoid date when used for other purposes
+		else
+		{
+			sBillCycleDate = sBillCycleDate + &quot; 00:00:00&quot;;
+		}
+	}
+	finally
+	{
+		if (sCustomerType != &quot;&quot;)
+		{
+			// FCARRIL: To avoid date when used for other purposes
+			Clib.strftime(sCycleDate, &quot;%m/%d/%Y %H:%M:%S&quot;, oCycleDate); //FSENDIM WA#17 //WA#20 Drop 3 Inclued the Time
+			psOutputs.SetProperty(&quot;CycleDate&quot;, sCycleDate); //FSENDIM WA#17
+		} 
+		else
+		{
+			psOutputs.SetProperty(&quot;CycleDate&quot;, sBillCycleDate); //FCARRIL - Keep this for non-FDOs
+		}
+
+		oDueDate   = null;
+		oCycleDate = null;
+		oTodayDate = null;
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="02/15/2017 18:39:22"
+			   UPDATED_BY="JCARVALHO"
+			   CREATED="11/03/2014 14:10:00"
+			   CREATED_BY="CJANEIRO">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="FormatBillCycleDate"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function FormatBillCycleDate(billMonth, billDay, billYear)
+{
+try
+	{
+		var BillCycleDateFormated = &quot;&quot;
+		if (billMonth &lt; 10){
+			billMonth = &quot;0&quot;+billMonth;
+		}
+		
+		if (billDay &lt; 10){
+			billDay = &quot;0&quot;+billDay;
+		}
+		
+		BillCycleDateFormated = billMonth+&quot;/&quot;+billDay+&quot;/&quot;+billYear; 
+		
+		return(BillCycleDateFormated);
+}
+	finally
+	{
+		BillCycleDateFormated = &quot;&quot;;
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="03/26/2015 15:41:29"
+			   UPDATED_BY="FCARRIL"
+			   CREATED="03/26/2015 15:23:09"
+			   CREATED_BY="FCARRIL">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GetBillCycle"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GetBillCycle (BillAccntId)
+{
+	try
+	{
+		var ComBO : BusObject = TheApplication().GetBusObject(&quot;Com Invoice Profile&quot;);
+		var ComBC : BusComp = ComBO.GetBusComp(&quot;Com Invoice Profile&quot;);
+		var BillCycle = &quot;&quot;;
+		with(ComBC)
+		{
+			ClearToQuery();
+			SetViewMode(AllView);
+			ActivateField(&quot;Bill Cycle&quot;);
+			SetSearchExpr(&quot;[Account Id] = &apos;&quot;+BillAccntId+&quot;&apos;&quot;);
+			ExecuteQuery(ForwardOnly);
+			if(FirstRecord())
+			{
+				BillCycle = GetFieldValue(&quot;Bill Cycle&quot;);
+			}			
+		}
+		return(BillCycle);
+	}
+	finally
+	{
+		ComBC = null;
+		ComBO = null;
+		BillCycle = &quot;&quot;;
+	}
+}"
+			   SEQUENCE="3"
+			   UPDATED="03/26/2015 15:23:09"
+			   UPDATED_BY="FCARRIL"
+			   CREATED="11/03/2014 16:18:16"
+			   CREATED_BY="CJANEIRO">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GetCurrentDate"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GetCurrentDate()
+{
+	//Created due to Oracle Bug 10589024 : [CR#12-1XHF9OH][FR#12-1XHF9P2] CLIB LIBRARY AND DATE OBJECT HAVE DIFFERENT RESUL
+	//Date constructor does not work properly in HP-UX
+	var sCurrentDate : chars = &quot;&quot;;
+	Clib.strftime(sCurrentDate, &apos;%m/%d/%Y %H:%M:%S&apos;, Clib.localtime(Clib.time()));
+
+	return new Date(sCurrentDate);
+}"
+			   SEQUENCE="4"
+			   UPDATED="02/15/2017 18:37:23"
+			   UPDATED_BY="JCARVALHO"
+			   CREATED="02/15/2017 18:36:27"
+			   CREATED_BY="JCARVALHO">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	try
+	{
+		Outputs.SetProperty(&quot;Error Code&quot;,    &quot;0&quot;);
+		Outputs.SetProperty(&quot;Error Message&quot;, &quot;&quot;);
+
+		switch (MethodName)
+		{
+			case &quot;CalcBillCycleDate&quot;:
+				CalcBillCycleDate(Inputs, Outputs);
+				break;
+				
+			// IMARTINS CA08 17082015
+			case &quot;SetCosbyMaxnumLimits&quot;:
+				SetCosbyMaxnumLimits(Inputs, Outputs);
+				break;
+
+			default:
+				return(ContinueOperation);
+				break;
+		}
+
+		return (CancelOperation);
+	}
+	catch (oException)
+	{
+		Outputs.SetProperty(&quot;Error Code&quot;,    oException.errCode);
+		Outputs.SetProperty(&quot;Error Message&quot;, oException.errText);
+	}
+	finally
+	{
+	}
+}"
+			   SEQUENCE="6"
+			   UPDATED="02/15/2017 18:36:27"
+			   UPDATED_BY="JCARVALHO"
+			   CREATED="11/03/2014 14:08:47"
+			   CREATED_BY="CJANEIRO">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SetCosbyMaxnumLimits"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="/*
+** IMARTINS 17082015 CA08 | VFTRCBU-15059
+**
+** Get Maximum Value for each of Cosby Limits (Data, Voice, SMS) defined as Feature in Red+ Tariff Plans
+** Set Profile Attributes to restrict Limits picklist
+*/
+
+function SetCosbyMaxnumLimits(psInputs, psOutputs) {
+
+	try
+	{
+		var BO : BusObject = TheApplication().GetBusObject(&quot;Internal Product&quot;);
+		var BC : BusComp = BO.GetBusComp(&quot;Key Feature&quot;);
+		var strProductId = psInputs.GetProperty(&quot;TariffId&quot;);
+		var arrFeatureName = new Array(&quot;MaxmumSMSLimit&quot;, &quot;MaxmumDataLimit&quot;, &quot;MaxmumVoiceLimit&quot;);
+		var strFeatureValue = &quot;&quot;;
+		
+		for (var i = 0; i &lt; arrFeatureName.length; i++)
+		{
+			with (BC)
+			{	
+				SetViewMode(AllView);
+				ClearToQuery();
+				ActivateField(&quot;VFTRCBU Feature Value&quot;);
+				SetSearchSpec(&quot;Product Id&quot;, strProductId);
+				SetSearchSpec(&quot;Feature&quot;, arrFeatureName[i]);
+				ExecuteQuery(ForwardOnly);
+				
+				if (FirstRecord())
+					TheApplication().SetProfileAttr(&quot;VFTRCBU_COSBY_&quot; + arrFeatureName[i].toUpperCase(), GetFieldValue(&quot;VFTRCBU Feature Value&quot;) * 10); 
+					// multiplied by 10 to match the Order field value of LOV
+			}
+		}
+	}
+	finally
+	{
+		strFeatureValue = &quot;&quot;;
+		arrFeatureName = null;
+		strProductId = &quot;&quot;;
+		BC = null;
+		BO = null;
+	}
+}"
+			   SEQUENCE="5"
+			   UPDATED="02/15/2017 18:36:27"
+			   UPDATED_BY="JCARVALHO"
+			   CREATED="08/17/2015 13:58:08"
+			   CREATED_BY="IMARTINS">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

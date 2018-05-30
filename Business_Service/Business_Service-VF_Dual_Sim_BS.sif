@@ -1,0 +1,493 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="05/20/2015 12:00:07"
+   UPDATED_BY="SADMIN"
+   CREATED="05/19/2015 19:58:21"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VF Dual Sim"
+	   UI_FREEZE="N"
+	   UPDATED="07/14/2017 12:18:44"
+	   UPDATED_BY="IBMDEVELOPER1"
+	   CREATED="03/01/2012 07:48:29"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   EXTERNAL_USE="Y"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VF Dual Sim BS"
+		   OBJECT_LOCKED="N"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   UPDATED="07/14/2017 12:19:10"
+		   UPDATED_BY="IBMDEVELOPER1"
+		   CREATED="03/01/2012 07:48:51"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Init"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Init(Inputs,Outputs)
+{
+	try
+	{
+		var svcParms = Inputs.GetProperty(&quot;Parameters&quot;);
+		var svcSource = Inputs.GetProperty(&quot;Remote Source&quot;);
+		var vbcParms = svcParms + &quot;,&quot; + svcSource;
+		var search = Inputs.GetProperty(&quot;Business Component Name&quot;);
+		var busObj : BusObject = TheApplication().GetBusObject(&quot;Account&quot;);
+		var busComp : BusComp = busObj.GetBusComp(&quot;SRF Field&quot;);
+		var record;
+		busComp.ClearToQuery();
+		busComp.ActivateField(&quot;Name&quot;);
+		//Scripting 15: Null check is not required since it&apos;s a vanilla behaviour that BC name will be passed always to VBC &apos;Init&apos; method
+		busComp.SetSearchSpec(&quot;Business Component&quot;,search);
+		busComp.ExecuteQuery(ForwardOnly);
+	
+		record = busComp.FirstRecord();
+	
+		while (record != &quot;0&quot;)
+		{
+			var fName = busComp.GetFieldValue(&quot;Name&quot;);
+			if (fName != &quot;SSA Primary Field&quot;)
+			{
+				Outputs.SetProperty(fName, &quot;&quot;);
+			}
+			record = busComp.NextRecord();
+		}
+		return (CancelOperation);
+	}
+	finally
+	{
+		busComp = null;
+		busObj	= null;
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="06/28/2012 12:49:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/01/2012 07:48:51"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="LookupDesc"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function LookupDesc(sValue)
+{
+	try
+	{
+		var boLOV : BusObject = TheApplication().GetBusObject(&quot;HP Order Entry&quot;);
+		var bcLOV : BusComp   = boLOV.GetBusComp(&quot;List Of Values&quot;);
+
+		var sName       = &quot;&quot;;
+		var sSearchExpr = &quot;[Type]=&apos;VF_TWIN_SIM_TYPE&apos; AND [Value]=&apos;&quot; + sValue + &quot;&apos; AND [Active]=&apos;Y&apos;&quot;;
+
+		bcLOV.SetViewMode(AllView);	
+		bcLOV.ClearToQuery();
+		bcLOV.ActivateField(&quot;Description&quot;);
+		bcLOV.SetSearchExpr(sSearchExpr);
+		bcLOV.ExecuteQuery(ForwardOnly);
+
+		if (bcLOV.FirstRecord())
+		{
+			sName = bcLOV.GetFieldValue (&quot;Description&quot;);
+		}
+
+		return(sName);
+	}
+	finally
+	{
+		bcLOV = null;
+		boLOV = null;
+	}
+}"
+			   SEQUENCE="3"
+			   UPDATED="08/07/2015 03:37:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/06/2015 09:42:24"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Query"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Query(Inputs,Outputs)
+{
+	try
+	{
+		var psRow        : PropertySet = TheApplication().NewPropertySet();
+		var boOrderHP    : BusObject   = TheApplication().GetBusObject(&quot;X Order Entry HP&quot;);
+		var bcAssetHP    : BusComp     = boOrderHP.GetBusComp(&quot;HP Submit - Asset Mgmt - Asset - Header&quot;);
+		var bcOrderHP    : BusComp     = boOrderHP.GetBusComp(&quot;HP Submit - Order Entry - Orders&quot;);
+		var bsCheck      : Service     = TheApplication().GetService(&quot;VF Check Order&quot;);
+		var psCheckIn    : PropertySet = TheApplication().NewPropertySet();
+		var psCheckOut   : PropertySet = TheApplication().NewPropertySet();
+		var boOrder      : BusObject   = TheApplication().GetBusObject(&quot;Order Entry (Sales)&quot;);
+		var bcAccount    : BusComp     = boOrder.GetBusComp(&quot;Account&quot;);
+		var bcOrder      : BusComp     = boOrder.GetBusComp(&quot;Order Entry - Orders&quot;);
+		var bsManager    : Service     = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		var psManagerIn  : PropertySet = TheApplication().NewPropertySet();
+		var psManagerOut : PropertySet = TheApplication().NewPropertySet();
+		var psIn         : PropertySet = TheApplication().NewPropertySet();
+		var psOut         : PropertySet = TheApplication().NewPropertySet();
+
+		var sSearchString      = Inputs.GetProperty(&quot;search-string&quot;);				
+		var sCoupledMSISDN     = getField(sSearchString, &quot;Coupled MSISDN&quot;);
+		var sAssetSearchExpr   = &quot;&quot;;
+		var sAssetStatus       = &quot;&quot;;
+		var sSIMCardType       = &quot;&quot;;
+		var sSIMCardGroup      = &quot;&quot;;
+		var sAccountId         = &quot;&quot;;
+		var sErrorMessage      = &quot;&quot;;
+		var sCheckResult       = &quot;&quot;;
+		var sAccountContactId  = &quot;&quot;;
+		var sTaskRunning       = &quot;&quot;;
+		var sTaskContactId     = &quot;&quot;; /*PCASTRO WA#14 - When the order is created via Task UI, the coupled MSISDN
+									   Primary Contact Id should be compared with this variable.*/
+		var sOrderId           = &quot;&quot;;
+		var sStatusCode        = &quot;&quot;;
+		var sErrorDescription  = &quot;&quot;;
+		var sHLRStatus         = &quot;&quot;;
+		var sCustomerType      = &quot;&quot;;
+		var sTC_ID             = &quot;&quot;;
+		var sFirstName         = &quot;&quot;;
+		var sLastName          = &quot;&quot;;
+		var sCustomerTypeOrder = &quot;&quot;;
+		var sTC_IDOrder        = &quot;&quot;;
+		var sFirstNameOrder    = &quot;&quot;;
+		var sLastNameOrder     = &quot;&quot;;
+		var sCustTypeConsumer  = &quot;&quot;;
+
+		var sStatusActive    = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;IMPL_PHASE&quot;,&quot;Active&quot;);
+		var sStatusSuspended = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;IMPL_PHASE&quot;,&quot;Suspended&quot;);
+		var sStatusInactive  = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;IMPL_PHASE&quot;,&quot;Inactive&quot;);
+		var sHLRActive       = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_DUAL_SIM_CHECK&quot;,&quot;Active&quot;);
+		var sTypeCorporate   = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_DUAL_SIM_CHECK&quot;,&quot;Corporate&quot;);
+		var sTypeConsumer    = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_DUAL_SIM_CHECK&quot;,&quot;Consumer&quot;);//TLGA-5849
+		var sParentMSISDN	 = TheApplication().GetProfileAttr(&quot;VFTRAD_CONTEXT_MSISDN&quot;); //BG_DEF-21120
+
+		psRow.SetProperty(&quot;Coupled MSISDN&quot;, &quot;&quot;);
+		psRow.SetProperty(&quot;Platform&quot;,       &quot;&quot;);
+
+		if (sCoupledMSISDN == null || sCoupledMSISDN == &quot;&quot;)	
+		{
+			return;
+		}
+		if(sParentMSISDN == sCoupledMSISDN){
+			sErrorMessage = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;RSTAB_017&quot;);
+			TheApplication().RaiseErrorText(sErrorMessage);		
+			return;
+		}
+
+		sAssetSearchExpr = &quot;[VF MSISDN]=&apos;&quot; + sCoupledMSISDN + &quot;&apos; AND [Status]&lt;&gt;&apos;&quot; + sStatusInactive + &quot;&apos;&quot;;
+
+		bcAssetHP.SetViewMode(AllView);
+		bcAssetHP.ClearToQuery();
+		bcAssetHP.ActivateField(&quot;Status&quot;);
+		bcAssetHP.ActivateField(&quot;VF SIM Type&quot;);
+		bcAssetHP.ActivateField(&quot;Owner Account Id&quot;);
+		bcAssetHP.SetSearchExpr(sAssetSearchExpr);
+		bcAssetHP.ExecuteQuery(ForwardOnly);
+
+		if (bcAssetHP.FirstRecord())
+		{
+			sAssetStatus  = bcAssetHP.GetFieldValue(&quot;Status&quot;);
+			sSIMCardType  = bcAssetHP.GetFieldValue(&quot;VF SIM Type&quot;);
+			sSIMCardGroup = LookupDesc(sSIMCardType);
+			sAccountId = bcAssetHP.GetFieldValue(&quot;Owner Account Id&quot;);
+
+			if (sAssetStatus == sStatusSuspended)
+			{
+				sErrorMessage = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;R21_153&quot;);
+				TheApplication().RaiseErrorText(sErrorMessage); // ISCHPOTE : 21/01/2012 : TLGA1024 : Amended from RaiseError to RaiseErrorText
+				return;
+			}
+
+			if (sSIMCardGroup == &quot;DU&quot;)
+			{
+				sErrorMessage = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;R21_154&quot;);
+				TheApplication().RaiseErrorText(sErrorMessage);// ISCHPOTE : 21/01/2012 : TLGA1024 : Amended from RaiseError to RaiseErrorText
+				return;
+			}
+
+			psCheckIn.SetProperty(&quot;MSISDN&quot;, sCoupledMSISDN);
+			bsCheck.InvokeMethod(&quot;checkDual&quot;, psCheckIn, psCheckOut);
+
+			sCheckResult = psCheckOut.GetProperty(&quot;Result&quot;);
+
+			if (sCheckResult == &quot;1&quot;)
+			{
+				sErrorMessage = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;R21_150&quot;);
+				TheApplication().RaiseErrorText(sErrorMessage); // ISCHPOTE : 21/01/2012 : TLGA1024 : Amended from RaiseError to RaiseErrorText
+				return;
+			}
+
+			bcAccount.SetViewMode(AllView);
+			bcAccount.ClearToQuery();
+			bcAccount.ActivateField(&quot;Primary Contact Id&quot;);
+			bcAccount.SetSearchExpr(&quot;[Id]=&apos;&quot; + sAccountId + &quot;&apos;&quot;);
+			bcAccount.ExecuteQuery(ForwardOnly);
+
+			if (bcAccount.FirstRecord())
+			{
+				sAccountContactId = bcAccount.GetFieldValue(&quot;Primary Contact Id&quot;);
+
+				//PCASTRO WA#14 - Check if the order is being created via TBUI.
+				sTaskRunning = TheApplication().GetProfileAttr(&quot;TaskIsRunning&quot;);
+
+				if (sTaskRunning == &quot;Y&quot;)
+				{
+					sTaskContactId = TheApplication().GetProfileAttr(&quot;TaskPrimaryContactId&quot;);
+				
+					psIn.SetProperty(&quot;ProcessName&quot;,    &quot;VFTRCBU Validate Same Contact WF&quot;);
+					psIn.SetProperty(&quot;Contact A&quot;, sTaskContactId);
+					psIn.SetProperty(&quot;Contact B&quot;, sAccountContactId);
+					bsManager.InvokeMethod(&quot;RunProcess&quot;, psIn, psOut);					
+
+					if (psOut.GetProperty(&quot;Same Contact&quot;)!= &quot;Y&quot;)
+					{
+						sErrorMessage = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;R21_152&quot;);
+						TheApplication().RaiseErrorText(sErrorMessage);
+						return;
+					}
+				}
+				else
+				{
+					sOrderId = TheApplication().GetProfileAttr(&quot;OrderId&quot;);
+
+					bcOrderHP.SetViewMode(AllView);
+					bcOrderHP.ActivateField(&quot;X_Primary_contact&quot;);
+					bcOrderHP.ClearToQuery();
+					bcOrderHP.SetSearchExpr(&quot;[Id]=&apos;&quot; + sOrderId + &quot;&apos;&quot;); // AND [X_Primary_contact]=&apos;&quot; + sAccountContactId + &quot;&apos;
+					bcOrderHP.ExecuteQuery(ForwardOnly);
+
+					if (bcOrderHP.FirstRecord())
+					{						
+						psIn.SetProperty(&quot;ProcessName&quot;,    &quot;VFTRCBU Validate Same Contact WF&quot;);
+						psIn.SetProperty(&quot;Contact A&quot;, bcOrderHP.GetFieldValue(&quot;X_Primary_contact&quot;));
+						psIn.SetProperty(&quot;Contact B&quot;, sAccountContactId);
+						bsManager.InvokeMethod(&quot;RunProcess&quot;, psIn, psOut);	
+						
+						if (psOut.GetProperty(&quot;Same Contact&quot;)!= &quot;Y&quot;) {
+							sErrorMessage = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;R21_152&quot;);
+							TheApplication().RaiseErrorText(sErrorMessage);// ISCHPOTE : 21/01/2012 : TLGA1024 : Amended from RaiseError to RaiseErrorText
+							return;
+						}
+					}
+				}
+			}
+
+			psRow.SetProperty(&quot;Coupled MSISDN&quot;, sCoupledMSISDN);
+			psRow.SetProperty(&quot;Platform&quot;,       &quot;Siebel&quot;);
+			psRow.SetProperty(&quot;Matching&quot;,       &quot;Y&quot;);
+			TheApplication().SetProfileAttr(&quot;DualPlatform&quot;, &quot;Siebel&quot;);
+		}
+		else
+		{
+			psManagerIn.SetProperty(&quot;ProcessName&quot;,    &quot;VF Check Dual MSISDN WF&quot;);
+			psManagerIn.SetProperty(&quot;Coupled MSISDN&quot;, sCoupledMSISDN);
+
+			bsManager.InvokeMethod(&quot;RunProcess&quot;, psManagerIn, psManagerOut);
+
+			sStatusCode       = psManagerOut.GetProperty(&quot;Status_Code&quot;);
+			sErrorDescription = psManagerOut.GetProperty(&quot;Error_Description&quot;);
+			sHLRStatus        = psManagerOut.GetProperty(&quot;HLR Status&quot;);
+			sCustomerType     = psManagerOut.GetProperty(&quot;Customer Type&quot;);
+			sTC_ID            = psManagerOut.GetProperty(&quot;TC_ID&quot;);
+			sFirstName        = psManagerOut.GetProperty(&quot;Name&quot;);
+			sLastName         = psManagerOut.GetProperty(&quot;Last Name&quot;);
+			
+			if (sStatusCode == null || sStatusCode == &quot;&quot; || sStatusCode != &quot;0&quot;)
+			{
+				if (sErrorDescription == &quot;msisdn has another couple&quot;)
+				{
+					sErrorMessage = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;R21_154&quot;);
+					TheApplication().RaiseErrorText(sErrorMessage);// ISCHPOTE : 21/01/2012 : TLGA1024 : Amended from RaiseError to RaiseErrorText
+				}
+				else if (sErrorDescription == &quot;msisdn not found&quot;)
+				{
+					sErrorMessage = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;R142_346&quot;);
+					TheApplication().RaiseErrorText(sErrorMessage); // ISCHPOTE : 21/01/2012 : TLGA1024 : Amended from RaiseError to RaiseErrorText
+				}
+				else
+				{
+					TheApplication().RaiseErrorText(sErrorDescription);// ISCHPOTE : 21/01/2012 : TLGA1024 : Amended from RaiseError to RaiseErrorText
+				}
+
+				return;
+			}
+
+			if (sHLRStatus != sHLRActive) 
+			{
+				sErrorMessage = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;ACQ-007&quot;);
+				TheApplication().RaiseErrorText(sErrorMessage);
+				return;
+			}	
+					
+			if (sCustomerType == sTypeCorporate)
+			{
+				sErrorMessage = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;ACQ-006&quot;);
+				TheApplication().RaiseErrorText(sErrorMessage);
+				return;
+			}
+
+			if (sCustomerType == sTypeConsumer)
+			{
+				sCustTypeConsumer = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACCOUNT_TYPE&quot;, &quot;102&quot;);
+			}
+
+			sOrderId = TheApplication().GetProfileAttr(&quot;OrderId&quot;);
+
+			bcOrder.SetViewMode(AllView);
+			bcOrder.ClearToQuery();
+			bcOrder.ActivateField(&quot;Contact TC ID&quot;);
+			bcOrder.ActivateField(&quot;Order Account Type&quot;);
+			bcOrder.ActivateField(&quot;X Primary Contact First Name&quot;);
+			bcOrder.ActivateField(&quot;X Primary Contact Last Name&quot;);
+			bcOrder.SetSearchExpr(&quot;[Id]=&apos;&quot; + sOrderId + &quot;&apos;&quot;);
+			bcOrder.ExecuteQuery(ForwardOnly);
+
+			if (bcOrder.FirstRecord())
+			{
+				sCustomerTypeOrder = bcOrder.GetFieldValue(&quot;Order Account Type&quot;);//TLGA-5849
+				sTC_IDOrder        = bcOrder.GetFieldValue(&quot;Contact TC ID&quot;);
+				sFirstNameOrder    = bcOrder.GetFieldValue(&quot;X Primary Contact First Name&quot;);
+				sLastNameOrder     = bcOrder.GetFieldValue(&quot;X Primary Contact Last Name&quot;);
+
+				psRow.SetProperty(&quot;Coupled MSISDN&quot;, sCoupledMSISDN);
+				psRow.SetProperty(&quot;Platform&quot;,       &quot;ICCB&quot;);
+						
+				//TLGA-5849
+				if (sCustomerTypeOrder == sCustTypeConsumer &amp;&amp; sTC_IDOrder == sTC_ID &amp;&amp;
+					sFirstNameOrder == sFirstName &amp;&amp; sLastNameOrder == sLastName)
+				{
+					psRow.SetProperty(&quot;Matching&quot;, &quot;Y&quot;);
+				}
+				else
+				{
+					psRow.SetProperty(&quot;Matching&quot;, &quot;N&quot;);
+				}
+
+				TheApplication().SetProfileAttr(&quot;DualPlatform&quot;, &quot;&quot;);
+			}
+		}
+
+		Outputs.AddChild(psRow);
+	}
+	finally
+	{
+		psManagerOut = null;
+		psManagerIn  = null;
+		bsManager    = null;
+		bcOrder      = null;
+		bcAccount    = null;
+		boOrder      = null;
+		psCheckOut   = null;
+		psCheckIn    = null;
+		bsCheck      = null;
+		bcOrderHP    = null;
+		bcAssetHP    = null;
+		boOrderHP    = null;
+		psRow        = null;
+	    psIn         = null;
+		psOut        = null;
+	}
+}"
+			   SEQUENCE="4"
+			   UPDATED="07/14/2017 12:18:44"
+			   UPDATED_BY="IBMDEVELOPER1"
+			   CREATED="03/01/2012 07:48:51"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	if (MethodName == &quot;Init&quot;)
+	{
+		Init (Inputs, Outputs);
+		return(CancelOperation);
+	}
+	else if (MethodName == &quot;Query&quot;)
+	{
+		Query (Inputs, Outputs);
+		return(CancelOperation);
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="5"
+			   UPDATED="05/06/2015 09:42:24"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/01/2012 07:48:51"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="getField"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function getField( inSearchStr, inFieldName )
+{
+//	La funzione estrae il valore del campo indicato in &apos;Field_Name&apos;, dalla query Siebel in formato
+//	stringa. 
+//	Se la ricerca ha successo ritorna la stringa contenente il valore, altrimenti null.
+//	Input_Query = è la query da analizzare
+//	Field_Name = è il nome del campo da trovare
+	try
+	{
+		var result = &quot;&quot;;
+		var sub_result;
+		var sub_string_field; 
+		var position_of_char;
+		var buffer;
+		
+		if (inSearchStr == null || inSearchStr.length == 0)
+			return null;
+		//Cerco il nome del primo field nella stringa di query
+		//Seleziono il resto della query dall&apos;occorenza del nome del field in poi.
+		sub_result = Clib.strstr( inSearchStr, inFieldName );
+		if(sub_result != null)
+		{
+			sub_string_field = Clib.strstr( sub_result, &quot;\&quot;&quot; );
+			
+			//Ottengo l&apos;indice a cui si trova il carattere &apos;&quot;&apos;, delimitatore finale del valore ricercato 
+			position_of_char = sub_string_field.indexOf( &quot;\&quot;&quot;, 1 );
+			buffer = new Buffer( sub_string_field );
+			
+			//Memorizzo il valore ricercato
+			result = buffer.subBuffer( 1, position_of_char ).toString();
+			var LastChar = result.substring(Clib.strlen(result)-1,Clib.strlen(result)); 
+			if (LastChar==&apos;*&apos;)
+			result=result.substring(0,Clib.strlen(result)-1);
+			buffer = null;
+		}
+		return result;
+	}
+	catch (e){
+		var dbg = e.errText;
+		return null;
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="06/30/2012 17:04:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/01/2012 07:48:51"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

@@ -1,0 +1,2561 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="20150105:WA#18"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VFTRCBU Orders MNP"
+	   UI_FREEZE="N"
+	   UPDATED="11/15/2016 10:18:14"
+	   UPDATED_BY="SNOIVO"
+	   CREATED="01/05/2015 16:22:01"
+	   CREATED_BY="MSOUSA"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<TASK
+		   ALLOW_PAUSE="N"
+		   BUSINESS_OBJECT="VFTRCBU Account BO"
+		   COMMENTS="WA#18:20141219:MSOUSA"
+		   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_MNP_PORT_IN_ACT"
+		   INACTIVE="N"
+		   INBOX_DISPOSITION="DO_NOT_CARE_FASTEST"
+		   IS_SUBTASK="N"
+		   NAME="VFTRCBU MNP Port In Activate New Line Task: 8"
+		   OBJECT_LOCKED="N"
+		   ON_CONFLICT="Cancel Operation"
+		   STATUS="NOT_IN_USE"
+		   TASK_NAME="VFTRCBU MNP Port In Activate New Line Task"
+		   TRANSACTIONAL="Y"
+		   VERSION="8"
+		   UPDATED="11/15/2016 10:18:08"
+		   UPDATED_BY="SNOIVO"
+		   CREATED="07/27/2015 11:54:09"
+		   CREATED_BY="SADMIN">
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Start"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*132 754*NPts1*22*P05*92 754*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 0"
+			   TO_STEP_NAME="Set Prof Attr 01"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/27/2015 11:54:09"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:09"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Set Prof Attr 01"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*171 1324*NPts1*22*P07*171 1024*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 1"
+			   TO_STEP_NAME="Get Active View Name"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/27/2015 11:54:09"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:09"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="(Black/Grey/Cep Aran Error This Must Match (Ignore Case)(&apos;Y&apos;))"
+			   FROM_STEP_NAME="End Task?"
+			   INACTIVE="N"
+			   LABEL="Yes"
+			   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P28*1011 1274*FrHS1*32*P17*723 1274*NPts1*42*P07*723 1022*P38*1011 1024*ToHS1*38*ArrowEnd1*1"
+			   NAME="Connector 10"
+			   TO_STEP_NAME="End"
+			   TYPE="DECISION"
+			   UPDATED="07/27/2015 11:54:09"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:09"
+			   CREATED_BY="SADMIN">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_2"
+				   OPERATION="EQ_THIS_NC"
+				   PREFERRED_SEQUENCE="2"
+				   PROPERTY_NAME="Black/Grey/Cep Aran Error"
+				   UPDATED="07/27/2015 11:54:09"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:09"
+				   CREATED_BY="SADMIN">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR1="Y"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="07/27/2015 11:54:09"
+					   UPDATED_BY="SADMIN"
+					   CREATED="07/27/2015 11:54:09"
+					   CREATED_BY="SADMIN">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="End Task?"
+			   INACTIVE="N"
+			   LABEL="No"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*790 754*NPts1*22*P06*762 754*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 11"
+			   TO_STEP_NAME="CreateBA"
+			   TYPE="DEFAULT"
+			   UPDATED="07/27/2015 11:54:09"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:09"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="( This Must Match (Ignore Case)(&apos;[&amp;CustomerAccountType] = LookupValue(&apos;ACCOUNT_TYPE&apos;,&apos;102&apos;)&apos;))"
+			   FROM_STEP_NAME="Consumer?"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*12*P17*519 1024*NPts1*22*P07*519 2044*ToHS1*38*ArrowEnd1*1"
+			   NAME="Connector 12"
+			   TO_STEP_NAME="Set Prof Attr Null Account"
+			   TYPE="DECISION"
+			   UPDATED="07/27/2015 11:54:10"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:09"
+			   CREATED_BY="SADMIN">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="EXPRESSION"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="EQ_THIS_NC"
+				   PREFERRED_SEQUENCE="1"
+				   UPDATED="07/27/2015 11:54:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:10"
+				   CREATED_BY="SADMIN">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR5="[&amp;CustomerAccountType] = LookupValue(&apos;ACCOUNT_TYPE&apos;,&apos;102&apos;)"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="07/27/2015 11:54:10"
+					   UPDATED_BY="SADMIN"
+					   CREATED="07/27/2015 11:54:10"
+					   CREATED_BY="SADMIN">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Consumer?"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*608 2314*NPts1*22*P07*558 2314*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 13"
+			   TO_STEP_NAME="Error 0"
+			   TYPE="DEFAULT"
+			   UPDATED="07/27/2015 11:54:10"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:10"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="(MigratingFlag This Must Match (Ignore Case)(&apos;Y&apos;))"
+			   FROM_STEP_NAME="Migrating?"
+			   INACTIVE="N"
+			   LABEL="Y"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*500 3394*NPts1*22*P07*450 3394*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 14"
+			   TO_STEP_NAME="Error 1"
+			   TYPE="DECISION"
+			   UPDATED="07/27/2015 11:54:10"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:10"
+			   CREATED_BY="SADMIN">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="EQ_THIS_NC"
+				   PREFERRED_SEQUENCE="1"
+				   PROPERTY_NAME="MigratingFlag"
+				   UPDATED="07/27/2015 11:54:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:10"
+				   CREATED_BY="SADMIN">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR1="Y"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="07/27/2015 11:54:10"
+					   UPDATED_BY="SADMIN"
+					   CREATED="07/27/2015 11:54:10"
+					   CREATED_BY="SADMIN">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Migrating?"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*480 2314*FrHS1*12*P17*411 2314*NPts1*32*P07*411 3124*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 15"
+			   TO_STEP_NAME="Consumer?"
+			   TYPE="DEFAULT"
+			   UPDATED="07/27/2015 11:54:10"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:10"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Get Active View Name"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P26*231 754*FrHS1*22*P17*231 1594*NPts1*42*P07*210 1592*P36*252 754*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 16"
+			   TO_STEP_NAME="Get Prof Attr Context Account Id"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/27/2015 11:54:10"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:10"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Clear Customer Id"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P26*480 754*FrHS1*12*P16*399 754*NPts1*32*P07*399 1444*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 17"
+			   TO_STEP_NAME="Set Prof Attr Null Account"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/27/2015 11:54:10"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:10"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="CreateBA"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*886 754*NPts1*22*P06*848 754*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 2"
+			   TO_STEP_NAME="ActivateSubscriber"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/27/2015 11:54:10"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:10"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="CreateCA"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*684 754*NPts1*22*P06*656 754*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 3"
+			   TO_STEP_NAME="End Task?"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/27/2015 11:54:10"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:10"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Get Prof Attr Context Account Id"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*291 1444*NPts1*22*P07*291 1024*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 4"
+			   TO_STEP_NAME="Exists Customer?"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/27/2015 11:54:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:11"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Set Prof Attr Null Account"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*598 754*NPts1*22*P06*558 754*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 5"
+			   TO_STEP_NAME="CreateCA"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/27/2015 11:54:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:11"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="ActivateSubscriber"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*972 754*NPts1*22*P06*944 754*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 6"
+			   TO_STEP_NAME="End"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/27/2015 11:54:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:11"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="(Context View Name One Must Match (Ignore Case)(&apos;SIS OM Customer Account Portal View - Poste&apos; AND &apos;PRM VF TR Account Detail (Asset)&apos;)) AND (CustomerAccountId Is Not Null)"
+			   FROM_STEP_NAME="Exists Customer?"
+			   INACTIVE="N"
+			   LABEL="Yes"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*291 3124*NPts1*22*P07*291 1984*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 7"
+			   TO_STEP_NAME="Query Customer"
+			   TYPE="DECISION"
+			   UPDATED="07/27/2015 11:54:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:11"
+			   CREATED_BY="SADMIN">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="IS_NOT_NULL"
+				   PREFERRED_SEQUENCE="1"
+				   PROPERTY_NAME="CustomerAccountId"
+				   UPDATED="07/27/2015 11:54:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:11"
+				   CREATED_BY="SADMIN">
+				</TASK_BRANCH_CRITERIA>
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_2"
+				   OPERATION="EQ_ANY_NC"
+				   PREFERRED_SEQUENCE="2"
+				   PROPERTY_NAME="Context View Name"
+				   UPDATED="07/27/2015 11:54:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:11"
+				   CREATED_BY="SADMIN">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR1="PRM VF TR Account Detail (Asset)"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="07/27/2015 11:54:11"
+					   UPDATED_BY="SADMIN"
+					   CREATED="07/27/2015 11:54:11"
+					   CREATED_BY="SADMIN">
+					</TASK_BRANCH_CRITERIA_VALUE>
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR1="SIS OM Customer Account Portal View - Poste"
+					   NAME="Criteria Value_2"
+					   PREFERRED_SEQUENCE="2"
+					   UPDATED="07/27/2015 11:54:11"
+					   UPDATED_BY="SADMIN"
+					   CREATED="07/27/2015 11:54:11"
+					   CREATED_BY="SADMIN">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Exists Customer?"
+			   INACTIVE="N"
+			   LABEL="No"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*360 1714*NPts1*22*P07*330 1714*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 8"
+			   TO_STEP_NAME="Clear Customer Id"
+			   TYPE="DEFAULT"
+			   UPDATED="07/27/2015 11:54:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:11"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Query Customer"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*372 3394*NPts1*22*P07*330 3394*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 9"
+			   TO_STEP_NAME="Migrating?"
+			   TYPE="CONNECTOR"
+			   UPDATED="07/27/2015 11:54:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:11"
+			   CREATED_BY="SADMIN">
+			</TASK_BRANCH>
+			<TASK_CHAPTER
+			   COLOR="65280"
+			   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_ACQUIRE_ACCOUNT_DATA"
+			   INACTIVE="N"
+			   NAME="Acquire Account Data"
+			   SEQUENCE="20"
+			   UPDATED="07/27/2015 11:54:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:12"
+			   CREATED_BY="SADMIN">
+				<TASK_CHAPTER_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="07/27/2015 11:54:12"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:12"
+				   CREATED_BY="SADMIN">
+				</TASK_CHAPTER_LOCALE>
+			</TASK_CHAPTER>
+			<TASK_CHAPTER
+			   COLOR="16764108"
+			   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_ACQUIRE_CUSTOMER_DATA"
+			   INACTIVE="N"
+			   NAME="Acquire Customer Data"
+			   SEQUENCE="10"
+			   UPDATED="07/27/2015 11:54:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:12"
+			   CREATED_BY="SADMIN">
+				<TASK_CHAPTER_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="07/27/2015 11:54:12"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:12"
+				   CREATED_BY="SADMIN">
+				</TASK_CHAPTER_LOCALE>
+			</TASK_CHAPTER>
+			<TASK_CHAPTER
+			   COLOR="13434879"
+			   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_ACT_NEW_LINE_CHAPTER"
+			   INACTIVE="N"
+			   NAME="Activate New Line"
+			   SEQUENCE="30"
+			   UPDATED="07/27/2015 11:54:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:12"
+			   CREATED_BY="SADMIN">
+				<TASK_CHAPTER_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="07/27/2015 11:54:12"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:12"
+				   CREATED_BY="SADMIN">
+				</TASK_CHAPTER_LOCALE>
+			</TASK_CHAPTER>
+			<TASK_EVENT
+			   COMMENTS="VFTRCBU-9029 IMARTINS 24042015"
+			   INACTIVE="N"
+			   NAME="Post-Cancel"
+			   WORKFLOW_PROCESS="VFTRCBU Clear Task Profile Attributes WF"
+			   UPDATED="07/27/2015 11:54:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:12"
+			   CREATED_BY="SADMIN">
+			</TASK_EVENT>
+			<TASK_EVENT
+			   COMMENTS="VFTRCBU-13267"
+			   INACTIVE="N"
+			   NAME="Pre-Cancel"
+			   WORKFLOW_PROCESS="VFTRCBU NI Unlock Actions WF"
+			   UPDATED="07/27/2015 11:54:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:12"
+			   CREATED_BY="SADMIN">
+			</TASK_EVENT>
+			<TASK_LOCALE
+			   APPLICATION_CODE="STD"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   REDO="N"
+			   TRANSLATE="Y"
+			   UPDATED="07/27/2015 11:54:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:12"
+			   CREATED_BY="SADMIN">
+			</TASK_LOCALE>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="INOUT"
+			   INACTIVE="N"
+			   NAME="Billing Account"
+			   UPDATED="07/27/2015 11:54:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:12"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Black/Grey/Cep Aran Error"
+			   UPDATED="07/27/2015 11:54:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:12"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Context BC Id"
+			   UPDATED="07/27/2015 11:54:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:12"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Context BC Name"
+			   UPDATED="07/27/2015 11:54:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:13"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Context BO Name"
+			   UPDATED="07/27/2015 11:54:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:13"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   COMMENTS="IMARTINS 20042015 VFTRCBU-8403"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Context View Name"
+			   UPDATED="07/27/2015 11:54:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:13"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="INOUT"
+			   INACTIVE="N"
+			   NAME="CustomerAccountId"
+			   UPDATED="07/27/2015 11:54:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:13"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="CustomerAccountType"
+			   UPDATED="07/27/2015 11:54:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:13"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="EndTask"
+			   UPDATED="07/27/2015 11:54:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:13"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Error Code"
+			   UPDATED="07/27/2015 11:54:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:13"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Error Message"
+			   UPDATED="07/27/2015 11:54:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:13"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Instance Identifier"
+			   UPDATED="07/27/2015 11:54:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:13"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="MigratingFlag"
+			   UPDATED="07/27/2015 11:54:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:13"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Object Id"
+			   UPDATED="07/27/2015 11:54:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:14"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Siebel Operation Object Id"
+			   UPDATED="07/27/2015 11:54:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:14"
+			   CREATED_BY="SADMIN">
+			</TASK_PROPERTY>
+			<TASK_STEP
+			   CHAPTER="Activate New Line"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_ACT_NEW_LINE_CHAPTER"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*876 48 954 1029*FillBgClr7*82516338*ArrowEnd1*1"
+			   NAME="ActivateSubscriber"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   SUBTASK_NAME="VFTRCBU MNP Port In Activate New Line SubTask"
+			   TYPE="SUBTASK"
+			   UPDATED="07/27/2015 11:54:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:14"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Billing Account Code"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Billing Account Code"
+				   PROPERTY_NAME="Billing Account"
+				   TYPE="Task Property"
+				   UPDATED="07/27/2015 11:54:14"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:14"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="Echo"
+			   BUSINESS_SERVICE_NAME="Workflow Utilities"
+			   CHAPTER="Acquire Customer Data"
+			   COMMENTS="IMARTINS 22042015 VFTRCBU-8403"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*360 144 438 1989*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Clear Customer Id"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="07/27/2015 11:54:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:14"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:CustomerAccountId"
+				   PROPERTY_NAME="CustomerAccountId"
+				   TYPE="Literal"
+				   UPDATED="07/27/2015 11:54:14"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:14"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*480 204 558 2589*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Consumer?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="07/27/2015 11:54:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:14"
+			   CREATED_BY="SADMIN">
+			</TASK_STEP>
+			<TASK_STEP
+			   CHAPTER="Acquire Account Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_ACQUIRE_ACCOUNT_DATA"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*780 48 858 1029*FillBgClr7*82516338*ArrowEnd1*1"
+			   NAME="CreateBA"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   SUBTASK_NAME="VFTRCBU Create Billing Account SubTask"
+			   TYPE="SUBTASK"
+			   UPDATED="07/27/2015 11:54:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:14"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="CustomerAccountId"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:CustomerAccountId"
+				   PROPERTY_NAME="CustomerAccountId"
+				   TYPE="Task Property"
+				   UPDATED="07/27/2015 11:54:14"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:14"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Billing Account BC"
+				   BUSINESS_COMPONENT_FIELD="Account Code"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Billing Account"
+				   PROPERTY_NAME="Billing Account"
+				   TYPE="Business Component"
+				   UPDATED="07/27/2015 11:54:15"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:15"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="07/27/2015 11:54:15"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:15"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_LOCALE>
+			</TASK_STEP>
+			<TASK_STEP
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_ACQUIRE_CUSTOMER_DATA"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*588 48 666 1029*FillBgClr7*82516338*ArrowEnd1*1"
+			   NAME="CreateCA"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   SUBTASK_NAME="VFTRCBU Create Customer Sub-Task"
+			   TYPE="SUBTASK"
+			   UPDATED="07/27/2015 11:54:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:15"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Context View Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Context View Name"
+				   PROPERTY_NAME="Context View Name"
+				   TYPE="Task Property"
+				   UPDATED="07/27/2015 11:54:15"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:15"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="ExistsCustomerId"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:ExistsCustomerId"
+				   PROPERTY_NAME="CustomerAccountId"
+				   TYPE="Task Property"
+				   UPDATED="07/27/2015 11:54:15"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:15"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="MaxLinesType"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:MaxLinesType"
+				   TYPE="Literal"
+				   VALUE="MNP Activation"
+				   UPDATED="07/27/2015 11:54:15"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:15"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Black/Grey/Cep Aran Error"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Black/Grey/Cep Aran Error"
+				   PROPERTY_NAME="Black/Grey/Cep Aran Error"
+				   TYPE="Output Argument"
+				   UPDATED="07/27/2015 11:54:15"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:15"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Account BC"
+				   BUSINESS_COMPONENT_FIELD="Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:CustomerAccountId"
+				   PROPERTY_NAME="CustomerAccountId"
+				   TYPE="Business Component"
+				   UPDATED="07/27/2015 11:54:15"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:15"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   CHAPTER="Activate New Line"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*972 48 1050 1029*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="End"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="END"
+			   UPDATED="07/27/2015 11:54:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:16"
+			   CREATED_BY="SADMIN">
+			</TASK_STEP>
+			<TASK_STEP
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*684 48 762 1029*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="End Task?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="07/27/2015 11:54:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:16"
+			   CREATED_BY="SADMIN">
+			</TASK_STEP>
+			<TASK_STEP
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   ERROR_CODE="WF_ERR_CUSTOM_1"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*588 204 666 2589*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="Error 0"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="ERROR"
+			   UPDATED="07/27/2015 11:54:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:16"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="%1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:%1"
+				   TYPE="Expression"
+				   VALUE="LookupMessage(&quot;VFTRCBU User Defined Errors&quot;,&quot;0080&quot;)"
+				   UPDATED="07/27/2015 11:54:16"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:16"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   ERROR_CODE="WF_ERR_CUSTOM_1"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*480 312 558 3669*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="Error 1"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="ERROR"
+			   UPDATED="07/27/2015 11:54:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:16"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="%1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:%1"
+				   TYPE="Expression"
+				   VALUE="LookupMessage(&quot;VFTRCBU User Defined Errors&quot;,&quot;0219&quot;)"
+				   UPDATED="07/27/2015 11:54:16"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:16"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*252 144 330 1989*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Exists Customer?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="07/27/2015 11:54:16"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:16"
+			   CREATED_BY="SADMIN">
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="GetActiveView"
+			   BUSINESS_SERVICE_NAME="Validation Utility Service"
+			   CHAPTER="Acquire Customer Data"
+			   COMMENTS="IMARTINS 20042015 VFTRCBU-8403"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*132 132 210 1869*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Active View Name"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="07/27/2015 11:54:17"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:17"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="View"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Context View Name"
+				   PROPERTY_NAME="Context View Name"
+				   TYPE="Output Argument"
+				   UPDATED="07/27/2015 11:54:17"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:17"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="GetProfileAttr"
+			   BUSINESS_SERVICE_NAME="SessionAccessService"
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*252 48 330 1029*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Prof Attr Context Account Id"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="07/27/2015 11:54:17"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:17"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Name"
+				   TYPE="Literal"
+				   VALUE="VFPA_AccountId"
+				   UPDATED="07/27/2015 11:54:17"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:17"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Value"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:CustomerAccountId"
+				   PROPERTY_NAME="CustomerAccountId"
+				   TYPE="Output Argument"
+				   UPDATED="07/27/2015 11:54:17"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:17"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="07/27/2015 11:54:17"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:17"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_LOCALE>
+			</TASK_STEP>
+			<TASK_STEP
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*372 312 450 3669*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Migrating?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="07/27/2015 11:54:17"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:17"
+			   CREATED_BY="SADMIN">
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_COMPONENT="VFTRCBU Account BC"
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*252 312 330 3669*FillBgClr8*134218238*ArrowEnd1*1"
+			   NAME="Query Customer"
+			   OPERATION="QUERY"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="SIEBEL_OPER"
+			   UPDATED="07/27/2015 11:54:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:17"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="Id"
+				   PROPERTY_NAME="CustomerAccountId"
+				   TYPE="Task Property"
+				   UPDATED="07/27/2015 11:54:18"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:18"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Account BC"
+				   BUSINESS_COMPONENT_FIELD="Market Class"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:CustomerAccountType"
+				   PROPERTY_NAME="CustomerAccountType"
+				   TYPE="Business Component"
+				   UPDATED="07/27/2015 11:54:18"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:18"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Account BC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU Migrating Flag"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:MigratingFlag"
+				   PROPERTY_NAME="MigratingFlag"
+				   TYPE="Business Component"
+				   UPDATED="07/27/2015 11:54:18"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:18"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="SetProfileAttr"
+			   BUSINESS_SERVICE_NAME="SessionAccessService"
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*132 48 210 1029*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Set Prof Attr 01"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="07/27/2015 11:54:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:18"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Name"
+				   TYPE="Literal"
+				   VALUE="VFTRCBU_PA_MainTask"
+				   UPDATED="07/27/2015 11:54:18"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:18"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Value"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Value"
+				   TYPE="Literal"
+				   VALUE="Y"
+				   UPDATED="07/27/2015 11:54:18"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:18"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="SetProfileAttr"
+			   BUSINESS_SERVICE_NAME="SessionAccessService"
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*480 48 558 1029*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Set Prof Attr Null Account"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="07/27/2015 11:54:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:18"
+			   CREATED_BY="SADMIN">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Name"
+				   TYPE="Literal"
+				   VALUE="VFPA_AccountId"
+				   UPDATED="07/27/2015 11:54:19"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:19"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Value"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Value"
+				   TYPE="Literal"
+				   UPDATED="07/27/2015 11:54:19"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/27/2015 11:54:19"
+				   CREATED_BY="SADMIN">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*24 48 102 1029*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="Start"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="START"
+			   UPDATED="07/27/2015 11:54:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/27/2015 11:54:19"
+			   CREATED_BY="SADMIN">
+			</TASK_STEP>
+		</TASK>
+		<TASK
+		   ALLOW_PAUSE="N"
+		   BUSINESS_OBJECT="VFTRCBU Account BO"
+		   COMMENTS="WA#18:20141219:MSOUSA"
+		   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_MNP_PORT_IN_ACT"
+		   INACTIVE="N"
+		   INBOX_DISPOSITION="DO_NOT_CARE_FASTEST"
+		   IS_SUBTASK="N"
+		   NAME="VFTRCBU MNP Port In Activate New Line Task: 9"
+		   OBJECT_LOCKED="N"
+		   ON_CONFLICT="Cancel Operation"
+		   STATUS="COMPLETED"
+		   TASK_NAME="VFTRCBU MNP Port In Activate New Line Task"
+		   TRANSACTIONAL="Y"
+		   VERSION="9"
+		   UPDATED="11/15/2016 10:18:08"
+		   UPDATED_BY="SNOIVO"
+		   CREATED="11/14/2016 17:02:51"
+		   CREATED_BY="SNOIVO">
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Start"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*132 754*NPts1*22*P05*92 754*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 0"
+			   TO_STEP_NAME="Set Prof Attr 01"
+			   TYPE="CONNECTOR"
+			   UPDATED="11/14/2016 17:02:52"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:52"
+			   CREATED_BY="SNOIVO">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Set Prof Attr 01"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*171 1324*NPts1*22*P07*171 1024*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 1"
+			   TO_STEP_NAME="Get Active View Name"
+			   TYPE="CONNECTOR"
+			   UPDATED="11/14/2016 17:02:52"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:52"
+			   CREATED_BY="SNOIVO">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="(Black/Grey/Cep Aran Error This Must Match (Ignore Case)(&apos;Y&apos;))"
+			   FROM_STEP_NAME="End Task?"
+			   INACTIVE="N"
+			   LABEL="Yes"
+			   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P28*1011 1274*FrHS1*32*P17*723 1274*NPts1*42*P07*723 1022*P38*1011 1024*ToHS1*38*ArrowEnd1*1"
+			   NAME="Connector 10"
+			   TO_STEP_NAME="End"
+			   TYPE="DECISION"
+			   UPDATED="11/14/2016 17:02:52"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:52"
+			   CREATED_BY="SNOIVO">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_2"
+				   OPERATION="EQ_THIS_NC"
+				   PREFERRED_SEQUENCE="2"
+				   PROPERTY_NAME="Black/Grey/Cep Aran Error"
+				   UPDATED="11/14/2016 17:02:52"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:52"
+				   CREATED_BY="SNOIVO">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR1="Y"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="11/14/2016 17:02:52"
+					   UPDATED_BY="SNOIVO"
+					   CREATED="11/14/2016 17:02:52"
+					   CREATED_BY="SNOIVO">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="End Task?"
+			   INACTIVE="N"
+			   LABEL="No"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*790 754*NPts1*22*P06*762 754*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 11"
+			   TO_STEP_NAME="CreateBA"
+			   TYPE="DEFAULT"
+			   UPDATED="11/14/2016 17:02:52"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:52"
+			   CREATED_BY="SNOIVO">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="( This Must Match (Ignore Case)(&apos;[&amp;CustomerAccountType] = LookupValue(&apos;ACCOUNT_TYPE&apos;,&apos;102&apos;)&apos;))"
+			   FROM_STEP_NAME="Consumer?"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*12*P17*519 1024*NPts1*22*P07*519 2044*ToHS1*38*ArrowEnd1*1"
+			   NAME="Connector 12"
+			   TO_STEP_NAME="Set Prof Attr Null Account"
+			   TYPE="DECISION"
+			   UPDATED="11/14/2016 17:02:52"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:52"
+			   CREATED_BY="SNOIVO">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="EXPRESSION"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="EQ_THIS_NC"
+				   PREFERRED_SEQUENCE="1"
+				   UPDATED="11/14/2016 17:02:52"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:52"
+				   CREATED_BY="SNOIVO">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR5="[&amp;CustomerAccountType] = LookupValue(&apos;ACCOUNT_TYPE&apos;,&apos;102&apos;)"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="11/14/2016 17:02:52"
+					   UPDATED_BY="SNOIVO"
+					   CREATED="11/14/2016 17:02:52"
+					   CREATED_BY="SNOIVO">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Consumer?"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*608 2314*NPts1*22*P07*558 2314*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 13"
+			   TO_STEP_NAME="Error 0"
+			   TYPE="DEFAULT"
+			   UPDATED="11/14/2016 17:02:52"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:52"
+			   CREATED_BY="SNOIVO">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="(MigratingFlag This Must Match (Ignore Case)(&apos;Y&apos;))"
+			   FROM_STEP_NAME="Migrating?"
+			   INACTIVE="N"
+			   LABEL="Y"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*500 3394*NPts1*22*P07*450 3394*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 14"
+			   TO_STEP_NAME="Error 1"
+			   TYPE="DECISION"
+			   UPDATED="11/14/2016 17:02:52"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:52"
+			   CREATED_BY="SNOIVO">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="EQ_THIS_NC"
+				   PREFERRED_SEQUENCE="1"
+				   PROPERTY_NAME="MigratingFlag"
+				   UPDATED="11/14/2016 17:02:52"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:52"
+				   CREATED_BY="SNOIVO">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR1="Y"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="11/14/2016 17:02:53"
+					   UPDATED_BY="SNOIVO"
+					   CREATED="11/14/2016 17:02:53"
+					   CREATED_BY="SNOIVO">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Migrating?"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P27*480 2314*FrHS1*12*P17*411 2314*NPts1*32*P07*411 3124*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 15"
+			   TO_STEP_NAME="Consumer?"
+			   TYPE="DEFAULT"
+			   UPDATED="11/14/2016 17:02:53"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:53"
+			   CREATED_BY="SNOIVO">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Get Active View Name"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P26*231 754*FrHS1*22*P17*231 1594*NPts1*42*P07*210 1592*P36*252 754*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 16"
+			   TO_STEP_NAME="Get Prof Attr Context Account Id"
+			   TYPE="CONNECTOR"
+			   UPDATED="11/14/2016 17:02:53"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:53"
+			   CREATED_BY="SNOIVO">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Clear Customer Id"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P26*480 754*FrHS1*12*P16*399 754*NPts1*32*P07*399 1444*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 17"
+			   TO_STEP_NAME="Set Prof Attr Null Account"
+			   TYPE="CONNECTOR"
+			   UPDATED="11/14/2016 17:02:53"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:53"
+			   CREATED_BY="SNOIVO">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="CreateBA"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*886 754*NPts1*22*P06*848 754*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 2"
+			   TO_STEP_NAME="ActivateSubscriber"
+			   TYPE="CONNECTOR"
+			   UPDATED="11/14/2016 17:02:53"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:53"
+			   CREATED_BY="SNOIVO">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="CreateCA"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*684 754*NPts1*22*P06*656 754*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 3"
+			   TO_STEP_NAME="End Task?"
+			   TYPE="CONNECTOR"
+			   UPDATED="11/14/2016 17:02:53"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:53"
+			   CREATED_BY="SNOIVO">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Get Prof Attr Context Account Id"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*291 1444*NPts1*22*P07*291 1024*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 4"
+			   TO_STEP_NAME="Exists Customer?"
+			   TYPE="CONNECTOR"
+			   UPDATED="11/14/2016 17:02:53"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:53"
+			   CREATED_BY="SNOIVO">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Set Prof Attr Null Account"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*598 754*NPts1*22*P06*558 754*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 5"
+			   TO_STEP_NAME="CreateCA"
+			   TYPE="CONNECTOR"
+			   UPDATED="11/14/2016 17:02:53"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:53"
+			   CREATED_BY="SNOIVO">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="ActivateSubscriber"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*972 754*NPts1*22*P06*944 754*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 6"
+			   TO_STEP_NAME="End"
+			   TYPE="CONNECTOR"
+			   UPDATED="11/14/2016 17:02:53"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:53"
+			   CREATED_BY="SNOIVO">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="(Context View Name One Must Match (Ignore Case)(&apos;SIS OM Customer Account Portal View - Poste&apos; AND &apos;PRM VF TR Account Detail (Asset)&apos;)) AND (CustomerAccountId Is Not Null)"
+			   FROM_STEP_NAME="Exists Customer?"
+			   INACTIVE="N"
+			   LABEL="Yes"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*291 3124*NPts1*22*P07*291 1984*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 7"
+			   TO_STEP_NAME="Query Customer"
+			   TYPE="DECISION"
+			   UPDATED="11/14/2016 17:02:53"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:53"
+			   CREATED_BY="SNOIVO">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="IS_NOT_NULL"
+				   PREFERRED_SEQUENCE="1"
+				   PROPERTY_NAME="CustomerAccountId"
+				   UPDATED="11/14/2016 17:02:53"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:53"
+				   CREATED_BY="SNOIVO">
+				</TASK_BRANCH_CRITERIA>
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_2"
+				   OPERATION="EQ_ANY_NC"
+				   PREFERRED_SEQUENCE="2"
+				   PROPERTY_NAME="Context View Name"
+				   UPDATED="11/14/2016 17:02:53"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:53"
+				   CREATED_BY="SNOIVO">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR1="PRM VF TR Account Detail (Asset)"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="11/14/2016 17:02:53"
+					   UPDATED_BY="SNOIVO"
+					   CREATED="11/14/2016 17:02:53"
+					   CREATED_BY="SNOIVO">
+					</TASK_BRANCH_CRITERIA_VALUE>
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR1="SIS OM Customer Account Portal View - Poste"
+					   NAME="Criteria Value_2"
+					   PREFERRED_SEQUENCE="2"
+					   UPDATED="11/14/2016 17:02:53"
+					   UPDATED_BY="SNOIVO"
+					   CREATED="11/14/2016 17:02:53"
+					   CREATED_BY="SNOIVO">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Exists Customer?"
+			   INACTIVE="N"
+			   LABEL="No"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*360 1714*NPts1*22*P07*330 1714*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 8"
+			   TO_STEP_NAME="Clear Customer Id"
+			   TYPE="DEFAULT"
+			   UPDATED="11/14/2016 17:02:53"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:53"
+			   CREATED_BY="SNOIVO">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Query Customer"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*372 3394*NPts1*22*P07*330 3394*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 9"
+			   TO_STEP_NAME="Migrating?"
+			   TYPE="CONNECTOR"
+			   UPDATED="11/14/2016 17:02:53"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:53"
+			   CREATED_BY="SNOIVO">
+			</TASK_BRANCH>
+			<TASK_CHAPTER
+			   COLOR="65280"
+			   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_ACQUIRE_ACCOUNT_DATA"
+			   INACTIVE="N"
+			   NAME="Acquire Account Data"
+			   SEQUENCE="20"
+			   UPDATED="11/14/2016 17:02:52"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:52"
+			   CREATED_BY="SNOIVO">
+				<TASK_CHAPTER_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/14/2016 17:02:52"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:52"
+				   CREATED_BY="SNOIVO">
+				</TASK_CHAPTER_LOCALE>
+			</TASK_CHAPTER>
+			<TASK_CHAPTER
+			   COLOR="16764108"
+			   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_ACQUIRE_CUSTOMER_DATA"
+			   INACTIVE="N"
+			   NAME="Acquire Customer Data"
+			   SEQUENCE="10"
+			   UPDATED="11/14/2016 17:02:51"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:51"
+			   CREATED_BY="SNOIVO">
+				<TASK_CHAPTER_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/14/2016 17:02:51"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:51"
+				   CREATED_BY="SNOIVO">
+				</TASK_CHAPTER_LOCALE>
+			</TASK_CHAPTER>
+			<TASK_CHAPTER
+			   COLOR="13434879"
+			   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_ACT_NEW_LINE_CHAPTER"
+			   INACTIVE="N"
+			   NAME="Activate New Line"
+			   SEQUENCE="30"
+			   UPDATED="11/14/2016 17:02:52"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:52"
+			   CREATED_BY="SNOIVO">
+				<TASK_CHAPTER_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/14/2016 17:02:52"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:52"
+				   CREATED_BY="SNOIVO">
+				</TASK_CHAPTER_LOCALE>
+			</TASK_CHAPTER>
+			<TASK_EVENT
+			   COMMENTS="VFTRCBU-9029 IMARTINS 24042015"
+			   INACTIVE="N"
+			   NAME="Post-Cancel"
+			   WORKFLOW_PROCESS="VFTRCBU Clear Task Profile Attributes WF"
+			   UPDATED="11/14/2016 17:02:52"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:52"
+			   CREATED_BY="SNOIVO">
+			</TASK_EVENT>
+			<TASK_EVENT
+			   BUSINESS_SERVICE_METHOD="RunProcess"
+			   BUSINESS_SERVICE_NAME="Workflow Process Manager"
+			   COMMENTS="VFTRCBU-13267"
+			   INACTIVE="N"
+			   NAME="Pre-Cancel"
+			   UPDATED="11/14/2016 18:59:23"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:52"
+			   CREATED_BY="SNOIVO">
+				<TASK_EVENT_IO_ARGUMENT
+				   ARGUMENT="ProcessName"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:ProcessName"
+				   TYPE="Literal"
+				   VALUE="VFTRCBU NI Unlock Actions WF"
+				   UPDATED="11/14/2016 18:56:47"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 18:56:47"
+				   CREATED_BY="SNOIVO">
+				</TASK_EVENT_IO_ARGUMENT>
+				<TASK_EVENT_IO_ARGUMENT
+				   ARGUMENT="ProcessType"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:ProcessType"
+				   TYPE="Literal"
+				   VALUE="M"
+				   UPDATED="11/14/2016 18:59:23"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 18:58:13"
+				   CREATED_BY="SNOIVO">
+				</TASK_EVENT_IO_ARGUMENT>
+			</TASK_EVENT>
+			<TASK_LOCALE
+			   APPLICATION_CODE="STD"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   REDO="N"
+			   TRANSLATE="Y"
+			   UPDATED="11/14/2016 17:02:55"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:55"
+			   CREATED_BY="SNOIVO">
+			</TASK_LOCALE>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="INOUT"
+			   INACTIVE="N"
+			   NAME="Billing Account"
+			   UPDATED="11/14/2016 17:02:55"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:55"
+			   CREATED_BY="SNOIVO">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Black/Grey/Cep Aran Error"
+			   UPDATED="11/14/2016 17:02:55"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:55"
+			   CREATED_BY="SNOIVO">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Context BC Id"
+			   UPDATED="11/14/2016 17:02:55"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:55"
+			   CREATED_BY="SNOIVO">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Context BC Name"
+			   UPDATED="11/14/2016 17:02:55"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:55"
+			   CREATED_BY="SNOIVO">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Context BO Name"
+			   UPDATED="11/14/2016 17:02:55"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:55"
+			   CREATED_BY="SNOIVO">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   COMMENTS="IMARTINS 20042015 VFTRCBU-8403"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Context View Name"
+			   UPDATED="11/14/2016 17:02:55"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:55"
+			   CREATED_BY="SNOIVO">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="INOUT"
+			   INACTIVE="N"
+			   NAME="CustomerAccountId"
+			   UPDATED="11/14/2016 17:02:55"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:55"
+			   CREATED_BY="SNOIVO">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="CustomerAccountType"
+			   UPDATED="11/14/2016 17:02:55"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:55"
+			   CREATED_BY="SNOIVO">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="EndTask"
+			   UPDATED="11/14/2016 17:02:55"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:55"
+			   CREATED_BY="SNOIVO">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Error Code"
+			   UPDATED="11/14/2016 17:02:55"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:55"
+			   CREATED_BY="SNOIVO">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Error Message"
+			   UPDATED="11/14/2016 17:02:55"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:55"
+			   CREATED_BY="SNOIVO">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Instance Identifier"
+			   UPDATED="11/14/2016 17:02:55"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:55"
+			   CREATED_BY="SNOIVO">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="MigratingFlag"
+			   UPDATED="11/14/2016 17:02:56"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:56"
+			   CREATED_BY="SNOIVO">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Object Id"
+			   UPDATED="11/14/2016 17:02:56"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:56"
+			   CREATED_BY="SNOIVO">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Siebel Operation Object Id"
+			   UPDATED="11/14/2016 17:02:56"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:56"
+			   CREATED_BY="SNOIVO">
+			</TASK_PROPERTY>
+			<TASK_STEP
+			   CHAPTER="Activate New Line"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_ACT_NEW_LINE_CHAPTER"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*876 48 954 1029*FillBgClr7*82516338*ArrowEnd1*1"
+			   NAME="ActivateSubscriber"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   SUBTASK_NAME="VFTRCBU MNP Port In Activate New Line SubTask"
+			   TYPE="SUBTASK"
+			   UPDATED="11/14/2016 17:02:53"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:53"
+			   CREATED_BY="SNOIVO">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Billing Account Code"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Billing Account Code"
+				   PROPERTY_NAME="Billing Account"
+				   TYPE="Task Property"
+				   UPDATED="11/14/2016 17:02:53"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:53"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="Echo"
+			   BUSINESS_SERVICE_NAME="Workflow Utilities"
+			   CHAPTER="Acquire Customer Data"
+			   COMMENTS="IMARTINS 22042015 VFTRCBU-8403"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*360 144 438 1989*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Clear Customer Id"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="11/14/2016 17:02:53"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:53"
+			   CREATED_BY="SNOIVO">
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:CustomerAccountId"
+				   PROPERTY_NAME="CustomerAccountId"
+				   TYPE="Literal"
+				   UPDATED="11/14/2016 17:02:53"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:53"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*480 204 558 2589*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Consumer?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="11/14/2016 17:02:53"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:53"
+			   CREATED_BY="SNOIVO">
+			</TASK_STEP>
+			<TASK_STEP
+			   CHAPTER="Acquire Account Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_ACQUIRE_ACCOUNT_DATA"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*780 48 858 1029*FillBgClr7*82516338*ArrowEnd1*1"
+			   NAME="CreateBA"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   SUBTASK_NAME="VFTRCBU Create Billing Account SubTask"
+			   TYPE="SUBTASK"
+			   UPDATED="11/14/2016 17:02:53"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:53"
+			   CREATED_BY="SNOIVO">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="CustomerAccountId"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:CustomerAccountId"
+				   PROPERTY_NAME="CustomerAccountId"
+				   TYPE="Task Property"
+				   UPDATED="11/14/2016 17:02:53"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:53"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Billing Account BC"
+				   BUSINESS_COMPONENT_FIELD="Account Code"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Billing Account"
+				   PROPERTY_NAME="Billing Account"
+				   TYPE="Business Component"
+				   UPDATED="11/14/2016 17:02:53"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:53"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/14/2016 17:02:53"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:53"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_LOCALE>
+			</TASK_STEP>
+			<TASK_STEP
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_ACQUIRE_CUSTOMER_DATA"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*588 48 666 1029*FillBgClr7*82516338*ArrowEnd1*1"
+			   NAME="CreateCA"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   SUBTASK_NAME="VFTRCBU Create Customer Sub-Task"
+			   TYPE="SUBTASK"
+			   UPDATED="11/14/2016 17:02:53"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:53"
+			   CREATED_BY="SNOIVO">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Context View Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Context View Name"
+				   PROPERTY_NAME="Context View Name"
+				   TYPE="Task Property"
+				   UPDATED="11/14/2016 17:02:53"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:53"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="ExistsCustomerId"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:ExistsCustomerId"
+				   PROPERTY_NAME="CustomerAccountId"
+				   TYPE="Task Property"
+				   UPDATED="11/14/2016 17:02:53"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:53"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="MaxLinesType"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:MaxLinesType"
+				   TYPE="Literal"
+				   VALUE="MNP Activation"
+				   UPDATED="11/14/2016 17:02:53"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:53"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Black/Grey/Cep Aran Error"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Black/Grey/Cep Aran Error"
+				   PROPERTY_NAME="Black/Grey/Cep Aran Error"
+				   TYPE="Output Argument"
+				   UPDATED="11/14/2016 17:02:53"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:53"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Account BC"
+				   BUSINESS_COMPONENT_FIELD="Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:CustomerAccountId"
+				   PROPERTY_NAME="CustomerAccountId"
+				   TYPE="Business Component"
+				   UPDATED="11/14/2016 17:02:53"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:53"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   CHAPTER="Activate New Line"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*972 48 1050 1029*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="End"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="END"
+			   UPDATED="11/14/2016 17:02:53"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:53"
+			   CREATED_BY="SNOIVO">
+			</TASK_STEP>
+			<TASK_STEP
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*684 48 762 1029*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="End Task?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="11/14/2016 17:02:53"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:53"
+			   CREATED_BY="SNOIVO">
+			</TASK_STEP>
+			<TASK_STEP
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   ERROR_CODE="WF_ERR_CUSTOM_1"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*588 204 666 2589*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="Error 0"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="ERROR"
+			   UPDATED="11/14/2016 17:02:53"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:53"
+			   CREATED_BY="SNOIVO">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="%1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:%1"
+				   TYPE="Expression"
+				   VALUE="LookupMessage(&quot;VFTRCBU User Defined Errors&quot;,&quot;0080&quot;)"
+				   UPDATED="11/14/2016 17:02:53"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:53"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   ERROR_CODE="WF_ERR_CUSTOM_1"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*480 312 558 3669*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="Error 1"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="ERROR"
+			   UPDATED="11/14/2016 17:02:54"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:54"
+			   CREATED_BY="SNOIVO">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="%1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:%1"
+				   TYPE="Expression"
+				   VALUE="LookupMessage(&quot;VFTRCBU User Defined Errors&quot;,&quot;0219&quot;)"
+				   UPDATED="11/14/2016 17:02:54"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:54"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*252 144 330 1989*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Exists Customer?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="11/14/2016 17:02:54"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:54"
+			   CREATED_BY="SNOIVO">
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="GetActiveView"
+			   BUSINESS_SERVICE_NAME="Validation Utility Service"
+			   CHAPTER="Acquire Customer Data"
+			   COMMENTS="IMARTINS 20042015 VFTRCBU-8403"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*132 132 210 1869*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Active View Name"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="11/14/2016 17:02:54"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:54"
+			   CREATED_BY="SNOIVO">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="View"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Context View Name"
+				   PROPERTY_NAME="Context View Name"
+				   TYPE="Output Argument"
+				   UPDATED="11/14/2016 17:02:54"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:54"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="GetProfileAttr"
+			   BUSINESS_SERVICE_NAME="SessionAccessService"
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*252 48 330 1029*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Prof Attr Context Account Id"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="11/14/2016 17:02:54"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:54"
+			   CREATED_BY="SNOIVO">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Name"
+				   TYPE="Literal"
+				   VALUE="VFPA_AccountId"
+				   UPDATED="11/14/2016 17:02:54"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:54"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Value"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:CustomerAccountId"
+				   PROPERTY_NAME="CustomerAccountId"
+				   TYPE="Output Argument"
+				   UPDATED="11/14/2016 17:02:54"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:54"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/14/2016 17:02:54"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:54"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_LOCALE>
+			</TASK_STEP>
+			<TASK_STEP
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*372 312 450 3669*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Migrating?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="11/14/2016 17:02:54"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:54"
+			   CREATED_BY="SNOIVO">
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_COMPONENT="VFTRCBU Account BC"
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*252 312 330 3669*FillBgClr8*134218238*ArrowEnd1*1"
+			   NAME="Query Customer"
+			   OPERATION="QUERY"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="SIEBEL_OPER"
+			   UPDATED="11/14/2016 17:02:54"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:54"
+			   CREATED_BY="SNOIVO">
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="Id"
+				   PROPERTY_NAME="CustomerAccountId"
+				   TYPE="Task Property"
+				   UPDATED="11/14/2016 17:02:55"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:55"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Account BC"
+				   BUSINESS_COMPONENT_FIELD="Market Class"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:CustomerAccountType"
+				   PROPERTY_NAME="CustomerAccountType"
+				   TYPE="Business Component"
+				   UPDATED="11/14/2016 17:02:55"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:55"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Account BC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU Migrating Flag"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:MigratingFlag"
+				   PROPERTY_NAME="MigratingFlag"
+				   TYPE="Business Component"
+				   UPDATED="11/14/2016 17:02:55"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:55"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="SetProfileAttr"
+			   BUSINESS_SERVICE_NAME="SessionAccessService"
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*132 48 210 1029*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Set Prof Attr 01"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="11/14/2016 17:02:55"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:55"
+			   CREATED_BY="SNOIVO">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Name"
+				   TYPE="Literal"
+				   VALUE="VFTRCBU_PA_MainTask"
+				   UPDATED="11/14/2016 17:02:55"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:55"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Value"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Value"
+				   TYPE="Literal"
+				   VALUE="Y"
+				   UPDATED="11/14/2016 17:02:55"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:55"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="SetProfileAttr"
+			   BUSINESS_SERVICE_NAME="SessionAccessService"
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r14*480 48 558 1029*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Set Prof Attr Null Account"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="11/14/2016 17:02:55"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:55"
+			   CREATED_BY="SNOIVO">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Name"
+				   TYPE="Literal"
+				   VALUE="VFPA_AccountId"
+				   UPDATED="11/14/2016 17:02:55"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:55"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Value"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Value"
+				   TYPE="Literal"
+				   UPDATED="11/14/2016 17:02:55"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="11/14/2016 17:02:55"
+				   CREATED_BY="SNOIVO">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   CHAPTER="Acquire Customer Data"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*24 48 102 1029*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="Start"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="START"
+			   UPDATED="11/14/2016 17:02:55"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="11/14/2016 17:02:55"
+			   CREATED_BY="SNOIVO">
+			</TASK_STEP>
+		</TASK>
+	</PROJECT>
+</REPOSITORY>
+
+
+

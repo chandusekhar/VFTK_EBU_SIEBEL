@@ -1,0 +1,2716 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   LOCKED_DATE="08/11/2017 16:03:47"
+	   NAME="ACS SR List of Val"
+	   UI_FREEZE="N"
+	   UPDATED="08/11/2017 16:03:47"
+	   UPDATED_BY="SADMIN"
+	   CREATED="10/01/2009 14:51:10"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="N"
+		   CLASS="CSSBCListOfValues"
+		   COMMENTS="FR#12-WMOWX6: Set Max Cursor Size and PreFetch Size property to -1"
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MAXIMUM_CURSOR_SIZE="-1"
+		   MULTI_RECIPIENT_SELECT="N"
+		   NAME="ACS SR Sub-Area List Of Values"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LOCKED="N"
+		   OWNER_DELETE="N"
+		   PREFETCH_SIZE="-1"
+		   SCRIPTED="Y"
+		   SEARCH_SPECIFICATION="[Type]=&apos;SR_AREA&apos; AND [Low]=&apos;SUB-AREA&apos;"
+		   SORT_SPECIFICATION="Type, Order By, Value"
+		   TABLE="S_LST_OF_VAL"
+		   TYPE="Non-Transient"
+		   UPGRADE_ANCESTOR="List Of Values"
+		   UPDATED="02/05/2018 09:53:35"
+		   UPDATED_BY="IBM_BAKIG"
+		   CREATED="10/01/2009 14:51:25"
+		   CREATED_BY="SADMIN">
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_NewRecord"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_NewRecord ()
+{
+	TheApplication().SetProfileAttr(&quot;IsNewSubArea&quot;, &quot;Y&quot;); 
+}"
+			   SEQUENCE="1"
+			   UPDATED="10/01/2009 14:51:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreSetFieldValue"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreSetFieldValue (FieldName, FieldValue)
+{
+/*	VFTRCBU-8384 - HRODRIGUES - 2015.04.22
+	try
+	{
+		if (FieldName == &quot;Value&quot;)
+		{
+			var UPP = FieldValue.toUpperCase();
+			var sLang = this.GetFieldValue(&quot;Language&quot;);
+	
+			var BS : Service = TheApplication().GetService(&quot;ACS NI General Operations&quot;);
+			var Inputs : PropertySet = TheApplication().NewPropertySet();
+			var Outputs : PropertySet= TheApplication().NewPropertySet();
+			Inputs.SetProperty(&quot;svc_In_LOV_Type&quot;,&quot;SR_AREA&quot;);
+			Inputs.SetProperty(&quot;svc_In_Value&quot;,UPP);
+			Inputs.SetProperty(&quot;svc_In_Language&quot;,sLang);
+			BS.InvokeMethod(&quot;Get_Language_IndependentCode&quot;, Inputs,Outputs); //Oracle Review October 2011 - Call a LookupName function
+			var strName = Outputs.GetProperty(&quot;LOV_NAME&quot;);
+			if (strName != null || strName != &quot;&quot;)
+				this.SetFieldValue(&quot;Name&quot;, strName); //Oracle Review October 2011 - SetFieldValue in this BC and FieldValue depending
+		}
+	}
+	finally
+	{
+		BS = null;
+		Inputs = null;
+		Outputs = null;
+	}
+*/
+}"
+			   SEQUENCE="2"
+			   UPDATED="05/14/2015 23:44:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreWriteRecord"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreWriteRecord ()
+{// CR270. Erdem Bodur.
+	try
+	{
+		var strAction = this.GetFieldValue(&quot;VF Triplet No&quot;);
+		var strTripletId = this.GetFieldValue(&quot;Id&quot;);
+		var bo : BusObject;
+		var bc : BusComp;
+		if(strAction != &quot;&quot;)
+		{
+			bo = TheApplication().GetBusObject(&quot;ACS SR Tripplet&quot;);
+			bc = bo.GetBusComp(&quot;ACS SR Sub-Area List Of Values&quot;);
+			bc.ClearToQuery();
+			bc.SetViewMode(AllView);
+			bc.ActivateField(&quot;VF Triplet No&quot;);
+			bc.ActivateField(&quot;Type&quot;);
+			bc.SetSearchExpr(&quot;[VF Triplet No] = &apos;&quot;+strAction+&quot;&apos; AND [Type] = &apos;SR_AREA&apos; AND [Id] &lt;&gt; &apos;&quot;+strTripletId+&quot;&apos;&quot;);
+			bc.ExecuteQuery(ForwardOnly);
+			
+			if (bc.FirstRecord())
+			{
+				TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;VF Message Category&quot;, &quot;269&quot;));
+				this.UndoRecord();
+				return (CancelOperation);
+			}
+		}
+	}
+	finally
+	{
+		bc= null;
+		bo = null;
+	}
+}"
+			   SEQUENCE="3"
+			   UPDATED="04/11/2013 11:56:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_SetFieldValue"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_SetFieldValue (FieldName)
+{ 
+	if (FieldName == &quot;Active&quot;)
+	{
+	    var SysDate = Clib.time();
+		var ObjDate = Date.fromSystem(SysDate);
+		var lsConvertSystemDate = (ObjDate.getMonth() +1) + &quot;/&quot; + ObjDate.getDate() + &quot;/&quot; + ObjDate.getFullYear() + &quot; &quot; + ObjDate.getHours() +&quot;:&quot; + ObjDate.getMinutes() + &quot;:&quot; + ObjDate.getSeconds();
+	    var FLAG = this.GetFieldValue(&quot;Active&quot;);
+	    if (FLAG == &quot;N&quot;)
+	  	{   
+	     	this.SetFieldValue(&quot;Modified Deactiv&quot;, lsConvertSystemDate);
+	 	}
+		this.ClearToQuery();
+		this.SetViewMode (AllView);
+		this.SetSearchSpec(&quot;Type&quot;,&quot;SR_AREA&quot;);
+		this.ExecuteQuery(ForwardBackward); //Vaibhav 27/03/2012: Added parameter for oracle review
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="4"
+			   UPDATED="06/24/2012 16:14:43"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_WriteRecord"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_WriteRecord ()
+{
+	try
+	{
+		var boLOV : BusObject;
+	 	var boTRipplet : BusObject;
+		var bcLOV : BusComp;	
+		var bcLOV2 : BusComp;
+		var bcLOV3 : BusComp;	
+		var bcLOVTeam : BusComp;
+		if (TheApplication().GetProfileAttr(&quot;IsNewSubArea&quot;) == &quot;Y&quot;)
+		{
+		
+			var VAL = this.GetFieldValue(&quot;Value&quot;);
+			var NAME = this.GetFieldValue(&quot;Name&quot;);
+			var SubAreaId = this.GetFieldValue(&quot;Id&quot;);
+			var MarketClass = this.GetFieldValue(&quot;Market Class&quot;);
+		 	boLOV = TheApplication().GetBusObject(&quot;List Of Values&quot;);
+		 	boTRipplet = this.BusObject();
+			bcLOV = boLOV.GetBusComp(&quot;List Of Values&quot;);	
+			bcLOV2 = boLOV.GetBusComp(&quot;List Of Values&quot;);
+			bcLOV3 = boLOV.GetBusComp(&quot;List Of Values&quot;);	
+			bcLOVTeam = boTRipplet.GetBusComp(&quot;ACS SR Queue List Of Values&quot;);
+		
+			bcLOV.ClearToQuery ();
+			bcLOV.SetViewMode (AllView);
+		    bcLOV.SetSearchSpec(&quot;Value&quot;,VAL);
+		    bcLOV.SetSearchSpec(&quot;Type&quot;,&quot;SR_DIST_TYPE&quot;);
+			bcLOV.ExecuteQuery(ForwardOnly); //Vaibhav 27/03/2012: Added parameter for oracle review
+			
+	        if (this.GetFieldValue(&quot;Market Class&quot;) == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;UT_MARKET_CLASS&quot;,&quot;101&quot;))
+	    	{
+	   				bcLOV3.ClearToQuery ();
+					bcLOV3.SetViewMode (AllView);
+					bcLOV3.ActivateField(&quot;Value&quot;);
+	    			bcLOV3.SetSearchSpec(&quot;Type&quot;,&quot;ACS_Market Segment&quot;);
+	    			bcLOV3.SetSearchSpec(&quot;Language&quot;,&quot;ENU&quot;);
+	    			bcLOV3.SetSearchSpec(&quot;Sub Type&quot;,&quot;101&quot;);
+	    			bcLOV3.ExecuteQuery(ForwardOnly); //Vaibhav 27/03/2012: Added parameter for oracle review
+	    			
+	    			var strNextVal = bcLOV3.FirstRecord();
+	    			while(strNextVal)
+	    			{
+	    				var strMktSegment = bcLOV3.GetFieldValue(&quot;Value&quot;);
+	    			
+	    				bcLOV2.NewRecord(NewAfter);
+	    				bcLOV2.SetFieldValue(&quot;Type&quot;,&quot;SR_TEAM&quot;);
+	    				bcLOV2.SetFieldValue(&quot;Description&quot;, &quot;ACS&quot;);
+	    				bcLOV2.SetFieldValue(&quot;Name&quot;,bcLOV2.GetFieldValue(&quot;Id&quot;));
+	    				bcLOV2.SetFieldValue(&quot;Value&quot;,bcLOV2.GetFieldValue(&quot;Id&quot;));
+	    				bcLOV2.SetFieldValue(&quot;High&quot;,strMktSegment);
+	    				bcLOV2.SetFieldValue(&quot;Parent Id&quot;,SubAreaId);
+	    				bcLOV2.SetFieldValue(&quot;Market Class&quot;,MarketClass);
+	    				bcLOV2.WriteRecord();
+	    				
+	    				strNextVal = bcLOV3.NextRecord();
+	    			}
+	    			
+	    			bcLOVTeam.ClearToQuery();
+	    			bcLOVTeam.ExecuteQuery(ForwardBackward); //Vaibhav 27/03/2012: Added parameter for oracle review
+	   		} 	
+	   		
+	   		// 02/09/09 FA - R8 Tool Triplette Consumer
+	   		if (this.GetFieldValue(&quot;Market Class&quot;) == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;UT_MARKET_CLASS&quot;,&quot;Consumer&quot;))
+	    	{
+	   				bcLOV3.ClearToQuery ();
+					bcLOV3.SetViewMode (AllView);
+					bcLOV3.ActivateField(&quot;Value&quot;);
+	    			bcLOV3.SetSearchSpec(&quot;Type&quot;,&quot;ACS_Market Segment&quot;);
+	    			bcLOV3.SetSearchSpec(&quot;Language&quot;,&quot;ENU&quot;);
+	    			bcLOV3.SetSearchSpec(&quot;Sub Type&quot;,&quot;100&quot;);
+	    			bcLOV3.ExecuteQuery(ForwardOnly); //Vaibhav 27/03/2012: Added parameter for oracle review
+	    			
+	    			var strNextVal = bcLOV3.FirstRecord();
+	    			while(strNextVal)
+	    			{
+	    				var strMktSegment = bcLOV3.GetFieldValue(&quot;Value&quot;);
+	    			
+	    				bcLOV2.NewRecord(NewAfter);
+	    				bcLOV2.SetFieldValue(&quot;Type&quot;,&quot;SR_TEAM&quot;);
+	    				bcLOV2.SetFieldValue(&quot;Description&quot;, &quot;ACS&quot;);
+	    				bcLOV2.SetFieldValue(&quot;Name&quot;,bcLOV2.GetFieldValue(&quot;Id&quot;));
+	    				bcLOV2.SetFieldValue(&quot;Value&quot;,bcLOV2.GetFieldValue(&quot;Id&quot;));
+	    				bcLOV2.SetFieldValue(&quot;High&quot;,strMktSegment);
+	    				bcLOV2.SetFieldValue(&quot;Parent Id&quot;,SubAreaId);
+	    				bcLOV2.SetFieldValue(&quot;Market Class&quot;,MarketClass);
+	    				bcLOV2.WriteRecord();
+	    				
+	    				strNextVal = bcLOV3.NextRecord();
+	    			}
+	    			
+	    			bcLOVTeam.ClearToQuery();
+	    			bcLOVTeam.ExecuteQuery(ForwardBackward); //Vaibhav 27/03/2012: Added parameter for oracle review	
+	   		} 	
+	   		// FA
+		    TheApplication().SetProfileAttr(&quot;IsNewSubArea&quot;, &quot;N&quot;); 
+		}
+	}
+	finally
+	{
+		bcLOV = null;
+		bcLOV2 = null;
+		bcLOV3 = null;
+		bcLOVTeam = null;
+		boLOV = null;
+	 	boTRipplet = null;
+	 }
+}"
+			   SEQUENCE="5"
+			   UPDATED="05/14/2015 23:44:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: ACS SAP Action"
+			   VALUE="ACS SAP Action Calc"
+			   UPDATED="10/01/2009 14:51:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: Language"
+			   VALUE="Is Header"
+			   UPDATED="10/01/2009 14:51:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: Language Name"
+			   VALUE="Is Header"
+			   UPDATED="10/01/2009 14:51:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: Parent"
+			   VALUE="Is Header"
+			   UPDATED="10/01/2009 14:51:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: Parent Id"
+			   VALUE="Is Header"
+			   UPDATED="10/01/2009 14:51:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Field Read Only Field: Value"
+			   VALUE="ValueCalc"
+			   UPDATED="10/01/2009 14:51:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="N"
+			   NAME="Named Method 1"
+			   VALUE="&quot;NewCorrespondence&quot;, &quot;INVOKESVC&quot;, &quot;List Of Values&quot;, &quot;LS Create Correspondence&quot;, &quot;Correspondence&quot;"
+			   UPDATED="10/01/2009 14:51:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<BUSINESS_COMPONENT_USER_PROP
+			   INACTIVE="Y"
+			   NAME="Protect Seed Data"
+			   VALUE="Y"
+			   UPDATED="10/01/2009 14:51:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_COMPONENT_USER_PROP>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_SAP_ACTION"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="ACS SAP Action"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[ACS SAP Action]   IS  NOT  NULL"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="ACS SAP Action Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:54:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_SAP_TYPE"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="ACS SAP Type"
+			   NO_COPY="N"
+			   PICKLIST="ACS Triplet SAP Type Picklist"
+			   PRE_DEFAULT_VALUE="Expr: &apos;LookupValue(&quot;SR_TRIPLE_SAP_TYPE&quot;,&quot;CREATE_SR&quot;)&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/27/2012 09:01:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   COMMENTS="ACS_Removal"
+				   FIELD="ACS SAP Type"
+				   INACTIVE="Y"
+				   NAME="ACS SAP Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="03/27/2012 09:01:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2009 14:51:25"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="ACTIVE_FLG"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Active"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Y"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_LIT"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Bitmap"
+			   NO_COPY="N"
+			   PICKLIST="PickList LOV Bitmap"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Bitmap"
+				   INACTIVE="N"
+				   NAME="Bitmap"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="10/01/2009 14:51:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2009 14:51:25"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Bitmap Id"
+				   INACTIVE="N"
+				   NAME="Bitmap Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="10/01/2009 14:51:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2009 14:51:25"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="BITMAP_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Bitmap Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[Updated] &gt; ChangedIndicatorDate ()"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Changed"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="CODE"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Class Code"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="DESC_TEXT"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Description"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="ACS"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="255"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="HIGH"
+			   COMMENTS="Set Required Flag To N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="High"
+			   NO_COPY="N"
+			   PICKLIST="ACS Tripplet Queue Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 18:36:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="High"
+				   INACTIVE="N"
+				   NAME="High"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="10/01/2009 14:51:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2009 14:51:25"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Market Class"
+				   INACTIVE="N"
+				   NAME="Market Class"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Market Class"
+				   UPDATED="10/01/2009 14:51:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2009 14:51:25"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="[Type] = &apos;LOV_TYPE&apos; OR [Type] IS NULL"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Is Header"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:25"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="LANG_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Language"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="ENU"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/17/2009 17:18:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_LANG"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Language Name"
+			   NO_COPY="N"
+			   PICKLIST="PickList Language"
+			   PRE_DEFAULT_VALUE="English-American"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Language"
+				   INACTIVE="N"
+				   NAME="Language"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Language Code"
+				   UPDATED="10/01/2009 14:51:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2009 14:51:26"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Language Name"
+				   INACTIVE="N"
+				   NAME="Language Name"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Language Name"
+				   UPDATED="10/01/2009 14:51:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2009 14:51:26"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="LOW"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Low"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="SUB-AREA"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_MARKET_CLASS"
+			   COMMENTS="VFTRCBU-8384 - HRODRIGUES - 2015.04.22 - Changed PreDefault"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Market Class"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Parent: Parent: &apos;ACS SR Type List Of Values.Market Class&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/14/2015 23:44:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="MODIFIABLE_FLG"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Modifiable"
+			   NO_COPY="N"
+			   POST_DEFAULT_VALUE="N"
+			   PRE_DEFAULT_VALUE="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="LAST_UPD"
+			   COMMENTS="Inactivated for Oracle Review - Stabilization Release"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="Y"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Modified"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/15/2013 23:18:27"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_DEACTIVATION_DT"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Modified Deactiv"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_UTCDATETIME"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="MULTI_LINGUAL_FLG"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Multilingual"
+			   NO_COPY="N"
+			   POST_DEFAULT_VALUE="N"
+			   PRE_DEFAULT_VALUE="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   COMMENTS="Needed for CS ADL | VFTRCBU-8384 - HRODRIGUES - 2015.04.22 - Changed PreDefault"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Name"
+			   NO_COPY="Y"
+			   POST_DEFAULT_VALUE="Field: &apos;Value&apos;"
+			   PRE_DEFAULT_VALUE="Field: &apos;Value&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/14/2015 23:44:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="ORDER_BY"
+			   COMMENTS="Needed for CS ADL"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Order By"
+			   NO_COPY="N"
+			   PRECISION="16"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_INTEGER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   VALIDATION="&gt;= 0"
+			   UPDATED="10/01/2009 14:51:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="BU_ID"
+			   COMMENTS="Deleted Predefault System: OrganizationId (TLGA-2063)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="OrganizationId"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/02/2013 12:13:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="Parent LOV"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Parent"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU Parent Triplet Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/19/2015 09:38:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Parent"
+				   INACTIVE="N"
+				   NAME="Parent"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="10/01/2009 14:51:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2009 14:51:26"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Parent Id"
+				   INACTIVE="N"
+				   NAME="Parent Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="10/01/2009 14:51:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2009 14:51:26"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Sub Type"
+				   INACTIVE="N"
+				   NAME="Sub Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="10/01/2009 14:51:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2009 14:51:26"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Type"
+				   INACTIVE="Y"
+				   NAME="Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Type"
+				   UPDATED="10/01/2009 14:51:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2009 14:51:26"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="PAR_ROW_ID"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Parent Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Parent Id"
+				   INACTIVE="N"
+				   NAME="Parent Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="10/01/2009 14:51:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2009 14:51:26"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="RPLCTN_LVL_CD"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Replication Level"
+			   NO_COPY="N"
+			   PICKLIST="PickList Replication Level"
+			   PRE_DEFAULT_VALUE="Expr: &apos;LookupValue(&quot;REPLICATION_LEVEL&quot;,&quot;All&quot;)&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Replication Level"
+				   INACTIVE="N"
+				   NAME="Replication Level"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="10/01/2009 14:51:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2009 14:51:26"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_SMART_SCRIPT"
+			   COMMENTS="Raj: 11/03/2010: Added for Invoking Smart Script"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Smart Script"
+			   NO_COPY="N"
+			   PICKLIST="ACS Smart Script"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/13/2010 11:25:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/23/2010 16:39:17"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Smart Script"
+				   INACTIVE="N"
+				   NAME="Smart Script"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="04/13/2010 11:25:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/23/2010 16:39:17"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="SUB_TYPE"
+			   COMMENTS="Actually contains NAME of parent LOV entry | VFTRCBU-8384 - HRODRIGUES - 2015.04.22 - Changed PreDefault"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Sub Type"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Field: &apos;Parent Id&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/14/2015 23:44:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="TARGET_HIGH"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Target High"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="TARGET_LOW"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Target Low"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMPOSITE="N"
+			   DEST_FIELD="Name"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUE_LINK="Sr Sms Mv Link"
+			   MULTI_VALUED="Y"
+			   NAME="Template Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/05/2012 12:12:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/05/2012 12:12:00"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="TRANSLATE_FLG"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Translate"
+			   NO_COPY="N"
+			   POST_DEFAULT_VALUE="N"
+			   PRE_DEFAULT_VALUE="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="TYPE"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Type"
+			   NO_COPY="N"
+			   PICKLIST="PickList List Of Values Type"
+			   PRE_DEFAULT_VALUE="Expr: &apos;LookupValue(&quot;LOV_TYPE&quot;,&quot;SR_AREA&quot;)&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="Type"
+				   INACTIVE="N"
+				   NAME="Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="10/01/2009 14:51:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2009 14:51:26"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_AUTO_ASSIGN"
+			   COMMENTS="BG_AutoAssignSR"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Auto Assign"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/05/2018 09:38:34"
+			   UPDATED_BY="IBM_BAKIG"
+			   CREATED="02/05/2018 09:38:34"
+			   CREATED_BY="IBM_BAKIG">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_CALL_BACK_CHANNEL"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Call Back Channel"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/03/2009 10:05:03"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/03/2009 10:05:03"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_CALL_BACK_REPLY"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Call Back Reply"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="4000"
+			   TYPE="DTYPE_NOTE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/26/2010 19:00:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/03/2009 10:04:47"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_CLOSED_STATUS_TEMPLATE_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Closed Status Template Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/05/2012 12:12:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/05/2012 12:12:00"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_COMM_PACKG_ID"
+			   COMMENTS="VFTK Amul - Created for Oracle Review - Config 8 - To define Primary Id field for the MVL"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Comm Package Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/25/2012 11:17:27"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:17:27"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_COMPLAINT"
+			   COMMENTS="BMUCHATA CR5507"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Complaint"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/02/2015 14:10:39"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/02/2015 14:10:39"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_CUST_TYPE"
+			   COMMENTS="VFTK Junaid R2.1 20111024 - Newly Created for WP01 | VFTRCBU-8384 - HRODRIGUES - 2015.04.22 - Changed PreDefault"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Customer Type"
+			   NO_COPY="N"
+			   PICKLIST="VF SR Customer Type Picklist"
+			   PRE_DEFAULT_VALUE="Parent: Parent: &apos;ACS SR Type List Of Values.Market Class&apos;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="05/14/2015 23:44:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/23/2011 18:50:05"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Customer Type"
+				   INACTIVE="N"
+				   NAME="VF Customer Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="04/16/2015 23:13:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/16/2015 23:13:23"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_MANDATORY_FIELD"
+			   COMMENTS="Created for PRM CR059"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Mandatory Field"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/20/2014 09:25:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/05/2013 13:11:37"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;SR_MANDATORY_FIELD&quot;, [VF Mandatory Field])"
+			   COMMENTS="Created for PRM CR059"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Mandatory Field Calc"
+			   NO_COPY="N"
+			   PICKLIST="VF SR Mandatory Field"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/20/2014 09:25:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/20/2014 09:25:33"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Mandatory Field"
+				   INACTIVE="N"
+				   NAME="VF Mandatory Field"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="01/20/2014 09:25:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/20/2014 09:25:33"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Mandatory Field Calc"
+				   INACTIVE="N"
+				   NAME="VF Mandatory Field Calc"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="01/20/2014 09:25:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/20/2014 09:25:33"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_OPEN_STATUS_TEMPLATE_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Open Status Template Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/05/2012 12:12:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/05/2012 12:12:00"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_OWNER_OU_ID"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Owned By Group Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/03/2009 10:03:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/03/2009 10:03:47"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="S_ORG_INT"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Owner Group"
+			   NO_COPY="N"
+			   PICKLIST="PickList SR Owner Group"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/23/2010 16:39:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/03/2009 10:06:52"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="OrganizationId"
+				   INACTIVE="Y"
+				   NAME="OrganizationId"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Organization Id"
+				   UPDATED="03/23/2010 16:39:18"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/03/2009 10:25:40"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Owned By Group Id"
+				   INACTIVE="N"
+				   NAME="VF Owned By Group Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="11/03/2009 10:26:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/03/2009 10:26:30"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Owner Group"
+				   INACTIVE="N"
+				   NAME="VF Owner Group"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="11/03/2009 10:26:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/03/2009 10:26:44"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_PRM_DONE_SR"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF PRM DoneSR"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/20/2012 14:28:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/20/2012 14:28:58"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_PRIORITY"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Priority"
+			   NO_COPY="N"
+			   PICKLIST="PickList SR Priority"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/03/2009 10:47:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/03/2009 10:02:02"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Priority"
+				   INACTIVE="N"
+				   NAME="VF Priority"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="11/03/2009 10:47:47"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/03/2009 10:47:47"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_RESOLUTION_TIME"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Resolution Time"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_INTEGER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/03/2009 12:54:49"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/03/2009 10:04:35"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   COMMENTS="VFTRCBU WA#31 2014.11.03 - HRODRIGUES"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="SMSTemplateClose"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF SMS Template Closed SR"
+			   NO_COPY="N"
+			   PICKLIST="VF SMS Template PickList"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/01/2014 11:48:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/05/2012 12:12:00"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Closed Status Template Id"
+				   INACTIVE="N"
+				   NAME="VF Closed Status Template Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="04/05/2012 12:12:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/05/2012 12:12:00"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF SMS Template Closed SR"
+				   INACTIVE="N"
+				   NAME="VF SMS Template Closed SR"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="04/05/2012 12:12:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/05/2012 12:12:00"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   COMMENTS="VFTRCBU WA#31 2014.11.03 - HRODRIGUES"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="SMSTemplateOpen"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF SMS Template Open SR"
+			   NO_COPY="N"
+			   PICKLIST="VF SMS Template PickList"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/01/2014 11:48:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/05/2012 12:12:00"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Open Status Template Id"
+				   INACTIVE="N"
+				   NAME="VF Open Status Template Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="04/05/2012 12:12:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/05/2012 12:12:00"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF SMS Template Open SR"
+				   INACTIVE="N"
+				   NAME="VF SMS Template Open SR"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="04/05/2012 12:12:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/05/2012 12:12:00"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_SUB_TYPE"
+			   COMMENTS="VFTK Junaid R2.1 20111025 - Newly Created for WP01"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Subscription Type"
+			   NO_COPY="N"
+			   PICKLIST="VF SR Subscription Type Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="11/23/2011 18:50:05"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/23/2011 18:50:05"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VF Subscription Type"
+				   INACTIVE="N"
+				   NAME="VF Subscription Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="11/23/2011 18:50:05"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/23/2011 18:50:05"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_TRIPLET_CAT"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Triplet Category"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/26/2013 20:02:38"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/26/2013 20:02:38"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupValue(&quot;VF_SR_CATEGORY&quot;, [VF Triplet Category])"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Triplet Category Calc"
+			   NO_COPY="N"
+			   PICKLIST="VF SR Category"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="04/11/2013 11:56:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/11/2013 11:56:14"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Language"
+				   INACTIVE="Y"
+				   NAME="Language"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Language"
+				   UPDATED="04/11/2013 11:56:14"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/11/2013 11:56:14"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Triplet Category"
+				   INACTIVE="N"
+				   NAME="VF Triplet Category"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="04/11/2013 11:56:14"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/11/2013 11:56:14"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VF Triplet Category Calc"
+				   INACTIVE="N"
+				   NAME="VF Triplet Category Calc"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="04/11/2013 11:56:14"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/11/2013 11:56:14"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_TRIPLET_NO"
+			   COMMENTS="WP04 CR."
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF Triplet No"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/09/2011 15:24:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/09/2011 15:24:01"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_WEB_DESC"
+			   COMMENTS="VFTK Rekha R2.1 20111223 - Newly Created for defect PROD00028261"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF WebDescription"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="200"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/28/2011 19:21:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/28/2011 19:21:19"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_WEB_INQUIRY"
+			   COMMENTS="VFTK Rekha R2.1 20111223 - Newly Created for defect PROD00028261"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF WebInquiry"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/28/2011 19:21:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/28/2011 19:21:19"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_WEB_UPDATE"
+			   COMMENTS="VFTK Rekha R2.1 20111223 - Newly Created for defect PROD00028261"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VF WebUpdate"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="1"
+			   TYPE="DTYPE_BOOL"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/28/2011 19:21:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/28/2011 19:21:19"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   COMMENTS="VFTRCBU WA#31 2014.10.28 - HRODRIGUES"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="Template"
+			   LINK_SPECIFICATION="Y"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Activity Plan"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU SR PickList Activity Template"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/01/2014 11:48:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/01/2014 11:48:33"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VFTRCBU Activity Plan"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Activity Plan"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="12/01/2014 11:48:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/01/2014 11:48:33"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VFTRCBU Activity Plan Id"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Activity Plan Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="12/01/2014 11:48:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/01/2014 11:48:33"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VFTRCBU_ACT_PLAN_ID"
+			   COMMENTS="VFTRCBU WA#31 2014.10.28 - HRODRIGUES"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Activity Plan Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="15"
+			   TYPE="DTYPE_ID"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/01/2014 11:48:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/01/2014 11:48:33"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   COMMENTS="VFTRCBU WA#31 2014.11.03 - HRODRIGUES"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="EmailTemplateClose"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Email Template Closed"
+			   NO_COPY="N"
+			   PICKLIST="VF SMS Template PickList"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/01/2014 11:48:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/01/2014 11:48:33"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VFTRCBU Email Template Closed"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Email Template Closed"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="12/01/2014 11:48:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/01/2014 11:48:33"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VFTRCBU Email Template Closed Id"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Email Template Closed Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="12/01/2014 11:48:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/01/2014 11:48:33"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_SMS_TEMPLATE_CLOSED"
+			   COMMENTS="VFTRCBU WA#31 2014.11.03 - HRODRIGUES"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Email Template Closed Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/01/2014 11:48:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/01/2014 11:48:33"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="NAME"
+			   COMMENTS="VFTRCBU WA#31 2014.11.03 - HRODRIGUES"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   JOIN="EmailTemplateOpen"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Email Template Open"
+			   NO_COPY="N"
+			   PICKLIST="VF SMS Template PickList"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="100"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/01/2014 11:48:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/01/2014 11:48:33"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VFTRCBU Email Template Open"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Email Template Open"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Name"
+				   UPDATED="12/01/2014 11:48:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/01/2014 11:48:33"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VFTRCBU Email Template Open Id"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Email Template Open Id"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Id"
+				   UPDATED="12/01/2014 11:48:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/01/2014 11:48:33"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="X_VF_SMS_TEMPLATE_OPEN"
+			   COMMENTS="VFTRCBU WA#31 2014.11.03 - HRODRIGUES"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Email Template Open Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TEXT_LENGTH="50"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/01/2014 11:48:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/01/2014 11:48:33"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COMMENTS="VFTRCBU WA#31 2014.11.03 - HRODRIGUES"
+			   COMPOSITE="N"
+			   DEST_FIELD="Name"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUE_LINK="VFTRCBU Email MvLink"
+			   MULTI_VALUED="Y"
+			   NAME="VFTRCBU Email Template Static"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="12/01/2014 11:48:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/01/2014 11:48:33"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="VAL"
+			   COMMENTS="Picklist removed: ACS PickList Distinct SR"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   FORCE_CASE="UPPER"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Value"
+			   NO_COPY="Y"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TEXT_LENGTH="30"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="03/23/2010 16:39:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="Market Class"
+				   INACTIVE="N"
+				   NAME="Market Class"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Market Class"
+				   UPDATED="10/01/2009 14:51:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2009 14:51:26"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="Value"
+				   INACTIVE="N"
+				   NAME="Value"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="10/01/2009 14:51:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2009 14:51:26"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF([Value] IS NOT NULL, &quot;Y&quot;, &quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="ValueCalc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="WEIGHTING_FACTOR"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="N"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="Weighting Factor"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_NUMBER"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="10/01/2009 14:51:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<JOIN
+			   COMMENTS="VFTRCBU WA#31 2014.11.03 - HRODRIGUES"
+			   INACTIVE="N"
+			   NAME="EmailTemplateClose"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_DMND_CRTN_PRG"
+			   UPDATED="12/01/2014 11:48:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/01/2014 11:48:33"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   COMMENTS="VFTRCBU WA#31 2014.11.03 - HRODRIGUES"
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="Email Template Close"
+				   SOURCE_FIELD="VFTRCBU Email Template Closed Id"
+				   UPDATED="12/01/2014 11:48:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/01/2014 11:48:33"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   COMMENTS="VFTRCBU WA#31 2014.11.03 - HRODRIGUES"
+			   INACTIVE="N"
+			   NAME="EmailTemplateOpen"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_DMND_CRTN_PRG"
+			   UPDATED="12/01/2014 11:48:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/01/2014 11:48:33"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   COMMENTS="VFTRCBU WA#31 2014.11.03 - HRODRIGUES"
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="Email Template Open"
+				   SOURCE_FIELD="VFTRCBU Email Template Open Id"
+				   UPDATED="12/01/2014 11:48:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/01/2014 11:48:33"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="Parent LOV"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_LST_OF_VAL"
+			   UPDATED="10/01/2009 14:51:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="Parent Id"
+				   SOURCE_FIELD="Parent Id"
+				   UPDATED="10/01/2009 14:51:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2009 14:51:26"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   COMMENTS="VFTRCBU WA#31 2014.11.03 - HRODRIGUES"
+			   INACTIVE="N"
+			   NAME="SMSTemplateClose"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_DMND_CRTN_PRG"
+			   UPDATED="12/01/2014 11:48:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/01/2014 11:48:33"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   COMMENTS="VFTRCBU WA#31 2014.11.03 - HRODRIGUES"
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="SMS Template Close"
+				   SOURCE_FIELD="VF Closed Status Template Id"
+				   UPDATED="12/01/2014 11:48:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/01/2014 11:48:33"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   COMMENTS="VFTRCBU WA#31 2014.11.03 - HRODRIGUES"
+			   INACTIVE="N"
+			   NAME="SMSTemplateOpen"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_DMND_CRTN_PRG"
+			   UPDATED="12/01/2014 11:48:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/01/2014 11:48:33"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   COMMENTS="VFTRCBU WA#31 2014.11.03 - HRODRIGUES"
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="SMS Template Open"
+				   SOURCE_FIELD="VF Open Status Template Id"
+				   UPDATED="12/01/2014 11:48:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/01/2014 11:48:33"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_LANG"
+			   OUTER_JOIN_FLAG="N"
+			   TABLE="S_LANG"
+			   UPDATED="10/01/2009 14:51:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="LANG_CD"
+				   INACTIVE="N"
+				   NAME="Language"
+				   SOURCE_FIELD="Language"
+				   UPDATED="10/01/2009 14:51:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2009 14:51:26"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_LIT"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_LIT"
+			   UPDATED="10/01/2009 14:51:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/01/2009 14:51:26"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="S_LIT"
+				   SOURCE_FIELD="Bitmap Id"
+				   UPDATED="10/01/2009 14:51:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/01/2009 14:51:26"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   INACTIVE="N"
+			   NAME="S_ORG_INT"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_ORG_EXT"
+			   UPDATED="11/03/2009 17:57:49"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/03/2009 10:04:17"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   DESTINATION_COLUMN="PAR_ROW_ID"
+				   INACTIVE="N"
+				   NAME="VF Owned By Group Id"
+				   SOURCE_FIELD="VF Owned By Group Id"
+				   UPDATED="11/03/2009 10:04:17"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/03/2009 10:04:17"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<JOIN
+			   COMMENTS="VFTRCBU WA#31 2014.11.03 - HRODRIGUES"
+			   INACTIVE="N"
+			   NAME="Template"
+			   OUTER_JOIN_FLAG="Y"
+			   TABLE="S_TMPL_PLANITEM"
+			   UPDATED="12/01/2014 11:48:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/01/2014 11:48:33"
+			   CREATED_BY="SADMIN">
+				<JOIN_SPECIFICATION
+				   COMMENTS="VFTRCBU WA#31 2014.10.28 - HRODRIGUES"
+				   DESTINATION_COLUMN="ROW_ID"
+				   INACTIVE="N"
+				   NAME="Template Name"
+				   SOURCE_FIELD="VFTRCBU Activity Plan Id"
+				   UPDATED="12/01/2014 11:48:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/01/2014 11:48:33"
+				   CREATED_BY="SADMIN">
+				</JOIN_SPECIFICATION>
+			</JOIN>
+			<MULTI_VALUE_LINK
+			   AUTO_PRIMARY="Default"
+			   CHECK_NO_MATCH="N"
+			   COMMENTS="Amul - Populated Primary id field for Oracle Review comments"
+			   DESTINATION_BUSINESS_COMPONENT="Comm Package"
+			   DESTINATION_LINK="ACS SR Sub-Area List Of Values/Comm Package"
+			   INACTIVE="N"
+			   NAME="Sr Sms Mv Link"
+			   NO_ASSOCIATE="N"
+			   NO_COPY="N"
+			   NO_DELETE="N"
+			   NO_INSERT="N"
+			   NO_UPDATE="N"
+			   POPUP_UPDATE_ONLY="N"
+			   PRIMARY_ID_FIELD="VF Comm Package Id"
+			   USE_PRIMARY_JOIN="Y"
+			   UPDATED="04/25/2012 11:17:27"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/05/2012 12:12:00"
+			   CREATED_BY="SADMIN">
+			</MULTI_VALUE_LINK>
+			<MULTI_VALUE_LINK
+			   AUTO_PRIMARY="Default"
+			   CHECK_NO_MATCH="N"
+			   COMMENTS="VFTRCBU WA#31 2014.11.03 - HRODRIGUES"
+			   DESTINATION_BUSINESS_COMPONENT="Comm Package"
+			   DESTINATION_LINK="ACR SR Sub-Area List Of Values/Comm Package Email"
+			   INACTIVE="N"
+			   NAME="VFTRCBU Email MvLink"
+			   NO_ASSOCIATE="N"
+			   NO_COPY="N"
+			   NO_DELETE="N"
+			   NO_INSERT="N"
+			   NO_UPDATE="N"
+			   POPUP_UPDATE_ONLY="N"
+			   USE_PRIMARY_JOIN="Y"
+			   UPDATED="12/01/2014 11:48:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/01/2014 11:48:33"
+			   CREATED_BY="SADMIN">
+			</MULTI_VALUE_LINK>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

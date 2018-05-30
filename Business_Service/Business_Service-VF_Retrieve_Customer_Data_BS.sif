@@ -1,0 +1,764 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VF WP10 R.2.1 Selfcare"
+	   UI_FREEZE="N"
+	   UPDATED="09/22/2016 14:43:57"
+	   UPDATED_BY="CJANEIRO"
+	   CREATED="09/26/2011 18:18:22"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   EXTERNAL_USE="N"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VF Retrieve Customer Data BS"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="09/20/2016 11:20:11"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   OBJECT_LOCKED_BY_NAME="CJANEIRO"
+		   UPDATED="09/22/2016 14:43:14"
+		   UPDATED_BY="CJANEIRO"
+		   CREATED="12/16/2011 18:50:42"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="RetrieveCustomerData"
+			   UPDATED="12/16/2011 18:50:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/16/2011 18:50:42"
+			   CREATED_BY="SADMIN">
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="Integration Object"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   INTEGRATION_OBJECT="VF Retrieve Customer Data Input"
+				   NAME="Inputs"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Hierarchy"
+				   TYPE="Input"
+				   UPDATED="12/16/2011 18:50:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/16/2011 18:50:42"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="Integration Object"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   INTEGRATION_OBJECT="VF Retrieve Customer Data Output"
+				   NAME="Outputs"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Hierarchy"
+				   TYPE="Output"
+				   UPDATED="12/16/2011 18:50:42"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/16/2011 18:50:42"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="ActivateFieldsBAAux"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function ActivateFieldsBAAux(BillingAccountBC2)
+{
+	/*******************************************************************
+	*	Created because RetriveCustomerData reached the limit of chars *
+	*******************************************************************/
+	
+	with(BillingAccountBC2)
+	{
+		SetViewMode(AllView);
+		ActivateField(&quot;Account Code&quot;);
+		ActivateField(&quot;TeXCo Account Type&quot;);
+		ActivateField(&quot;VF Bill Cycle&quot;);
+		ActivateField(&quot;VF Apartment Number Picklist&quot;);
+		ActivateField(&quot;Bill To City&quot;);
+		ActivateField(&quot;Bill To Country&quot;);
+		ActivateField(&quot;VF Bill To District&quot;);
+		ActivateField(&quot;Id&quot;);
+		ActivateField(&quot;Bill To Street Address Picklist&quot;);
+		ActivateField(&quot;VF Bill To Neighborhood&quot;);
+		ActivateField(&quot;Bill To Address Num&quot;);
+		ActivateField(&quot;VF Bill To Site&quot;);
+		ActivateField(&quot;Bill To Province&quot;);
+		ActivateField(&quot;Bill To Address Type&quot;);
+		ActivateField(&quot;Bill To Postal Code&quot;);
+	}
+	
+	return BillingAccountBC2;
+}"
+			   SEQUENCE="1"
+			   UPDATED="12/31/2014 13:19:04"
+			   UPDATED_BY="MMARTINS"
+			   CREATED="12/31/2014 10:39:26"
+			   CREATED_BY="MMARTINS">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   COMMENTS="VFTRCBU-33490 - CJANEIRO"
+			   INACTIVE="N"
+			   NAME="GetPrimaryUserInfo"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GetPrimaryUserInfo(strContactId)
+{	
+	try
+	{ 			
+		var strContactBirthDate=&quot;&quot;;
+		var app = TheApplication();
+		var AccountBO:BusObject= app.GetBusObject(&quot;Account&quot;);
+		var ContactBC:BusComp= AccountBO.GetBusComp(&quot;Contact&quot;);
+	
+			
+		with(ContactBC)
+		{		
+			SetViewMode(AllView);
+			ActivateField(&quot;Birth Date&quot;);
+			ClearToQuery();
+			SetSearchExpr(&quot;[Id] = &apos;&quot;+ strContactId +&quot;&apos;&quot;);
+			ExecuteQuery(ForwardOnly);
+
+			if(FirstRecord())
+			{
+				strContactBirthDate = GetFieldValue(&quot;Birth Date&quot;);
+			}
+		}
+		
+		return strContactBirthDate;
+			
+	}
+	finally
+	{
+		strContactBirthDate = &quot;&quot;;
+		app = null;
+		AccountBO = null;
+		ContactBC = null;
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="09/22/2016 14:42:19"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="09/21/2016 15:37:31"
+			   CREATED_BY="CJANEIRO">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="RetrieveAssetDates"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function RetrieveAssetDates(inPropA,outPropA)
+{
+	var strMSISDN = inPropA.GetProperty(&quot;strMSISDN&quot;);
+	var sCustomerId = inPropA.GetProperty(&quot;strCustomerId&quot;);
+		
+	var AccountBO:BusObject= TheApplication().GetBusObject(&quot;Account&quot;);
+	var AssetMgmtHeaderBC:BusComp= AccountBO.GetBusComp(&quot;HP Submit - Asset Mgmt - Asset - Header&quot;);
+
+	var sAcquisitionDate = &quot;&quot;;
+	var sPreToPostDate = &quot;&quot;;
+	var sSubscriptionDate = &quot;&quot;;
+	var sMNPDate = &quot;&quot;;
+	
+		with(AssetMgmtHeaderBC)
+		{ 
+			SetViewMode(AllView);
+			ActivateField(&quot;VFTRCBU MNP Date&quot;);
+			ActivateField(&quot;VFTRCBU New Acquisition Date&quot;);
+			ActivateField(&quot;VFTRCBU PreToPost Date&quot;);
+			ActivateField(&quot;VFTRCBU Subscription Date&quot;);
+			ActivateField(&quot;Owner Account Id&quot;);
+			ActivateField(&quot;Root Asset Id&quot;);
+			ActivateField(&quot;MSISDN&quot;);
+			ClearToQuery();
+					
+			SetSearchExpr(&quot;[Owner Account Id] = &apos;&quot; + sCustomerId + &quot;&apos; AND [Root Asset Id] = [Id] AND [MSISDN] = &apos;&quot; + strMSISDN +&quot;&apos;&quot;);
+			
+			ExecuteQuery(ForwardOnly);
+			
+			if(FirstRecord())
+			{
+				sMNPDate = GetFieldValue(&quot;VFTRCBU MNP Date&quot;);
+				sAcquisitionDate = GetFieldValue(&quot;VFTRCBU New Acquisition Date&quot;);
+				sPreToPostDate = GetFieldValue(&quot;VFTRCBU PreToPost Date&quot;);
+				sSubscriptionDate = GetFieldValue(&quot;VFTRCBU Subscription Date&quot;);
+				outPropA.SetProperty(&quot;MNPDate&quot;, sMNPDate);
+				outPropA.SetProperty(&quot;AcquisitionDate&quot;, sAcquisitionDate);
+				outPropA.SetProperty(&quot;PreToPostDate&quot;, sPreToPostDate);
+				outPropA.SetProperty(&quot;SubscriptionDate&quot;, sSubscriptionDate);
+			}
+		}
+		
+	return(CancelOperation);
+}"
+			   SEQUENCE="3"
+			   UPDATED="09/21/2016 15:38:41"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="06/16/2015 19:09:52"
+			   CREATED_BY="SJOAO">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="RetrieveCustomerData"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function RetrieveCustomerData(Inputs, Outputs)
+{	
+	try
+	{ 			
+		var Record=&quot;&quot;;
+		var strStatusCode=&quot;&quot;;
+		var strErrorCode=&quot;&quot;;
+		var strErrorDescription=&quot;&quot;;		
+		var strSequenceNum=&quot;&quot;;
+	   	var strParentCustomer=&quot;&quot;;
+		var strAccountFirstName=&quot;&quot;;
+		var strLanguage=&quot;&quot;;
+		var strTaxId=&quot;&quot;;
+		var strTaxOffice=&quot;&quot;;
+		var ret=&quot;&quot;;
+		var strCustomerId=&quot;&quot;;			
+		var strRowId=&quot;&quot;;
+		var strIsPrimary=&quot;&quot;;
+		var strAddressId=&quot;&quot;;
+		var strAddressNum=&quot;&quot;;
+		var strStreetType=&quot;&quot;;
+		var strApartmentNum=&quot;&quot;;
+		var strCity=&quot;&quot;;
+		var strProvince=&quot;&quot;;//WA#20drop 2
+		var strCountry=&quot;&quot;;
+		var strDistrict=&quot;&quot;;
+		var strPostalCode=&quot;&quot;;
+		var strState=&quot;&quot;;
+		var strAddress=&quot;&quot;;
+		var strVillage=&quot;&quot;; 
+		var strSite=&quot;&quot;;
+		var strOrganization=&quot;&quot;;
+		var strOrganizationCode=&quot;&quot;;
+		var strOrganizationId=&quot;&quot;; 
+		var strMNPDate=&quot;&quot;;
+		var strPrePos=&quot;&quot;;
+		var strNewAc=&quot;&quot;;
+		var strSubs=&quot;&quot;;
+		var strBAId=&quot;&quot;;
+		var strPrimAdressId=&quot;&quot;; //RETROFITS
+		var strContactId=&quot;&quot;; //VFTRCBU-33490
+		var strContactBirthDate=&quot;&quot;; //VFTRCBU-33490
+		var app = TheApplication();
+		var CustomerDataInput =  Inputs.GetChild(0).GetChild(0).GetChild(0);	
+		var strCustomerCode =  CustomerDataInput.GetProperty(&quot;CUSTOMER_CODE&quot;);
+		var strMSISDN  =  CustomerDataInput.GetProperty(&quot;MSISDN&quot;);
+		var strBACode  =  CustomerDataInput.GetProperty(&quot;BILLING_ACCOUNT_CODE&quot;);
+		var BillingAccountBO2:BusObject= app.GetBusObject(&quot;VFTRCBU Account BO&quot;);
+		var BillingAccountBC2:BusComp= BillingAccountBO2.GetBusComp(&quot;VFTRCBU Billing Account BC&quot;);
+		var AccountBO:BusObject= app.GetBusObject(&quot;Account&quot;);
+		var BillingAccountBC:BusComp= AccountBO.GetBusComp(&quot;HP Submit - Billing Account&quot;); 
+		var AssetMgmtHeaderBC:BusComp= AccountBO.GetBusComp(&quot;HP Submit - Asset Mgmt - Asset - Header&quot;);
+		var AccountBC:BusComp= AccountBO.GetBusComp(&quot;HP Submit - Account&quot;);
+		var BillingAccountBO:BusObject= app.GetBusObject(&quot;VF Billing Account&quot;);
+		var CUTAddress:BusComp= BillingAccountBO.GetBusComp(&quot;HP CUT Address&quot;);
+		var ContactBC:BusComp= AccountBO.GetBusComp(&quot;Contact&quot;);	//VFTRCBU-33490			
+		var NewProp:PropertySet = app.NewPropertySet();
+		var inPropI:PropertySet;	
+		var psADDRESS:PropertySet = app.NewPropertySet();
+		var psORGANIZATION:PropertySet = app.NewPropertySet();	
+		var psMethodName:PropertySet = app.NewPropertySet();
+		var psListOfVFCADataOutput:PropertySet = app.NewPropertySet();
+		var psCustomerDetails:PropertySet = app.NewPropertySet();
+		var psListOfHEADER:PropertySet = app.NewPropertySet();
+		var psListOfBODY:PropertySet = app.NewPropertySet();
+		var psHEADER:PropertySet = app.NewPropertySet();
+		var psBODY:PropertySet = app.NewPropertySet();
+		var psListOfCUSTOMER:PropertySet = app.NewPropertySet(); 
+		var psCUSTOMER:PropertySet = app.NewPropertySet();
+		var psListOfORGANIZATION:PropertySet = app.NewPropertySet();
+		var psListOfADDRESS:PropertySet = app.NewPropertySet();
+		var inProp:PropertySet = app.NewPropertySet();
+		var outProp:PropertySet = app.NewPropertySet();
+		var BS:Service	= app.GetService(&quot;VF TRK Utilities&quot;);	
+		psMethodName.SetType(&quot;Outputs&quot;);
+		psListOfVFCADataOutput.SetType(&quot;ListOfVF Retrieve Customer Data Output&quot;);
+		psCustomerDetails.SetType(&quot;VF Retrieve Customer Data Output&quot;);
+		psListOfHEADER.SetType(&quot;ListOfHEADER&quot;);
+		psHEADER.SetType(&quot;HEADER&quot;);
+		psListOfBODY.SetType(&quot;ListOfBODY&quot;);
+		psBODY.SetType(&quot;BODY&quot;);
+		psListOfCUSTOMER.SetType(&quot;ListOfCUSTOMER&quot;);
+		psCUSTOMER.SetType(&quot;CUSTOMER&quot;);
+		psListOfORGANIZATION.SetType(&quot;ListOfORGANIZATION&quot;);
+		psListOfADDRESS.SetType(&quot;ListOfADDRESS&quot;);
+		Outputs.AddChild(psMethodName);
+		psMethodName.AddChild(psListOfVFCADataOutput);
+		psListOfVFCADataOutput.AddChild(psCustomerDetails);
+		psCustomerDetails.AddChild(psListOfBODY);
+		psListOfBODY.AddChild(psBODY);
+		psBODY.AddChild(psListOfCUSTOMER);
+		psListOfCUSTOMER.AddChild(psCUSTOMER);
+		psCUSTOMER.AddChild(psListOfORGANIZATION);
+		psCUSTOMER.AddChild(psListOfADDRESS);
+		psCustomerDetails.AddChild(psListOfHEADER);
+		psListOfHEADER.AddChild(psHEADER);		
+		//ESANTOS VFTRCBU-33103
+		var sStatusInactive = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;IMPL_PHASE&quot;,&quot;Inactive&quot;);
+		// Get Customer Row Id in case MSISDN or BA are given as input	
+		if (strCustomerCode ==&quot;&quot; &amp;&amp; strBACode !=&quot;&quot; &amp;&amp; strMSISDN ==&quot;&quot;)
+		{
+			BillingAccountBC2 = ActivateFieldsBAAux(BillingAccountBC2);
+			with(BillingAccountBC2)
+			{					
+				ClearToQuery();	
+				SetSearchExpr(&quot;[Account Code] = &apos;&quot;+strBACode+&quot;&apos;&quot;);
+				ExecuteQuery(ForwardOnly);
+				//psCUSTOMER = RetrieveCustomerDataAux(BillingAccountBC2, psCUSTOMER, app); //RCRISPIM: CR-10
+				if(FirstRecord())
+				{
+					psCUSTOMER = RetrieveCustomerDataAux(BillingAccountBC2, psCUSTOMER, app);
+					strCustomerId = GetFieldValue(&quot;Parent Account Id&quot;);
+					strBAId = GetFieldValue(&quot;Id&quot;);
+				}
+				else 
+				{
+					strStatusCode = &quot;1&quot;;
+					strErrorCode = &quot;SBL-28005&quot;;
+					strErrorDescription	= app.LookupMessage(&quot;VF Message Category&quot;, &quot;132&quot;);
+					psHEADER.SetProperty(&quot;STATUS_CODE&quot;, strStatusCode);
+					psHEADER.SetProperty(&quot;ERROR_CODE&quot;, strErrorCode);
+					psHEADER.SetProperty(&quot;ERROR_DESCRIPTION&quot;, strErrorDescription);	
+					return(CancelOperation);		
+				}
+			}
+		}	
+		if (strCustomerCode ==&quot;&quot; &amp;&amp; strBACode ==&quot;&quot; &amp;&amp; strMSISDN !=&quot;&quot;)
+		{	
+			with(AssetMgmtHeaderBC)
+			{
+				SetViewMode(AllView);
+				ActivateField(&quot;VF MSISDN&quot;);
+				ActivateField(&quot;Owner Account Id&quot;);
+				ActivateField(&quot;Owner Contact Id&quot;);
+				ClearToQuery();		
+				SetSearchExpr(&quot;[VF MSISDN] = &apos;&quot;+strMSISDN+&quot;&apos; AND [Status] &lt;&gt; &apos;&quot;+sStatusInactive+&quot;&apos;&quot;);//ESANTOS VFTRCBU-33103 - status added to searchspec
+				ExecuteQuery(ForwardOnly);
+				if(FirstRecord())
+				{
+					strCustomerId = GetFieldValue(&quot;Owner Account Id&quot;);
+					//VFTRCBU-33490 - Start
+					strContactId = GetFieldValue(&quot;Owner Contact Id&quot;);
+			    	strContactBirthDate = GetPrimaryUserInfo(strContactId);
+					//VFTRCBU-33490 - End
+				}
+				else 
+				{
+					strStatusCode = &quot;1&quot;;
+					strErrorCode = &quot;SBL-28006&quot;;
+					strErrorDescription	= app.LookupMessage(&quot;VF Message Category&quot;, &quot;R142_346&quot;);	
+					psHEADER.SetProperty(&quot;STATUS_CODE&quot;, strStatusCode);
+					psHEADER.SetProperty(&quot;ERROR_CODE&quot;, strErrorCode);
+					psHEADER.SetProperty(&quot;ERROR_DESCRIPTION&quot;, strErrorDescription);	
+					return(CancelOperation);									
+				}
+			}
+		}
+		with(AccountBC)
+		{		
+			SetViewMode(AllView);
+			ActivateField(&quot;CSN&quot;); 
+			ActivateField(&quot;VF Sequence Num&quot;);	
+			ActivateField(&quot;Parent Account Number&quot;);	
+			ActivateField(&quot;Account First Name&quot;);
+			ActivateField(&quot;Account Full Name Primary&quot;);//RETROFITS	
+			ActivateField(&quot;Language&quot;);	
+			ActivateField(&quot;Tax Id&quot;);
+			ActivateField(&quot;VF Tax Office&quot;);
+			ActivateField(&quot;Market Class&quot;);
+			ActivateField(&quot;Main E-Mail Address&quot;);
+			ActivateField(&quot;Main Fax Number&quot;);
+			ActivateField(&quot;Main Phone Number&quot;);
+			ActivateField(&quot;Market Type&quot;);
+			ActivateField(&quot;VF Sub Class&quot;);
+			ActivateField(&quot;Name&quot;);
+			ActivateField(&quot;Account Status Code&quot;);
+			ActivateField(&quot;VF First Subscription Date&quot;);
+			ActivateField(&quot;Row Id&quot;);
+			ActivateField(&quot;Account Updated&quot;);
+			ActivateField(&quot;VF Root Transaction Id&quot;);
+			ActivateField(&quot;Customer Since&quot;);
+			ActivateField(&quot;Flag PF&quot;);
+			ActivateField(&quot;Contact SSN&quot;);
+			ActivateField(&quot;Status Code&quot;);
+			ActivateField(&quot;Flag PF&quot;);
+			ActivateField(&quot;VF VIP Flag&quot;);
+			ActivateField(&quot;Contact Date Of Birth&quot;);
+			ActivateField(&quot;VF Contact Citizenship&quot;);
+			ActivateField(&quot;Primary Address Id&quot;);//RETROFITS
+			ActivateField(&quot;Primary Contact Id&quot;);//VFTRCBU-33490	
+			ClearToQuery();	
+			if (strCustomerCode ==&quot;&quot;)
+			{	inProp.SetProperty(&quot;strCustomerId&quot;,strCustomerId);
+				BS.InvokeMethod(&quot;Input Validation&quot;,inProp, outProp);
+				SetSearchExpr(&quot;[Row Id] = &apos;&quot;+strCustomerId+&quot;&apos;&quot;);
+			}
+			else
+			{
+				SetSearchExpr(&quot;[CSN] = &apos;&quot;+strCustomerCode+&quot;&apos;&quot;);//null check present
+			}			
+			ExecuteQuery(ForwardOnly);//Review Parent-Child Query: No link between BC’s, No changes 16may2012 Udbhav IDC
+			if(FirstRecord())
+			{   
+				strRowId = GetFieldValue(&quot;Row Id&quot;);
+				strCustomerCode = GetFieldValue(&quot;CSN&quot;);
+				strSequenceNum = GetFieldValue(&quot;VF Sequence Num&quot;);	
+				strParentCustomer = GetFieldValue(&quot;Parent Account Number&quot;);	
+				strAccountFirstName = GetFieldValue(&quot;Account Full Name Primary&quot;);	
+				strLanguage = GetFieldValue(&quot;Language&quot;);	
+				strTaxId = GetFieldValue(&quot;VF Tax Number&quot;);
+				strPrimAdressId = GetFieldValue(&quot;Primary Address Id&quot;);				
+				strTaxOffice = &quot;NA&quot;;
+				//SJOAO
+				if(strMSISDN != &quot;&quot;)
+				{
+					var inPropA = app.NewPropertySet();
+					var outPropA = app.NewPropertySet();			
+					inPropA.SetProperty(&quot;strMSISDN&quot;,strMSISDN);
+					inPropA.SetProperty(&quot;strCustomerId&quot;,strRowId);
+					RetrieveAssetDates(inPropA, outPropA);
+				}
+				
+				var GIBResponseBC :BusComp= AccountBO.GetBusComp(&quot;VF GIB Response&quot;);
+				with(GIBResponseBC)
+				{
+					SetViewMode(AllView);
+					ActivateField(&quot;Tax Office Code&quot;); 
+					SetSearchExpr(&quot;[Account Id] = &apos;&quot;+strRowId+&quot;&apos;&quot;);
+					ExecuteQuery(ForwardOnly);
+					if(FirstRecord())
+						 strTaxOffice = GetFieldValue(&quot;Tax Office Code&quot;);
+				}
+				//ESANTOS VFTRCBU-33103 - script simplified to getFieldValue and set Property in only one line to save space
+				psCUSTOMER.SetProperty(&quot;CUSTOMERTYPE&quot;, GetFieldValue(&quot;Market Class&quot;));
+				psCUSTOMER.SetProperty(&quot;EMAIL&quot;, GetFieldValue(&quot;Main E-Mail Address&quot;));
+				psCUSTOMER.SetProperty(&quot;FAXNUM&quot;, GetFieldValue(&quot;Main Fax Number&quot;));
+				psCUSTOMER.SetProperty(&quot;PHONENUM&quot;, GetFieldValue(&quot;Main Phone Number&quot;));
+				psCUSTOMER.SetProperty(&quot;MSEGMENT&quot;, GetFieldValue(&quot;Market Type&quot;));
+				psCUSTOMER.SetProperty(&quot;SUBCLASS&quot;, GetFieldValue(&quot;VF Sub Class&quot;));
+				psCUSTOMER.SetProperty(&quot;NAME&quot;, GetFieldValue(&quot;Name&quot;));
+				psCUSTOMER.SetProperty(&quot;STATUSCODE&quot;, GetFieldValue(&quot;Status Code&quot;));
+				psCUSTOMER.SetProperty(&quot;FIRSTSUBSCRIPTIONDATE&quot;, GetFieldValue(&quot;VF First Subscription Date&quot;));	
+				strOrganization = GetFieldValue(&quot;Organization&quot;);
+				strOrganizationCode = GetFieldValue(&quot;Organization Code&quot;);
+				strOrganizationId = GetFieldValue(&quot;Organization Id&quot;);
+				psCUSTOMER.SetProperty(&quot;LASTUPDATEDATE&quot;, GetFieldValue(&quot;Account Updated&quot;));
+				psCUSTOMER.SetProperty(&quot;ROOTTRANSACTIONID&quot;, GetFieldValue(&quot;VF Root Transaction Id&quot;));
+				psCUSTOMER.SetProperty(&quot;ACQUISITIONDATE&quot;, GetFieldValue(&quot;Customer Since&quot;));
+				psCUSTOMER.SetProperty(&quot;PHYFLAG&quot;, GetFieldValue(&quot;Flag PF&quot;));
+				psCUSTOMER.SetProperty(&quot;PERSONALID&quot;, GetFieldValue(&quot;Contact SSN&quot;));
+				psCUSTOMER.SetProperty(&quot;STATUSDESCR&quot;, GetFieldValue(&quot;Account Status Code&quot;));
+				psCUSTOMER.SetProperty(&quot;TYPE&quot;,GetFieldValue(&quot;Flag PF&quot;));
+				psCUSTOMER.SetProperty(&quot;VIP&quot;,GetFieldValue(&quot;VF VIP Flag&quot;));
+				psCUSTOMER.SetProperty(&quot;BIRTHDATE&quot;,GetFieldValue(&quot;Contact Date Of Birth&quot;));
+				psCUSTOMER.SetProperty(&quot;USERBIRTHDATE&quot;,strContactBirthDate);
+				psCUSTOMER.SetProperty(&quot;CITIZENSHIP&quot;,GetFieldValue(&quot;VF Contact Citizenship&quot;));
+				if(strMSISDN != &quot;&quot;)
+				{
+					strMNPDate = outPropA.GetProperty(&quot;MNPDate&quot;);
+					strPrePos = outPropA.GetProperty(&quot;PreToPostDate&quot;);
+					strNewAc = outPropA.GetProperty(&quot;AcquisitionDate&quot;);
+					strSubs = outPropA.GetProperty(&quot;SubscriptionDate&quot;);			
+				}
+				with(psCUSTOMER)						
+				{	
+					SetProperty(&quot;CUSTOMERCODE&quot;, strCustomerCode);
+					SetProperty(&quot;FIRSTNAME&quot;, strAccountFirstName);
+					SetProperty(&quot;LANGUAGE&quot;, strLanguage);
+					SetProperty(&quot;PARENTCUSTOMERCODE&quot;, strParentCustomer);
+					SetProperty(&quot;ROOTCUSTOMERCODE&quot;, strParentCustomer);
+					SetProperty(&quot;SEQUENCENUM&quot;, strSequenceNum);
+					SetProperty(&quot;TAXID&quot;, strTaxId);
+					SetProperty(&quot;TAXOFFICE&quot;, strTaxOffice);
+					SetProperty(&quot;MNPDATE&quot;,strMNPDate);
+					SetProperty(&quot;NEWACQUISITIONDATE&quot;,strNewAc);
+					SetProperty(&quot;PRETOPOSTDATE&quot;,strPrePos);
+					SetProperty(&quot;SUBSCRIPTIONDATE&quot;,strSubs);
+					}			
+				with(psORGANIZATION)
+				{
+					SetType(&quot;ORGANIZATION&quot;);
+					SetProperty(&quot;ADDRESSID&quot;, &quot;&quot;);
+					SetProperty(&quot;CITY&quot;, &quot;&quot;);
+					SetProperty(&quot;COUNTRY&quot;, &quot;&quot;);
+					SetProperty(&quot;FAXNUMBER&quot;, &quot;&quot;);
+					SetProperty(&quot;ISPRIMARY&quot;, &quot;&quot;);
+					SetProperty(&quot;NAME&quot;, strOrganization);
+					SetProperty(&quot;ORGANIZATIONCODE&quot;, strOrganizationCode);
+					SetProperty(&quot;ORGANIZATIONID&quot;, strOrganizationId);
+					SetProperty(&quot;PHONENUMBER&quot;, &quot;&quot;);
+					SetProperty(&quot;POSTALCODE&quot;, &quot;&quot;);
+					SetProperty(&quot;STATE&quot;, &quot;&quot;);
+					SetProperty(&quot;STREETADDRESS&quot;, &quot;&quot;);
+				}
+				psListOfORGANIZATION.AddChild(psORGANIZATION);
+				strStatusCode	= &quot;0&quot;;
+				strErrorCode	= &quot;&quot;;
+				strErrorDescription	= &quot;&quot;;
+				psHEADER.SetProperty(&quot;STATUS_CODE&quot;, strStatusCode);
+				psHEADER.SetProperty(&quot;ERROR_CODE&quot;, strErrorCode);
+				psHEADER.SetProperty(&quot;ERROR_DESCRIPTION&quot;, strErrorDescription);
+			}	
+			else
+			{	strStatusCode	= &quot;1&quot;;
+				strErrorCode	= &quot;SBL-28003&quot;;
+				strErrorDescription	= app.LookupMessage(&quot;VF Message Category&quot;, &quot;127&quot;);
+				psHEADER.SetProperty(&quot;STATUS_CODE&quot;, strStatusCode);
+				psHEADER.SetProperty(&quot;ERROR_CODE&quot;, strErrorCode);
+				psHEADER.SetProperty(&quot;ERROR_DESCRIPTION&quot;, strErrorDescription);						
+				return(CancelOperation);
+			}		
+		}			
+		with(CUTAddress)
+		{
+			SetViewMode(AllView);
+			ActivateField(&quot;Account Id&quot;); 
+			ActivateField(&quot;Primary Address Flg&quot;);
+			ActivateField(&quot;Address Num&quot;);
+			ActivateField(&quot;Street Type&quot;);
+			ActivateField(&quot;Apartment Number&quot;);
+			ActivateField(&quot;City Cal&quot;);
+			ActivateField(&quot;VFTRCBU Province Cal&quot;);
+			ActivateField(&quot;Country&quot;);
+			ActivateField(&quot;District Cal&quot;);
+			ActivateField(&quot;Postal Code&quot;);
+			ActivateField(&quot;State&quot;);
+			ActivateField(&quot;Address&quot;);
+			ActivateField(&quot;Account Primary Address Id&quot;);
+			ActivateField(&quot;VF Neighborhood/Village&quot;);
+			ActivateField(&quot;VF Site&quot;);
+			ClearToQuery();
+			inPropI = app.NewPropertySet();
+			inPropI.SetProperty(&quot;strRowId&quot;,strRowId);
+			BS.InvokeMethod(&quot;Input Validation&quot;,inPropI, outProp);		
+			SetSearchExpr(&quot;[Id] = &apos;&quot;+strPrimAdressId+&quot;&apos;&quot;); // Retrofits MAR15 0023
+			ExecuteQuery(ForwardOnly);
+			Record = FirstRecord();	
+			if (Record)
+			{
+				//while(Record!= &quot;0&quot;){ Retrofits MAR15 0023
+					strIsPrimary = GetFieldValue(&quot;Primary Address Flg&quot;);
+					strAddressId = GetFieldValue(&quot;Id&quot;);
+					strAddressNum = GetFieldValue(&quot;Address Num&quot;);
+					strStreetType = GetFieldValue(&quot;Street Type&quot;);
+					strApartmentNum = GetFieldValue(&quot;Apartment Number&quot;);
+					//VFTRCBU-22408 - HRODRIGUES - Fields are interchanged
+					strProvince = GetFieldValue(&quot;City Cal&quot;);
+					strCity = GetFieldValue(&quot;VFTRCBU Province Cal&quot;);
+					strCountry = GetFieldValue(&quot;Country&quot;);
+					strDistrict = GetFieldValue(&quot;District Cal&quot;);
+					strPostalCode = GetFieldValue(&quot;Postal Code&quot;);
+					strState = GetFieldValue(&quot;State&quot;);
+					strAddress = GetFieldValue(&quot;Address&quot;);
+					strVillage = GetFieldValue(&quot;VF Neighborhood/Village&quot;);
+					strSite = GetFieldValue(&quot;VF Site&quot;);
+					with(psADDRESS)		
+					{	SetType(&quot;ADDRESS&quot;);
+						SetProperty(&quot;ADDRESS&quot;, strAddress);
+						SetProperty(&quot;ADDRESSID&quot;, strAddressId);
+						SetProperty(&quot;ADDRESSNUM&quot;, strAddressNum);
+						SetProperty(&quot;APARTMENTBUILDINGNUM&quot;, strApartmentNum);
+						SetProperty(&quot;CITY&quot;, strCity);
+						SetProperty(&quot;PROVINCE&quot;, strProvince);
+						SetProperty(&quot;COUNTRY&quot;, strCountry);
+						SetProperty(&quot;DISTRICTTOWN&quot;, strDistrict);
+						SetProperty(&quot;ISPRIMARY&quot;, strIsPrimary);
+						SetProperty(&quot;NEIGHBORHOODVILLAGE&quot;, strVillage);
+						SetProperty(&quot;SITEPLAZA&quot;, strSite);
+						SetProperty(&quot;STATE&quot;, strState);
+						SetProperty(&quot;STREETTYPE&quot;, strStreetType);
+						SetProperty(&quot;ZIP&quot;, strPostalCode);	
+					}
+					psListOfADDRESS.AddChild(psADDRESS);				
+				    /*Record = NextRecord();	
+				} Retrofits MAR15 0023*/
+			}
+		}	
+	}
+	catch(e)
+	{	
+		strStatusCode = &quot;1&quot;;
+		strErrorCode = &quot;SBL-1XXXX&quot;;
+		strErrorDescription	= &quot;Siebel Generic Error Description&quot;;	
+		psHEADER.SetProperty(&quot;STATUS_CODE&quot;, strStatusCode);
+		psHEADER.SetProperty(&quot;ERROR_CODE&quot;, strErrorCode);
+		psHEADER.SetProperty(&quot;ERROR_DESCRIPTION&quot;, strErrorDescription);				
+		throw (psHEADER);	
+	}
+	finally
+	{
+		BillingAccountBC = null;
+		AssetMgmtHeaderBC = null;
+		AccountBC = null;
+		CUTAddress = null;
+		psMethodName	= null;
+		psListOfVFCADataOutput	= null;
+		psCustomerDetails 	= null;
+		psListOfHEADER = null;
+		psListOfBODY = null;
+		psHEADER = null;
+		psBODY = null;
+		psListOfCUSTOMER = null;
+		psCUSTOMER = null;
+		psListOfORGANIZATION = null;
+		psListOfADDRESS = null;
+		AccountBO = null;
+		BillingAccountBO = null;
+		inProp  = null;
+	 	outProp = null;
+		BS = null;
+		app = null;
+		NewProp = null;
+		psADDRESS = null;
+		psORGANIZATION = null;
+		inPropI = null;
+	}
+}"
+			   SEQUENCE="4"
+			   UPDATED="09/22/2016 14:43:14"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="12/16/2011 18:50:42"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="RetrieveCustomerDataAux"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function RetrieveCustomerDataAux(BillingAccountBC2, psCUSTOMER, app)
+{
+	/**************************************************
+	*		Billing Account vars                      *
+	**************************************************/
+	// Generic data
+	var psListOfBillingAccount  :PropertySet = app.NewPropertySet();
+	var psBillingAccount		:PropertySet = app.NewPropertySet();
+	
+	// Invoice Profile Data
+	var psListInvoiceProfile	:PropertySet = app.NewPropertySet();
+	var psInvoiceProfile		:PropertySet = app.NewPropertySet();
+	
+	// Billing Address Data
+	var psListOfBillingAddress 	:PropertySet = app.NewPropertySet();
+	var psBillingAddress 		:PropertySet = app.NewPropertySet();
+		
+	//Set Types Billing Account **********************************************
+	// Generic Data
+	psListOfBillingAccount.SetType(&quot;ListOfBillingAccount&quot;);
+	psBillingAccount.SetType(&quot;BillingAccount&quot;);
+	
+	// Invoice Profile Data
+	psListInvoiceProfile.SetType(&quot;ListOfInvoiceProfile&quot;);
+	psInvoiceProfile.SetType(&quot;InvoiceProfile&quot;);
+	
+	// Billing Address Data
+	psListOfBillingAddress.SetType(&quot;ListOfBillingAddress&quot;); 
+	psBillingAddress.SetType(&quot;BillingAddress&quot;);
+		
+	with(BillingAccountBC2)
+	{
+		/**************************************************
+		*		Add Billing Account on IO Hierarchy       *
+		**************************************************/
+		
+		// Get Bill Account Code and add in Bill Account TAG
+		psBillingAccount.SetProperty(&quot;BillAccountCode&quot;, GetFieldValue(&quot;Account Code&quot;));
+					
+		// Get Bill Account Type and add in Bill Account TAG
+		psBillingAccount.SetProperty(&quot;BillAccountType&quot;, GetFieldValue(&quot;TeXCo Account Type&quot;));
+		
+		// Get Billing Address
+		// Validate if AptBldgNum is diger. If it is, the value shoud be free text field
+		var AptBN = GetFieldValue(&quot;VF Apartment Number Picklist&quot;);
+		if (AptBN == &quot;ſ -- Diğer -- ſ&quot;)
+		{
+			psBillingAddress.SetProperty(&quot;AddressAptBldgNum&quot;, GetFieldValue(&quot;VF Apartment Number FreeText&quot;));
+		}else{
+			psBillingAddress.SetProperty(&quot;AddressAptBldgNum&quot;, GetFieldValue(&quot;VF Apartment Number Picklist&quot;));
+		}
+		psBillingAddress.SetProperty(&quot;AddressCity&quot;, GetFieldValue(&quot;Bill To City&quot;));
+		psBillingAddress.SetProperty(&quot;AddressCountry&quot;, GetFieldValue(&quot;Bill To Country&quot;));		
+		psBillingAddress.SetProperty(&quot;AddressDistrictTown&quot;, GetFieldValue(&quot;VF Bill To District&quot;));	
+		psBillingAddress.SetProperty(&quot;AddressId&quot;, GetFieldValue(&quot;Id&quot;));
+		
+		// Validate if Street name is Diger. If it is, the value shoud be free text field
+		var AddressNameTmp = GetFieldValue(&quot;Bill To Street Address Picklist&quot;);
+		if (AddressNameTmp == &quot;ſ -- Diğer -- ſ&quot;)
+		{
+			psBillingAddress.SetProperty(&quot;AddressName&quot;, GetFieldValue(&quot;Bill To Street Address&quot;));
+		}else{
+			psBillingAddress.SetProperty(&quot;AddressName&quot;, GetFieldValue(&quot;Bill To Street Address Picklist&quot;));
+		}
+							
+		psBillingAddress.SetProperty(&quot;AddressNbhdVillage&quot;, GetFieldValue(&quot;VF Bill To Neighborhood&quot;)); 	
+		psBillingAddress.SetProperty(&quot;AddressNum&quot;, GetFieldValue(&quot;Bill To Address Num&quot;));			
+		psBillingAddress.SetProperty(&quot;AddressSitePlaza&quot;, GetFieldValue(&quot;VF Bill To Site&quot;)); 		
+		psBillingAddress.SetProperty(&quot;AddressState&quot;, GetFieldValue(&quot;Bill To Province&quot;));		
+		psBillingAddress.SetProperty(&quot;AddressStreetType&quot;, GetFieldValue(&quot;Bill To Address Type&quot;));		
+		psBillingAddress.SetProperty(&quot;AddressZIP&quot;, GetFieldValue(&quot;Bill To Postal Code&quot;));
+		
+		psListOfBillingAddress.AddChild(psBillingAddress);
+		psBillingAccount.AddChild(psListOfBillingAddress);
+		
+		// Get Invoice profile
+		psInvoiceProfile.SetProperty(&quot;BillCycle&quot;, GetFieldValue(&quot;VF Bill Cycle&quot;));
+		psListInvoiceProfile.AddChild(psInvoiceProfile);
+		psBillingAccount.AddChild(psListInvoiceProfile);
+		
+		// Add Billing Account on CUSTOMER TAG
+		psListOfBillingAccount.AddChild(psBillingAccount);
+		psCUSTOMER.AddChild(psListOfBillingAccount);
+	}
+	return psCUSTOMER;
+}"
+			   SEQUENCE="5"
+			   UPDATED="09/21/2016 15:38:41"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="12/30/2014 17:45:38"
+			   CREATED_BY="MMARTINS">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="/* Created by A.Rocco for WP10 - Ext, R2.1, F166
+   December 2011
+*/
+function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	if (MethodName==&quot;RetrieveCustomerData&quot;)
+	{
+		RetrieveCustomerData(Inputs, Outputs);
+		return (CancelOperation);
+	}	
+	return (ContinueOperation);
+}"
+			   SEQUENCE="6"
+			   UPDATED="09/21/2016 15:38:41"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="12/16/2011 18:50:42"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

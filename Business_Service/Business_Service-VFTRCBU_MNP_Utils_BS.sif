@@ -1,0 +1,286 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="20150105:WA#18"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VFTRCBU Orders MNP"
+	   UI_FREEZE="N"
+	   UPDATED="04/03/2017 18:03:05"
+	   UPDATED_BY="ESANTOS"
+	   CREATED="01/05/2015 16:22:01"
+	   CREATED_BY="MSOUSA"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   EXTERNAL_USE="N"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VFTRCBU MNP Utils BS"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="04/03/2017 16:00:06"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   OBJECT_LOCKED_BY_NAME="ESANTOS"
+		   UPDATED="04/03/2017 18:00:53"
+		   UPDATED_BY="ESANTOS"
+		   CREATED="03/03/2015 11:59:37"
+		   CREATED_BY="JSOUSA">
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="GenerateReferenceForCancellation"
+			   UPDATED="03/26/2015 10:45:52"
+			   UPDATED_BY="JSOUSA"
+			   CREATED="03/03/2015 11:59:37"
+			   CREATED_BY="JSOUSA">
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="OrderNum"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="03/03/2015 11:59:37"
+				   UPDATED_BY="JSOUSA"
+				   CREATED="03/03/2015 11:59:37"
+				   CREATED_BY="JSOUSA">
+					<BUSINESS_SERVICE_METHOD_ARG_LOCALE
+					   APPLICATION_CODE="STD"
+					   DISPLAY_NAME="OrderNum"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="03/03/2015 11:59:37"
+					   UPDATED_BY="JSOUSA"
+					   CREATED="03/03/2015 11:59:37"
+					   CREATED_BY="JSOUSA">
+					</BUSINESS_SERVICE_METHOD_ARG_LOCALE>
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="Result"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Output"
+				   UPDATED="03/03/2015 11:59:37"
+				   UPDATED_BY="JSOUSA"
+				   CREATED="03/03/2015 11:59:37"
+				   CREATED_BY="JSOUSA">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="Sequence"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="03/20/2015 17:02:15"
+				   UPDATED_BY="JSOUSA"
+				   CREATED="03/20/2015 17:02:15"
+				   CREATED_BY="JSOUSA">
+				</BUSINESS_SERVICE_METHOD_ARG>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CheckReviseAllowance"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CheckReviseAllowance(Inputs, Outputs)
+{		
+	try
+	{
+		Outputs.SetProperty (&quot;Result&quot;, &quot;OK&quot;);
+//		var BO :  BusObject= TheApplication().GetBusObject(&quot;Order Entry (Sales)&quot;);
+//		var bcOrderEntry : BusComp = BO.GetBusComp(&quot;Order Entry - Orders&quot;);
+		var strOrderNum = Inputs.GetProperty(&quot;OrderNum&quot;);
+		//VFTRCBU-VFTRCBU-37401 - ESANTOS - BO and BC changed due to performance issue
+		var boOrderManagement  : BusObject= TheApplication ().GetBusObject (&quot;Order Entry (Sales)&quot;);
+		var bcOrderManagement  : BusComp = boOrderManagement.GetBusComp (&quot;HP Submit - Order Entry - Orders&quot;);
+		
+		bcOrderManagement.SetViewMode(AllView);
+		//bcOrderManagement.ActivateField(&quot;Revision&quot;);
+		bcOrderManagement.ActivateField(&quot;Order Number&quot;);
+		bcOrderManagement.ActivateField(&quot;Parent Order Id&quot;);
+		bcOrderManagement.ActivateField(&quot;Revising&quot;);
+		bcOrderManagement.ClearToQuery();
+		
+		var express = &quot;[Order Number] = &apos;&quot;+strOrderNum+&quot;&apos;&quot;
+		bcOrderManagement.SetSearchExpr(express);
+	//	bcOrderManagement.SetSortSpec(&quot;Revision (DESCENDING)&quot;);
+		bcOrderManagement.ExecuteQuery(ForwardOnly);
+				
+		var recordExistsOnLineItems = bcOrderManagement.FirstRecord();
+	
+	 	if (recordExistsOnLineItems) 
+	 	{
+	 		//var revision = bcOrderManagement.GetFieldValue(&quot;Revision&quot;);
+	 		var currentRevision = bcOrderManagement.GetFieldValue(&quot;Revising&quot;);
+	 		var existParent = bcOrderManagement.GetFieldValue(&quot;Parent Order Id&quot;);
+	 		//if (revision &gt; 1 &amp;&amp; currentRevision == &quot;Y&quot;)
+	 		  if (existParent != &quot;&quot; &amp;&amp; currentRevision == &quot;Y&quot;)
+	 		  Outputs.SetProperty (&quot;Result&quot;, &quot;KO&quot;);
+
+	 		
+	 	}
+	 }
+	 catch(e)
+	 {
+		Outputs.SetProperty (&quot;Result&quot;, &quot;KO&quot;);
+
+	 }
+	 finally
+	 {
+	 	bcOrderManagement = null;
+		boOrderManagement = null;
+	 }
+	
+}"
+			   SEQUENCE="1"
+			   UPDATED="04/03/2017 18:00:53"
+			   UPDATED_BY="ESANTOS"
+			   CREATED="03/03/2015 11:59:37"
+			   CREATED_BY="JSOUSA">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GenerateReferenceForCancellation"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GenerateReferenceForCancellation(Inputs, Outputs) 
+{ 
+	try 
+	{	
+		var TheApp = TheApplication();
+		var BO = TheApp.GetBusObject(&quot;Order Entry (Sales)&quot;);
+		var BC = BO.GetBusComp(&quot;Order Entry - Orders&quot;);
+		var ordernum = Inputs.GetProperty(&quot;OrderNum&quot;); 
+		
+		if(ordernum != &quot;&quot;)//PSANTOS VFTRCBU-22356 Oracle Review
+		{
+			CheckReviseAllowance(Inputs, Outputs);
+	
+		 	if (Outputs.GetProperty(&quot;Result&quot;) == &quot;KO&quot;)
+			{													
+				TheApp.RaiseErrorText(TheApp.LookupMessage(&quot;VF Message Category&quot;, &quot;122&quot;));			
+		 	}
+		 	
+		 	var today	: Date		= new Date;		
+	 		var daysToAdd		= 2;
+	 		var dDate	: Date		= new Date(today.getTime() + daysToAdd*24*60*60*1000);
+	 		
+			//Get Sequence will do the things below 
+			//	var myBS : Service	= TheApp.GetService (&quot;ACS Sequence Generator&quot;);
+		 	//	var psIn : PropertySet	= TheApp.NewPropertySet ();
+		 	//	var psOut : PropertySet	= TheApp.NewPropertySet (); 
+	
+			//Get Sequence will do the things below
+	   		//psIn.SetProperty (&quot;SequenceType&quot;, &quot;REQ&quot;);
+	 		//myBS.InvokeMethod (&quot;GetSequence&quot;, psIn, psOut);
+	 		var Out		= Inputs.GetProperty(&quot;Sequence&quot;);
+	 		
+			var year	= dDate.getFullYear();
+	
+	 		with(BC)
+			{
+				
+				SetViewMode(AllView);
+				ActivateField(&quot;Revising&quot;);
+				ClearToQuery();
+				SetSearchSpec (&quot;Order Number&quot;, ordernum);
+				ExecuteQuery(ForwardOnly);
+					
+				if (FirstRecord())
+				{	
+					SetFieldValue(&quot;Reference Number Canc&quot;, &quot;VODAFONE-&quot;+year+&quot;-&quot;+Out);
+					SetFieldValue(&quot;Revising&quot;, &quot;Y&quot;);
+					WriteRecord();
+				}
+	 		}
+	 	}
+		TheApp.SetSharedGlobal(&quot;CANINVOKEREVISE&quot;,&quot;FALSE&quot;);
+	 		//return result;
+	}
+	catch(e)
+	 {
+		Outputs.SetProperty (&quot;Result&quot;, &quot;KO&quot;);
+	 }
+	finally
+	{	
+		
+		TheApp = null;
+		BC = null;
+		BO = null;
+		today = null;
+		dDate = null;
+	}
+//	return result;	
+
+}"
+			   SEQUENCE="2"
+			   UPDATED="01/18/2016 12:43:15"
+			   UPDATED_BY="PSANTOS"
+			   CREATED="03/03/2015 11:59:37"
+			   CREATED_BY="JSOUSA">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	try
+	{
+		Outputs.SetProperty(&quot;Error Code&quot;,    &quot;0&quot;);
+		Outputs.SetProperty(&quot;Error Message&quot;, &quot;&quot;);
+
+		switch (MethodName)
+		{
+			case &quot;GenerateReferenceForCancellation&quot;:
+				GenerateReferenceForCancellation(Inputs, Outputs);
+				return (CancelOperation);
+				break;
+
+			default:
+				return(ContinueOperation);
+				break;
+		}
+
+		return (CancelOperation);
+	}
+	catch (oException)
+	{
+		Outputs.SetProperty(&quot;Error Code&quot;,    oException.errCode);
+		Outputs.SetProperty(&quot;Error Message&quot;, oException.errText);
+	}
+	finally
+	{
+		return (CancelOperation);
+	}
+}"
+			   SEQUENCE="3"
+			   UPDATED="03/06/2015 10:41:58"
+			   UPDATED_BY="JSOUSA"
+			   CREATED="03/03/2015 11:59:37"
+			   CREATED_BY="JSOUSA">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

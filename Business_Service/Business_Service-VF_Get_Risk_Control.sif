@@ -1,0 +1,244 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="LOCKED BY VTAO UI UPGRADE"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="Account (SSE)"
+	   UI_FREEZE="N"
+	   UPDATED="02/12/2017 22:15:10"
+	   UPDATED_BY="JMARQUES"
+	   CREATED="01/01/1980 00:00:00"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   COMMENTS="Created: CR609"
+		   EXTERNAL_USE="N"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VF Get Risk Control"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="02/12/2017 21:34:55"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   OBJECT_LOCKED_BY_NAME="JMARQUES"
+		   UPDATED="02/12/2017 22:15:10"
+		   UPDATED_BY="JMARQUES"
+		   CREATED="05/15/2013 10:51:36"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_LOCALE
+			   APPLICATION_CODE="STD"
+			   DISPLAY_NAME="VF Get Risk Control"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   TRANSLATE="Y"
+			   UPDATED="05/15/2013 10:52:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/15/2013 10:51:39"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_LOCALE>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="GetRiskControl"
+			   UPDATED="05/16/2013 19:01:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/15/2013 15:40:57"
+			   CREATED_BY="SADMIN">
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="Error Message"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Output"
+				   UPDATED="05/16/2013 18:56:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/16/2013 18:56:02"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="NumAffRows"
+				   OPTIONAL="Y"
+				   STORAGE_TYPE="Property"
+				   TYPE="Output"
+				   UPDATED="05/16/2013 19:01:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/15/2013 15:51:35"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="Object Id"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Input"
+				   UPDATED="05/16/2013 18:56:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/15/2013 15:41:54"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_ARG
+				   DATA_TYPE="String"
+				   HIDDEN="N"
+				   INACTIVE="N"
+				   NAME="VF Risk Status"
+				   OPTIONAL="N"
+				   STORAGE_TYPE="Property"
+				   TYPE="Output"
+				   UPDATED="05/15/2013 15:42:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/15/2013 15:42:20"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_ARG>
+				<BUSINESS_SERVICE_METHOD_LOCALE
+				   APPLICATION_CODE="STD"
+				   DISPLAY_NAME="GetRiskControl"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="05/15/2013 15:41:38"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/15/2013 15:41:38"
+				   CREATED_BY="SADMIN">
+				</BUSINESS_SERVICE_METHOD_LOCALE>
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GetRiskControl"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GetRiskControl(Inputs,Outputs)
+{
+try
+{
+	var record;
+	var obj_AssetBO       = TheApplication().GetBusObject (&quot;Account&quot;);
+	var obj_AssetItemBC   = obj_AssetBO.GetBusComp (&quot;VF Risk Control&quot;);
+	var AccountId		  =Inputs.GetProperty(&quot;Object Id&quot;);
+	var expr_Search       = &quot;[Account Id] = &apos;&quot; + AccountId + &quot;&apos; AND [VF Risk Status 1] &lt;&gt; &apos;0&apos; AND [VFTRCBU Risk Control Time Flg] = &apos;N&apos;&quot;;
+
+			with(obj_AssetItemBC)
+			{
+				ClearToQuery ();
+				SetViewMode(AllView);				
+				SetSearchExpr (expr_Search);
+				ExecuteQuery (ForwardOnly);
+				record=FirstRecord();
+		
+				if(record)
+				{
+					
+					Outputs.SetProperty(&quot;VF Risk Status&quot;,&quot;Y&quot;);
+				}	
+				else
+				{
+					Outputs.SetProperty(&quot;VF Risk Status&quot;,&quot;N&quot;);
+				}//if
+	
+			}//with	
+		
+			}
+			catch(e)
+			{
+			   	Outputs.SetProperty(&quot;Error Code&quot;,&quot;1&quot;);
+				Outputs.SetProperty(&quot;Error Message&quot;, e.toString());
+			}
+			finally
+			{	
+				obj_AssetBO =null;
+				obj_AssetItemBC  =null;
+				expr_Search  =null;
+				record =null;
+		
+			}
+
+}"
+			   SEQUENCE="1"
+			   UPDATED="02/12/2017 22:15:10"
+			   UPDATED_BY="JMARQUES"
+			   CREATED="05/15/2013 10:55:27"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Init"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Init (Inputs, Outputs)
+{
+	Outputs.SetProperty (&quot;VF Risk Status&quot;, &quot;&quot;);
+}"
+			   SEQUENCE="2"
+			   UPDATED="05/15/2013 11:01:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/15/2013 10:51:38"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Query"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Query (Inputs, Outputs)
+{
+	
+}"
+			   SEQUENCE="3"
+			   UPDATED="05/15/2013 11:02:22"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/15/2013 10:51:39"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	if (MethodName == &quot;Query&quot;)
+	{
+		Query (Inputs, Outputs);
+		return (CancelOperation);
+	}
+	else if (MethodName == &quot;Init&quot;)
+	{
+		Init (Inputs, Outputs);
+		return (CancelOperation);
+	}
+	else if (MethodName == &quot;GetRiskControl&quot;)
+	{
+		GetRiskControl (Inputs, Outputs);
+		return (CancelOperation);
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="4"
+			   UPDATED="05/15/2013 15:34:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/15/2013 10:51:39"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

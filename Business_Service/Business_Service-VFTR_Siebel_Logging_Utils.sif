@@ -1,0 +1,765 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   LOCKED_DATE="08/11/2017 16:04:06"
+	   NAME="VFTR Siebel Logging"
+	   UI_FREEZE="N"
+	   UPDATED="01/10/2018 17:04:39"
+	   UPDATED_BY="IBM_RCATITA"
+	   CREATED="03/08/2016 21:04:42"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_SERVICE
+		   CACHE="N"
+		   CLASS="CSSService"
+		   COMMENTS="SJOAO; SiebelLogging; Nov2015"
+		   EXTERNAL_USE="Y"
+		   HIDDEN="N"
+		   INACTIVE="N"
+		   NAME="VFTR Siebel Logging Utils"
+		   OBJECT_LOCKED="N"
+		   SERVER_ENABLED="N"
+		   STATE_MANAGEMENT_TYPE="Stateful"
+		   WEB_SERVICE_ENABLED="N"
+		   UPDATED="01/10/2018 17:05:01"
+		   UPDATED_BY="IBM_RCATITA"
+		   CREATED="03/08/2016 21:19:59"
+		   CREATED_BY="SADMIN">
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="DateToString"
+			   UPDATED="03/08/2016 21:19:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/08/2016 21:19:59"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="GetFieldValues"
+			   UPDATED="03/08/2016 21:19:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/08/2016 21:19:59"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="GetProfileAttrConcat"
+			   UPDATED="03/08/2016 21:19:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/08/2016 21:19:59"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="GetSearchCriteria"
+			   UPDATED="03/08/2016 21:19:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/08/2016 21:19:59"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="GetSiebelLoggingPath"
+			   UPDATED="03/08/2016 21:19:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/08/2016 21:19:59"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="LogCreation"
+			   UPDATED="03/08/2016 21:19:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/08/2016 21:19:59"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="ParseCommands"
+			   UPDATED="06/14/2016 22:24:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/14/2016 22:24:35"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="SetProfileAttrConcat"
+			   UPDATED="03/08/2016 21:19:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/08/2016 21:19:59"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_METHOD
+			   HIDDEN="N"
+			   INACTIVE="N"
+			   NAME="SiebelLogging"
+			   UPDATED="03/08/2016 21:20:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/08/2016 21:20:00"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_METHOD>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="DateToString"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function DateToString (Inputs,Outputs)
+{ 	
+	/*
+	var dDate = new Date;
+	var sMonth = ToString(dDate.getMonth() + 1); 
+	if (sMonth.length == 1)
+	{
+		sMonth = &quot;0&quot; + sMonth;
+	} 
+	var sDay = ToString(dDate.getDate()); 
+	if (sDay.length == 1) 
+	{
+		sDay = &quot;0&quot; + sDay;
+	} 
+	var sHours = ToString(dDate.getHours());
+	if (sHours.length == 1) 
+	{
+		sHours = &quot;0&quot; + sHours;
+	}
+	
+	var sMinutes = ToString(dDate.getMinutes());
+	if (sMinutes.length == 1) 
+	{
+		sMinutes = &quot;0&quot; + sMinutes;
+	} 
+	var sSeconds = ToString(dDate.getSeconds());
+	if (sSeconds.length == 1)  
+	{
+		sSeconds = &quot;0&quot; + sSeconds;
+	}
+	var strYMDH = dDate.getFullYear() + sMonth + sDay + &quot;_&quot; + sHours;
+	var strYMDHMS = dDate.getFullYear()+&quot;-&quot;+sMonth +&quot;-&quot;+sDay+&quot; &quot;+sHours+&quot;:&quot;+sMinutes+&quot;:&quot;+sSeconds;
+	*/
+	//YYYY-MM-DD HH:MM:SS
+	var sToday:String = &quot;&quot;;
+	var sTimestamp = Clib.localtime(Clib.time());
+	var strYMDH = Clib.strftime(sToday, &quot;%Y%m%d_%H&quot;, sTimestamp);
+	var strYMDHMS = Clib.strftime(sToday, &quot;%Y-%m-%d %H:%M:%S&quot;, sTimestamp);
+	
+	Outputs.SetProperty(&quot;ymdh&quot;, strYMDH);
+	Outputs.SetProperty(&quot;ymdhms&quot;, strYMDHMS);
+}"
+			   SEQUENCE="1"
+			   UPDATED="03/08/2016 21:20:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/08/2016 21:20:00"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GetFieldValues"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GetFieldValues(Input, Output)
+{
+	//SJOAO 05.11.2015
+	//TO USE IN QUERY LOGIC
+	try
+		{		
+		
+		TheApplication().TraceOn(&quot;/swstage/Logging_IBMRDAS.txt&quot;,&quot;Allocation&quot;,&quot;All&quot;);
+		
+		var busComp = &quot;&quot;;
+		var sBCName = Input.GetProperty(&quot;BCName&quot;);
+		TheApplication().Trace(&quot;BC: &quot; + sBCName);
+		
+		var BO = TheApplication().ActiveBusObject();
+		
+		if (BO != null)
+		{
+			//busComp = TheApplication().ActiveBusObject().GetBusComp(sBCName);
+			busComp = TheApplication().GetBusObject(&quot;VFTRCBU Account BO&quot;).GetBusComp(sBCName);
+				
+			var strTransactionType = Input.GetProperty(&quot;TransactionType&quot;);
+			
+			var listOfFields = Input.GetProperty(&quot;FieldName&quot;); //Field Name on BC
+			var listOfFieldsLog = Input.GetProperty(&quot;FieldNameLog&quot;);// Field Name to write in log file
+			var fieldsArray = listOfFields.split(&quot;,&quot;);
+			var fieldsLogArray = listOfFieldsLog.split(&quot;,&quot;);
+			var isRecord;
+			//var numOfRecords = 0; //DEF-22655 - IBMRDAS
+			var recordsProcessed = 0;	
+			with(busComp)
+			{
+				//ESANTOS - VFTRCBU-36065 - Added if to set searchspec using profileAttr set in logging RTE of PLW Com TT Service Request Detail Applet - Note
+				var vftrcbuRowId = TheApplication().GetProfileAttr(&quot;VFTRCBU_Row_Id&quot;)
+				
+				TheApplication().Trace(&quot;RowId: &quot; + vftrcbuRowId);
+				
+				if(vftrcbuRowId != null &amp;&amp; vftrcbuRowId!=&quot;&quot;)
+				{
+				ClearToQuery();
+				SetSearchSpec(&quot;Id&quot;,vftrcbuRowId);
+				//ExecuteQuery(ForwardBackward); //DEF-22655 - IBMRDAS Performance issues
+				ExecuteQuery(ForwardOnly); //DEF-22655 - IBMRDAS
+				}
+				//numOfRecords = CountRecords(); //DEF-22655 - IBMRDAS Performance issues
+				
+				isRecord = FirstRecord();
+				
+				TheApplication().Trace(&quot;isRecord: &quot; + isRecord);
+				
+				//while(recordsProcessed &lt; numOfRecords) //DEF-22655 - IBMRDAS
+				while(isRecord) //DEF-22655 - IBMRDAS
+				{	
+					for (var i = 0; i &lt; fieldsArray.length; i++)
+					{
+						TheApplication().Trace(&quot;i: &quot; + i);
+						
+						var fieldName = fieldsArray[i];
+						var fieldNameLog = fieldsLogArray[i];
+						var fieldValue = &quot;&quot;;
+						ActivateField(fieldName);
+						//verify if FieldName was defined to mask
+						var masked = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;VFTR_SIEBEL_LOGGING_MASKFIELD&quot;, fieldName)
+						if(masked == &quot;&quot; || masked == null)
+							fieldValue = GetFieldValue(fieldName);
+						else fieldValue = masked;
+						
+						Input.SetProperty(&quot;FieldName&quot;, fieldNameLog);
+						Input.SetProperty(&quot;FieldValue&quot;, fieldValue);
+						
+						TheApplication().Trace(&quot;Fields: &quot; + fieldNameLog + &quot; - &quot; + fieldValue);
+						
+						SiebelLogging(Input,Output);				
+					}
+					//recordsProcessed++; //DEF-22655 - IBMRDAS
+					isRecord = NextRecord();
+					
+					TheApplication().Trace(&quot;Next? &quot; + isRecord);
+				}
+				
+			}
+		}
+		
+	}
+	catch (e)
+	{
+		TheApplication().Trace(&quot;Error ----- &quot; + e.errText);
+		throw e;
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="01/10/2018 17:04:38"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="03/08/2016 21:20:00"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GetProfileAttrConcat"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GetProfileAttrConcat(Input, Output)
+{
+	//SJOAO 05.11.2015
+	var counter = Input.GetProperty(&quot;Counter&quot;);
+	
+	var concatedName = &quot;SIEBEL_LOGGING_FIELDNAME&quot; + counter;
+	var concatedValue = &quot;SIEBEL_LOGGING_FIELDVALUE&quot; + counter;
+	var concatedOldValue = &quot;SIEBEL_LOGGING_FIELDOLDVALUE&quot; + counter;
+	
+	
+	var newFieldName = TheApplication().GetProfileAttr(concatedName);
+	var newFieldValue = TheApplication().GetProfileAttr(concatedValue);
+	var oldFieldValue =  TheApplication().GetProfileAttr(concatedOldValue);
+
+	
+	Output.SetProperty(&quot;NewFieldName&quot;, newFieldName);
+	Output.SetProperty(&quot;NewFieldValue&quot;, newFieldValue);
+	Output.SetProperty(&quot;OldFieldValue&quot;, oldFieldValue);	
+
+}"
+			   SEQUENCE="3"
+			   UPDATED="03/08/2016 21:20:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/08/2016 21:20:00"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GetSearchCriteria"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GetSearchCriteria(Input,Output)
+{
+
+	//SJOAO 05.11.2015
+	//Get Search criteria when user execute a query
+	try
+	{	
+		
+		var sSearchExpr = &quot;&quot;;
+		var bonull=&quot;false&quot;;
+			
+		var sBCName = Input.GetProperty(&quot;BCName&quot;);
+		
+		var BO = TheApplication().ActiveBusObject();
+		var vftrcbuRowId = TheApplication().GetProfileAttr(&quot;VFTRCBU_Row_Id&quot;)
+
+		if (BO == null)
+			sSearchExpr = &quot;&quot;;
+		//ESANTOS - VFTRCBU-36065 - Added if to set searchspec using profileAttr set in logging RTE of PLW Com TT Service Request Detail Applet - Note
+		else if (vftrcbuRowId != null &amp;&amp; vftrcbuRowId!=&quot;&quot;)
+			sSearchExpr = &quot;[Id]=&apos;&quot;+vftrcbuRowId+&quot;&apos;&quot;;
+		else
+			sSearchExpr = TheApplication().ActiveBusObject().GetBusComp(sBCName).GetSearchExpr();
+
+		Output.SetProperty(&quot;SearchCriteria&quot;, sSearchExpr);
+		//Output.SetProperty(&quot;BONull&quot;, bonull);
+		
+	}
+	catch (e)
+	{
+		Output.SetProperty(&quot;Error&quot;, e.toString());		
+	}
+	finally
+	{
+		Output = null;
+	}
+}"
+			   SEQUENCE="4"
+			   UPDATED="06/12/2017 23:40:42"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/08/2016 21:20:00"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GetSiebelLoggingPath"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GetSiebelLoggingPath()
+{
+	//SJOAO 11.05.2015
+	//Get Path from LOV
+	var lovBO = TheApplication().GetBusObject(&quot;List Of Values&quot;);
+	var lovBC = lovBO.GetBusComp(&quot;List Of Values&quot;);
+	var longDesc = &quot;&quot;;
+	
+	with (lovBC)
+	{
+		ClearToQuery();
+		SetSearchExpr(&quot;[Type] = &apos;VFTR_SIEBEL_LOGGING_FILECONFIG&apos; AND  [Name] = &apos;FilePath&apos;&quot;);
+		ActivateField(&quot;VF Long Description&quot;);
+		ExecuteQuery(ForwardBackward);
+	
+	   if (FirstRecord())
+	   {
+			longDesc = GetFieldValue(&quot;VF Long Description&quot;);
+	   }
+	
+	return longDesc;
+	}
+}"
+			   SEQUENCE="5"
+			   UPDATED="03/08/2016 21:20:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/08/2016 21:20:00"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="LogCreation"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function LogCreation()
+{
+
+	//SJOAO - 11.05.2015
+	//When user logged in, a log file is created
+	
+	try 
+	{
+		//Name: SIEBELLOGGING_&lt;USERID&gt;_&lt;SERVERNAME&gt;_&lt;DATE&gt;&lt;HOUR&gt;.log		
+		var strPath = GetSiebelLoggingPath();
+		var spacer = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;VFTR_SIEBEL_LOGGING_FILECONFIG&quot;, &quot;Spacer&quot;);
+		
+		var dCreatedUser = TheApplication().LoginName(); 
+		var strSrvname = Clib.getenv(&quot;SBL_SRVR_NAME&quot;);
+		var sDateOutputs = TheApplication().NewPropertySet();	
+		var sDateInputs = TheApplication().NewPropertySet();
+		DateToString(sDateInputs,sDateOutputs);
+		var strDate = sDateOutputs.GetProperty(&quot;ymdh&quot;);
+		var timestamp = sDateOutputs.GetProperty(&quot;ymdhms&quot;);
+		var extension = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VFTR_SIEBEL_LOGGING_FILECONFIG&quot;, &quot;FileExtension&quot;);
+		var strLogFile = strPath + &quot;SIEBELLOGGING_&quot; +dCreatedUser+&quot;_&quot;+strSrvname+&quot;_&quot;+ strDate + extension; 
+
+		
+		//Mensage in Login: Login~~&lt;YYYY-MM-DD HH:MM:SS&gt;~&lt;User Login&gt;~&lt;User Shop Id&gt;~&lt;Application&gt;~~~~&lt;IP&gt;~
+		var strTransactionType = &quot;Login&quot;;
+		var strTransactionName = &quot;&quot;;
+		var userShopId = TheApplication().GetProfileAttr(&quot;ShopID&quot;);
+		
+		var strApplicationCode = &quot;&quot;;
+		if(TheApplication().GetProfileAttr(&quot;ApplicationName&quot;)  == &quot;TeXCo Application&quot;)
+			strApplicationCode = &quot;SiebelCRM&quot;;
+		else if(TheApplication().GetProfileAttr(&quot;ApplicationName&quot;)  == &quot;Siebel eChannel&quot;)
+			strApplicationCode = &quot;SiebelPRM&quot;;
+		
+		TheApplication().SetProfileAttr(&quot;SIEBELLOGGING_ApplicationCode&quot;,strApplicationCode);
+		
+		var strHostIP = TheApplication().GetProfileAttr(&quot;USERHOSTIP&quot;);
+		
+		//IP
+		if(strHostIP == &quot;&quot;)
+		{
+			var bsWebEngine = TheApplication().GetService(&quot;Web Engine HTTP TXN&quot;);
+			var ptIn = TheApplication().NewPropertySet();
+			var ptOut = TheApplication().NewPropertySet();
+			var sParseOutputs = TheApplication().NewPropertySet();	
+		    var sParseInputs = TheApplication().NewPropertySet();
+			bsWebEngine.InvokeMethod(&quot;GetAllRequestHeaders&quot;,ptIn,ptOut);
+			strHostIP = ptOut.GetProperty(&quot;X-FORWARDED-FOR&quot;);
+					
+				sParseInputs.SetProperty(&quot;Commands&quot;, strHostIP);
+				ParseCommands(sParseInputs, sParseOutputs);
+				strHostIP = sParseOutputs.GetProperty(&quot;Result&quot;);
+			
+			if (strHostIP == null || strHostIP == &quot;&quot;)
+			{
+				bsWebEngine.InvokeMethod(&quot;GetAllServerVariables&quot;,ptIn,ptOut);
+				strHostIP = ptOut.GetProperty(&quot;REMOTE_HOST&quot;);
+			}
+			TheApplication().SetProfileAttr(&quot;USERHOSTIP&quot;,strHostIP);	
+		}
+		
+		var strMsg = 	strTransactionType + spacer + 
+					 	strTransactionName + spacer  + 
+					 	timestamp + spacer + 
+					 	dCreatedUser +spacer+ 
+					 	userShopId + spacer + 
+					 	strApplicationCode + 
+					 	spacer + spacer + spacer + spacer +
+					 	strHostIP + spacer + spacer;
+					 	
+		
+		var oFile = Clib.fopen(strLogFile, &quot;au&quot;);
+		if (oFile != null)
+		{
+		   Clib.fputs(strMsg + &quot;\n&quot;, oFile);
+		   Clib.fclose(oFile);
+		   TheApplication().SetProfileAttr(&quot;SIEBEL_LOGGING_LOGFILE&quot;,strLogFile);
+		}		
+		
+		else
+			return (ContinueOperation);
+		
+	}
+	catch (e)
+	{
+		return (ContinueOperation);
+		//throw e;
+	}
+	finally
+	{
+		sDateInputs = null;
+		sDateOutputs = null;
+	}
+	
+}"
+			   SEQUENCE="6"
+			   UPDATED="06/14/2016 22:24:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/08/2016 21:20:00"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="ParseCommands"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function ParseCommands(Input,Output)
+{
+	var strCommands = Input.GetProperty(&quot;Commands&quot;);
+	var arrCommands = strCommands.split(&quot;,&quot;);
+				
+Output.SetProperty(&quot;Result&quot;,arrCommands[0]);
+		
+}"
+			   SEQUENCE="7"
+			   UPDATED="06/14/2016 22:24:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/14/2016 22:24:35"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Service_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Service_PreInvokeMethod (MethodName, Inputs, Outputs)
+{
+	if (MethodName==&quot;LogCreation&quot;)
+	{
+		LogCreation(Inputs, Outputs);
+		return (CancelOperation);
+	}	
+		if (MethodName==&quot;ParseCommands&quot;)
+	{
+		ParseCommands(Inputs, Outputs);
+		return (CancelOperation);
+	}	
+	if (MethodName==&quot;SiebelLogging&quot;)
+	{
+		SiebelLogging(Inputs, Outputs);
+		return (CancelOperation);
+	}
+	if (MethodName==&quot;GetSearchCriteria&quot;)
+	{
+		GetSearchCriteria(Inputs, Outputs);
+		return (CancelOperation);
+	}
+	
+	if (MethodName==&quot;GetFieldValues&quot;)
+	{
+		GetFieldValues(Inputs, Outputs);
+		return (CancelOperation);
+	}
+	
+	if (MethodName==&quot;GetProfileAttrConcat&quot;)
+	{
+		GetProfileAttrConcat(Inputs, Outputs);
+		return (CancelOperation);
+	}
+	
+	if (MethodName == &quot;SetProfileAttrConcat&quot;)
+	{
+		var context_string = Inputs.GetProperty(&quot;Context&quot;);
+
+		var context_array = context_string.split(&quot;, &quot;);
+		var sName = context_array[1];
+		var sSiebelName = context_array[3];
+		
+		sName = sName.replace(/\&apos;/g,&quot;&quot;);
+		sSiebelName = sSiebelName.replace(/\&apos;/g,&quot;&quot;);
+		
+		SetProfileAttrConcat(sName,sSiebelName, Outputs);
+		return (CancelOperation);
+	}
+	
+	return (ContinueOperation); 
+}"
+			   SEQUENCE="10"
+			   UPDATED="06/14/2016 22:24:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/08/2016 21:20:00"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SetProfileAttrConcat"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SetProfileAttrConcat(Name,SiebelName,Output)
+{	
+	//Name: Field Name to log in file
+	//SiebelName: Field Name on BC
+	var counter = TheApplication().GetProfileAttr(&quot;SIEBEL_LOGGING_COUNTER&quot;);
+	
+	var newFieldName = &quot;SIEBEL_LOGGING_FIELDNAME&quot; + counter;
+	var newFieldValue = &quot;SIEBEL_LOGGING_FIELDVALUE&quot; + counter;
+	var oldFieldValue = &quot;SIEBEL_LOGGING_FIELDOLDVALUE&quot; + counter;
+	
+	
+	var masked = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;VFTR_SIEBEL_LOGGING_MASKFIELD&quot;, SiebelName)
+	if(masked == &quot;&quot; || masked == null)
+	{
+		TheApplication().SetProfileAttr(newFieldValue, TheApplication().GetProfileAttr(&quot;SIEBEL_LOGGING_FIELDVALUE&quot;));
+		TheApplication().SetProfileAttr(oldFieldValue, TheApplication().GetProfileAttr(&quot;SIEBEL_LOGGING_FIELDOLDVALUE&quot;));
+	}
+	else 
+	{
+		TheApplication().SetProfileAttr(newFieldValue,masked);
+		TheApplication().SetProfileAttr(oldFieldValue,masked);
+	}
+	
+	TheApplication().SetProfileAttr(newFieldName, Name);
+	
+}"
+			   SEQUENCE="8"
+			   UPDATED="06/14/2016 22:24:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/08/2016 21:20:00"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+			<BUSINESS_SERVICE_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SiebelLogging"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SiebelLogging(Input,Output) 
+{
+	try {
+	
+		var spacer = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;VFTR_SIEBEL_LOGGING_FILECONFIG&quot;, &quot;Spacer&quot;);
+		var dCreatedUser = TheApplication().LoginName(); 
+		var sDateOutputs = TheApplication().NewPropertySet();	
+		var sDateInputs = TheApplication().NewPropertySet();
+		DateToString(sDateInputs,sDateOutputs);
+		var strDate = sDateOutputs.GetProperty(&quot;ymdh&quot;);
+		var timestamp = sDateOutputs.GetProperty(&quot;ymdhms&quot;);
+		var strLogFile = TheApplication().GetProfileAttr(&quot;SIEBEL_LOGGING_LOGFILE&quot;);
+		
+		//CREATE LOG FILE
+		if (strLogFile == &quot;&quot; || strLogFile == null)
+		{
+			var strPath = GetSiebelLoggingPath();
+			var strSrvname = Clib.getenv(&quot;SBL_SRVR_NAME&quot;);
+			var extension = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VFTR_SIEBEL_LOGGING_FILECONFIG&quot;, &quot;FileExtension&quot;)
+			
+			strLogFile = strPath + &quot;SIEBELLOGGING_&quot; +dCreatedUser+&quot;_&quot;+strSrvname+&quot;_&quot;+ strDate + extension; 
+
+			TheApplication().SetProfileAttr(&quot;SIEBEL_LOGGING_LOGFILE&quot;,strLogFile);
+		}
+		 
+		//TO MSG
+		//&lt;Transaction Type&gt;~&lt;Transaction Name&gt;~&lt;Created Date&gt;~&lt;User Id&gt;~&lt;Shop Id&gt;~&lt;Application Code&gt;~&lt;Field&gt;~&lt;Value&gt;~&lt;Old Value&gt;~&lt;Host IP&gt;~&lt;View Name&gt;
+		var actView = TheApplication().ActiveViewName();
+			
+		if (actView != null &amp;&amp; actView != &quot;&quot;)
+		{
+		
+			var strTransactionType = Input.GetProperty(&quot;TransactionType&quot;); //Query, Add, Update, Delete
+			var strTransactionName = Input.GetProperty(&quot;TransactionName&quot;); 
+			var strFieldName = Input.GetProperty(&quot;FieldName&quot;); 
+			var strOldValue = Input.GetProperty(&quot;FieldOldValue&quot;); //Old value, (only to update)
+			var strNewValue = Input.GetProperty(&quot;FieldValue&quot;); 
+			var strSearchCriteria = Input.GetProperty(&quot;SearchCriteria&quot;); //only to Query
+			var userShopId = TheApplication().GetProfileAttr(&quot;ShopID&quot;);
+		
+			var strHostIP = TheApplication().GetProfileAttr(&quot;USERHOSTIP&quot;);
+			
+			var strApplicationCode = TheApplication().GetProfileAttr(&quot;SIEBELLOGGING_ApplicationCode&quot;);		
+			if (strApplicationCode == &quot;&quot; || strApplicationCode == null)
+			{
+				if(TheApplication().GetProfileAttr(&quot;ApplicationName&quot;)  == &quot;TeXCo Application&quot;)
+					strApplicationCode = &quot;SiebelCRM&quot;;
+				else if(TheApplication().GetProfileAttr(&quot;ApplicationName&quot;)  == &quot;Siebel eChannel&quot;)
+					strApplicationCode = &quot;SiebelPRM&quot;;
+				
+				TheApplication().SetProfileAttr(&quot;SIEBELLOGGING_ApplicationCode&quot;,strApplicationCode);
+			}
+				
+			//IP
+			if(strHostIP == &quot;&quot;)
+			{
+				var bsWebEngine = TheApplication().GetService(&quot;Web Engine HTTP TXN&quot;);
+				var ptIn = TheApplication().NewPropertySet();
+				var ptOut = TheApplication().NewPropertySet();
+				var sParseOutputs = TheApplication().NewPropertySet();	
+		        var sParseInputs = TheApplication().NewPropertySet();
+				bsWebEngine.InvokeMethod(&quot;GetAllRequestHeaders&quot;,ptIn,ptOut);
+				strHostIP = ptOut.GetProperty(&quot;X-FORWARDED-FOR&quot;);
+				
+				sParseInputs.SetProperty(&quot;Commands&quot;, strHostIP);
+				ParseCommands(sParseInputs, sParseOutputs);
+				strHostIP = sParseOutputs.GetProperty(&quot;Result&quot;);
+			
+				
+				if (strHostIP == null || strHostIP == &quot;&quot;)
+				{
+					bsWebEngine.InvokeMethod(&quot;GetAllServerVariables&quot;,ptIn,ptOut);
+					strHostIP = ptOut.GetProperty(&quot;REMOTE_HOST&quot;);
+				}
+			
+				TheApplication().SetProfileAttr(&quot;USERHOSTIP&quot;,strHostIP);	
+			}
+				
+			var strMsg = 	strTransactionType + spacer + 
+						 	strTransactionName + spacer  + 
+						 	timestamp + spacer + 
+						 	dCreatedUser +spacer+ 
+						 	userShopId + spacer + 
+						 	strApplicationCode;
+				
+			if (strTransactionType == &quot;Query&quot;)
+			{
+				//~Search Criteria~[Field1] LIKE &quot;Value1*&quot; AND [Field2] = &quot;Value2&quot; AND [Field3] = ‘Value3’~~&lt;IP&gt;~&lt;View Name&gt;
+				if (strSearchCriteria != &quot;&quot; &amp;&amp; strSearchCriteria != null)
+					strMsg = strMsg + spacer + &quot;Search Criteria&quot; + spacer + 
+						 strSearchCriteria + spacer + spacer +
+						 strHostIP + spacer + 
+						 actView + spacer;
+						 
+				//~&lt;Identifier Field&gt;~&lt;Value of Identifier Field&gt;~~&lt;IP&gt;~&lt;View Name&gt;
+				else
+					strMsg = strMsg + spacer + 
+						 strFieldName + spacer +
+						 strNewValue + spacer + spacer +
+						 strHostIP + spacer + 
+						 actView + spacer;
+			}
+			else if (strTransactionType == &quot;Add&quot;)
+			{
+				strMsg = strMsg + spacer + 
+						 strFieldName + spacer +
+						 strNewValue + spacer +
+						 spacer +  
+						 strHostIP + spacer + 
+						 actView + spacer;
+			}
+			else if (strTransactionType == &quot;Update&quot;)
+			{
+				strMsg = strMsg + spacer + 
+						 strFieldName + spacer +
+						 strNewValue + spacer + 
+						 strOldValue + spacer + 
+						 strHostIP + spacer + 
+						 actView + spacer;
+			}
+			else if (strTransactionType == &quot;Delete&quot;)
+			{
+				strMsg = strMsg + spacer + 
+						 strFieldName + spacer +
+						 strNewValue + spacer + 
+						 spacer + 
+						 strHostIP + spacer + 
+						 actView + spacer;
+			}
+			
+			var oFile = Clib.fopen(strLogFile, &quot;au&quot;);
+			if (oFile != null)
+			{
+			   Clib.fputs(strMsg + &quot;\n&quot;, oFile);
+			   Clib.fclose(oFile);
+			}	
+		}
+	}
+	
+	catch (e)
+	{
+		throw e;
+	}
+	
+	finally
+	{
+		sDateInputs = null;
+		sDateOutputs = null
+	}
+}"
+			   SEQUENCE="9"
+			   UPDATED="06/14/2016 22:24:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/08/2016 21:20:00"
+			   CREATED_BY="SADMIN">
+			</BUSINESS_SERVICE_SERVER_SCRIPT>
+		</BUSINESS_SERVICE>
+	</PROJECT>
+</REPOSITORY>
+
+
+

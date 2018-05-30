@@ -1,0 +1,4216 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LANGUAGE_LOCKED="ENU"
+	   LOCKED="Y"
+	   LOCKED_DATE="04/20/2017 09:32:17"
+	   NAME="VFTRCBU Products and Services"
+	   UI_FREEZE="N"
+	   LOCKED_BY_NAME="GBRAZ"
+	   UPDATED="04/20/2017 09:34:24"
+	   UPDATED_BY="GBRAZ"
+	   CREATED="01/09/2015 10:23:22"
+	   CREATED_BY="MMARTINS"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<TASK
+		   ALLOW_PAUSE="Y"
+		   BUSINESS_OBJECT="VFTRCBU Customer Score BO"
+		   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_ADVANCED_SCORE"
+		   INACTIVE="N"
+		   INBOX_DISPOSITION="DO_NOT_CARE_FASTEST"
+		   IS_SUBTASK="N"
+		   NAME="VFTRCBU Advanced Score Calculation Task: 10"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="04/20/2017 09:32:41"
+		   ON_CONFLICT="Cancel Operation"
+		   STATUS="COMPLETED"
+		   TASK_NAME="VFTRCBU Advanced Score Calculation Task"
+		   TRANSACTIONAL="Y"
+		   TRANSIENT_BC="VFTRCBU Advanced Score Calc TBC"
+		   VERSION="10"
+		   OBJECT_LOCKED_BY_NAME="GBRAZ"
+		   UPDATED="04/20/2017 09:34:24"
+		   UPDATED_BY="GBRAZ"
+		   CREATED="04/20/2017 09:32:39"
+		   CREATED_BY="GBRAZ">
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Start"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*123 514*NPts1*22*P05*83 514*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 0"
+			   TO_STEP_NAME="Task View 0"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/20/2017 09:32:39"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:39"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="(ControlFlg This Must Match(&apos;B&apos;))"
+			   FROM_STEP_NAME="Valid Score and KKB Report?"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*12*P16*402 794*NPts1*22*P07*402 1084*ToHS1*38*ArrowEnd1*1"
+			   NAME="Connector 1"
+			   TO_STEP_NAME="Calc Valid Date Score"
+			   TYPE="DECISION"
+			   UPDATED="04/20/2017 09:32:39"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:39"
+			   CREATED_BY="GBRAZ">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="EQ_THIS"
+				   PREFERRED_SEQUENCE="1"
+				   PROPERTY_NAME="ControlFlg"
+				   UPDATED="04/20/2017 09:32:39"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:39"
+				   CREATED_BY="GBRAZ">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR1="B"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="04/20/2017 09:32:39"
+					   UPDATED_BY="GBRAZ"
+					   CREATED="04/20/2017 09:32:39"
+					   CREATED_BY="GBRAZ">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Generate KKB Report"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1024 2194*NPts1*22*P07*994 2194*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 10"
+			   TO_STEP_NAME="IsCustomer"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/20/2017 09:32:39"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:39"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="(IsCustomer None Can Match (Ignore Case)(&apos;Y&apos;))"
+			   FROM_STEP_NAME="PIN Required?"
+			   INACTIVE="N"
+			   LABEL="Y"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1240 2194*NPts1*22*P08*1210 2194*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 11"
+			   TO_STEP_NAME="Update TBC"
+			   TYPE="DECISION"
+			   UPDATED="04/20/2017 09:32:39"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:39"
+			   CREATED_BY="GBRAZ">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="NE_ALL_NC"
+				   PREFERRED_SEQUENCE="1"
+				   PROPERTY_NAME="IsCustomer"
+				   UPDATED="04/20/2017 09:32:39"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:39"
+				   CREATED_BY="GBRAZ">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR1="Y"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="04/20/2017 09:32:39"
+					   UPDATED_BY="GBRAZ"
+					   CREATED="04/20/2017 09:32:39"
+					   CREATED_BY="GBRAZ">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Task View 2"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1456 2194*NPts1*22*P08*1426 2194*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 12"
+			   TO_STEP_NAME="Aprove Report"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/20/2017 09:32:39"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:39"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Task View 0"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*169 1084*NPts1*22*P06*169 784*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 13"
+			   TO_STEP_NAME="Query Score"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Aprove Report"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P28*1559 3034*FrHS1*22*P18*1559 2194*NPts1*42*P08*1534 2192*P38*1318 3034*ToHS1*28*ArrowEnd1*1"
+			   NAME="Connector 14"
+			   TO_STEP_NAME="Set Multiple PA"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Echo"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*322 1354*FrHS1*22*P17*322 1364*NPts1*42*P07*321 1362*P37*363 1354*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 15"
+			   TO_STEP_NAME="Valid Score and KKB Report?"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="( This Must Match (Ignore Case)(&apos;[&amp;PhoneNumber] = &apos;&apos; OR [&amp;PhoneNumber] IS NULL OR [&amp;PhoneQueryId] = &apos;&apos; OR [&amp;PhoneQueryId] IS NULL&apos;))"
+			   FROM_STEP_NAME="Has a number?"
+			   INACTIVE="N"
+			   LABEL="No"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*831 2884*NPts1*22*P07*831 2464*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 16"
+			   TO_STEP_NAME="No GSM Numbers"
+			   TYPE="DECISION"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="EXPRESSION"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="EQ_THIS_NC"
+				   PREFERRED_SEQUENCE="1"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR5="[&amp;PhoneNumber] = &apos;&apos; OR [&amp;PhoneNumber] IS NULL OR [&amp;PhoneQueryId] = &apos;&apos; OR [&amp;PhoneQueryId] IS NULL"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="04/20/2017 09:32:40"
+					   UPDATED_BY="GBRAZ"
+					   CREATED="04/20/2017 09:32:40"
+					   CREATED_BY="GBRAZ">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="PIN Required?"
+			   INACTIVE="N"
+			   LABEL="N"
+			   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P28*1240 3034*FrHS1*32*P18*1171 3034*NPts1*32*P08*1171 2464*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 17"
+			   TO_STEP_NAME="Set Multiple PA"
+			   TYPE="DEFAULT"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Update TBC"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1348 2194*NPts1*22*P08*1318 2194*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 18"
+			   TO_STEP_NAME="Task View 2"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Set Multiple PA"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P18*1279 3604*NPts1*22*P08*1279 3304*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 19"
+			   TO_STEP_NAME="End"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="(ControlFlg This Must Match(&apos;S&apos;))"
+			   FROM_STEP_NAME="Valid Score and KKB Report?"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*512 1354*NPts1*22*P07*441 1354*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 2"
+			   TO_STEP_NAME="Score Not Valid"
+			   TYPE="DECISION"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="EQ_THIS"
+				   PREFERRED_SEQUENCE="1"
+				   PROPERTY_NAME="ControlFlg"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR1="S"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="04/20/2017 09:32:40"
+					   UPDATED_BY="GBRAZ"
+					   CREATED="04/20/2017 09:32:40"
+					   CREATED_BY="GBRAZ">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Query Customer Id"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*481 3154*NPts1*22*P07*441 3154*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 20"
+			   TO_STEP_NAME="Data Masking"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME=" Set BankCode"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*567 2194*NPts1*22*P07*549 2194*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 21"
+			   TO_STEP_NAME="Set TCId"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Set TCId"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*675 2194*NPts1*22*P07*645 2194*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 22"
+			   TO_STEP_NAME="Task View 1"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="IsCustomer"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1132 2194*NPts1*22*P08*1102 2194*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 23"
+			   TO_STEP_NAME="PIN Required?"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Calc Valid Date Score"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*480 514*NPts1*22*P06*441 524*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 24"
+			   TO_STEP_NAME="Calc Diff in Days - KKB Last Report"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Calc Diff in Days - KKB Last Report"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*588 514*NPts1*22*P06*558 514*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 25"
+			   TO_STEP_NAME="Get Error Msg"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Valid Score and KKB Report?"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*402 1924*NPts1*22*P07*402 1624*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 3"
+			   TO_STEP_NAME="VF Client?"
+			   TYPE="DEFAULT"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Query Score"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*243 1354*NPts1*22*P07*208 1354*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 4"
+			   TO_STEP_NAME="Echo"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="(VFClientFlg This Must Match(&apos;Y&apos;))"
+			   FROM_STEP_NAME="VF Client?"
+			   INACTIVE="N"
+			   LABEL="Y"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*402 2884*NPts1*22*P07*402 2464*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 5"
+			   TO_STEP_NAME="Query Customer Id"
+			   TYPE="DECISION"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="EQ_THIS"
+				   PREFERRED_SEQUENCE="1"
+				   PROPERTY_NAME="VFClientFlg"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR1="Y"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="04/20/2017 09:32:40"
+					   UPDATED_BY="GBRAZ"
+					   CREATED="04/20/2017 09:32:40"
+					   CREATED_BY="GBRAZ">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="VF Client?"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*471 2194*NPts1*22*P07*441 2194*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 6"
+			   TO_STEP_NAME=" Set BankCode"
+			   TYPE="DEFAULT"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Data Masking"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*12*P17*510 2464*NPts1*22*P07*510 2884*ToHS1*38*ArrowEnd1*1"
+			   NAME="Connector 7"
+			   TO_STEP_NAME=" Set BankCode"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Get Error Msg"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*704 514*NPts1*22*P06*666 514*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 8"
+			   TO_STEP_NAME="Both Valid"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Task View 1"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*792 2194*NPts1*22*P07*753 2194*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 9"
+			   TO_STEP_NAME="Has a number?"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Has a number?"
+			   INACTIVE="N"
+			   LABEL="Yes"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*916 2194*NPts1*22*P07*870 2194*ToHS1*08*ArrowEnd1*1"
+			   NAME="Yes"
+			   TO_STEP_NAME="Generate KKB Report"
+			   TYPE="DEFAULT"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="BankCode"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Citizenship"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Context BC Id"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Context BC Name"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Context BO Name"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="ControlFlg"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="CustomerId"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="DaysParametric"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Error Code"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Error Message"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="ErrorMessage"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Instance Identifier"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="IsCustomer"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="KKBReport"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="DATE"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="KKBReportDate"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="DATE"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="KKBReportMaxDate"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="NumAffRows"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Object Id"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="PhoneNumber"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="PhoneQueryId"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="RequestId"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Score"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="DATE"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="ScoreDate"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Siebel Operation Object Id"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="INOUT"
+			   INACTIVE="N"
+			   NAME="TCId"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="VFClientFlg"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="Set Profile Attribute"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*471 192 549 2469*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME=" Set BankCode"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Profile Attribute Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Profile Attribute Name"
+				   TYPE="Literal"
+				   VALUE="VFTRCBUBankCode"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Profile Attribute Value"
+				   BUSINESS_COMPONENT="VFTRCBU Advanced Score Calc TBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU CS Bank LIC"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Profile Attribute Value"
+				   TYPE="Business Component"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="RunProcess"
+			   BUSINESS_SERVICE_NAME="Workflow Process Manager"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1456 192 1534 2469*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Aprove Report"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="BirthDate"
+				   BUSINESS_COMPONENT="VFTRCBU Advanced Score Calc TBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU KKB Bith Date"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:BirthDate"
+				   TYPE="Business Component"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Pin"
+				   BUSINESS_COMPONENT="VFTRCBU Advanced Score Calc TBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU KKB Pin"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Pin"
+				   TYPE="Business Component"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="ProcessName"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:ProcessName"
+				   TYPE="Literal"
+				   VALUE="VFTRCBU CS Approve KKB Report WF"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="RequestId"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:RequestId"
+				   PROPERTY_NAME="RequestId"
+				   TYPE="Task Property"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   ERROR_CODE="WF_ERR_CUSTOM_1"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*684 24 762 789*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="Both Valid"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="ERROR"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="%1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:%1"
+				   PROPERTY_NAME="ErrorMessage"
+				   TYPE="Task Property"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="DateTimeDiff"
+			   BUSINESS_SERVICE_NAME="TELCO DateTime Utils"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*480 24 558 789*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Calc Diff in Days - KKB Last Report"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Date1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Date1"
+				   TYPE="Expression"
+				   VALUE="Today()"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Date2"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Date2"
+				   PROPERTY_NAME="KKBReportMaxDate"
+				   TYPE="Task Property"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Ignore Time"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Ignore Time"
+				   TYPE="Literal"
+				   VALUE="Y"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Result"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:DaysParametric"
+				   PROPERTY_NAME="DaysParametric"
+				   TYPE="Output Argument"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="AddDaysToDate"
+			   BUSINESS_SERVICE_NAME="TELCO DateTime Utils"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*363 25 441 799*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Calc Valid Date Score"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="dateIn"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:dateIn"
+				   PROPERTY_NAME="KKBReportDate"
+				   TYPE="Task Property"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="dayDuration"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:dayDuration"
+				   PROPERTY_NAME="DaysParametric"
+				   TYPE="Task Property"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="dateOut"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:KKBReportMaxDate"
+				   PROPERTY_NAME="KKBReportMaxDate"
+				   TYPE="Output Argument"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*471 288 549 3429*FillBgClr7*82516338*ArrowEnd1*1"
+			   NAME="Data Masking"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   SUBTASK_NAME="VFTRCBU CS OTP &amp; Identity Validation Sub-Task"
+			   TYPE="SUBTASK"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VFTRCBU Account Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:VFTRCBU Account Id"
+				   PROPERTY_NAME="CustomerId"
+				   TYPE="Task Property"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VFTRCBU Is Turkish"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:VFTRCBU Is Turkish"
+				   TYPE="Expression"
+				   VALUE="IIf ([&amp;Citizenship] = LookupValue(&quot;X_CITIZENSHIP&quot;,&quot;Turkish&quot;),&quot;Y&quot;,&quot;N&quot;)"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VFTRCBU TCID"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:VFTRCBU TCID"
+				   PROPERTY_NAME="TCId"
+				   TYPE="Task Property"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="Echo"
+			   BUSINESS_SERVICE_NAME="Workflow Utilities"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*243 108 321 1629*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Echo"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:ControlFlg"
+				   PROPERTY_NAME="ControlFlg"
+				   TYPE="Expression"
+				   VALUE="Iif(([&amp;KKBReport] = &apos;Y&apos;) AND ([&amp;Score] = &apos;Y&apos;), &quot;B&quot;, IIf(([&amp;Score]= &apos;N&apos;), &quot;S&quot;,&quot;X&quot;))"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:DaysParametric"
+				   PROPERTY_NAME="DaysParametric"
+				   TYPE="Expression"
+				   VALUE="LookupValue(&quot;VFTRCBU_KKB_VALUE&quot;,&quot;Valid KKB Report&quot;)"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1240 360 1318 4149*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="End"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="END"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="RunProcess"
+			   BUSINESS_SERVICE_NAME="Workflow Process Manager"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*916 192 994 2469*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Generate KKB Report"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="CustomerTaxId"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:CustomerTaxId"
+				   PROPERTY_NAME="TCId"
+				   TYPE="Task Property"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="PhoneNumber"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:PhoneNumber"
+				   PROPERTY_NAME="PhoneNumber"
+				   TYPE="Task Property"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="PhoneQueryId"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:PhoneQueryId"
+				   PROPERTY_NAME="PhoneQueryId"
+				   TYPE="Task Property"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="ProcessName"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:ProcessName"
+				   TYPE="Literal"
+				   VALUE="VFTRCBU CS Generate KKB Report WF"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="TCId"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:TCId"
+				   PROPERTY_NAME="TCId"
+				   TYPE="Task Property"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="RequestId"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:RequestId"
+				   PROPERTY_NAME="RequestId"
+				   TYPE="Output Argument"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="GetErrorMessageText"
+			   BUSINESS_SERVICE_NAME="TELCO Message Utils"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*588 24 666 789*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Error Msg"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Argument1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Argument1"
+				   PROPERTY_NAME="DaysParametric"
+				   TYPE="Task Property"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Category"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Category"
+				   TYPE="Literal"
+				   VALUE="VFTRCBU User Defined Errors"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Name"
+				   TYPE="Literal"
+				   VALUE="0350"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="ErrorMessage"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:ErrorMessage"
+				   PROPERTY_NAME="ErrorMessage"
+				   TYPE="Output Argument"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*792 192 870 2469*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Has a number?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="Echo"
+			   BUSINESS_SERVICE_NAME="Workflow Utilities"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1024 192 1102 2469*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="IsCustomer"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU CS Get GSM Numbers VBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU IsCustomer"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:IsCustomer"
+				   PROPERTY_NAME="IsCustomer"
+				   TYPE="Business Component"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   ERROR_CODE="WF_ERR_CUSTOM_1"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*792 288 870 3429*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="No GSM Numbers"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="ERROR"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="%1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:%1"
+				   TYPE="Expression"
+				   VALUE="LookupMessage(&quot;VFTRCBU User Defined Errors&quot;,&quot;ADVSCORE1&quot;)"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1132 192 1210 2469*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="PIN Required?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="GetFieldsFromFirstRow"
+			   BUSINESS_SERVICE_NAME="TELCO BusComp Utils"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*363 288 441 3429*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Query Customer Id"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/20/2017 09:33:04"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="BusinessComponent"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:BusinessComponent"
+				   TYPE="Literal"
+				   VALUE="VF Account Simple"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="BusinessObject"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:BusinessObject"
+				   TYPE="Literal"
+				   VALUE="Account"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Id"
+				   TYPE="Literal"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="SearchExpression"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:SearchExpression"
+				   TYPE="Expression"
+				   VALUE="&quot;[Contact SSN] = &apos;&quot; + [&amp;TCId] + &quot;&apos; AND [Market Class] = &apos;&quot; + LookupValue(&quot;ACCOUNT_TYPE&quot;,&quot;102&quot;) + &quot;&apos;&quot;"
+				   UPDATED="04/20/2017 09:33:04"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VF Contact Citizenship"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:VF Contact Citizenship"
+				   TYPE="Literal"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VF Contact Citizenship"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Citizenship"
+				   PROPERTY_NAME="Citizenship"
+				   TYPE="Output Argument"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:CustomerId"
+				   PROPERTY_NAME="CustomerId"
+				   TYPE="Output Argument"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="GetFieldsFromFirstRow"
+			   BUSINESS_SERVICE_NAME="TELCO BusComp Utils"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*130 108 208 1629*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Query Score"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="BusinessComponent"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:BusinessComponent"
+				   TYPE="Literal"
+				   VALUE="VFTRCBU Customer Score BC"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="BusinessObject"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:BusinessObject"
+				   TYPE="Literal"
+				   VALUE="VFTRCBU Customer Score BO"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Id"
+				   TYPE="Literal"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="SearchExpression"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:SearchExpression"
+				   TYPE="Expression"
+				   VALUE="&quot;[VFTRCBU CS TC Id] = &apos;&quot; + [&amp;TCId] + &quot;&apos;&quot;"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VFTRCBU CS VF Client Flg"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:VFTRCBU CS VF Client Flg"
+				   TYPE="Literal"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VFTRCBU KKB Report Last Date"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:VFTRCBU KKB Report Last Date"
+				   TYPE="Literal"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VFTRCBU KKB Report Last Date"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:KKBReportDate"
+				   PROPERTY_NAME="KKBReportDate"
+				   TYPE="Output Argument"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Object Id"
+				   PROPERTY_NAME="Object Id"
+				   TYPE="Output Argument"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VFTRCBU CS VF Client Flg"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:VFClientFlg"
+				   PROPERTY_NAME="VFClientFlg"
+				   TYPE="Output Argument"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   ERROR_CODE="WF_ERR_CUSTOM_1"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*492 108 570 1629*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="Score Not Valid"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="ERROR"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="%1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:%1"
+				   TYPE="Expression"
+				   VALUE="LookupMessage(&quot;VFTRCBU User Defined Errors&quot;,&quot;0351&quot;)"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="SetProfileAttributes"
+			   BUSINESS_SERVICE_NAME="TELCO OM Framework Utilities"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1240 276 1318 3309*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Set Multiple PA"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Name 1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Name 1"
+				   TYPE="Literal"
+				   VALUE="VFTRCBUQueryAfterTBUI"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Name 2"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Name 2"
+				   TYPE="Literal"
+				   VALUE="VFTRCBUQueryBy"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Name 3"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Name 3"
+				   TYPE="Literal"
+				   VALUE="VFTRCBUQueryValue"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Name 4"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Name 4"
+				   TYPE="Literal"
+				   VALUE="VFTRCBUCustomerId"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Name 5"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Name 5"
+				   TYPE="Literal"
+				   VALUE="VFTRCBUBankCode"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Value 1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Value 1"
+				   TYPE="Literal"
+				   VALUE="Y"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Value 2"
+				   BUSINESS_COMPONENT="VFTRCBU Customer Score VBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU CS Query By"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Value 2"
+				   TYPE="Business Component"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Value 3"
+				   BUSINESS_COMPONENT="VFTRCBU Customer Score VBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU CS Query Value"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Value 3"
+				   TYPE="Business Component"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Value 4"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Value 4"
+				   TYPE="Literal"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Value 5"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Value 5"
+				   TYPE="Literal"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="Set Profile Attribute"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*567 192 645 2469*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Set TCId"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Profile Attribute Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Profile Attribute Name"
+				   TYPE="Literal"
+				   VALUE="VFTRCBUCustomerId"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Profile Attribute Value"
+				   BUSINESS_COMPONENT="VFTRCBU Advanced Score Calc TBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU CS TC Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Profile Attribute Value"
+				   TYPE="Business Component"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r11*15 24 93 789*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="Start"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="START"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_SCORE_CALCULATION"
+			   DISPLAY_NAME_TYPE="Normal"
+			   FORWARD_BUTTON_TYPE="Next"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*123 24 201 789*FillBgClr8*107355238*ArrowEnd1*1"
+			   NAME="Task View 0"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TASK_VIEW="VFTRCBU Advanced Score Task View"
+			   TYPE="TASK_VIEW"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Advanced Score Calc TBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU CS Bank"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:BankCode"
+				   PROPERTY_NAME="BankCode"
+				   TYPE="Business Component"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Customer Score VBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU KKB Valid Flg"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:KKBReport"
+				   PROPERTY_NAME="KKBReport"
+				   TYPE="Business Component"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Customer Score VBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU CS Valid Flg"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Score"
+				   PROPERTY_NAME="Score"
+				   TYPE="Business Component"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Advanced Score Calc TBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU CS TC Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:TCId"
+				   PROPERTY_NAME="TCId"
+				   TYPE="Business Component"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_AS_CUSTOM_AUTHORIZATION"
+			   DISPLAY_NAME_TYPE="Normal"
+			   FORWARD_BUTTON_TYPE="Next"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*675 192 753 2469*FillBgClr8*107355238*ArrowEnd1*1"
+			   NAME="Task View 1"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TASK_VIEW="VFTRCBU CS Customer Authorization Task View"
+			   TYPE="TASK_VIEW"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU CS Get GSM Numbers VBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU Number"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:PhoneNumber"
+				   PROPERTY_NAME="PhoneNumber"
+				   TYPE="Business Component"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU CS Get GSM Numbers VBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU PhoneQueryId"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:PhoneQueryId"
+				   PROPERTY_NAME="PhoneQueryId"
+				   TYPE="Business Component"
+				   UPDATED="04/20/2017 09:32:40"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:40"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_AS_REQ_AUTHORIZATION_INFO"
+			   DISPLAY_NAME_TYPE="Normal"
+			   FORWARD_BUTTON_TYPE="Finish"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1348 192 1426 2469*FillBgClr8*107355238*ArrowEnd1*1"
+			   NAME="Task View 2"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TASK_VIEW="VFTRCBU CS Required Authorization Info Task View"
+			   TYPE="TASK_VIEW"
+			   UPDATED="04/20/2017 09:32:40"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:40"
+			   CREATED_BY="GBRAZ">
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_COMPONENT="VFTRCBU Advanced Score Calc TBC"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1240 192 1318 2469*FillBgClr8*134218238*ArrowEnd1*1"
+			   NAME="Update TBC"
+			   OPERATION="UPDATE"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="SIEBEL_OPER"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="VFTRCBU KKB Request Id"
+				   PROPERTY_NAME="RequestId"
+				   TYPE="Task Property"
+				   UPDATED="04/20/2017 09:32:41"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/20/2017 09:32:41"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*363 192 441 2469*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="VF Client?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*363 108 441 1629*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Valid Score and KKB Report?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="04/20/2017 09:32:41"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/20/2017 09:32:41"
+			   CREATED_BY="GBRAZ">
+			</TASK_STEP>
+		</TASK>
+		<TASK
+		   ALLOW_PAUSE="Y"
+		   BUSINESS_OBJECT="VFTRCBU Customer Score BO"
+		   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_ADVANCED_SCORE"
+		   INACTIVE="N"
+		   INBOX_DISPOSITION="DO_NOT_CARE_FASTEST"
+		   IS_SUBTASK="N"
+		   NAME="VFTRCBU Advanced Score Calculation Task: 9"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="04/18/2017 17:58:27"
+		   ON_CONFLICT="Cancel Operation"
+		   STATUS="NOT_IN_USE"
+		   TASK_NAME="VFTRCBU Advanced Score Calculation Task"
+		   TRANSACTIONAL="Y"
+		   TRANSIENT_BC="VFTRCBU Advanced Score Calc TBC"
+		   VERSION="9"
+		   OBJECT_LOCKED_BY_NAME="GBRAZ"
+		   UPDATED="04/20/2017 09:34:17"
+		   UPDATED_BY="GBRAZ"
+		   CREATED="04/18/2017 17:58:26"
+		   CREATED_BY="GBRAZ">
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Start"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*123 514*NPts1*22*P05*83 514*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 0"
+			   TO_STEP_NAME="Task View 0"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="(ControlFlg This Must Match(&apos;B&apos;))"
+			   FROM_STEP_NAME="Valid Score and KKB Report?"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*12*P16*402 794*NPts1*22*P07*402 1084*ToHS1*38*ArrowEnd1*1"
+			   NAME="Connector 1"
+			   TO_STEP_NAME="Calc Valid Date Score"
+			   TYPE="DECISION"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="EQ_THIS"
+				   PREFERRED_SEQUENCE="1"
+				   PROPERTY_NAME="ControlFlg"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR1="B"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="04/18/2017 17:58:26"
+					   UPDATED_BY="GBRAZ"
+					   CREATED="04/18/2017 17:58:26"
+					   CREATED_BY="GBRAZ">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Generate KKB Report"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1024 2194*NPts1*22*P07*994 2194*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 10"
+			   TO_STEP_NAME="IsCustomer"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="(IsCustomer None Can Match (Ignore Case)(&apos;Y&apos;))"
+			   FROM_STEP_NAME="PIN Required?"
+			   INACTIVE="N"
+			   LABEL="Y"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1240 2194*NPts1*22*P08*1210 2194*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 11"
+			   TO_STEP_NAME="Update TBC"
+			   TYPE="DECISION"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="NE_ALL_NC"
+				   PREFERRED_SEQUENCE="1"
+				   PROPERTY_NAME="IsCustomer"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR1="Y"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="04/18/2017 17:58:26"
+					   UPDATED_BY="GBRAZ"
+					   CREATED="04/18/2017 17:58:26"
+					   CREATED_BY="GBRAZ">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Task View 2"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1456 2194*NPts1*22*P08*1426 2194*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 12"
+			   TO_STEP_NAME="Aprove Report"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Task View 0"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*169 1084*NPts1*22*P06*169 784*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 13"
+			   TO_STEP_NAME="Query Score"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Aprove Report"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P28*1559 3034*FrHS1*22*P18*1559 2194*NPts1*42*P08*1534 2192*P38*1318 3034*ToHS1*28*ArrowEnd1*1"
+			   NAME="Connector 14"
+			   TO_STEP_NAME="Set Multiple PA"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Echo"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*9*0*0*0*9*LineWidth1*22*P27*322 1354*FrHS1*22*P17*322 1364*NPts1*42*P07*321 1362*P37*363 1354*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 15"
+			   TO_STEP_NAME="Valid Score and KKB Report?"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="( This Must Match (Ignore Case)(&apos;[&amp;PhoneNumber] = &apos;&apos; OR [&amp;PhoneNumber] IS NULL OR [&amp;PhoneQueryId] = &apos;&apos; OR [&amp;PhoneQueryId] IS NULL&apos;))"
+			   FROM_STEP_NAME="Has a number?"
+			   INACTIVE="N"
+			   LABEL="No"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*831 2884*NPts1*22*P07*831 2464*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 16"
+			   TO_STEP_NAME="No GSM Numbers"
+			   TYPE="DECISION"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="EXPRESSION"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="EQ_THIS_NC"
+				   PREFERRED_SEQUENCE="1"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR5="[&amp;PhoneNumber] = &apos;&apos; OR [&amp;PhoneNumber] IS NULL OR [&amp;PhoneQueryId] = &apos;&apos; OR [&amp;PhoneQueryId] IS NULL"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="04/18/2017 17:58:26"
+					   UPDATED_BY="GBRAZ"
+					   CREATED="04/18/2017 17:58:26"
+					   CREATED_BY="GBRAZ">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="PIN Required?"
+			   INACTIVE="N"
+			   LABEL="N"
+			   LAYOUT="@0*0*8*0*0*0*9*LineWidth1*22*P28*1240 3034*FrHS1*32*P18*1171 3034*NPts1*32*P08*1171 2464*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 17"
+			   TO_STEP_NAME="Set Multiple PA"
+			   TYPE="DEFAULT"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Update TBC"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1348 2194*NPts1*22*P08*1318 2194*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 18"
+			   TO_STEP_NAME="Task View 2"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Set Multiple PA"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P18*1279 3604*NPts1*22*P08*1279 3304*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 19"
+			   TO_STEP_NAME="End"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="(ControlFlg This Must Match(&apos;S&apos;))"
+			   FROM_STEP_NAME="Valid Score and KKB Report?"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*512 1354*NPts1*22*P07*441 1354*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 2"
+			   TO_STEP_NAME="Score Not Valid"
+			   TYPE="DECISION"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="EQ_THIS"
+				   PREFERRED_SEQUENCE="1"
+				   PROPERTY_NAME="ControlFlg"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR1="S"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="04/18/2017 17:58:26"
+					   UPDATED_BY="GBRAZ"
+					   CREATED="04/18/2017 17:58:26"
+					   CREATED_BY="GBRAZ">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Query Customer Id"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*481 3154*NPts1*22*P07*441 3154*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 20"
+			   TO_STEP_NAME="Data Masking"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME=" Set BankCode"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*567 2194*NPts1*22*P07*549 2194*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 21"
+			   TO_STEP_NAME="Set TCId"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Set TCId"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*675 2194*NPts1*22*P07*645 2194*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 22"
+			   TO_STEP_NAME="Task View 1"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="IsCustomer"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P18*1132 2194*NPts1*22*P08*1102 2194*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 23"
+			   TO_STEP_NAME="PIN Required?"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Calc Valid Date Score"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*480 514*NPts1*22*P06*441 524*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 24"
+			   TO_STEP_NAME="Calc Diff in Days - KKB Last Report"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Calc Diff in Days - KKB Last Report"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*588 514*NPts1*22*P06*558 514*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 25"
+			   TO_STEP_NAME="Get Error Msg"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Valid Score and KKB Report?"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*402 1924*NPts1*22*P07*402 1624*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 3"
+			   TO_STEP_NAME="VF Client?"
+			   TYPE="DEFAULT"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Query Score"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*243 1354*NPts1*22*P07*208 1354*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 4"
+			   TO_STEP_NAME="Echo"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   EXPRESSION="(VFClientFlg This Must Match(&apos;Y&apos;))"
+			   FROM_STEP_NAME="VF Client?"
+			   INACTIVE="N"
+			   LABEL="Y"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*32*P17*402 2884*NPts1*22*P07*402 2464*ToHS1*18*ArrowEnd1*1"
+			   NAME="Connector 5"
+			   TO_STEP_NAME="Query Customer Id"
+			   TYPE="DECISION"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_BRANCH_CRITERIA
+				   COMPARE_TO="TASK_PROPERTY"
+				   INACTIVE="N"
+				   NAME="Criteria_1"
+				   OPERATION="EQ_THIS"
+				   PREFERRED_SEQUENCE="1"
+				   PROPERTY_NAME="VFClientFlg"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+					<TASK_BRANCH_CRITERIA_VALUE
+					   INACTIVE="N"
+					   LO_CHAR1="Y"
+					   NAME="Criteria Value_1"
+					   PREFERRED_SEQUENCE="1"
+					   UPDATED="04/18/2017 17:58:26"
+					   UPDATED_BY="GBRAZ"
+					   CREATED="04/18/2017 17:58:26"
+					   CREATED_BY="GBRAZ">
+					</TASK_BRANCH_CRITERIA_VALUE>
+				</TASK_BRANCH_CRITERIA>
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="VF Client?"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*471 2194*NPts1*22*P07*441 2194*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 6"
+			   TO_STEP_NAME=" Set BankCode"
+			   TYPE="DEFAULT"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Data Masking"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*12*P17*510 2464*NPts1*22*P07*510 2884*ToHS1*38*ArrowEnd1*1"
+			   NAME="Connector 7"
+			   TO_STEP_NAME=" Set BankCode"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Get Error Msg"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P16*704 514*NPts1*22*P06*666 514*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 8"
+			   TO_STEP_NAME="Both Valid"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Task View 1"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*792 2194*NPts1*22*P07*753 2194*ToHS1*08*ArrowEnd1*1"
+			   NAME="Connector 9"
+			   TO_STEP_NAME="Has a number?"
+			   TYPE="CONNECTOR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_BRANCH
+			   FROM_STEP_NAME="Has a number?"
+			   INACTIVE="N"
+			   LABEL="Yes"
+			   LAYOUT="@0*0*7*0*0*0*9*LineWidth1*24*FrHS1*22*P17*916 2194*NPts1*22*P07*870 2194*ToHS1*08*ArrowEnd1*1"
+			   NAME="Yes"
+			   TO_STEP_NAME="Generate KKB Report"
+			   TYPE="DEFAULT"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_BRANCH>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="BankCode"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Citizenship"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Context BC Id"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Context BC Name"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Context BO Name"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="ControlFlg"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="CustomerId"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="DaysParametric"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Error Code"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Error Message"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="ErrorMessage"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Instance Identifier"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="IsCustomer"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="KKBReport"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="DATE"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="KKBReportDate"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="DATE"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="KKBReportMaxDate"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="NumAffRows"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Object Id"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="PhoneNumber"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="PhoneQueryId"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="RequestId"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Score"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="DATE"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="ScoreDate"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="Siebel Operation Object Id"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="INOUT"
+			   INACTIVE="N"
+			   NAME="TCId"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_PROPERTY
+			   ACCESS_MODE="R/W"
+			   DATA_TYPE="VARCHAR"
+			   IN_OUT="NONE"
+			   INACTIVE="N"
+			   NAME="VFClientFlg"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_PROPERTY>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="Set Profile Attribute"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*471 192 549 2469*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME=" Set BankCode"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Profile Attribute Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Profile Attribute Name"
+				   TYPE="Literal"
+				   VALUE="VFTRCBUBankCode"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Profile Attribute Value"
+				   BUSINESS_COMPONENT="VFTRCBU Advanced Score Calc TBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU CS Bank LIC"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Profile Attribute Value"
+				   TYPE="Business Component"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="RunProcess"
+			   BUSINESS_SERVICE_NAME="Workflow Process Manager"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1456 192 1534 2469*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Aprove Report"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="BirthDate"
+				   BUSINESS_COMPONENT="VFTRCBU Advanced Score Calc TBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU KKB Bith Date"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:BirthDate"
+				   TYPE="Business Component"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Pin"
+				   BUSINESS_COMPONENT="VFTRCBU Advanced Score Calc TBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU KKB Pin"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Pin"
+				   TYPE="Business Component"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="ProcessName"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:ProcessName"
+				   TYPE="Literal"
+				   VALUE="VFTRCBU CS Approve KKB Report WF"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="RequestId"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:RequestId"
+				   PROPERTY_NAME="RequestId"
+				   TYPE="Task Property"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   ERROR_CODE="WF_ERR_CUSTOM_1"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*684 24 762 789*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="Both Valid"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="ERROR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="%1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:%1"
+				   PROPERTY_NAME="ErrorMessage"
+				   TYPE="Task Property"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="DateTimeDiff"
+			   BUSINESS_SERVICE_NAME="TELCO DateTime Utils"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*480 24 558 789*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Calc Diff in Days - KKB Last Report"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Date1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Date1"
+				   TYPE="Expression"
+				   VALUE="Today()"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Date2"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Date2"
+				   PROPERTY_NAME="KKBReportMaxDate"
+				   TYPE="Task Property"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Ignore Time"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Ignore Time"
+				   TYPE="Literal"
+				   VALUE="Y"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Result"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:DaysParametric"
+				   PROPERTY_NAME="DaysParametric"
+				   TYPE="Output Argument"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="AddDaysToDate"
+			   BUSINESS_SERVICE_NAME="TELCO DateTime Utils"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*363 25 441 799*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Calc Valid Date Score"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="dateIn"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:dateIn"
+				   PROPERTY_NAME="KKBReportDate"
+				   TYPE="Task Property"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="dayDuration"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:dayDuration"
+				   PROPERTY_NAME="DaysParametric"
+				   TYPE="Task Property"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="dateOut"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:KKBReportMaxDate"
+				   PROPERTY_NAME="KKBReportMaxDate"
+				   TYPE="Output Argument"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*471 288 549 3429*FillBgClr7*82516338*ArrowEnd1*1"
+			   NAME="Data Masking"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   SUBTASK_NAME="VFTRCBU CS OTP &amp; Identity Validation Sub-Task"
+			   TYPE="SUBTASK"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VFTRCBU Account Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:VFTRCBU Account Id"
+				   PROPERTY_NAME="CustomerId"
+				   TYPE="Task Property"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VFTRCBU Is Turkish"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:VFTRCBU Is Turkish"
+				   TYPE="Expression"
+				   VALUE="IIf ([&amp;Citizenship] = LookupValue(&quot;X_CITIZENSHIP&quot;,&quot;Turkish&quot;),&quot;Y&quot;,&quot;N&quot;)"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VFTRCBU TCID"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:VFTRCBU TCID"
+				   PROPERTY_NAME="TCId"
+				   TYPE="Task Property"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="Echo"
+			   BUSINESS_SERVICE_NAME="Workflow Utilities"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*243 108 321 1629*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Echo"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:ControlFlg"
+				   PROPERTY_NAME="ControlFlg"
+				   TYPE="Expression"
+				   VALUE="Iif(([&amp;KKBReport] = &apos;Y&apos;) AND ([&amp;Score] = &apos;Y&apos;), &quot;B&quot;, IIf(([&amp;Score]= &apos;N&apos;), &quot;S&quot;,&quot;X&quot;))"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:DaysParametric"
+				   PROPERTY_NAME="DaysParametric"
+				   TYPE="Expression"
+				   VALUE="LookupValue(&quot;VFTRCBU_KKB_VALUE&quot;,&quot;Valid KKB Report&quot;)"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1240 360 1318 4149*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="End"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="END"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="RunProcess"
+			   BUSINESS_SERVICE_NAME="Workflow Process Manager"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*916 192 994 2469*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Generate KKB Report"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="CustomerTaxId"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:CustomerTaxId"
+				   PROPERTY_NAME="TCId"
+				   TYPE="Task Property"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="PhoneNumber"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:PhoneNumber"
+				   PROPERTY_NAME="PhoneNumber"
+				   TYPE="Task Property"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="PhoneQueryId"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:PhoneQueryId"
+				   PROPERTY_NAME="PhoneQueryId"
+				   TYPE="Task Property"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="ProcessName"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:ProcessName"
+				   TYPE="Literal"
+				   VALUE="VFTRCBU CS Generate KKB Report WF"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="TCId"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:TCId"
+				   PROPERTY_NAME="TCId"
+				   TYPE="Task Property"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="RequestId"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:RequestId"
+				   PROPERTY_NAME="RequestId"
+				   TYPE="Output Argument"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="GetErrorMessageText"
+			   BUSINESS_SERVICE_NAME="TELCO Message Utils"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*588 24 666 789*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Get Error Msg"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Argument1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Argument1"
+				   PROPERTY_NAME="DaysParametric"
+				   TYPE="Task Property"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Category"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Category"
+				   TYPE="Literal"
+				   VALUE="VFTRCBU User Defined Errors"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Name"
+				   TYPE="Literal"
+				   VALUE="0350"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="ErrorMessage"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:ErrorMessage"
+				   PROPERTY_NAME="ErrorMessage"
+				   TYPE="Output Argument"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*792 192 870 2469*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Has a number?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="Echo"
+			   BUSINESS_SERVICE_NAME="Workflow Utilities"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1024 192 1102 2469*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="IsCustomer"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU CS Get GSM Numbers VBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU IsCustomer"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:IsCustomer"
+				   PROPERTY_NAME="IsCustomer"
+				   TYPE="Business Component"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   ERROR_CODE="WF_ERR_CUSTOM_1"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*792 288 870 3429*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="No GSM Numbers"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="ERROR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="%1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:%1"
+				   TYPE="Expression"
+				   VALUE="LookupMessage(&quot;VFTRCBU User Defined Errors&quot;,&quot;ADVSCORE1&quot;)"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1132 192 1210 2469*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="PIN Required?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="GetFieldsFromFirstRow"
+			   BUSINESS_SERVICE_NAME="TELCO BusComp Utils"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*363 288 441 3429*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Query Customer Id"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/18/2017 17:58:56"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="BusinessComponent"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:BusinessComponent"
+				   TYPE="Literal"
+				   VALUE="VF Account Simple"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="BusinessObject"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:BusinessObject"
+				   TYPE="Literal"
+				   VALUE="Account"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Id"
+				   TYPE="Literal"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="SearchExpression"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:SearchExpression"
+				   TYPE="Expression"
+				   VALUE="&quot;[Contact SSN] = &apos;&quot; + [&amp;TCId] + &quot;&apos; AND [VF Market Class] = &apos;&quot; + LookupValue(&quot;ACCOUNT_TYPE&quot;,&quot;102&quot;) + &quot;&apos;&quot;"
+				   UPDATED="04/18/2017 17:58:56"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VF Contact Citizenship"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:VF Contact Citizenship"
+				   TYPE="Literal"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VF Contact Citizenship"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Citizenship"
+				   PROPERTY_NAME="Citizenship"
+				   TYPE="Output Argument"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:CustomerId"
+				   PROPERTY_NAME="CustomerId"
+				   TYPE="Output Argument"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="GetFieldsFromFirstRow"
+			   BUSINESS_SERVICE_NAME="TELCO BusComp Utils"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*130 108 208 1629*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Query Score"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="BusinessComponent"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:BusinessComponent"
+				   TYPE="Literal"
+				   VALUE="VFTRCBU Customer Score BC"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="BusinessObject"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:BusinessObject"
+				   TYPE="Literal"
+				   VALUE="VFTRCBU Customer Score BO"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Id"
+				   TYPE="Literal"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="SearchExpression"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:SearchExpression"
+				   TYPE="Expression"
+				   VALUE="&quot;[VFTRCBU CS TC Id] = &apos;&quot; + [&amp;TCId] + &quot;&apos;&quot;"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VFTRCBU CS VF Client Flg"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:VFTRCBU CS VF Client Flg"
+				   TYPE="Literal"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VFTRCBU KKB Report Last Date"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:VFTRCBU KKB Report Last Date"
+				   TYPE="Literal"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VFTRCBU KKB Report Last Date"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:KKBReportDate"
+				   PROPERTY_NAME="KKBReportDate"
+				   TYPE="Output Argument"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Object Id"
+				   PROPERTY_NAME="Object Id"
+				   TYPE="Output Argument"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="VFTRCBU CS VF Client Flg"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:VFClientFlg"
+				   PROPERTY_NAME="VFClientFlg"
+				   TYPE="Output Argument"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   ERROR_CODE="WF_ERR_CUSTOM_1"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*492 108 570 1629*FillBgClr8*100794878*ArrowEnd1*1"
+			   NAME="Score Not Valid"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="ERROR"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="%1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:%1"
+				   TYPE="Expression"
+				   VALUE="LookupMessage(&quot;VFTRCBU User Defined Errors&quot;,&quot;0351&quot;)"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="SetProfileAttributes"
+			   BUSINESS_SERVICE_NAME="TELCO OM Framework Utilities"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1240 276 1318 3309*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Set Multiple PA"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Name 1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Name 1"
+				   TYPE="Literal"
+				   VALUE="VFTRCBUQueryAfterTBUI"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Name 2"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Name 2"
+				   TYPE="Literal"
+				   VALUE="VFTRCBUQueryBy"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Name 3"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Name 3"
+				   TYPE="Literal"
+				   VALUE="VFTRCBUQueryValue"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Name 4"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Name 4"
+				   TYPE="Literal"
+				   VALUE="VFTRCBUCustomerId"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Name 5"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Name 5"
+				   TYPE="Literal"
+				   VALUE="VFTRCBUBankCode"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Value 1"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Value 1"
+				   TYPE="Literal"
+				   VALUE="Y"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Value 2"
+				   BUSINESS_COMPONENT="VFTRCBU Customer Score VBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU CS Query By"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Value 2"
+				   TYPE="Business Component"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Value 3"
+				   BUSINESS_COMPONENT="VFTRCBU Customer Score VBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU CS Query Value"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Value 3"
+				   TYPE="Business Component"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Value 4"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Value 4"
+				   TYPE="Literal"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Attribute Value 5"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Attribute Value 5"
+				   TYPE="Literal"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_SERVICE_METHOD="Set Profile Attribute"
+			   BUSINESS_SERVICE_NAME="SIS OM PMT Service"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*567 192 645 2469*FillBgClr8*134217218*ArrowEnd1*1"
+			   NAME="Set TCId"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="TASK"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Profile Attribute Name"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Profile Attribute Name"
+				   TYPE="Literal"
+				   VALUE="VFTRCBUCustomerId"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   ARGUMENT="Profile Attribute Value"
+				   BUSINESS_COMPONENT="VFTRCBU Advanced Score Calc TBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU CS TC Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="I:Profile Attribute Value"
+				   TYPE="Business Component"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r11*15 24 93 789*FillBgClr8*167641088*ArrowEnd1*1"
+			   NAME="Start"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="START"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_SCORE_CALCULATION"
+			   DISPLAY_NAME_TYPE="Normal"
+			   FORWARD_BUTTON_TYPE="Next"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r13*123 24 201 789*FillBgClr8*107355238*ArrowEnd1*1"
+			   NAME="Task View 0"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TASK_VIEW="VFTRCBU Advanced Score Task View"
+			   TYPE="TASK_VIEW"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Advanced Score Calc TBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU CS Bank"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:BankCode"
+				   PROPERTY_NAME="BankCode"
+				   TYPE="Business Component"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Customer Score VBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU KKB Valid Flg"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:KKBReport"
+				   PROPERTY_NAME="KKBReport"
+				   TYPE="Business Component"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Customer Score VBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU CS Valid Flg"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:Score"
+				   PROPERTY_NAME="Score"
+				   TYPE="Business Component"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU Advanced Score Calc TBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU CS TC Id"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:TCId"
+				   PROPERTY_NAME="TCId"
+				   TYPE="Business Component"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_AS_CUSTOM_AUTHORIZATION"
+			   DISPLAY_NAME_TYPE="Normal"
+			   FORWARD_BUTTON_TYPE="Next"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*675 192 753 2469*FillBgClr8*107355238*ArrowEnd1*1"
+			   NAME="Task View 1"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TASK_VIEW="VFTRCBU CS Customer Authorization Task View"
+			   TYPE="TASK_VIEW"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU CS Get GSM Numbers VBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU Number"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:PhoneNumber"
+				   PROPERTY_NAME="PhoneNumber"
+				   TYPE="Business Component"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+				<TASK_STEP_IO_ARGUMENT
+				   BUSINESS_COMPONENT="VFTRCBU CS Get GSM Numbers VBC"
+				   BUSINESS_COMPONENT_FIELD="VFTRCBU PhoneQueryId"
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Output"
+				   NAME="O:PhoneQueryId"
+				   PROPERTY_NAME="PhoneQueryId"
+				   TYPE="Business Component"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_AS_REQ_AUTHORIZATION_INFO"
+			   DISPLAY_NAME_TYPE="Normal"
+			   FORWARD_BUTTON_TYPE="Finish"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1348 192 1426 2469*FillBgClr8*107355238*ArrowEnd1*1"
+			   NAME="Task View 2"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TASK_VIEW="VFTRCBU CS Required Authorization Info Task View"
+			   TYPE="TASK_VIEW"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+			</TASK_STEP>
+			<TASK_STEP
+			   BUSINESS_COMPONENT="VFTRCBU Advanced Score Calc TBC"
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r17*1240 192 1318 2469*FillBgClr8*134218238*ArrowEnd1*1"
+			   NAME="Update TBC"
+			   OPERATION="UPDATE"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="SIEBEL_OPER"
+			   UPDATED="04/18/2017 17:58:26"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:26"
+			   CREATED_BY="GBRAZ">
+				<TASK_STEP_IO_ARGUMENT
+				   INACTIVE="N"
+				   INPUT_OUTPUT="Input"
+				   NAME="VFTRCBU KKB Request Id"
+				   PROPERTY_NAME="RequestId"
+				   TYPE="Task Property"
+				   UPDATED="04/18/2017 17:58:26"
+				   UPDATED_BY="GBRAZ"
+				   CREATED="04/18/2017 17:58:26"
+				   CREATED_BY="GBRAZ">
+				</TASK_STEP_IO_ARGUMENT>
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*363 192 441 2469*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="VF Client?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_STEP>
+			<TASK_STEP
+			   DEFER_WRITE_RECORD="N"
+			   DISABLE_CANCEL="N"
+			   DISABLE_PAUSE="N"
+			   DISABLE_PREVIOUS="N"
+			   DISPLAY_NAME_TYPE="Normal"
+			   INACTIVE="N"
+			   LAYOUT="@0*0*3*0*0*0*1*r15*363 108 441 1629*FillBgClr8*134348798*ArrowEnd1*1"
+			   NAME="Valid Score and KKB Report?"
+			   REPEATABLE="Y"
+			   RETAIN_APPLET_SEARCH_SPEC="N"
+			   RETAIN_TASK_SEARCH_SPEC="Y"
+			   RETAIN_USER_SEARCH_SPEC="N"
+			   TYPE="DECISION_POINT"
+			   UPDATED="04/18/2017 17:58:27"
+			   UPDATED_BY="GBRAZ"
+			   CREATED="04/18/2017 17:58:27"
+			   CREATED_BY="GBRAZ">
+			</TASK_STEP>
+		</TASK>
+	</PROJECT>
+</REPOSITORY>
+
+
+

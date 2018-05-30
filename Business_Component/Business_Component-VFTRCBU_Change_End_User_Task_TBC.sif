@@ -1,0 +1,1104 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="20140703 - VFTRCBU Project for WP#01 objects"
+	   INACTIVE="N"
+	   LANGUAGE_LOCKED="ENU"
+	   LOCKED="Y"
+	   LOCKED_DATE="02/13/2018 15:10:30"
+	   NAME="VFTRCBU Customer_Account_Subscriber Management"
+	   UI_FREEZE="N"
+	   LOCKED_BY_NAME="IBM_OSMANS"
+	   UPDATED="02/13/2018 15:11:42"
+	   UPDATED_BY="IBM_OSMANS"
+	   CREATED="08/14/2014 20:13:39"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<BUSINESS_COMPONENT
+		   CACHE_DATA="N"
+		   CLASS="CSSBCTaskTransient"
+		   COMMENTS="VFTRCBU WA#05 28072014 - FGUEDES"
+		   DIRTY_READS="Y"
+		   DISTINCT="N"
+		   FORCE_ACTIVE="N"
+		   GENREASSIGNACT="N"
+		   INACTIVE="N"
+		   INSERT_UPDATE_ALL_COLUMNS="N"
+		   LOG_CHANGES="Y"
+		   MULTI_RECIPIENT_SELECT="N"
+		   NAME="VFTRCBU Change End User Task TBC"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LOCKED="N"
+		   OWNER_DELETE="N"
+		   POPUP_VISIBILITY_AUTO_ALL="N"
+		   SCRIPTED="Y"
+		   TABLE="S_TU_LOG"
+		   TYPE="Transient"
+		   UPDATED="03/05/2018 15:01:15"
+		   UPDATED_BY="IBM_OSMANS"
+		   CREATED="08/18/2014 18:10:21"
+		   CREATED_BY="SADMIN">
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreSetFieldValue"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreSetFieldValue (FieldName, FieldValue)
+{
+	var ErrMsg = &quot;&quot;;
+	var sActiveViewName = TheApplication().ActiveViewName();
+	
+	if(sActiveViewName == &quot;VFTRCBU Create New End User Task View&quot;)
+	{
+	
+		if (FieldName==&quot;VFTRCBU TC Id&quot;)
+		{	
+				ErrMsg= &quot;0034&quot;;
+			
+				this.CheckTcId(FieldValue, ErrMsg);
+		}
+		
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="4"
+			   UPDATED="06/21/2015 23:18:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:21"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="BusComp_PreWriteRecord"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function BusComp_PreWriteRecord ()
+{
+	var sActiveViewName = TheApplication().ActiveViewName();
+	
+	if(sActiveViewName == &quot;VFTRCBU Create New End User Task View&quot;)
+	{
+		this.RequiredInfo();
+		this.ValidateBirthDate();	
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="5"
+			   UPDATED="01/11/2016 17:02:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:21"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CheckTcId"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CheckTcId (Field,ErrMsg)
+{	
+	var sNation = this.GetFieldValue(&quot;VFTRCBU Citizenship&quot;);
+	var sTrk = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;X_CITIZENSHIP&quot;, &quot;Turkish&quot;);
+	
+	if(sNation == sTrk)
+	{
+		var sMsg = &quot;&quot;;
+		var strMessageCategory = &quot;VFTRCBU User Defined Errors&quot;;
+		var strCode = ErrMsg;
+		/*tc id owns 11 numbers, the first one cannot be 0, the following regular exp check this property*/
+		//var sCheck 		= 	/^[1-9]\d{10}$/;
+		var regRes = Field.match(/^[1-9][0-9]{10}$/);
+		
+		if(regRes != null)	
+		{
+			var tcIdNoLong=parseInt(Field,10);
+		    var tmp, tmp1;
+		    var oddSum, evenSum, total, chkDigit1, chkDigit2;
+		    var array=new Array;   
+	
+	       	tmp  =Math.floor(tcIdNoLong/100);  //Assigning Temporary    
+	       	tmp1 =Math.floor(tcIdNoLong/100);  //Assigning Temporary1
+	       	
+	       	for(var i=9;i&gt;0;i--)
+	       	{
+	       		array[i]=(tmp1%10);	
+	       		tmp1=Math.floor(tmp1/10);	
+	       	}
+	       	oddSum=array[1]+array[3]+array[5]+array[7]+array[9];
+	       	evenSum=array[2]+array[4]+array[6]+array[8];     	
+	       	total=oddSum*3+evenSum; 
+	       	chkDigit1=(10-(total % 10))%10;
+	       	oddSum=chkDigit1+array[8]+array[6]+array[4]+array[2];
+	       	evenSum=array[9]+array[7]+array[5]+array[3]+array[1];
+	       	total=oddSum*3+evenSum;	 
+	       	chkDigit2=(10-(total % 10))%10;
+	       	tmp=tmp*100+chkDigit1*10+chkDigit2; 
+	       	
+	       	if (tmp != tcIdNoLong)
+	      	{	      		
+		        sMsg = TheApplication().LookupMessage(strMessageCategory, strCode);
+		        TheApplication().RaiseErrorText(sMsg);              
+		        return (CancelOperation);
+	     	}
+	     }
+	     else
+	     {
+	     	sMsg = TheApplication().LookupMessage(strMessageCategory, strCode);
+	        TheApplication().RaiseErrorText(sMsg);    //size          
+	        return (CancelOperation);
+	     }       	
+	}
+
+}"
+			   SEQUENCE="1"
+			   UPDATED="09/01/2014 19:24:10"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:21"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="RequiredInfo"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function RequiredInfo()
+{
+	var sNation = this.GetFieldValue(&quot;VFTRCBU Citizenship&quot;);
+	var sTrk = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_CITIZENSHIP&quot;,&quot;Turkish&quot;);
+	var sErr;
+	
+	var sFrstName = this.GetFieldValue(&quot;VFTRCBU First Name&quot;);
+	var sLName = this.GetFieldValue(&quot;VFTRCBU Last Name&quot;);
+	var sDOB = this.GetFieldValue(&quot;VFTRCBU Birth Date&quot;);
+	var sPOB = this.GetFieldValue(&quot;VFTRCBU Place of Birth&quot;);
+	var sMFName = this.GetFieldValue(&quot;VFTRCBU Mernis Father Name&quot;);
+	var sGender = this.GetFieldValue(&quot;VFTRCBU Gender&quot;);
+	var sTCId = this.GetFieldValue(&quot;VFTRCBU TC Id&quot;);
+	var sDocType = this.GetFieldValue(&quot;VFTRCBU Document Type&quot;);
+		
+	if(sNation == sTrk)
+	{
+		// if((sTCId == &quot;&quot;) &amp;&amp; (sFrstName == &quot;&quot; || sLName == &quot;&quot; || sDOB == &quot;&quot;|| sPOB == &quot;&quot; || sGender == &quot;&quot;))
+		if(sTCId == &quot;&quot; || sDOB == &quot;&quot; || sFrstName == &quot;&quot; || sLName == &quot;&quot;)
+		{
+		 	sErr = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;,&quot;0640&quot;);
+			TheApplication().RaiseErrorText(sErr);	
+		}
+	}
+	// else if(sFrstName == &quot;&quot; || sLName == &quot;&quot; || sDOB == &quot;&quot;|| sPOB == &quot;&quot; || sGender == &quot;&quot; || sMFName == &quot;&quot; || sTCId == &quot;&quot;)
+	else if(sTCId == &quot;&quot; || sGender == &quot;&quot; || sPOB == &quot;&quot; || sDOB == &quot;&quot; || sMFName == &quot;&quot; || sDocType == &quot;&quot;)
+	{
+			sErr = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;,&quot;0037&quot;);
+			TheApplication().RaiseErrorText(sErr);
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="02/08/2018 11:28:38"
+			   UPDATED_BY="IBM_OSMANS"
+			   CREATED="08/18/2014 18:10:21"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<BUSCOMP_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="ValidateBirthDate"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function ValidateBirthDate(){
+	//WA#05 - GAP - JSARMENTO - 18052014
+
+	try
+	{
+		var sResult = &quot;False&quot;;
+		var dateBS : Service = TheApplication().GetService(&quot;TELCO DateTime Utils&quot;);
+		var sMinimumYears = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;CONTACT_MIN_BIRTH_YEARS&quot;,&quot;BIRTH_YEARS&quot;); //FCARRIL: LIC modified from &quot;8&quot; to &quot;BIRTH_YEARS&quot;
+		var sBirthDate = this.GetFieldValue(&quot;VFTRCBU Birth Date&quot;);
+		var oPSInputs  : PropertySet = TheApplication().NewPropertySet();
+		var oPSOutputs : PropertySet = TheApplication().NewPropertySet();
+		
+		oPSInputs.SetProperty(&quot;date&quot;, sBirthDate);
+		oPSInputs.SetProperty(&quot;years&quot;, sMinimumYears);
+		dateBS.InvokeMethod(&quot;AddYears&quot;,oPSInputs,oPSOutputs);
+		var newBirthDate = oPSOutputs.GetProperty(&quot;Result&quot;);
+		oPSInputs.Reset();
+		oPSOutputs.Reset();
+		
+		oPSInputs.SetProperty(&quot;date&quot;, newBirthDate);
+		dateBS.InvokeMethod(&quot;CompareDateWithToday&quot;,oPSInputs,oPSOutputs);
+		var result = oPSOutputs.GetProperty(&quot;result&quot;);
+		
+		if (result == &quot;1&quot;) {
+			var sMsg = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0315&quot;, sMinimumYears); //FCARRIL: Added sMinimumYears as parameter
+	        TheApplication().RaiseErrorText(sMsg);
+	    }
+	    else
+	    	sResult=&quot;True&quot;;
+		
+	
+	/*
+		var sResult = &quot;False&quot;;
+	
+		var sBirthDate = this.GetFieldValue(&quot;Date of Birth&quot;);
+		
+		var sMinimumYears = parseInt(TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;CONTACT_MIN_BIRTH_YEARS&quot;,&quot;8&quot;));
+		
+		var sMinimumYearsToDays = (sMinimumYears * 365); //convertion to days.
+			
+		var dateBS : Service = TheApplication().GetService(&quot;TELCO DateTime Utils&quot;);
+		var oPSInputs  : PropertySet = TheApplication().NewPropertySet();
+		var oPSOutputs : PropertySet = TheApplication().NewPropertySet();
+			
+		oPSInputs.SetProperty(&quot;Date1&quot;,sBirthDate);
+	
+		dateBS.InvokeMethod(&quot;DateTimeDiff&quot;,oPSInputs,oPSOutputs);
+		var result = oPSOutputs.GetProperty(&quot;Result&quot;);
+			
+		if(result &lt; sMinimumYearsToDays){
+	          var sMsg = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0315&quot;);
+	          TheApplication().RaiseErrorText(sMsg);
+		}
+		else
+			sResult = &quot;True&quot;;
+			*/
+
+		return sResult;
+	}
+	finally
+	{
+		dateBS = null;
+		oPSInputs = null;
+		oPSOutputs = null;
+	}	
+
+}"
+			   SEQUENCE="3"
+			   UPDATED="02/14/2016 12:53:15"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/21/2015 23:18:11"
+			   CREATED_BY="SADMIN">
+			</BUSCOMP_SERVER_SCRIPT>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Bail Condition"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:46:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:21"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_DN_04"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Birth Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:46:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:21"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Blue Card Status"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:46:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:21"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_04"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Choose End User"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU Reuse End User Picklist"
+			   PRE_DEFAULT_VALUE="Expr: &quot;LookupValue(&quot;&quot;VFTRCBU_REUSE_END_USER&quot;&quot;,&quot;&quot;Reuse Existing End User&quot;&quot;)&quot;"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:46:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:21"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VFTRCBU Choose End User"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Choose End User"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="08/18/2014 18:10:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/18/2014 18:10:21"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_04"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Citizenship"
+			   NO_COPY="N"
+			   PICKLIST="VF Citizenship Picklist"
+			   PRE_DEFAULT_VALUE="Expr: &quot;LookupValue(&quot;&quot;X_CITIZENSHIP&quot;&quot;, &quot;&quot;Turkish&quot;&quot;)&quot;"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:46:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:21"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VFTRCBU Citizenship"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Citizenship"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="08/18/2014 18:10:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/18/2014 18:10:21"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMMENTS="FTOSCANO - VFTRCBU-9546 - Change Calculated Value"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_05"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Contact Type"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Expr: &quot;LookupValue(&quot;&quot;CONTACT_TYPE&quot;&quot;,&quot;&quot;Legal Owner&quot;&quot;)&quot;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="06/21/2015 23:18:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/01/2014 19:24:10"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_05"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Customer Type"
+			   NO_COPY="N"
+			   PRE_DEFAULT_VALUE="Expr: &quot;LookupValue(&quot;&quot;ACCOUNT_TYPE&quot;&quot;,&quot;&quot;102&quot;&quot;)&quot;"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:46:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/01/2014 19:24:10"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="LookupName (&quot;ACCOUNT_TYPE&quot;,[VFTRCBU Customer Type])"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Customer Type Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="09/01/2014 19:24:10"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/01/2014 19:24:10"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_06"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Document Number"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:46:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:21"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_06"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Document Type"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU Document Type Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/06/2018 14:12:42"
+			   UPDATED_BY="IBM_OSMANS"
+			   CREATED="08/18/2014 18:10:21"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   CONSTRAIN="Y"
+				   FIELD="VFTRCBU Customer Type Calc"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Customer Type Calc"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Parent Name"
+				   UPDATED="09/01/2014 19:24:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/01/2014 19:24:10"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+				<PICK_MAP
+				   FIELD="VFTRCBU Document Type"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Document Type"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="08/18/2014 18:10:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/18/2014 18:10:21"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_07"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Favorite Team"
+			   NO_COPY="N"
+			   PICKLIST="VFTRCBU Favourite Team Picklist"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:46:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:21"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VFTRCBU Favorite Team"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Favorite Team"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="08/18/2014 18:10:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/18/2014 18:10:21"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_07"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU First Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:46:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:21"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_08"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Gender"
+			   NO_COPY="N"
+			   PICKLIST="PickList M/F"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:46:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:21"
+			   CREATED_BY="SADMIN">
+				<PICK_MAP
+				   FIELD="VFTRCBU Gender"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Gender"
+				   NO_CLEAR="N"
+				   PICK_LIST_FIELD="Value"
+				   UPDATED="08/18/2014 18:10:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/18/2014 18:10:21"
+				   CREATED_BY="SADMIN">
+				</PICK_MAP>
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_08"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Id Number"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/06/2018 15:05:02"
+			   UPDATED_BY="IBM_OSMANS"
+			   CREATED="08/18/2014 18:10:21"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIf([VFTRCBU Citizenship] = LookupValue(&quot;X_CITIZENSHIP&quot;,&quot;Turkish&quot;), &quot;Y&quot;, &quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Is Turkish Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="08/18/2014 18:10:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:21"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_DN_02"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Issue Date"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_DATE"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/06/2018 15:11:40"
+			   UPDATED_BY="IBM_OSMANS"
+			   CREATED="08/18/2014 18:10:21"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_09"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Job"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/06/2018 15:10:50"
+			   UPDATED_BY="IBM_OSMANS"
+			   CREATED="08/18/2014 18:10:22"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_09"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Last Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="Y"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:46:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:22"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_10"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Letter Condition"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:46:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:22"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V255_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_10"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU MSISDN"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:46:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:22"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V500_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Mernis Father Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:46:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:22"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V500_2"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Mernis Mother Name"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="02/20/2015 01:31:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:22"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V500_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_07"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Mernis Status"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:46:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:22"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V500_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_08"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Place of Birth"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:46:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:22"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V500_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_09"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Relative Status"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:46:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:22"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF(([VFTRCBU First Name] IS NULL OR [VFTRCBU Last Name] IS NULL OR [VFTRCBU Place of Birth] IS NULL OR[VFTRCBU Birth Date] IS NULL OR [VFTRCBU Gender] IS NULL OR [VFTRCBU Mernis Father Name] IS NULL),&quot;Y&quot;,&quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Req Field Mernis No Tc Id Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:44:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/30/2015 09:44:21"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="Y"
+			   CALCULATED_VALUE="IIF(([VFTRCBU First Name] IS NULL OR [VFTRCBU Last Name] IS NULL),&quot;Y&quot;,&quot;N&quot;)"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="Y"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Req Field Mernis Tc Id Calc"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:44:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/30/2015 09:44:21"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V500_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_10"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU Residentional Status"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:46:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:22"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1024_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU TC Id"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:46:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:22"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+			<FIELD
+			   CALCULATED="N"
+			   COLUMN="FLD_VAL_V1024_1"
+			   COMPOSITE="N"
+			   DISABLE_SEARCH="N"
+			   DISABLE_SORT="N"
+			   FORCE_ACTIVE="N"
+			   HIDDEN="N"
+			   IMMEDIATE_POST_CHANGES="Y"
+			   INACTIVE="N"
+			   JOIN="S_TU_LOG_X_05"
+			   LINK_SPECIFICATION="N"
+			   MESSAGE_DISPLAY_MODE="User Msg with Error Code Only"
+			   MULTI_VALUED="N"
+			   NAME="VFTRCBU WorkDocAvail"
+			   NO_COPY="N"
+			   READ_ONLY="N"
+			   REQUIRED="N"
+			   TYPE="DTYPE_TEXT"
+			   USE_DEFAULT_SENSITIVITY="Y"
+			   UPDATED="01/30/2015 09:46:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/18/2014 18:10:22"
+			   CREATED_BY="SADMIN">
+			</FIELD>
+		</BUSINESS_COMPONENT>
+	</PROJECT>
+</REPOSITORY>
+
+
+

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><?Siebel-Property-Set EscapeNames="true"?><Business_spcService
+ Comments=""
+ State_spcManagement_spcType="Stateful"
+ Cache="N"
+ Server_spcEnabled="N"
+ Display_spcName="VFTRCBU_Caches_WarmUp"
+ Inactive="N"
+ Hidden="N"
+ Class="CSSService"
+ Name="VFTRCBU_Caches_WarmUp"
+><Business_spcService_spcMethod
+ Comments=""
+ Parent_spcId="1-1SN0QDU"
+ Display_spcName="PreCacheAll"
+ Inactive="N"
+ Parent_spcName="VFTRCBU_usCaches_usWarmUp"
+ Parent_spcInactive="N"
+ Hidden="N"
+ Name="PreCacheAll"
+></Business_spcService_spcMethod
+><Business_spcService_spcMethod
+ Comments=""
+ Parent_spcId="1-1SN0QDU"
+ Display_spcName="PreCacheProd"
+ Inactive="N"
+ Parent_spcName="VFTRCBU_usCaches_usWarmUp"
+ Parent_spcInactive="N"
+ Hidden="N"
+ Name="PreCacheProd"
+></Business_spcService_spcMethod
+><Business_spcService_spcMethod
+ Comments=""
+ Parent_spcId="1-1SN0QDU"
+ Display_spcName="PreCacheWF"
+ Inactive="N"
+ Parent_spcName="VFTRCBU_usCaches_usWarmUp"
+ Parent_spcInactive="N"
+ Hidden="N"
+ Name="PreCacheWF"
+></Business_spcService_spcMethod
+><Business_spcService_spcMethod
+ Comments=""
+ Parent_spcId="1-1SN0QDU"
+ Display_spcName="PreCacheWSDummySvc"
+ Inactive="N"
+ Parent_spcName="VFTRCBU_usCaches_usWarmUp"
+ Parent_spcInactive="N"
+ Hidden="N"
+ Name="PreCacheWS"
+></Business_spcService_spcMethod
+><Business_spcService_spcScript
+ Comments=""
+ Parent_spcId="1-1SN0QDU"
+ Parent_spcInactive="N"
+ Parent_spcName="VFTRCBU_usCaches_usWarmUp"
+ Inactive="N"
+ Script="function Service_usPreInvokeMethod(MethodName, Inputs, Outputs) _newline{_newline  if (MethodName == &quot;PreCacheAll&quot;) _newline  {_newline_newline//TheApplication().TraceOn(&quot;WarmPreCache_usALL_ustrace_us$p_us$t.txt&quot;, &quot;Allocation&quot;, &quot;All&quot;);_newline//TheApplication().Trace(&quot;tracing ....&quot;);_newline//TheApplication().TraceOff();_newline_newline     PreCacheProd(Inputs, Outputs);_newline     PreCacheWF(Inputs, Outputs);_newline     PreCacheWS(Inputs, Outputs);_newline     return(CancelOperation); _newline  } //!PreCacheAll_newline_newline  if (MethodName == &quot;PreCacheProd&quot;) _newline  {_newline     PreCacheProd(Inputs, Outputs);_newline     return(CancelOperation); _newline  } //!PreCacheProd_newline_newline  if (MethodName == &quot;PreCacheWF&quot;) _newline  {_newline     PreCacheWF(Inputs, Outputs);_newline     return(CancelOperation); _newline  } //!PreCacheWF_newline_newline  if (MethodName == &quot;PreCacheWS&quot;) _newline  {_newline     PreCacheWS(Inputs, Outputs);_newline     return(CancelOperation); _newline  } //!PreCacheWS_newline_newline} //!Service_usPreInvokeMethod"
+ Program_spcLanguage="JS"
+ Name="PreCacheAll"
+ Sequence="1"
+></Business_spcService_spcScript
+><Business_spcService_spcScript
+ Comments=""
+ Parent_spcId="1-1SN0QDU"
+ Parent_spcInactive="N"
+ Parent_spcName="VFTRCBU_usCaches_usWarmUp"
+ Inactive="N"
+ Script="function PreCacheProd (Inputs, Outputs)_newline{_newline    try _newline    {_newline_newline//TheApplication().TraceOn(&quot;WarmPreCache_usPROD_ustrace_us$p_us$t.txt&quot;, &quot;Allocation&quot;, &quot;All&quot;);_newline//TheApplication().Trace(&quot;tracing ....&quot;);_newline//TheApplication().TraceOff();_newline_newline      var boLOV: BusObject = TheApplication().GetBusObject(&quot;List Of Values&quot;);_newline      var bcLOV: BusComp = boLOV.GetBusComp(&quot;List Of Values&quot;);_newline_newline      var bs: Service = TheApplication().GetService(&quot;Cfg Object Broker&quot;);_newline      var pIn: PropertySet = TheApplication().NewPropertySet();_newline      var pOut: PropertySet = TheApplication().NewPropertySet();_newline      var outDesc;_newline_newline      if (TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;VFTRCBU_usPRECACHE_usWARM_usUP&quot;, &quot;PROD&quot;) == &quot;PROD&quot;) _newline      {_newline_newline        bcLOV.ClearToQuery();_newline        bcLOV.SetViewMode(AllView);_newline        bcLOV.ActivateField(&quot;Description&quot;);_newline        bcLOV.SetSearchSpec(&quot;Type&quot;, &quot;VFTRCBU_usPRECACHE_usWARM_usUP&quot;);_newline        bcLOV.SetSearchSpec(&quot;Name&quot;, &quot;PROD&quot;);_newline        bcLOV.SetSearchSpec(&quot;Value&quot;, &quot;PROD&quot;);_newline        bcLOV.ExecuteQuery(ForwardOnly);_newline        if (bcLOV.FirstRecord()) _newline        {_newline          outDesc = bcLOV.GetFieldValue(&quot;Description&quot;);_newline        }_newline        _newline        if (outDesc != &quot;&quot; &amp;&amp; outDesc != null) _newline        {_newline          var arrProd = outDesc.split(&quot;|&quot;);_newline          for (var i = 0; i &lt; arrProd.length; i++)_newline          {_newline              pIn.SetProperty(&quot;RootId&quot;,arrProd[i]);_newline              pIn.SetProperty(&quot;Full&quot;,&quot;Y&quot;);_newline              bs.InvokeMethod(&quot;GetProdStruct&quot;,pIn, pOut);_newline          }      _newline        }_newline      }_newline_newline       return (CancelOperation);_newline_newline    } //!try_newline    catch (e) _newline    {_newline      throw (e);_newline    }_newline    finally _newline   {_newline      bcLOV = null;_newline      boLOV = null;_newline      pOut = null;_newline      pIn = null;_newline      bs = null;_newline    }_newline_newline}"
+ Program_spcLanguage="JS"
+ Name="PreCacheProd"
+ Sequence="2"
+></Business_spcService_spcScript
+><Business_spcService_spcScript
+ Comments=""
+ Parent_spcId="1-1SN0QDU"
+ Parent_spcInactive="N"
+ Parent_spcName="VFTRCBU_usCaches_usWarmUp"
+ Inactive="N"
+ Script="function PreCacheWF (Inputs, Outputs)_newline{_newline    try _newline    {_newline_newline//TheApplication().TraceOn(&quot;WarmPreCache_usWF_ustrace_us$p_us$t.txt&quot;, &quot;Allocation&quot;, &quot;All&quot;);_newline//TheApplication().Trace(&quot;tracing ....&quot;);_newline//TheApplication().TraceOff();_newline_newline      var boLOV: BusObject = TheApplication().GetBusObject(&quot;List Of Values&quot;);_newline      var bcLOV: BusComp = boLOV.GetBusComp(&quot;List Of Values&quot;);_newline_newline      var bs: Service = TheApplication().GetService(&quot;Workflow Process Manager&quot;);_newline      var pIn: PropertySet = TheApplication().NewPropertySet();_newline      var pOut: PropertySet = TheApplication().NewPropertySet();_newline      var outDesc;_newline_newline      if (TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;VFTRCBU_usPRECACHE_usWARM_usUP&quot;, &quot;WF&quot;) == &quot;WF&quot;) _newline      {_newline_newline        bcLOV.ClearToQuery();_newline        bcLOV.SetViewMode(AllView);_newline        bcLOV.ActivateField(&quot;Description&quot;);_newline        bcLOV.SetSearchSpec(&quot;Type&quot;, &quot;VFTRCBU_usPRECACHE_usWARM_usUP&quot;);_newline        bcLOV.SetSearchSpec(&quot;Name&quot;, &quot;WF&quot;);_newline        bcLOV.SetSearchSpec(&quot;Value&quot;, &quot;WF&quot;);_newline        bcLOV.ExecuteQuery(ForwardOnly);_newline        if (bcLOV.FirstRecord()) _newline        {_newline          outDesc = bcLOV.GetFieldValue(&quot;Description&quot;);_newline        }_newline        _newline        if (outDesc != &quot;&quot; &amp;&amp; outDesc != null) _newline        {_newline          var arrProd = outDesc.split(&quot;|&quot;);_newline          for (var i = 0; i &lt; arrProd.length; i++)_newline          {_newline              pIn.SetProperty(&quot;ProcessName&quot;,arrProd[i]);_newline              bs.InvokeMethod(&quot;GetProcessPropertiesDefn&quot;,pIn, pOut);_newline          }      _newline        }_newline      }_newline_newline      return (CancelOperation);_newline_newline    } _newline    catch (e) _newline    {_newline      throw (e);_newline    }_newline    finally _newline   {_newline      bcLOV = null;_newline      boLOV = null;_newline      pOut = null;_newline      pIn = null;_newline      bs = null;_newline    }_newline_newline}"
+ Program_spcLanguage="JS"
+ Name="PreCacheWF"
+ Sequence="3"
+></Business_spcService_spcScript
+><Business_spcService_spcScript
+ Comments=""
+ Parent_spcId="1-1SN0QDU"
+ Parent_spcInactive="N"
+ Parent_spcName="VFTRCBU_usCaches_usWarmUp"
+ Inactive="N"
+ Script="function PreCacheWS (Inputs, Outputs)_newline{_newline    try _newline    {_newline_newline//TheApplication().TraceOn(&quot;WarmPreCache_usWS_ustrace_us$p_us$t.txt&quot;, &quot;Allocation&quot;, &quot;All&quot;);_newline//TheApplication().Trace(&quot;tracing ....&quot;);_newline//TheApplication().TraceOff();_newline_newline      var pIn: PropertySet = TheApplication().NewPropertySet();_newline      var pOut: PropertySet = TheApplication().NewPropertySet();_newline_newline      if (TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;VFTRCBU_usPRECACHE_usWARM_usUP&quot;, &quot;WS&quot;) == &quot;WS&quot;) _newline      {_newline          TheApplication().GetService(&quot;DefaultPort&quot;).InvokeMethod(&quot;dummyoper&quot;,pIn, pOut);_newline      }_newline      return (CancelOperation);_newline    } _newline    catch (e) _newline    {_newline      throw (e);_newline    }_newline    finally _newline   {_newline      pOut = null;_newline      pIn = null;_newline    }_newline}"
+ Program_spcLanguage="JS"
+ Name="PreCacheWS"
+ Sequence="4"
+></Business_spcService_spcScript
+></Business_spcService
+>
