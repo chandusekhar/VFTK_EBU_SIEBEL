@@ -1,0 +1,1903 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   LOCKED_DATE="08/11/2017 16:03:57"
+	   NAME="ISS Promotion Integration"
+	   UI_FREEZE="N"
+	   UPDATED="03/02/2018 17:02:21"
+	   UPDATED_BY="IBM_RCATITA"
+	   CREATED="06/19/2004 17:34:35"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   BUSINESS_COMPONENT="ISS Promotion Related Prom VBC"
+		   CLASS="CSSSWEFrameListPick"
+		   COMMENTS="promotion pick"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HTML_POPUP_DIMENSION="800 X 230"
+		   HEIGHT="4"
+		   HELP_IDENTIFIER="ID_APPLET_PRODUCT_PICK"
+		   INACTIVE="N"
+		   NAME="ISS Promotion Related Prom Pick Applet"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LOCKED="N"
+		   POPUP_DIMENSION="800 X 230"
+		   SCRIPTED="Y"
+		   SEARCH_SPECIFICATION="([End Date] &gt;= IIf(GetProfileAttr (&quot;Active JWS Test Date&quot;) IS NULL, Today(), GetProfileAttr (&quot;Active JWS Test DT&quot;)) or [End Date] is null) AND [VFTRCBU Second Campaign] = &quot;N&quot;"
+		   TITLE_-_STRING_REFERENCE="SBL_PICK_PROMOTION-1009090239-3Q8"
+		   TYPE="Pick List"
+		   UPGRADE_BEHAVIOR="Preserve"
+		   WIDTH="2"
+		   UPDATED="03/02/2018 14:03:18"
+		   UPDATED_BY="IBM_RCATITA"
+		   CREATED="06/19/2004 18:37:32"
+		   CREATED_BY="SADMIN">
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_InvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_InvokeMethod (MethodName)
+{
+	try
+	{
+		var bo = TheApplication().ActiveBusObject();
+		var bc = bo.GetBusComp(&quot;Order Entry - Line Items&quot;);
+		
+		var sOrderId               = bc.GetFieldValue(&quot;Order Header Id&quot;);
+		
+		var boAux 		= TheApplication().GetBusObject(&quot;Order Entry (Simple)&quot;);
+		var bcLineItems = boAux.GetBusComp(&quot;Order Entry - Line Items (Simple)&quot;);
+		var sExisting:String = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;DELTA_ACTION_CODE&quot;,&quot;Existing&quot;); 
+		var sModify:String = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;DELTA_ACTION_CODE&quot;,&quot;Modified&quot;); 
+
+		if(MethodName == &quot;PickRecord&quot;)
+		{
+			bcLineItems.ClearToQuery();
+			bcLineItems.SetViewMode(3);
+			bcLineItems.SetSearchExpr(&quot;[Order Header Id]=&apos;&quot;+sOrderId+&quot;&apos; AND [VF Product Group]=&apos;TARIFF&apos; AND [Action Code]=&apos;&quot;+sExisting+&quot;&apos;&quot;);
+			bcLineItems.ExecuteQuery(ForwardOnly);
+			
+			if(bcLineItems.FirstRecord())
+			{
+				bcLineItems.SetFieldValue(&quot;Action Code&quot;,sModify);
+				bcLineItems.WriteRecord();
+			}
+			
+			bc.ExecuteQuery(); //refresh
+		}
+		
+	}
+	catch(e)
+	{
+		TheApplication().RaiseErrorText(e.errText);
+	}
+	finally
+	{
+		bcLineItems = null;
+		bc = null;
+		bo = null;
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="03/02/2018 17:02:21"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="03/02/2018 17:02:21"
+			   CREATED_BY="IBM_RCATITA">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_Load"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_Load ()
+{
+	try
+	{
+		var bsManager:Service        = TheApplication().GetService(&quot;TELCO Order Management Utilities&quot;);
+		var psManagerIn:PropertySet  = TheApplication().NewPropertySet();
+		var psManagerOut:PropertySet = TheApplication().NewPropertySet();
+		
+		
+		var bo = TheApplication().ActiveBusObject();
+		var bc = bo.GetBusComp(&quot;Order Entry - Line Items&quot;);
+		
+		var sOrderId               = bc.GetFieldValue(&quot;Order Header Id&quot;);
+		var sItemId                = bc.GetFieldValue(&quot;Id&quot;);
+		var sErrorCode             = &quot;&quot;;
+		var sErrorMessage          = &quot;&quot;;
+		
+		//IBMRDAS-DEF23102
+		var boAux 		= TheApplication().GetBusObject(&quot;Order Entry (Simple)&quot;);
+		var bcLineItems = bo.GetBusComp(&quot;Order Entry - Line Items (Simple)&quot;);
+		var sNew:String = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;DELTA_ACTION_CODE&quot;,&quot;New&quot;); 
+
+		bcLineItems.ClearToQuery()
+		bcLineItems.SetViewMode(3);
+		bcLineItems.SetSearchExpr(&quot;[Order Header Id]=&apos;&quot;+sOrderId+&quot;&apos; AND [VF Product Type]=&apos;MAIN&apos; AND [Action Code]=&apos;&quot;+sNew+&quot;&apos;&quot;);
+		bcLineItems.ExecuteQuery(ForwardOnly);
+		
+		var iAux = bcLineItems.FirstRecord();
+		
+		if(bcLineItems.NextRecord())
+		{
+			TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;VF Message Category&quot;, &quot;426&quot;));
+		}		
+		//IBMRDAS-DEF23102
+
+		psManagerIn.SetProperty(&quot;FromActiveBusObject&quot;, &quot;Y&quot;);
+		psManagerIn.SetProperty(&quot;OrderId&quot;,             sOrderId);
+		psManagerIn.SetProperty(&quot;ItemId&quot;,              sItemId);
+
+		bsManager.InvokeMethod(&quot;SetConfiguratorProfileAttributes&quot;, psManagerIn, psManagerOut);
+
+		sErrorCode    = psManagerOut.GetProperty(&quot;Error Code&quot;);
+		sErrorMessage = psManagerOut.GetProperty(&quot;Error Message&quot;);
+
+		if (sErrorCode != null &amp;&amp; sErrorCode != &quot;&quot; &amp;&amp; sErrorCode != &quot;0&quot;)
+		{
+			TheApplication().RaiseErrorText(sErrorMessage);
+		}
+	}
+	catch(e)
+	{
+			TheApplication().RaiseErrorText(e.errText);
+	}		
+	finally
+	{
+		psManagerOut = null;
+		psManagerIn  = null;
+		bsManager    = null;
+		bc = null;
+		bo = null;
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="03/02/2018 17:02:21"
+			   UPDATED_BY="IBM_RCATITA"
+			   CREATED="12/14/2015 11:43:01"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Base"
+			   SEQUENCE="0"
+			   TYPE="Edit List"
+			   WEB_TEMPLATE="Popup List"
+			   UPDATED="03/30/2016 07:20:52"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 18:41:31"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="CloseApplet"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="153"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="CloseApplet"
+				   TYPE="Control"
+				   UPDATED="06/19/2004 18:55:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Description"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="509"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Description"
+				   TYPE="List Item"
+				   UPDATED="06/28/2015 23:45:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Eligibility Reason"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="508"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Eligibility Reason"
+				   TYPE="List Item"
+				   UPDATED="06/28/2015 23:45:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Eligibility Status"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="507"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Eligibility Status"
+				   TYPE="List Item"
+				   UPDATED="06/28/2015 23:45:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="GotoNextSet"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="123"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="GotoNextSet"
+				   TYPE="Control"
+				   UPDATED="06/19/2004 18:55:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="GotoPreviousSet"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="122"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="GotoPreviousSet"
+				   TYPE="Control"
+				   UPDATED="06/19/2004 18:55:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ExecuteQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="107"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="InlineExecuteQuery"
+				   TYPE="Control"
+				   UPDATED="06/19/2004 18:55:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="UndoQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="108"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="InlineUndoQuery"
+				   TYPE="Control"
+				   UPDATED="06/19/2004 18:55:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Pick Applet Standardization"
+				   CONTROL="LabelFind"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="160"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="LabelFind"
+				   TYPE="Control"
+				   UPDATED="06/19/2004 18:55:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Pick Applet Standardization"
+				   CONTROL="Labelstartingwith"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="162"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Labelstartingwith"
+				   TYPE="Control"
+				   UPDATED="06/19/2004 18:55:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="503"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application"
+				   TYPE="Control"
+				   UPDATED="03/30/2016 07:20:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/30/2016 07:20:52"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="504"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application2"
+				   TYPE="Control"
+				   UPDATED="03/30/2016 07:20:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/30/2016 07:20:52"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="509"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application3"
+				   TYPE="Control"
+				   UPDATED="03/30/2016 07:20:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/30/2016 07:20:52"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="506"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Name"
+				   TYPE="List Item"
+				   UPDATED="06/28/2015 23:45:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="NewQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="106"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NewQuery"
+				   TYPE="Control"
+				   UPDATED="06/19/2004 18:55:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="PickNone"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="158"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="PickNone"
+				   TYPE="Control"
+				   UPDATED="06/19/2004 18:55:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="PickRecord"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="152"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="PickRecord"
+				   TYPE="Control"
+				   UPDATED="06/19/2004 18:55:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Pick Applet Standardization"
+				   CONTROL="PopupQueryCombobox"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="161"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="PopupQueryCombobox"
+				   TYPE="Control"
+				   UPDATED="06/19/2004 18:55:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Pick Applet Standardization"
+				   CONTROL="PopupQueryExecute"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="164"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="PopupQueryExecute"
+				   TYPE="Control"
+				   UPDATED="06/19/2004 18:55:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Pick Applet Standardization"
+				   CONTROL="PopupQuerySrchspec"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="163"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="PopupQuerySrchspec"
+				   TYPE="Control"
+				   UPDATED="06/19/2004 18:55:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="PositionOnRow"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="144"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="PositionOnRow"
+				   TYPE="Control"
+				   UPDATED="06/19/2004 18:55:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Prod Prom Name Translated"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="501"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Prod Prom Name Translated"
+				   TYPE="List Item"
+				   UPDATED="02/02/2015 22:54:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/28/2014 12:52:07"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Prod Prom Part Num"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="505"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Prod Prom Part Num"
+				   TYPE="List Item"
+				   UPDATED="06/28/2015 23:45:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/28/2014 12:52:07"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Bundle Promotion Type"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="502"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Bundle Promotion Type"
+				   TYPE="List Item"
+				   UPDATED="06/28/2015 23:45:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/28/2015 23:45:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU End Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="504"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU End Date"
+				   TYPE="List Item"
+				   UPDATED="06/28/2015 23:45:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/02/2015 22:54:32"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Start Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="503"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Start Date"
+				   TYPE="List Item"
+				   UPDATED="06/28/2015 23:45:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/02/2015 22:54:32"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Tariff Dependency Type"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="510"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Tariff Dependency Type"
+				   TYPE="List Item"
+				   UPDATED="08/09/2015 23:42:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/09/2015 23:42:33"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Query"
+			   SEQUENCE="0"
+			   TYPE="Query"
+			   WEB_TEMPLATE="Popup Query"
+			   UPDATED="02/02/2015 22:54:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 18:41:32"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Description"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1302"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Description"
+				   TYPE="List Item"
+				   UPDATED="06/19/2004 18:55:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Modified by 7.7 Fix Existing Button Mappings Rule Tools Patch: Switched Item Identifier from 152 to 107"
+				   CONTROL="ExecuteQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="107"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="ExecuteQuery"
+				   TYPE="Control"
+				   UPDATED="06/19/2004 18:55:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1300"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Name"
+				   TYPE="List Item"
+				   UPDATED="06/19/2004 18:55:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Promotion Score"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1301"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Promotion Score"
+				   TYPE="List Item"
+				   UPDATED="06/19/2004 18:55:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Modified by 7.7 Fix Existing Button Mappings Rule Tools Patch: Switched Item Identifier from 153 to 108"
+				   CONTROL="UndoQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="108"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="UndoQuery"
+				   TYPE="Control"
+				   UPDATED="06/19/2004 18:55:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 18:55:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Prod Prom Name Translated"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1300"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Prod Prom Name Translated"
+				   TYPE="List Item"
+				   UPDATED="02/02/2015 22:54:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/28/2014 12:52:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Prod Prom Part Num"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1301"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Prod Prom Part Num"
+				   TYPE="List Item"
+				   UPDATED="02/02/2015 22:54:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/28/2014 12:52:08"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_NEW-1004235437-602"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEdit"
+			   HEIGHT="20"
+			   INACTIVE="N"
+			   LEFT="78"
+			   LEFT_TEXT="N"
+			   METHOD_INVOKED="NewRecord"
+			   MULTI_LINE="N"
+			   NAME="ButtonNew"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="16"
+			   SHOW_POPUP="N"
+			   SORT="N"
+			   TAB_STOP="N"
+			   TEXT_ALIGNMENT="Left"
+			   TOP="600"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="64"
+			   UPDATED="06/19/2004 22:34:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 19:48:13"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="06/19/2004 20:23:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 20:23:20"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CANCEL-1004230137-1J7"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="GotoUrl"
+			   MULTI_LINE="N"
+			   NAME="CancelQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="1"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TOP="0"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/19/2004 20:31:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 19:48:13"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="06/19/2004 20:23:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 20:23:20"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+				<CONTROL_USER_PROP
+				   INACTIVE="N"
+				   NAME="Url"
+				   VALUE="JavaScript:history.back()"
+				   UPDATED="06/19/2004 20:31:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 20:31:30"
+				   CREATED_BY="SADMIN">
+				</CONTROL_USER_PROP>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CANCEL-1004230137-1J7"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="20"
+			   INACTIVE="N"
+			   LEFT="926"
+			   LEFT_TEXT="N"
+			   METHOD_INVOKED="CloseApplet"
+			   MULTI_LINE="N"
+			   NAME="CloseApplet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="17"
+			   SHOW_POPUP="N"
+			   SORT="N"
+			   TAB_STOP="N"
+			   TEXT_ALIGNMENT="Left"
+			   TOP="600"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="64"
+			   UPDATED="06/19/2004 22:34:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 19:48:13"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="06/19/2004 20:23:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 20:23:20"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_GO-1004224654-095"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="ExecuteQuery"
+			   MULTI_LINE="N"
+			   NAME="ExecuteQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="2"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TOP="0"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/19/2004 20:23:20"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 19:48:13"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="06/19/2004 20:23:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 20:23:20"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   COMMENTS="Updated for Record Set Controls : defect 12-86W3JF"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_BITMAP="RECNAV_NEXTSET_ON"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISABLED_BITMAP="RECNAV_NEXTSET_OFF"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RecNavNxt"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="GotoNextSet"
+			   MULTI_LINE="N"
+			   NAME="GotoNextSet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="3"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/19/2004 20:23:20"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 19:48:13"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="06/19/2004 20:23:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 20:23:20"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   COMMENTS="Updated for Record Set Controls : defect 12-86W3JF"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_BITMAP="RECNAV_PREVSET_ON"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISABLED_BITMAP="RECNAV_PREVSET_OFF"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RecNavPrv"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="GotoPreviousSet"
+			   MULTI_LINE="N"
+			   NAME="GotoPreviousSet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="4"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/19/2004 20:23:20"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 19:48:13"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="06/19/2004 20:23:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 20:23:20"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CANCEL-1004230137-1J7"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="DontEncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="20"
+			   INACTIVE="N"
+			   LEFT="926"
+			   LEFT_TEXT="N"
+			   METHOD_INVOKED="CloseApplet"
+			   MULTI_LINE="N"
+			   NAME="Idcancel"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="18"
+			   SHOW_POPUP="N"
+			   SORT="N"
+			   TAB_STOP="N"
+			   TEXT_ALIGNMENT="Left"
+			   TOP="600"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="64"
+			   UPDATED="06/19/2004 22:34:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 19:48:13"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   COMMENTS="Modified by 7.7 Standardize Button Attributes Tools Patch: Switched from definition: &apos;CloseApplet - Incorrect2: CloseApplet - Correct1&apos;:to definition:&apos;CloseApplet - Correct1&apos;"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="06/19/2004 20:23:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 20:23:20"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_FIND-1004224512-0V7"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="FieldLabel"
+			   HEIGHT="20"
+			   INACTIVE="N"
+			   LEFT="2"
+			   LEFT_TEXT="N"
+			   MULTI_LINE="N"
+			   NAME="LabelFind"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="9"
+			   SHOW_POPUP="N"
+			   SORT="N"
+			   TAB_STOP="N"
+			   TEXT_ALIGNMENT="Right"
+			   TOP="6"
+			   TYPE="Label"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="64"
+			   UPDATED="06/19/2004 22:34:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 19:48:13"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="06/19/2004 20:23:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 20:23:20"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_STARTING_WITH-1005113158-3CG"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="FieldLabel"
+			   HEIGHT="20"
+			   INACTIVE="N"
+			   LEFT="210"
+			   LEFT_TEXT="N"
+			   MULTI_LINE="N"
+			   NAME="Labelstartingwith"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="10"
+			   SHOW_POPUP="N"
+			   SORT="N"
+			   TAB_STOP="N"
+			   TEXT_ALIGNMENT="Right"
+			   TOP="6"
+			   TYPE="Label"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="112"
+			   UPDATED="06/19/2004 22:34:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 19:48:13"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="06/19/2004 20:23:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 20:23:20"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_LIST-1009090938-8PN"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HEIGHT="556"
+			   INACTIVE="N"
+			   LEFT="6"
+			   LEFT_TEXT="N"
+			   MULTI_LINE="N"
+			   NAME="List"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="14"
+			   SHOW_POPUP="N"
+			   SORT="N"
+			   TAB_STOP="N"
+			   TEXT_ALIGNMENT="Left"
+			   TOP="36"
+			   TYPE="ListControl"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="1012"
+			   UPDATED="07/24/2004 15:23:20"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 19:48:13"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="06/19/2004 20:23:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 20:23:20"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_QUERY-1005111820-1VI"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEdit"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="NewQuery"
+			   MULTI_LINE="N"
+			   NAME="NewQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="5"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TOP="0"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/19/2004 20:23:20"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 19:48:13"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="06/19/2004 20:23:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 20:23:20"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CLEAR-1004224615-03O"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="DontEncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="N"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="20"
+			   INACTIVE="N"
+			   LEFT="926"
+			   LEFT_TEXT="N"
+			   METHOD_INVOKED="PickNone"
+			   MULTI_LINE="N"
+			   NAME="PickNone"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="19"
+			   SHOW_POPUP="N"
+			   SORT="N"
+			   TAB_STOP="N"
+			   TEXT_ALIGNMENT="Left"
+			   TOP="600"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="64"
+			   UPDATED="06/19/2004 22:34:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 19:48:14"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="06/19/2004 20:23:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 20:23:20"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_OK-1004224735-0D4"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="PickRecord"
+			   MULTI_LINE="N"
+			   NAME="PickRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="6"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TOP="0"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/19/2004 20:23:20"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 19:48:14"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="06/19/2004 20:23:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 20:23:20"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_FIND-1004224512-0V7"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="ComboBox"
+			   HEIGHT="128"
+			   INACTIVE="N"
+			   LEFT="70"
+			   LEFT_TEXT="N"
+			   MULTI_LINE="N"
+			   NAME="PopupQueryCombobox"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="13"
+			   SHOW_POPUP="N"
+			   SORT="N"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TOP="2"
+			   TYPE="ComboBox"
+			   VERTICAL_SCROLL="Y"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="132"
+			   UPDATED="06/03/2014 19:17:10"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 19:48:14"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="06/19/2004 20:23:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 20:23:20"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_GO-1004224654-095"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="20"
+			   INACTIVE="N"
+			   LEFT="470"
+			   LEFT_TEXT="N"
+			   METHOD_INVOKED="Find"
+			   MULTI_LINE="N"
+			   NAME="PopupQueryExecute"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="12"
+			   SHOW_POPUP="N"
+			   SORT="N"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TOP="2"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="64"
+			   UPDATED="06/19/2004 22:34:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 19:48:14"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="06/19/2004 20:23:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 20:23:20"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_OK-1004224735-0D4"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="20"
+			   INACTIVE="N"
+			   LEFT="8"
+			   LEFT_TEXT="N"
+			   METHOD_INVOKED="PickRecord"
+			   MULTI_LINE="N"
+			   NAME="PopupQueryPick"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="15"
+			   SHOW_POPUP="N"
+			   SORT="N"
+			   TAB_STOP="N"
+			   TEXT_ALIGNMENT="Left"
+			   TOP="600"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="64"
+			   UPDATED="06/19/2004 22:34:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 19:48:14"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="06/19/2004 20:23:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 20:23:20"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_STARTING_WITH-1005113158-3CG"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="326"
+			   LEFT_TEXT="N"
+			   MULTI_LINE="N"
+			   NAME="PopupQuerySrchspec"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="11"
+			   SHOW_POPUP="N"
+			   SORT="N"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TOP="2"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="132"
+			   UPDATED="06/03/2014 19:17:10"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 19:48:14"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="06/19/2004 20:23:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 20:23:20"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   BITMAP="ROW_OFF"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_BITMAP="ROW_OFF"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISABLED_BITMAP="ROW_ON"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="PositionOnRow"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="PositionOnRow"
+			   MULTI_LINE="N"
+			   NAME="PositionOnRow"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="7"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TOP="0"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/19/2004 19:48:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 19:48:14"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CANCEL-1004230137-1J7"
+			   COMMENTS="UndoQuery control created during Template Merge"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="UndoQuery"
+			   MULTI_LINE="N"
+			   NAME="UndoQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="8"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TOP="0"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/19/2004 20:23:20"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 19:48:14"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="06/19/2004 20:23:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 20:23:20"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<LIST
+			   INACTIVE="N"
+			   NAME="List"
+			   TOTAL_DISPLAYED="N"
+			   TOTAL_REQUIRED="N"
+			   UPDATED="03/30/2016 07:20:53"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/19/2004 19:11:30"
+			   CREATED_BY="SADMIN">
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_DESCRIPTION-1004230718-21G"
+				   FIELD="Description"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="Y"
+				   NAME="Description"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SEQUENCE="6"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="30"
+				   UPDATED="03/30/2016 07:20:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 19:16:19"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_ELIGIBILITY_REASON"
+				   FIELD="Eligibility Reason"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Eligibility Reason"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SEQUENCE="2"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="03/30/2016 07:20:53"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 19:16:19"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   CHECK_BITMAP_IDENTIFIER="CHECK"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_ELIGIBILITY_STATUS-1004230818-2BB"
+				   FIELD="Eligibility Status"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_ICON_MAP="CHECK"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="CheckBox"
+				   INACTIVE="N"
+				   NAME="Eligibility Status"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SEQUENCE="3"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="04/28/2014 12:52:09"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 19:16:19"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="CF_GSEQUEIRA :: Bundled Promotions :: 27.03.2013"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_PROMOTION-1004224942-09S"
+				   FIELD="Name"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="Y"
+				   NAME="Name"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SEQUENCE="4"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="30"
+				   UPDATED="04/28/2014 12:52:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 19:16:19"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="CF_GSEQUEIRA :: Bundled Promotions :: 27.03.2013"
+				   FIELD="Promotion Instance Flag"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="CheckBox"
+				   INACTIVE="Y"
+				   NAME="Promotion Instance Flag"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SEQUENCE="1"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="04/28/2014 12:52:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 19:16:19"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="CF_GSEQUEIRA :: Bundled Promotions :: 27.03.2013"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_SCORE-1004232628-67A"
+				   FIELD="Promotion Score"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="Y"
+				   NAME="Promotion Score"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SEQUENCE="5"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="04/28/2014 12:52:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/19/2004 19:16:19"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="CF_GSEQUEIRA :: Bundled Promotions :: 27.03.2013"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_CAMPAIGN_NAME-1004225203-1IQ"
+				   FIELD="VF Prod Prom Name Translated"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="VF Prod Prom Name Translated"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SEQUENCE="8"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="30"
+				   UPDATED="03/30/2016 07:20:53"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/28/2014 12:52:08"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="CF_GSEQUEIRA :: Bundled Promotions :: 27.03.2013"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_PART_#-1004225107-0K8"
+				   FIELD="VF Prod Prom Part Num"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="VF Prod Prom Part Num"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SEQUENCE="9"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="04/28/2014 12:52:09"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/28/2014 12:52:09"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="JMARQUES - CA11 -FRODO"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_TELCO_TYPE"
+				   FIELD="VFTRCBU Bundle Promotion Type"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Bundle Promotion Type"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SEQUENCE="9"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="03/30/2016 07:20:53"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/28/2015 23:45:29"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_END_DATE"
+				   FIELD="End Date"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="Y"
+				   NAME="VFTRCBU End Date"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="03/30/2016 07:20:53"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/02/2015 22:54:32"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_START_DATE"
+				   FIELD="Start Date"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="Y"
+				   NAME="VFTRCBU Start Date"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="03/30/2016 07:20:53"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/02/2015 22:54:33"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="02112014 - WA#21 - RPIRES"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_TARIFF_DEPENDENCY"
+				   FIELD="VFTRCBU Tariff Dependency Type"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Tariff Dependency Type"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="03/30/2016 07:20:53"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/09/2015 23:42:33"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+			</LIST>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+

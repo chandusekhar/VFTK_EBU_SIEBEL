@@ -1,0 +1,2582 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="LOCKED BY VTAO UI UPGRADE (Control Alignment)"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="CUT Profile"
+	   UI_FREEZE="N"
+	   UPDATED="04/28/2017 10:45:25"
+	   UPDATED_BY="MOLIVEIRA"
+	   CREATED="06/03/2003 01:15:35"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   BUSINESS_COMPONENT="Com Invoice Profile"
+		   CLASS="CSSFrame"
+		   COMMENTS="7.5.2.200 UI ENHANCEMENT"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HEIGHT="2"
+		   INACTIVE="N"
+		   NAME="CUT Credit Card Payment Form Applet"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="04/28/2017 09:43:11"
+		   SCRIPTED="Y"
+		   TITLE_-_STRING_REFERENCE="SBL_CREDIT_CARD_PAYMENT-1009085946-1GW"
+		   TYPE="Standard"
+		   UPGRADE_BEHAVIOR="Preserve"
+		   WIDTH="2"
+		   OBJECT_LOCKED_BY_NAME="MOLIVEIRA"
+		   UPDATED="04/28/2017 10:45:25"
+		   UPDATED_BY="MOLIVEIRA"
+		   CREATED="06/04/2003 06:32:43"
+		   CREATED_BY="SADMIN">
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="Applet_PreInvokeMethod"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="Applet_PreInvokeMethod"
+			   SCRIPT="function Applet_PreInvokeMethod(name, inputPropSet) {
+	/*******************************************************************
+	 *VFTK Mamta R2.1 WP01:Newly Created
+	 *Purpose is to display message to the user to reset Credit card info
+	/*******************************************************************/
+	try {
+		var svc_ACSNIGeneralOperations  = theApplication().GetService (&quot;ACS NI General Operations&quot;);
+		var BS_search = theApplication().GetService (&quot;TELCO BusComp Utils&quot;);
+		var pset_Inputs = theApplication().NewPropertySet();
+		var pset_Outputs = theApplication().NewPropertySet();
+		var myBS, URLin, URLout;
+		var oBS;
+		var oBS_Inputs, oBS_Outputs, sURL;
+		var str_Message = &quot;&quot;;
+
+		if (name == &quot;VFResetInfo&quot;) {
+			pset_Inputs.Reset();
+			pset_Outputs.Reset();
+			pset_Inputs.SetProperty(&quot;Code&quot;, &quot;153&quot;);
+			pset_Inputs.SetProperty(&quot;MessageCategory&quot;, &quot;VF Message Category&quot;);
+			pset_Outputs = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupMsg&quot;, pset_Inputs);
+			str_Message = pset_Outputs.GetProperty(&quot;Message&quot;);
+			if (!(confirm(str_Message))) {
+				return (&quot;CancelOperation&quot;);
+			} else {
+				theApplication().SetProfileAttr(&quot;ResetCCFields&quot;, &quot;Y&quot;);
+				return (&quot;ContinueOperation&quot;);
+			}
+		}
+		if (name == &quot;GenerateForm&quot;) {
+			//CR680
+			var sCIPId = this.BusComp().GetFieldValue(&quot;Id&quot;);
+
+			if (sCIPId != &quot;&quot;) {
+			
+				//VFTRCBU-23934 - HRODRIGUES - START
+				pset_Inputs.Reset();
+				pset_Outputs.Reset();
+				pset_Inputs.SetProperty(&quot;BusinessObject&quot;, &quot;TELCO OM Order Entry (Thin)&quot;);
+				pset_Inputs.SetProperty(&quot;BusinessComponent&quot;, &quot;Com Invoice Profile&quot;);
+				pset_Inputs.SetProperty(&quot;SearchExpression&quot;, &quot;[Id] = &apos;&quot; + sCIPId + &quot;&apos;&quot;);
+				pset_Inputs.SetProperty(&quot;VFTRCBU Owner Account Type&quot;, &quot;&quot;);
+				pset_Inputs.SetProperty(&quot;Account Id&quot;, &quot;&quot;);
+				pset_Outputs = BS_search.InvokeMethod(&quot;GetFieldsFromFirstRow&quot;, pset_Inputs);
+				var sCustomerType = pset_Outputs.GetProperty(&quot;VFTRCBU Owner Account Type&quot;);
+				var sBAccntId = pset_Outputs.GetProperty(&quot;Account Id&quot;);
+				
+				pset_Inputs = theApplication().NewPropertySet();
+				pset_Outputs = theApplication().NewPropertySet();
+				pset_Inputs.SetProperty(&quot;LOV Type&quot;, &quot;ACCOUNT_TYPE&quot;);
+				pset_Inputs.SetProperty(&quot;LOV Name&quot;, &quot;102&quot;);
+				pset_Outputs = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupValue&quot;, pset_Inputs);
+				var strConsClass = pset_Outputs.GetProperty(&quot;LOV Value&quot;)
+
+				if (sCustomerType == strConsClass) {
+					pset_Inputs.Reset();
+					pset_Outputs.Reset();
+					pset_Inputs.SetProperty(&quot;BusinessObject&quot;, &quot;Asset Mgmt - Asset (NoLink)&quot;);
+					pset_Inputs.SetProperty(&quot;BusinessComponent&quot;, &quot;HP Submit - Asset Mgmt - Asset - Header&quot;);
+					pset_Inputs.SetProperty(&quot;SearchExpression&quot;, &quot;[Billing Account Id] = &apos;&quot; + sBAccntId + &quot;&apos; AND [VF MSISDN] IS NOT NULL&quot;);
+					pset_Outputs = BS_search.InvokeMethod(&quot;GetFieldsFromFirstRow&quot;,pset_Inputs);
+					var hasRecord = pset_Outputs.GetProperty(&quot;TotalNumberOfRows&quot;);
+	
+					if (hasRecord == &quot;0&quot;) {
+						pset_Inputs.Reset();
+						pset_Outputs.Reset();
+						pset_Inputs.SetProperty(&quot;Code&quot;, &quot;0619&quot;);
+						pset_Inputs.SetProperty(&quot;MessageCategory&quot;, &quot;VFTRCBU User Defined Errors&quot;);
+						pset_Outputs = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupMsg&quot;, pset_Inputs);	
+						str_Message = pset_Outputs.GetProperty(&quot;Message&quot;);
+						theApplication().SWEAlert(str_Message);
+						return (&quot;CancelOperation&quot;);
+					}
+				}
+				//VFTRCBU-23934 - END
+				
+				oBS = theApplication().GetService(&quot;Workflow Process Manager&quot;);
+				oBS_Inputs = theApplication().NewPropertySet();
+				oBS_Outputs = theApplication().NewPropertySet();
+
+				oBS_Inputs.SetProperty(&quot;CIPRowId&quot;, sCIPId);
+
+				oBS_Inputs.SetProperty(&quot;ProcessName&quot;, &quot;VF CC Form Generation WF&quot;);
+				oBS_Outputs = oBS.InvokeMethod(&quot;RunProcess&quot;, oBS_Inputs, oBS_Outputs);
+
+				sURL = oBS_Outputs.GetProperty(&quot;URL&quot;);
+
+				if (sURL != &quot;&quot;) {
+					var oIE = new ActiveXObject(&quot;InternetExplorer.Application&quot;);
+					oIE.Navigate2(sURL);
+					oIE.Visible = true;
+				}
+			}
+		}
+		return (&quot;ContinueOperation&quot;);
+	} catch (e) {
+		var errDesc = e.toString();
+		throw (e);
+		return (&quot;CancelOperation&quot;);
+	}
+	finally {
+		svc_ACSNIGeneralOperations = null;
+		pset_Inputs = null;
+		pset_Outputs = null;
+		oBS = null;
+		oBS_Inputs = null;
+		oBS_Outputs = null;
+		sURL = null;
+		BS_search = null;
+	}
+}"
+			   UPDATED="01/27/2016 17:01:19"
+			   UPDATED_BY="HRODRIGUES"
+			   CREATED="05/08/2013 13:26:14"
+			   CREATED_BY="SADMIN">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="New Query (SWE)"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_NEW_QUERY-1004225223-0LU"
+			   NAME="1"
+			   POSITION="1"
+			   SUPPRESS_MENU_ITEM="Y"
+			   UPDATED="12/06/2003 13:07:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/05/2003 22:11:09"
+			   CREATED_BY="SADMIN">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="Execute Query (SWE)"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_RUN_QUERY-1004224751-0GX"
+			   NAME="2"
+			   POSITION="2"
+			   SUPPRESS_MENU_ITEM="Y"
+			   UPDATED="07/24/2004 16:12:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/05/2003 22:11:09"
+			   CREATED_BY="SADMIN">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="Refine Query (SWE)"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_REFINE_QUERY-1004224741-0EF"
+			   NAME="3"
+			   POSITION="3"
+			   SUPPRESS_MENU_ITEM="Y"
+			   UPDATED="07/24/2004 16:06:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/05/2003 22:11:09"
+			   CREATED_BY="SADMIN">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreCanInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreCanInvokeMethod (MethodName, &amp;CanInvoke)
+{				
+//Oracle Review October 2011 - Deep Code
+	try{
+		//VFTK Mamta WP01 R2.1 20090923:Updated to add script to  make reset button enabled or disabled based on role	
+		var psInputs = &quot;&quot;;
+		var psOutputs = &quot;&quot;;
+		var bsGeneralOperations = &quot;&quot;;
+		if(MethodName == &quot;VFResetInfo&quot;)
+		{
+			var activeView = TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;);
+	    	var isReadOnly = TheApplication().InvokeMethod(&quot;IsViewReadOnly&quot;, activeView);		
+	  	    var canInvokeResult = 	&quot;True&quot;;
+	  	    var ControlName		=	&quot;VF Reset Info&quot;;	 
+			var StrRole 		= 	TheApplication().GetProfileAttr(&quot;TELCO.PositionProfile:Role.AvailableRoles&quot;); //SANTOSP 04/2015 - VFTRCBU-1769
+			psInputs  			= 	TheApplication().NewPropertySet();
+			psOutputs 			= 	TheApplication().NewPropertySet();		
+			bsGeneralOperations = 	TheApplication().GetService (&quot;ACS General Operations&quot;);	
+			psInputs.SetProperty (&quot;Function&quot;, &quot;CreditReset&quot;);
+			psInputs.SetProperty (&quot;Name&quot;, ControlName);
+			psInputs.SetProperty (&quot;Value&quot;, StrRole);
+			bsGeneralOperations.InvokeMethod (&quot;GetParameter_3Inputs&quot;, psInputs, psOutputs);
+	        var buttonVisibility = psOutputs.GetProperty (&quot;Cons1&quot;);
+			 if ((buttonVisibility==&quot;False&quot;) || (isReadOnly ==&quot;TRUE&quot;))
+			    canInvokeResult = &quot;FALSE&quot;;
+			 else canInvokeResult = &quot;TRUE&quot;;
+				CanInvoke = canInvokeResult;
+			return (CancelOperation);
+		}
+		return (ContinueOperation);
+	}
+
+	finally
+	{
+		psInputs= null;
+		psOutputs= null;
+		bsGeneralOperations= null;
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="04/15/2015 14:56:38"
+			   UPDATED_BY="PSANTOS"
+			   CREATED="05/08/2013 13:09:19"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreInvokeMethod (MethodName)
+{	
+	//VFTK Mamta WP01 R2.1 20090923:Updated to add script on click of reset button
+	try
+	{
+		var thisBC = this.BusComp();
+		
+		if(MethodName == &quot;GenerateForm&quot;)
+		{
+			return(CancelOperation);
+		}
+		
+		if(MethodName == &quot;VFResetInfo&quot;)
+		{	
+			var strResetProf = TheApplication().GetProfileAttr(&quot;ResetCCFields&quot;);
+			if(strResetProf==&quot;Y&quot;)
+			{
+				var strPayment =TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACCOUNT_PAYMENT_TYPE&quot;,&quot;Cash&quot;);
+				thisBC.SetFieldValue(&quot;Credit Card Type&quot;,&quot;&quot;);
+				thisBC.SetFieldValue(&quot;VF Credit Card Type Ext&quot;,&quot;&quot;);
+				thisBC.SetFieldValue(&quot;VF CC Exp Month&quot;,&quot;&quot;);
+				thisBC.SetFieldValue(&quot;VF CC Exp Year&quot;,&quot;&quot;);
+				thisBC.SetFieldValue(&quot;VF CCV&quot;,&quot;&quot;);
+				thisBC.SetFieldValue(&quot;VF Credit Card Owner Last Name Int&quot;,&quot;&quot;);
+				thisBC.SetFieldValue(&quot;VF Credit Card Owner First Name Int&quot;,&quot;&quot;);
+				thisBC.SetFieldValue(&quot;VF Credit Card Number Int&quot;,&quot;&quot;);
+				thisBC.SetFieldValue(&quot;VF Last CC Update Date&quot;,&quot;&quot;);
+				thisBC.SetFieldValue(&quot;Payment Method&quot;,strPayment);				
+				thisBC.WriteRecord();							
+			}
+			return(CancelOperation);	
+		}						
+			
+		if (MethodName == &quot;ShowPopup&quot;)
+		{
+			
+			if(thisBC.GetFieldValue(&quot;Edit Flag&quot;) == &quot;N&quot;)
+			{
+				thisBC.SetFieldValue(&quot;Edit Flag&quot;,&quot;Y&quot;);	
+				thisBC.WriteRecord();
+			}
+		}
+		return (ContinueOperation);
+	}
+	
+	finally
+	{
+		thisBC = null;
+		strResetProf=null;
+		TheApplication().SetProfileAttr(&quot;ResetCCFields&quot;,&quot;&quot;);
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="06/03/2013 09:18:41"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/08/2013 13:08:03"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_TOGGLE
+			   APPLET="CUT Automatic Debit Form Applet"
+			   AUTO_TOGGLE_FIELD="Payment Method Calc"
+			   AUTO_TOGGLE_VALUE="100"
+			   INACTIVE="Y"
+			   NAME="CUT Automatic Debit Form Applet"
+			   SEQUENCE="3"
+			   UPDATED="11/30/2009 11:47:34"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/05/2003 05:46:35"
+			   CREATED_BY="SADMIN">
+			</APPLET_TOGGLE>
+			<APPLET_TOGGLE
+			   APPLET="CUT Credit Card Payment Form Applet - Edit"
+			   AUTO_TOGGLE_FIELD="Credit Card Block Flag"
+			   AUTO_TOGGLE_VALUE="Y"
+			   INACTIVE="Y"
+			   NAME="CUT Credit Card Payment Form Applet - Edit"
+			   SEQUENCE="1"
+			   UPDATED="11/19/2009 12:37:50"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/18/2009 20:26:13"
+			   CREATED_BY="SADMIN">
+			</APPLET_TOGGLE>
+			<APPLET_TOGGLE
+			   APPLET="CUT No Payment Method Form Applet"
+			   AUTO_TOGGLE_FIELD="Payment Method Calc"
+			   AUTO_TOGGLE_VALUE="Cash"
+			   INACTIVE="N"
+			   NAME="CUT No Payment Method Form Applet"
+			   SEQUENCE="1"
+			   UPDATED="05/02/2013 15:07:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/31/2009 20:02:04"
+			   CREATED_BY="SADMIN">
+			</APPLET_TOGGLE>
+			<APPLET_USER_PROP
+			   COMMENTS="Oracle Review October 2011"
+			   INACTIVE="Y"
+			   NAME="CanInvokeMethod: ChangeTemplate"
+			   VALUE="TRUE"
+			   UPDATED="05/02/2013 18:18:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/15/2012 08:43:35"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="VFTRCBU-37708"
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: CopyRecord"
+			   VALUE="FALSE"
+			   UPDATED="04/28/2017 10:45:25"
+			   UPDATED_BY="MOLIVEIRA"
+			   CREATED="04/28/2017 10:11:03"
+			   CREATED_BY="MOLIVEIRA">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: DeleteRecord"
+			   VALUE="FALSE"
+			   UPDATED="05/15/2012 08:43:35"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/19/2007 21:03:50"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="Oracle Review October 2011"
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: GenerateForm"
+			   VALUE="IIf ([VF Credit Card Type Ext]=&quot;&quot;, FALSE , TRUE )"
+			   UPDATED="05/20/2013 16:35:02"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/15/2012 08:43:35"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="VFTRCBU-37552"
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: NewRecord"
+			   VALUE="FALSE"
+			   UPDATED="04/18/2017 17:08:45"
+			   UPDATED_BY="MOLIVEIRA"
+			   CREATED="04/18/2017 17:08:45"
+			   CREATED_BY="MOLIVEIRA">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="CR680 :: 02.05.2013"
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: ShowPopup"
+			   VALUE="TRUE"
+			   UPDATED="05/02/2013 18:18:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/02/2013 18:18:01"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="EnableStandardMethods"
+			   VALUE="Y"
+			   UPDATED="06/10/2013 19:48:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/10/2013 19:48:13"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Base"
+			   TYPE="Base"
+			   WEB_TEMPLATE="Applet Form Grid Layout"
+			   UPDATED="06/03/2014 19:07:22"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 19:06:25"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="1"
+				   CONTROL="HTML Label"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="9022"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="HTML Label"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="06/03/2014 19:07:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2014 19:07:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="1"
+				   CONTROL="HTML Label3"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="15022"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="HTML Label3"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="06/03/2014 19:07:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2014 19:07:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="1"
+				   CONTROL="HTML Label4"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="18022"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="HTML Label4"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="06/03/2014 19:07:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2014 19:07:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Edit"
+			   TYPE="Edit"
+			   WEB_TEMPLATE="Applet Form 4 Column (Edit/New)"
+			   UPDATED="01/22/2016 15:44:36"
+			   UPDATED_BY="HRODRIGUES"
+			   CREATED="06/05/2003 05:51:22"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="Card Verification Number"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="6060"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Card Verification Number"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/12/2007 21:36:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/12/2007 21:36:07"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="21"
+				   CONTROL="Card Verification Number"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="6039"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Card Verification NumberLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/12/2007 21:37:08"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/12/2007 21:36:11"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ChangeTemplate"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="132"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="ChangeTemplate"
+				   TYPE="Control"
+				   UPDATED="11/19/2009 11:02:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/19/2009 11:02:55"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Credit Card Expiration Month"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1304"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Credit Card Expiration Month"
+				   TYPE="Control"
+				   UPDATED="10/13/2009 10:29:19"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/13/2009 10:29:19"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Credit Card Expiration Year"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1303"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Credit Card Expiration Year"
+				   TYPE="Control"
+				   UPDATED="10/13/2009 10:29:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/13/2009 10:29:26"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Credit Card Expired Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="21023"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Credit Card Expired Date"
+				   TYPE="Control"
+				   UPDATED="02/03/2009 08:36:40"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/24/2008 13:01:53"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Credit Card First Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2301"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Credit Card First Name"
+				   TYPE="Control"
+				   UPDATED="11/18/2009 10:41:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/18/2009 10:41:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Credit Card Last Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2302"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Credit Card Last Name"
+				   TYPE="Control"
+				   UPDATED="11/18/2009 10:41:34"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/18/2009 10:41:34"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Credit Card Number - Display"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1302"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Credit Card Number - Display"
+				   TYPE="Control"
+				   UPDATED="11/18/2009 20:25:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/18/2009 20:25:20"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="Credit Card Security Code"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="15060"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Credit Card Security Code"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="07/24/2008 13:01:53"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/24/2008 13:01:53"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="21"
+				   CONTROL="Credit Card Security Code"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="18039"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Credit Card Security CodeLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="07/24/2008 13:01:53"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/24/2008 13:01:53"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Credit Card Type"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1301"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Credit Card Type"
+				   TYPE="Control"
+				   UPDATED="01/31/2009 19:05:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/05/2003 07:30:19"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Generate Form"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="109"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Generate Form"
+				   TYPE="Control"
+				   UPDATED="01/10/2012 08:23:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/10/2012 08:23:02"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Group Credit Card"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Group Credit Card"
+				   TYPE="Control"
+				   UPDATED="01/31/2009 19:05:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/05/2003 07:30:19"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="HTML Label"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="HTML Label"
+				   TYPE="Control"
+				   UPDATED="01/31/2009 19:05:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/31/2009 19:05:10"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="1"
+				   CONTROL="HTML Label5"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="9022"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="HTML Label5"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="06/03/2014 19:07:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2014 19:07:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="1"
+				   CONTROL="HTML Label6"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="15022"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="HTML Label6"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="06/03/2014 19:07:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2014 19:07:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="1"
+				   CONTROL="HTML Label7"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="18022"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="HTML Label7"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="06/03/2014 19:07:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2014 19:07:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1305"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application"
+				   TYPE="Control"
+				   UPDATED="01/22/2016 14:33:26"
+				   UPDATED_BY="HRODRIGUES"
+				   CREATED="01/22/2016 14:33:26"
+				   CREATED_BY="HRODRIGUES">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1306"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application2"
+				   TYPE="Control"
+				   UPDATED="01/22/2016 15:44:36"
+				   UPDATED_BY="HRODRIGUES"
+				   CREATED="01/22/2016 15:44:36"
+				   CREATED_BY="HRODRIGUES">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="QueryAssistant"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="126"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Query Assistant"
+				   TYPE="Control"
+				   UPDATED="01/31/2009 19:05:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/31/2009 19:05:10"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ToggleLayout"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="161"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="ToggleLayout"
+				   TYPE="Control"
+				   UPDATED="01/31/2009 19:05:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/31/2009 19:05:10"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Reset Info"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="134"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Reset Info"
+				   TYPE="Control"
+				   UPDATED="09/23/2011 11:07:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/23/2011 11:07:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CARD_VERIFICATION_#-1004230141-1LA"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Credit Card Verification Number"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="13"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="Y"
+			   LEFT="152"
+			   MULTI_LINE="N"
+			   NAME="Card Verification Number"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="37"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="366"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="130"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/12/2007 21:34:59"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_EDITABLE-1004230807-29Q"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEdit"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ShowPopup"
+			   MULTI_LINE="N"
+			   NAME="ChangeTemplate"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="35"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/19/2009 11:01:05"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/19/2009 11:01:05"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/19/2009 11:01:05"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+				<CONTROL_USER_PROP
+				   INACTIVE="N"
+				   NAME="Mode"
+				   VALUE="Edit"
+				   UPDATED="05/02/2013 18:15:54"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/02/2013 18:15:54"
+				   CREATED_BY="SADMIN">
+				</CONTROL_USER_PROP>
+				<CONTROL_USER_PROP
+				   INACTIVE="N"
+				   NAME="Popup"
+				   VALUE="VF Decrypted Credit Card Payment Form Applet"
+				   UPDATED="05/02/2013 18:38:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/02/2013 18:16:01"
+				   CREATED_BY="SADMIN">
+				</CONTROL_USER_PROP>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_BLOCKED-1009091748-20E"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Credit Card Block Flag"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="6"
+			   HTML_TYPE="CheckBox"
+			   HTML_WIDTH="24"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Credit Card Block Flag"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="Y"
+			   SEQUENCE="11"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/05/2003 23:26:10"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_BLOCKED_REASON-1009091406-3AG"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Credit Card Block Reason"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="7"
+			   HTML_TYPE="Field"
+			   HTML_WIDTH="120"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Credit Card Block Reason"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="Y"
+			   SEQUENCE="14"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/05/2003 23:26:10"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CATEGORY-1004224659-20J"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Credit Card Category"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="5"
+			   HTML_TYPE="Field"
+			   HTML_WIDTH="120"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Credit Card Category"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="Y"
+			   SEQUENCE="15"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/05/2003 23:26:10"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_EXPIRATION_MONTH-1004225154-0CS"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF CC Exp Month"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="16"
+			   HTML_TYPE="Password"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="152"
+			   MULTI_LINE="N"
+			   NAME="Credit Card Expiration Month"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="Y"
+			   SEQUENCE="38"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="262"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="130"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/29/2007 18:24:29"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_EXPIRATION_YEAR-1004225154-0CT"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF CC Exp Year"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="17"
+			   HTML_TYPE="Password"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="152"
+			   MULTI_LINE="N"
+			   NAME="Credit Card Expiration Year"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="Y"
+			   SEQUENCE="39"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="288"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="130"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/29/2007 18:24:33"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_EXPIRATION_DATE-1004230919-2LZ"
+			   COMMENTS="JSHEN: Replaced with Expiration Month and Expiration Year"
+			   DEFAULT_BUTTON="N"
+			   DISPLAY_FORMAT="MM/YYYY"
+			   FIELD="Credit Card Expiration Calculated Date"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="4"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="Y"
+			   LEFT="300"
+			   MULTI_LINE="N"
+			   NAME="Credit Card Expired Date"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="22"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="109"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="107"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/05/2003 23:26:11"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   COMMENTS="ACS_Removal"
+				   INACTIVE="Y"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/08/2012 13:54:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/31/2009 23:42:25"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_FIRST_NAME-1004225616-017"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF Credit Card Owner First Name Int"
+			   FIELD_TYPE="BC Field"
+			   GROUP="Y"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="1"
+			   HTML_TYPE="Password"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="144"
+			   LEFT_TEXT="N"
+			   MULTI_LINE="N"
+			   NAME="Credit Card First Name"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="N"
+			   SEQUENCE="16"
+			   SHOW_POPUP="N"
+			   SORT="N"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="56"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="263"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/18/2009 10:38:12"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_LAST_NAME-1004225617-01M"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF Credit Card Owner Last Name Int"
+			   FIELD_TYPE="BC Field"
+			   GROUP="Y"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="1"
+			   HTML_TYPE="Password"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="144"
+			   LEFT_TEXT="N"
+			   MULTI_LINE="N"
+			   NAME="Credit Card Last Name"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="N"
+			   SEQUENCE="17"
+			   SHOW_POPUP="N"
+			   SORT="N"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="56"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="263"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/05/2003 23:26:11"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CREDIT_CARD-1004230536-29D"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Credit Card Number - Display"
+			   FIELD_TYPE="BC Field"
+			   GROUP="Y"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="2"
+			   HTML_TYPE="Field"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="144"
+			   LEFT_TEXT="N"
+			   MULTI_LINE="N"
+			   NAME="Credit Card Number"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="18"
+			   SHOW_POPUP="N"
+			   SORT="N"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="82"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="264"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/05/2003 23:26:11"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CREDIT_CARD_#-1004225139-091"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF Credit Card Number Int"
+			   FIELD_TYPE="BC Field"
+			   GROUP="Y"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="2"
+			   HTML_TYPE="Password"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="144"
+			   LEFT_TEXT="N"
+			   MULTI_LINE="N"
+			   NAME="Credit Card Number - Display"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="N"
+			   SEQUENCE="19"
+			   SHOW_POPUP="N"
+			   SORT="N"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="82"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="264"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/16/2009 18:28:29"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_SECURITY_CODE-1004225050-AC12"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Credit Card Security Code"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Field"
+			   HTML_WIDTH="120"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Credit Card Security Code"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="7"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/24/2008 13:01:53"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="07/24/2008 13:01:53"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/24/2008 13:01:53"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CARD_TYPE-1004230141-1L7"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF Credit Card Type Ext"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="3"
+			   HTML_TYPE="Password"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="144"
+			   MULTI_LINE="N"
+			   NAME="Credit Card Type"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="N"
+			   SEQUENCE="21"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="109"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="95"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/05/2003 23:26:11"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_EDIT-1004231338-2SY"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Edit Flag"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="6"
+			   HTML_TYPE="CheckBox"
+			   HTML_WIDTH="24"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Edit - Flag"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="Y"
+			   SEQUENCE="12"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/18/2009 20:27:55"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_EDITABLE_VALUE"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Edit Calc"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="6"
+			   HTML_TYPE="CheckBox"
+			   HTML_WIDTH="24"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Edit Calc"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="13"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/20/2009 14:15:59"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_EDIT-1004231338-2SY"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEdit"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="EditRecord"
+			   MULTI_LINE="N"
+			   NAME="EditRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="36"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/31/2009 21:15:32"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/31/2009 23:42:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/31/2009 23:42:25"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_FIRST_NAME-1004225616-017"
+			   DEFAULT_BUTTON="N"
+			   FIELD=" First Name"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="First Name"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="32"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/31/2009 21:15:32"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/31/2009 23:42:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/31/2009 23:42:25"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_GENERATEFORM"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   METHOD_INVOKED="GenerateForm"
+			   MULTI_LINE="N"
+			   NAME="Generate Form"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="1"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/10/2012 08:23:02"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CREDIT_CARD-1004230536-29D"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_HEIGHT="32"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="8"
+			   HTML_TYPE="FormSection"
+			   HTML_WIDTH="584"
+			   HEIGHT="128"
+			   INACTIVE="N"
+			   LEFT="16"
+			   MULTI_LINE="N"
+			   NAME="Group Credit Card"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="23"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="N"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="21"
+			   TYPE="Group"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="408"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/05/2003 23:26:11"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_AUTHORIZED_PERSON-0928172739-09U"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="FormSection"
+			   HTML_WIDTH="120"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="HTML Label"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="34"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/05/2014 13:58:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/31/2009 21:15:32"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="06/03/2014 19:23:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2014 19:23:26"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="HTML Label2"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="24"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 19:13:32"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_ICON_REQ_STRING"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HTML_WIDTH="8"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="HTML Label3"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="25"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 19:13:32"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="06/03/2014 19:23:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2014 19:23:26"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_ICON_REQ_STRING"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HTML_WIDTH="8"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="HTML Label4"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="26"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 19:13:32"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="06/03/2014 19:23:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2014 19:23:26"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_ICON_REQ_STRING"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HTML_WIDTH="8"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="HTML Label5"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="27"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 19:13:32"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="06/03/2014 19:23:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2014 19:23:26"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_ICON_REQ_STRING"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HTML_WIDTH="8"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="HTML Label6"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="28"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 19:13:32"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="06/03/2014 19:23:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2014 19:23:26"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_ICON_REQ_STRING"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HTML_WIDTH="8"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="HTML Label7"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="29"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 19:13:32"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="06/03/2014 19:23:27"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2014 19:23:27"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_LAST_NAME-1004225617-01M"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Last Name"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MVG_APPLET="ACS Payment Profile Contact Mvg Applet"
+			   MULTI_LINE="N"
+			   NAME="Last Name"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="33"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/31/2009 21:15:32"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/31/2009 23:42:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/31/2009 23:42:25"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_QUERY-1005111820-1VI"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="NewQuery"
+			   MULTI_LINE="N"
+			   NAME="NewQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="30"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/05/2003 23:26:11"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_QUERY_ASSISTANT-0928173050-1NF"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="ShowQueryAssistant"
+			   MULTI_LINE="N"
+			   NAME="QueryAssistant"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="10"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/31/2009 21:15:32"
+			   CREATED_BY="SADMIN">
+				<CONTROL_USER_PROP
+				   INACTIVE="N"
+				   NAME="Mode"
+				   VALUE="Edit"
+				   UPDATED="02/01/2009 00:04:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 00:04:48"
+				   CREATED_BY="SADMIN">
+				</CONTROL_USER_PROP>
+				<CONTROL_USER_PROP
+				   INACTIVE="N"
+				   NAME="Popup"
+				   VALUE="Query Assistant"
+				   UPDATED="02/01/2009 00:04:48"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 00:04:48"
+				   CREATED_BY="SADMIN">
+				</CONTROL_USER_PROP>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_BITMAP="BTTNS_MORE"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ICON_MAP="ToggleLayout"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Link"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="ToggleLayout"
+			   MULTI_LINE="N"
+			   NAME="ToggleLayout"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="8"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/31/2009 21:15:32"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_CVV2"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF CCV"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Password"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="Y"
+			   MULTI_LINE="N"
+			   NAME="VF CCV"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="N"
+			   SEQUENCE="2"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/10/2012 08:23:02"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/10/2012 08:23:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/10/2012 08:23:02"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CREDIT_CARD_#-1004225139-091"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF Credit Card Number Int"
+			   FIELD_TYPE="BC Field"
+			   GROUP="Y"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="2"
+			   HTML_TYPE="Field"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="144"
+			   LEFT_TEXT="N"
+			   MULTI_LINE="N"
+			   NAME="VF Credit Card Encrypted"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="20"
+			   SHOW_POPUP="N"
+			   SORT="N"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="82"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="264"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/05/2010 13:06:34"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF Credit Card Number Ext"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="Y"
+			   MULTI_LINE="N"
+			   NAME="VF Credit Card Number Ext"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="3"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/19/2010 09:43:54"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Credit Card Number"
+				   COMMENTS="ACS_Removal"
+				   INACTIVE="Y"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/08/2012 13:54:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/19/2010 09:43:54"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF Credit Card Number Ext"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="Y"
+			   MULTI_LINE="N"
+			   NAME="VF Credit Card Number Tibco"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="N"
+			   SEQUENCE="4"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/19/2010 09:43:54"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Credit Card Tibco"
+				   COMMENTS="ACS_Removal"
+				   INACTIVE="Y"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/08/2012 13:54:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/19/2010 09:43:54"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF Last CC Update Date"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Hidden"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VF Last CC Update Date"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="N"
+			   SEQUENCE="5"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/31/2012 18:58:05"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Last CC Update Date"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="07/31/2012 19:00:14"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/31/2012 19:00:14"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_RESET-1005000208-6SL"
+			   COMMENTS="VFTK Mamta R2.1 wP01 20090923 - Newly Created"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   METHOD_INVOKED="VFResetInfo"
+			   MULTI_LINE="N"
+			   NAME="VF Reset Info"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="6"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/23/2011 10:59:15"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_CHECK_PAYMENT_DATA"
+			   COMMENTS="AB, 29.11.06, Created"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="CheckPaymentCC"
+			   MULTI_LINE="N"
+			   NAME="Validate Payment Data"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="9"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/31/2009 21:15:32"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_SAVE-1004225832-051"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEditNew"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ExplicitWriteRecord"
+			   MULTI_LINE="N"
+			   NAME="WriteRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="31"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/03/2014 23:00:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/05/2003 23:26:11"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+
