@@ -1,0 +1,4037 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="LOCKED BY VTAO UI UPGRADE"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="Siebel eChannel"
+	   UI_FREEZE="N"
+	   UPDATED="04/24/2017 17:10:48"
+	   UPDATED_BY="SSANTOS"
+	   CREATED="07/20/1999 17:12:10"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLICATION
+		   ACKNOWLEDGMENT_WEB_VIEW="VFTR_HomeView"
+		   COMMENTS="ACS AC 02-10-2006 Deleted from Logoff Web Page &quot;DotCom Logout Page&quot; to return to the standard login page when Logout
+The eChannel Application"
+		   CONTAINER_WEB_PAGE="VFTR_eChannel Container Page"
+		   ERROR_WEB_PAGE="CC Error Page"
+		   INACTIVE="N"
+		   LOGIN_WEB_PAGE="CC Login Page (Login Only)"
+		   LOGOFF_ACKNOWLEDGMENT_WEB_PAGE="CC Login Page (Login Only)"
+		   MENU="Generic WEB"
+		   NAME="Siebel eChannel"
+		   OBJECT_LOCKED="N"
+		   SCRIPTED="Y"
+		   UPDATED="04/24/2017 17:45:04"
+		   UPDATED_BY="SSANTOS"
+		   CREATED="07/20/1999 17:12:26"
+		   CREATED_BY="SADMIN">
+			<APPLICATION_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="Application_PreInvokeMethod-All"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="Application_PreInvokeMethod"
+			   SCRIPT="function Application_PreInvokeMethod (name, inputPropSet)
+{
+	try
+	{
+	   if(name ==&quot;LogOffOnAppExit&quot; || name ==&quot;CanLeaveMainView&quot;)
+	   {
+		   theApplication().InvokeMethod(&quot;Logoff&quot;);
+	   }
+	}
+	catch(e)
+	{
+	}
+	finally
+	{
+	}	
+	return (&quot;ContinueOperation&quot;);
+}"
+			   UPDATED="03/10/2014 08:30:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/10/2014 08:30:55"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_BROWSER_SCRIPT>
+			<APPLICATION_EVENT_SERVICES
+			   COMMENTS="Audit Trail for Campaign Contact Organization and Position Owners"
+			   EVENT_NAME="Start"
+			   INACTIVE="Y"
+			   METHOD_NAME="Start"
+			   NAME="Start"
+			   SEQUENCE="1"
+			   SERVICE_NAME="Audit Trail Engine"
+			   UPDATED="07/21/2014 13:01:39"
+			   UPDATED_BY="MCOSTA"
+			   CREATED="05/28/2002 19:08:20"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_EVENT_SERVICES>
+			<APPLICATION_FIND
+			   FIND="Account (SCW)"
+			   INACTIVE="N"
+			   NAME="Account (SCW)"
+			   SEQUENCE="1"
+			   UPDATED="11/19/2007 23:43:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/17/2000 20:33:45"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_FIND>
+			<APPLICATION_FIND
+			   FIND="Campaign Members"
+			   INACTIVE="N"
+			   NAME="Campaign Members"
+			   SEQUENCE="5"
+			   UPDATED="11/19/2007 23:44:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/11/2003 18:41:15"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_FIND>
+			<APPLICATION_FIND
+			   FIND="Contact (SCW)"
+			   INACTIVE="N"
+			   NAME="Contact (SCW)"
+			   SEQUENCE="2"
+			   UPDATED="11/19/2007 23:44:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/17/2000 21:32:00"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_FIND>
+			<APPLICATION_FIND
+			   FIND="Opportunity (SCW)"
+			   INACTIVE="N"
+			   NAME="Opportunity (SCW)"
+			   SEQUENCE="3"
+			   UPDATED="11/19/2007 23:44:02"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/19/2000 16:43:48"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_FIND>
+			<APPLICATION_FIND
+			   FIND="Service Request (SCW)"
+			   INACTIVE="N"
+			   NAME="Service Request (SCW)"
+			   SEQUENCE="4"
+			   UPDATED="11/19/2007 23:44:05"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/19/2000 16:17:14"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_FIND>
+			<APPLICATION_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="(declarations)"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="var TeXCoInvoiceProf;		// Global Variables to control the update of fields in Com Invoice Profile BusComp
+var TeXCoPaymentProf;		// Global Variables to control the update of fields in Com Invoice Profile BusComp
+var LOCK;					// Global Variable to control that code do not pass through BusComp_SetFieldValue each time we set a value
+var OLE_INTERFACE;
+
+TheApplication().SetProfileAttr(&quot;LogLogin&quot;,&quot;N&quot;);
+TheApplication().SetProfileAttr(&quot;LogLogout&quot;,&quot;Y&quot;);
+
+var GRANT_MATRIX;"
+			   SEQUENCE="1"
+			   UPDATED="03/23/2017 14:14:07"
+			   UPDATED_BY="EFONSECA"
+			   CREATED="07/21/2016 11:11:47"
+			   CREATED_BY="HRODRIGUES">
+			</APPLICATION_SERVER_SCRIPT>
+			<APPLICATION_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Application_PreNavigate"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Application_PreNavigate (DestViewName, DestBusObjName)
+{
+	var currentView1;
+	
+	currentView1 = TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;);
+
+
+	if(currentView1 == &quot;Sales Order Catalog Complex Product Runtime Instance View&quot;)
+	{
+		var sFunctionalityActive = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_BLOCK_CONF&quot;,&quot;VF_BLOCK_CONF&quot;);
+		
+		if(sFunctionalityActive == &quot;Y&quot;)
+		{
+		
+			var sAllowExitConfigurator = TheApplication().GetProfileAttr(&quot;AllowExitConfigurator&quot;);
+			
+			if(sAllowExitConfigurator != &quot;Y&quot;)
+			{
+				var sMessage = TheApplication().LookupMessage(&quot;VF Message Category&quot;, &quot;X_DENY_EXIT_CONFIG&quot;);
+				
+				TheApplication().RaiseErrorText(sMessage);
+			}
+			else
+			{
+				TheApplication().SetProfileAttr(&quot;AllowExitConfigurator&quot;, &quot;N&quot;);
+			}
+		}
+	}
+	
+	if(currentView1 == &quot;PRM VF TR Account Detail (Interactions)&quot;)
+	{
+		var bs = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		
+		var inputs = TheApplication().NewPropertySet();
+		var outputs = TheApplication().NewPropertySet();
+		
+		inputs.SetProperty(&quot;ProcessName&quot;, &quot;VFTRCBU Can Close Smart Script WF&quot;);		
+		bs.InvokeMethod (&quot;RunProcess&quot;, inputs, outputs);
+	}
+	
+		
+	// 6/12/2013
+	var InsideTask = TheApplication().GetProfileAttr(&quot;InsideTask&quot;);
+
+	if (InsideTask == &quot;Y&quot;) // &quot;Y&quot; if application is in a Post Activation Task
+	{
+		var ViewNotAllowed = true;
+		if ( CheckLovDescription_isAllowed( &quot;VF_ALLOWED_VIEWS_POSTACT_TASK&quot;, DestViewName ,&quot;Value&quot; ) == &quot;Y&quot; )
+		{
+			ViewNotAllowed = false;
+		}
+					
+		if (ViewNotAllowed == true)
+		{
+			var DestViewNameMessage = TheApplication().LookupMessage(&quot;VF Message Category&quot;, &quot;X_VF_TASK_PA_VIEW_CONTROL&quot;);
+			TheApplication().RaiseErrorText(DestViewNameMessage);
+		}	
+	}
+}"
+			   SEQUENCE="11"
+			   UPDATED="03/23/2017 14:14:42"
+			   UPDATED_BY="EFONSECA"
+			   CREATED="11/28/2013 09:02:56"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_SERVER_SCRIPT>
+			<APPLICATION_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Application_Start"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Application_Start (commandline)
+{
+	try
+	{	
+	
+		var lovBO = TheApplication().GetBusObject(&quot;List Of Values&quot;); 
+		var lovBC = lovBO.GetBusComp(&quot;List Of Values&quot;); 
+		var sHasRoles = &quot;&quot;;
+		var strPositionId = &quot;&quot;; // iMARTINS 12102016
+		/*load Grant Matrix - PSANTOS 04/2015 - Included in RTE/Action Set:TELCO Set Position Profile as Prof Attr Set
+		var psInputs  		= 	TheApplication().NewPropertySet();
+		var psOutputs 		= 	TheApplication().NewPropertySet();	
+		var bsGeneralOperations = TheApplication().GetService (&quot;ACS General Operations&quot;);
+		bsGeneralOperations.InvokeMethod (&quot;LoadGrantMatrix&quot;, psInputs, psOutputs);
+		GRANT_MATRIX = psOutputs;*/
+		
+		//VFTRCBU-31632 - HRODRIGUES - START
+		var psOutput:PropertySet = TheApplication().NewPropertySet();
+		
+		TheApplication().SetProfileAttr(&quot;PositionType&quot;,GetPositionType(psOutput));
+		SetProfileAttr(&quot;LevOfAccess&quot;,psOutput.GetProperty(&quot;LAccess&quot;));
+		SetProfileAttr(&quot;PositionType&quot;,psOutput.GetProperty(&quot;PosType&quot;));
+		SetProfileAttr(&quot;Department&quot;,psOutput.GetProperty(&quot;Department&quot;));
+		TheApplication().SetProfileAttr(&quot;ActiveOrg&quot;,psOutput.GetProperty(&quot;OrgName&quot;));
+		TheApplication().SetProfileAttr(&quot;VFTRCBUPositionType&quot;,&quot;&quot;); // SSANTOS - DEF-14309
+		//VFTRCBU-31632 - HRODRIGUES - END
+		
+		//load Shop Id profile attribute
+		var BOEmployee = TheApplication().GetBusObject(&quot;Employee&quot;);
+		var BCEmployee = BOEmployee.GetBusComp(&quot;Employee&quot;);
+		with (BCEmployee)
+		{
+			SetViewMode(AllView);
+		   	ClearToQuery();
+		   	ActivateField(&quot;VF Shop Id&quot;);
+		   	ActivateField(&quot;VF Dealer Code&quot;);
+		   	ActivateField(&quot;Position Id&quot;);
+		   	ActivateField(&quot;Parent Position Id&quot;);
+		   	ActivateField(&quot;VFTRCBU SubDealer Flag&quot;);
+		   	ActivateField(&quot;VFTRCBU Filter Dealer Code&quot;);
+		   	ActivateField(&quot;VFTRCBU Branch Flag&quot;);
+		   	ActivateField(&quot;Parent Position Name&quot;); // DEF-14409
+		   	//ActivateField(&quot;VFTRCBU Grand Parent Position Id&quot;);
+		   	SetSearchSpec(&quot;Id&quot;, TheApplication().LoginId());
+		   	ExecuteQuery(ForwardOnly);
+		   	if(FirstRecord())
+		   	{
+  	 		//	TheApplication().SetProfileAttr(&quot;ShopID&quot;, GetFieldValue(&quot;VF Shop Id&quot;)); // Inactivated by DEF-14409
+			   	TheApplication().SetProfileAttr(&quot;ShopID&quot;, GetFieldValue(&quot;Parent Position Name&quot;)); 
+		   		TheApplication().SetProfileAttr(&quot;DealerCode&quot;,GetFieldValue(&quot;VF Dealer Code&quot;));
+		   		strPositionId = GetFieldValue(&quot;Position Id&quot;);
+		   		TheApplication().SetProfileAttr(&quot;PostnID&quot;, strPositionId); // iMARTINS 12102016
+		   		TheApplication().SetProfileAttr(&quot;ParPostnID&quot;,GetFieldValue(&quot;Parent Position Id&quot;));
+		   		TheApplication().SetProfileAttr(&quot;SubDealerFlg&quot;, GetFieldValue(&quot;VFTRCBU SubDealer Flag&quot;));
+		   		TheApplication().SetProfileAttr(&quot;FiltId&quot;, GetFieldValue(&quot;VFTRCBU Filter Dealer Code&quot;));
+		   		TheApplication().SetProfileAttr(&quot;BranchFlg&quot;, GetFieldValue(&quot;VFTRCBU Branch Flag&quot;));
+		   		TheApplication().SetProfileAttr(&quot;ShopCode&quot;, GetFieldValue(&quot;VF Shop Id&quot;)); //DEF-19998
+		   	}
+		}
+		
+		/* start IMARTINS 12102016 VFTRCBU-34008 Check if position has position profile Agent Type = Dealer */
+		var boPosProfile : BusObject = TheApplication().GetBusObject(&quot;Position&quot;);
+		var bcPosProfile : BusComp   = boPosProfile.GetBusComp(&quot;TELCO Position Profiles&quot;);
+				
+		with(bcPosProfile)
+		{
+			ClearToQuery();
+			ActivateField(&quot;TELCO Category&quot;);
+			ActivateField(&quot;TELCO Attribute&quot;);
+			ActivateField(&quot;TELCO Attribute Value&quot;);
+			ActivateField(&quot;TELCO Position Id&quot;);
+			SetSearchSpec(&quot;TELCO Category&quot;, TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;TELCO_SECURITY_PROFILE&quot;,&quot;Agent Type&quot;));
+			SetSearchSpec(&quot;TELCO Attribute&quot;, TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;TELCO_SECURITY_PROFILE&quot;,&quot;Dealer&quot;));
+			SetSearchSpec(&quot;TELCO Position Id&quot;, strPositionId);
+			SetSearchSpec(&quot;TELCO Attribute Value&quot;, &quot;Y&quot;);
+			ExecuteQuery(ForwardOnly);
+			
+			if (FirstRecord()) 
+			{						
+				TheApplication().SetProfileAttr(&quot;VFTRCBUPositionType&quot;,&quot;Dealer&quot;);
+			}
+		}
+		// end IMARTINS 12102016 VFTRCBU-34008
+	
+
+		TheApplication().SetProfileAttr(&quot;PaymentCheck&quot;,&quot;N&quot;);
+	    
+	    TheApplication().SetProfileAttr(&quot;VF_TRACE_SESSIONE_UTENTE&quot;,&quot;OFF&quot;); // VFLOGEVENT
+	    
+	    //Global variables used to Log On KPI and TRACE
+	    SetSharedGlobal(&quot;KPI_ON&quot;,(InvokeMethod(&quot;LookupValue&quot;, &quot;VF_KPI_ON&quot;, &quot;Value&quot;)));
+		//Global Variables used in Billing Account Management
+		SetSharedGlobal(&quot;TeXCoInvoiceProf&quot;, &quot;0&quot;);
+		SetSharedGlobal(&quot;TeXCoPaymentProf&quot;, &quot;0&quot;);
+		SetSharedGlobal(&quot;LOCK&quot;, &quot;UnLock&quot;);
+		
+		// load PusulaEnable attribute for PRM
+		
+		with (lovBC) 
+		{ 
+			SetViewMode(AllView); 
+			ClearToQuery();
+			ActivateField(&quot;VFTRCBU Role List&quot;);
+			ActivateField(&quot;VFTRCBU Visible To User Roles Calc&quot;);
+			SetSearchSpec(&quot;Type&quot;, &quot;VF NBA Roles&quot;);
+			SetSearchSpec(&quot;Active&quot;, &quot;Y&quot;); 
+			ExecuteQuery(ForwardOnly); 
+			
+			if (FirstRecord()) 
+			{ 
+				sHasRoles = GetFieldValue(&quot;VFTRCBU Visible To User Roles Calc&quot;); //SANTOSP 04/2015 - VFTRCBU-1769
+			
+				if(sHasRoles == &quot;Y&quot;)//SANTOSP 04/2015 - VFTRCBU-1769 - if the logged user&apos;s position have the required Roles in LOV 
+					TheApplication().SetProfileAttr(&quot;EnablePusula&quot;, &quot;Y&quot;); 
+			}
+		}
+		
+		//g.Delle Donne --dry run for Web Services BlackGreyListInquiryPortType
+		DryRunGreyList();
+		DryRunMernis();
+		//g.Delle Donne --dry run for Web Services BlackGreyListInquiryPortType
+	}	
+	finally
+	{
+		bcPosProfile = null; // IMARTINS
+		boPosProfile = null; // IMARTINS
+		BCEmployee = null;
+		BOEmployee = null;
+		psOutput = null;
+	}
+}"
+			   SEQUENCE="12"
+			   UPDATED="04/24/2017 17:10:48"
+			   UPDATED_BY="SSANTOS"
+			   CREATED="09/12/2011 11:08:03"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_SERVER_SCRIPT>
+			<APPLICATION_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CheckLovDescription_isAllowed"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CheckLovDescription_isAllowed( LovType,Description,sFieldToCheck )
+{
+	var bResult = &quot;N&quot;;
+
+	try
+	{
+		var oBO = TheApplication().GetBusObject( &quot;PRM VF List Of Value&quot; );
+		var oBC = oBO.GetBusComp( &quot;PRM VF List Of Value&quot; );
+		
+		with ( oBC )
+		{
+			ClearToQuery();
+			ActivateField( sFieldToCheck );
+			SetViewMode( AllView );
+			SetSearchSpec( &quot;Type&quot;, LovType );
+			SetSearchSpec( &quot;Description&quot;, Description );
+			ExecuteQuery( ForwardOnly );
+			
+			if (FirstRecord())
+				{
+					bResult = GetFieldValue(sFieldToCheck);
+				}
+		}
+	}
+	catch( e )
+	{
+		bResult = &quot;Y&quot;;
+	}
+	finally
+	{
+		oBC = null;
+		oBO = null;
+	}
+	
+	return ( bResult );
+}"
+			   SEQUENCE="2"
+			   UPDATED="07/21/2016 11:11:47"
+			   UPDATED_BY="HRODRIGUES"
+			   CREATED="12/23/2013 08:30:11"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_SERVER_SCRIPT>
+			<APPLICATION_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="DryRunGreyList"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function DryRunGreyList() {
+	try {
+		var inpSet : PropertySet = null;
+		var outSet : PropertySet = null;
+		var sService : Service = null;
+		var inpSetW : PropertySet = null;
+		var outSetW : PropertySet = null;
+		var sServiceW : Service = null;
+		var sSiebelMessage = &quot;&quot;;
+		var sSiebelMessageRequest = &quot;&quot;;
+		var sGlobalLevel = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;VF_ACTIVATION_DRYRUN&quot;, &quot;DRYRUN_STATE&quot;);
+		var sBGLVersion = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;VFTRCBU_BGL_LIST&quot;, &quot;Version&quot;);
+		var svc :Service = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+
+		if (sGlobalLevel != &quot;DRYRUN_STATE_IS_OFF&quot;) {
+			//create empty request
+			inpSet = TheApplication().NewPropertySet();
+			outSet = TheApplication().NewPropertySet();
+			sService = TheApplication().GetService(&quot;PRM ANI Utility Service&quot;);
+			
+			//Generate Header
+			var Header : PropertySet = TheApplication().NewPropertySet();
+			inpSet.SetProperty(&quot;ProcessName&quot;, &quot;VFTRCBU Generate Header IO WF&quot;);
+			svc.InvokeMethod(&quot;RunProcess&quot;, inpSet, Header);
+			Header = Header.GetChild(0);
+					
+			if (sBGLVersion == &quot;V1&quot;)
+				inpSet.SetProperty(&quot;Hierarchy Name&quot;, &quot;SiebelGetBlackListRequest&quot;);
+			else
+				inpSet.SetProperty(&quot;Hierarchy Name&quot;, &quot;SiebelGetBlackListRequest_v2&quot;);
+
+			sService.InvokeMethod(&quot;CreateEmptyPropSet&quot;, inpSet, outSet);
+			//create empty request
+			sSiebelMessage = outSet.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0);
+
+			with (sSiebelMessage) {
+				SetProperty(&quot;CCNumber&quot;, &quot;&quot;);
+				SetProperty(&quot;CompanyName&quot;, &quot;Lorem ipsum&quot;);
+				SetProperty(&quot;CompanyTaxNumber&quot;, &quot;&quot;);
+				SetProperty(&quot;CompanyTaxOffice&quot;, &quot;taxOffice&quot;);
+				SetProperty(&quot;Description&quot;, &quot;&quot;);
+				SetProperty(&quot;GreyBlackListIND&quot;, &quot;B&quot;);
+				SetProperty(&quot;InquiryType&quot;, &quot;C&quot;);
+				SetProperty(&quot;ListType&quot;, &quot;2&quot;);
+				SetProperty(&quot;MSISDN&quot;, &quot;&quot;);
+				SetProperty(&quot;PersonBirthDate&quot;, &quot;01/16/1976&quot;);
+				SetProperty(&quot;PersonBirthPlace&quot;, &quot;ISTANBUL&quot;);
+				SetProperty(&quot;PersonFatherName&quot;, &quot;EMRE&quot;);
+				SetProperty(&quot;PersonGender&quot;, &quot;K&quot;);
+				SetProperty(&quot;PersonLastName&quot;, &quot;YILMAZ&quot;);
+				SetProperty(&quot;PersonMotherName&quot;, &quot;RUKNED&quot;);
+				SetProperty(&quot;PersonName&quot;, &quot;ÇIGDEM&quot;);
+				SetProperty(&quot;PersonNationalID&quot;, &quot;60790300476&quot;);
+				SetProperty(&quot;Reason&quot;, &quot;&quot;);
+				SetProperty(&quot;SearchType&quot;, &quot;1&quot;);
+				SetProperty(&quot;SiebelCustomerID&quot;, &quot;&quot;);
+				SetProperty(&quot;StartDate&quot;, &quot;&quot;);
+			}
+			//Fill dummy request
+
+			//Prepare WebService Input
+			sSiebelMessageRequest = outSet.GetChild(0).Copy();
+			if (sBGLVersion == &quot;V1&quot;){
+				sSiebelMessageRequest.SetType(&quot;GetBlackListRequest_v1:Body&quot;);
+				Header.SetType(&quot;GetBlackListRequest_v1:Header&quot;);
+			}
+			else {
+				sSiebelMessageRequest.SetType(&quot;GetBlackListRequest_v2:Body&quot;);
+				Header.SetType(&quot;GetBlackListRequest_v2:Header&quot;);
+			}
+			inpSetW = TheApplication().NewPropertySet();
+			inpSetW.AddChild(sSiebelMessageRequest.Copy());
+			inpSetW.AddChild(Header.Copy());
+			inpSetW.SetProperty(&quot;siebel_ws_param:RemoveEmptyTags&quot;, &quot;Y&quot;);
+			//Prepare WebService Input
+
+			//Call Web Service
+			sServiceW = TheApplication().GetService(&quot;SiebelAdapterICCBServicesPortType&quot;);
+			outSetW = TheApplication().NewPropertySet();
+			if (sBGLVersion == &quot;V1&quot;)
+				sServiceW.InvokeMethod(&quot;GetBlackList_v1&quot;, inpSetW, outSetW);
+			else
+				sServiceW.InvokeMethod(&quot;GetBlackList_v2&quot;, inpSetW, outSetW);
+			//Call Web Service
+
+		}
+
+	} catch (e) {
+		//NO ACTION!!!!! -&gt; catch empty to avoid issues on application start if service fails
+
+	}
+	finally {
+		inpSet = null;
+		outSet = null;
+		Header = null;
+		svc = null;
+		sService = null;
+		inpSetW = null;
+		outSetW = null;
+		sServiceW = null;
+		sSiebelMessage = null;
+		sSiebelMessageRequest = null;
+	}
+}"
+			   SEQUENCE="3"
+			   UPDATED="07/21/2016 11:11:47"
+			   UPDATED_BY="HRODRIGUES"
+			   CREATED="06/24/2013 21:17:18"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_SERVER_SCRIPT>
+			<APPLICATION_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="DryRunMernis"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function DryRunMernis()
+{
+	try
+	{
+		var inpSet : PropertySet = null;
+		var outSet : PropertySet= null;
+		var sService : Service = null;
+		var inpSetW : PropertySet = null;
+		var outSetW : PropertySet = null;
+		var sServiceW : Service = null;
+		var VerifyCustomerDataInput : PropertySet = null;
+		var INQUIRY_INPUT : PropertySet = null;
+		var BIRTH_DATE : PropertySet= null;
+		var sSiebelMessageRequest : PropertySet = null;
+	
+		var sGlobalLevel = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_ACTIVATION_DRYRUN&quot;,&quot;DRYRUN_STATE&quot;);
+		
+		if(sGlobalLevel != &quot;DRYRUN_STATE_IS_OFF&quot;)
+		{	
+			//create empty request
+			inpSet = TheApplication().NewPropertySet();
+			outSet = TheApplication().NewPropertySet();
+			sService = TheApplication().GetService(&quot;PRM ANI Utility Service&quot;);
+			
+			inpSet.SetProperty(&quot;Hierarchy Name&quot;,&quot;VerifyCustomerDataInput&quot;);
+			
+			sService.InvokeMethod(&quot;CreateEmptyPropSet&quot;, inpSet, outSet);
+			//create empty request
+			
+			//Fill dummy request
+			VerifyCustomerDataInput = outSet.GetChild(0).GetChild(0);
+			INQUIRY_INPUT = VerifyCustomerDataInput.GetChild(0).GetChild(0).GetChild(0);
+			
+			with(INQUIRY_INPUT)
+			{
+				SetProperty(&quot;BIRTH_PLACE&quot;,&quot;IZMIR&quot;);
+				SetProperty(&quot;FATHER_NAME&quot;,&quot;KERIM&quot;);
+				SetProperty(&quot;INQUIRY_TYPE&quot;,&quot;&quot;);
+				SetProperty(&quot;MOTHER_NAME&quot;,&quot;BURCU&quot;);
+				SetProperty(&quot;NAME&quot;,&quot;CAN&quot;);
+				SetProperty(&quot;SEX&quot;,&quot;M&quot;);
+				SetProperty(&quot;SURNAME&quot;,&quot;&quot;);
+				SetProperty(&quot;TC_ID&quot;,&quot;&quot;);
+			}
+			
+			BIRTH_DATE = INQUIRY_INPUT.GetChild(0).GetChild(0);
+			
+			with(BIRTH_DATE)
+			{
+				SetProperty(&quot;BIRTH_DAY&quot;,&quot;01&quot;);
+				SetProperty(&quot;BIRTH_MONTH&quot;,&quot;01&quot;);
+				SetProperty(&quot;BIRTH_YEAR&quot;,&quot;1970&quot;);
+			
+			}
+			
+			//Fill dummy request
+			
+			//Prepare WebService Input
+			sSiebelMessageRequest = outSet.GetChild(0).Copy();
+			sSiebelMessageRequest.SetType(&quot;VerifyCustomerDataRequest:VerifyCustomerDataRequest&quot;);
+			inpSetW = TheApplication().NewPropertySet();
+			inpSetW.AddChild(sSiebelMessageRequest.Copy());
+			//Prepare WebService Input
+			
+			//Call Web Service
+			sServiceW = TheApplication().GetService(&quot;VerifyCustomerDataPortType&quot;);
+			outSetW = TheApplication().NewPropertySet();
+			sServiceW.InvokeMethod(&quot;VerifyCustomerData&quot;, inpSetW, outSetW);
+			//Call Web Service
+			
+		} 
+	
+	}
+	catch(e)
+	{
+		//NO ACTION!!!!! -&gt; catch empty to avoid issues on application start if service fails
+	}
+	finally
+	{
+		inpSet = null;
+		outSet = null;
+		sService = null;
+		inpSetW = null;
+		outSetW = null;
+		sServiceW = null;
+		VerifyCustomerDataInput = null;
+		BIRTH_DATE = null;
+		INQUIRY_INPUT = null;
+		sSiebelMessageRequest = null;
+	}
+}"
+			   SEQUENCE="4"
+			   UPDATED="07/21/2016 11:11:47"
+			   UPDATED_BY="HRODRIGUES"
+			   CREATED="07/14/2013 01:52:16"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_SERVER_SCRIPT>
+			<APPLICATION_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GetPositionType"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GetPositionType(psOutput)
+{
+	try
+	{
+		//VFTRCBU-31632 - HRODRIGUES - Function created to get the user position information
+		var BOPosition	: BusObject = TheApplication().GetBusObject(&quot;Position&quot;);
+		var BCPosition	: BusComp	= BOPosition.GetBusComp(&quot;Position&quot;);
+		var strPositionName			= TheApplication().PositionName();
+		var strPositionType = &quot;&quot;;
+		var strLAccess = &quot;&quot;;
+		var strDepartment = &quot;&quot;; 
+		var strOrg = &quot;&quot;;
+		
+		BCPosition.SetViewMode(AllView);
+		BCPosition.ClearToQuery();
+		BCPosition.ActivateField(&quot;Position Type&quot;);
+		BCPosition.ActivateField(&quot;Name&quot;);
+		BCPosition.ActivateField(&quot;VF Level of Access&quot;);
+		BCPosition.ActivateField(&quot;VF Department&quot;);
+		BCPosition.ActivateField(&quot;Organization&quot;);
+		BCPosition.SetSearchSpec (&quot;Name&quot;, strPositionName);
+		BCPosition.ExecuteQuery(ForwardOnly);
+		if(BCPosition.FirstRecord())
+		{
+			strPositionType = BCPosition.GetFieldValue(&quot;Position Type&quot;);
+			strLAccess		= BCPosition.GetFieldValue(&quot;VF Level of Access&quot;);
+			strDepartment   = BCPosition.GetFieldValue(&quot;VF Department&quot;);
+			strOrg			= BCPosition.GetFieldValue(&quot;Organization&quot;);
+			psOutput.SetProperty(&quot;OrgName&quot;,strOrg);
+			psOutput.SetProperty(&quot;Department&quot;,strDepartment);
+			psOutput.SetProperty(&quot;PosType&quot;,strPositionType);
+			psOutput.SetProperty(&quot;LAccess&quot;,strLAccess);//WP01
+			return(strPositionType);
+		}
+	}
+	finally
+	{
+		BCPosition = null;
+		BOPosition = null;
+	}
+}"
+			   SEQUENCE="5"
+			   UPDATED="07/21/2016 11:12:43"
+			   UPDATED_BY="HRODRIGUES"
+			   CREATED="07/21/2016 11:11:33"
+			   CREATED_BY="HRODRIGUES">
+			</APPLICATION_SERVER_SCRIPT>
+			<APPLICATION_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GetSystemPreference"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GetSystemPreference(Name)
+{
+	try
+	{
+		var boSysPref :BusObject = TheApplication().GetBusObject(&quot;System Preferences&quot;);
+		var bcSysPref :BusComp   = boSysPref.GetBusComp(&quot;System Preferences&quot;);
+		var SysPrefValue = &quot;&quot;;		
+		var SysPrefName = Name;
+
+		bcSysPref.SetViewMode(AllView);
+		bcSysPref.ClearToQuery();
+		bcSysPref.ActivateField(&quot;Name&quot;);
+		bcSysPref.ActivateField(&quot;Value&quot;);
+		bcSysPref.SetSearchSpec(&quot;Name&quot;,SysPrefName);
+		bcSysPref.ExecuteQuery(ForwardOnly);
+		
+		if (bcSysPref.FirstRecord())
+		{
+			SysPrefValue = bcSysPref.GetFieldValue(&quot;Value&quot;);
+		}			
+		
+		return(SysPrefValue);
+	}
+	catch(e)
+	{
+		SysPrefValue = &quot;&quot;;
+	}
+	finally
+	{
+		 bcSysPref    = null;
+		 boSysPref	 = null;
+	}
+}"
+			   SEQUENCE="6"
+			   UPDATED="03/23/2017 14:14:42"
+			   UPDATED_BY="EFONSECA"
+			   CREATED="03/23/2017 14:14:42"
+			   CREATED_BY="EFONSECA">
+			</APPLICATION_SERVER_SCRIPT>
+			<APPLICATION_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="LogError"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function LogError(TipoOggetto,NomeOggetto,NomeMetodo,ErrorCode,ErrorDescription,ErrorFlag,MoreInfo)
+{ // VFLOGEVENT
+	try{
+		var inpSet = &quot;&quot;;
+		var outSet = &quot;&quot;;
+		var sService = &quot;&quot;;
+		
+		var nGlobalLogLevel = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_LOG_LEVEL&quot;,&quot;LOG_LEVEL&quot;);
+		var nSessionLogLevel = TheApplication().GetProfileAttr(&quot;VF_TRACE_SESSIONE_UTENTE&quot;);
+		//var sProfileSessionId = TheApplication().GetProfileAttr(&quot;VF_LOG_MANAGEMENT_SESSIONE_UTENTE_ID&quot;);
+
+		if(nGlobalLogLevel == &quot;1&quot; || nGlobalLogLevel == &quot;2&quot; || nSessionLogLevel == &quot;ON&quot;)
+		{
+			inpSet = TheApplication().NewPropertySet();
+			outSet = TheApplication().NewPropertySet();
+			sService = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+			/* UTENTE03 -&gt; Now the WF Event Log do this
+			var currentdate= new Date();
+			var sysDateDateUTC = Date.UTC(currentdate.getFullYear(),currentdate.getMonth(),currentdate.getDate(),currentdate.getHours(),currentdate.getMinutes(),currentdate.getSeconds());
+			var nMillisecond = currentdate.getMilliseconds();
+			sysDateDateUTC = sysDateDateUTC+nMillisecond;
+			*/
+			inpSet.SetProperty(&quot;ProcessName&quot;, &quot;VF Event Log Workflow&quot;);
+			inpSet.SetProperty(&quot;VF Error Flag&quot;, ErrorFlag); //“Y” shows error message at GUI, “N” does not show the error message at GUI (suitable for server process requests)
+			inpSet.SetProperty(&quot;VF Event Type&quot;, TipoOggetto);
+			inpSet.SetProperty(&quot;VF Event Object&quot;, NomeOggetto);
+			inpSet.SetProperty(&quot;VF Event Name&quot;,NomeMetodo);
+			inpSet.SetProperty(&quot;VF Event Description&quot;,ErrorDescription);
+			inpSet.SetProperty(&quot;VF Error Code&quot;,ErrorCode);
+			inpSet.SetProperty(&quot;VF Log Level&quot;,&quot;ERROR&quot;);
+			//inpSet.SetProperty(&quot;VF Session Id&quot;,sProfileSessionId);
+			inpSet.SetProperty(&quot;VF More Info&quot;,MoreInfo);
+			//inpSet.SetProperty(&quot;VF Timestamp&quot;,sysDateDateUTC);
+			sService.InvokeMethod(&quot;RunProcess&quot;, inpSet, outSet);
+			
+			return(&quot;&quot;);
+		}
+	
+	}
+	catch(e)
+	{
+		//TheApplication().RaiseErrorText(&quot;AN ERROR IN ERROR FUNCTION OCCURRED&quot;);
+		//throw(e);
+		return(CancelOperation);
+	}
+	finally
+	{
+		inpSet = null;
+		outSet = null;
+		sService = null;
+	}
+}"
+			   SEQUENCE="7"
+			   UPDATED="03/23/2017 14:14:42"
+			   UPDATED_BY="EFONSECA"
+			   CREATED="12/23/2013 08:30:11"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_SERVER_SCRIPT>
+			<APPLICATION_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="PositionHasRole"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="//JMARQUES - WA#39 
+function PositionHasRole(roles, positionId)
+{
+	var listOfRoles = roles.split(&quot;,&quot;);
+	var numberOfListOfRoles = listOfRoles.length;
+	var sService = TheApplication().GetService(&quot;Workflow Process Manager&quot;);	
+	var inpSet = TheApplication().NewPropertySet();
+	var outSet = TheApplication().NewPropertySet();
+	var positionRoles;
+	var positionRolesAux;
+	
+	inpSet.SetProperty(&quot;ProcessName&quot;, &quot;TELCO Available Roles by Position Id WF&quot;);
+	inpSet.SetProperty(&quot;Object Id&quot;, positionId); 
+	sService.InvokeMethod(&quot;RunProcess&quot;, inpSet, outSet);
+	positionRoles = outSet.GetProperty(&quot;AvailableRoles&quot;);
+	positionRolesAux = positionRoles.split(&quot;,&quot;);
+	
+	var numberOfRoles = 0;
+	
+	while(numberOfListOfRoles &gt; 0)
+	{		
+		numberOfRoles = positionRolesAux.length;
+	
+		while(numberOfRoles&gt;0)
+		{
+			if(Clib.stricmp(positionRolesAux[numberOfRoles-1], listOfRoles[numberOfListOfRoles-1])== 0)
+			{
+				return true;
+			}
+			numberOfRoles = numberOfRoles-1;
+		}
+		numberOfListOfRoles = numberOfListOfRoles-1;
+	}
+	return false;
+}"
+			   SEQUENCE="8"
+			   UPDATED="03/23/2017 14:14:42"
+			   UPDATED_BY="EFONSECA"
+			   CREATED="04/30/2015 09:21:07"
+			   CREATED_BY="JMARQUES">
+			</APPLICATION_SERVER_SCRIPT>
+			<APPLICATION_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="TraceData"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function TraceData(TipoOggetto,NomeOggetto,NomeMetodo,EventDescription,MoreInfo,CurrentStep)
+{ // VFLOGEVENT
+	try{
+		var inpSet = &quot;&quot;;
+		var outSet = &quot;&quot;;
+		var sService = &quot;&quot;;
+	
+		var nGlobalLogLevel = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_LOG_LEVEL&quot;,&quot;LOG_LEVEL&quot;);
+		var nSessionLogLevel = TheApplication().GetProfileAttr(&quot;VF_TRACE_SESSIONE_UTENTE&quot;);
+		//var sProfileSessionId = TheApplication().GetProfileAttr(&quot;VF_LOG_MANAGEMENT_SESSIONE_UTENTE_ID&quot;);
+		
+		if(nGlobalLogLevel == &quot;2&quot; || nSessionLogLevel == &quot;ON&quot;)
+		{	
+			inpSet = TheApplication().NewPropertySet();
+			outSet = TheApplication().NewPropertySet();
+			sService = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+			/* UTENTE03 -&gt; Now the WF Event Log do this
+			var currentdate= new Date();
+			var sysDateDateUTC = Date.UTC(currentdate.getFullYear(),currentdate.getMonth(),currentdate.getDate(),currentdate.getHours(),currentdate.getMinutes(),currentdate.getSeconds());
+			var nMillisecond = currentdate.getMilliseconds();
+			sysDateDateUTC = sysDateDateUTC+nMillisecond;
+			*/
+	
+			inpSet.SetProperty(&quot;ProcessName&quot;, &quot;VF Event Log Workflow&quot;);
+			inpSet.SetProperty(&quot;VF Error Flag&quot;, &quot;N&quot;); //“Y” shows error message at GUI, “N” does not show the error message at GUI (suitable for server process requests)
+			inpSet.SetProperty(&quot;VF Event Type&quot;, TipoOggetto);
+			inpSet.SetProperty(&quot;VF Event Object&quot;, NomeOggetto);
+			inpSet.SetProperty(&quot;VF Event Name&quot;,NomeMetodo);
+			inpSet.SetProperty(&quot;VF Event Description&quot;,EventDescription);
+			inpSet.SetProperty(&quot;VF Log Level&quot;,&quot;DEBUG&quot;);
+			inpSet.SetProperty(&quot;VF More Info&quot;,MoreInfo);
+			inpSet.SetProperty(&quot;VF Event Step&quot;,CurrentStep);
+			//inpSet.SetProperty(&quot;VF Session Id&quot;,sProfileSessionId);
+			//inpSet.SetProperty(&quot;VF Timestamp&quot;,sysDateDateUTC);
+			sService.InvokeMethod(&quot;RunProcess&quot;, inpSet, outSet);
+			
+			return(&quot;&quot;);
+		}
+	
+	}
+	catch(e)
+	{
+		//TheApplication().RaiseErrorText(&quot;AN ERROR IN TRACE FUNCTION OCCURRED&quot;);
+		//throw(e);
+		return(CancelOperation);
+	}
+	finally
+	{
+		inpSet = null;
+		outSet = null;
+		sService = null;
+	}
+	
+}"
+			   SEQUENCE="9"
+			   UPDATED="03/23/2017 14:14:42"
+			   UPDATED_BY="EFONSECA"
+			   CREATED="12/23/2013 08:30:11"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_SERVER_SCRIPT>
+			<APPLICATION_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="UserHasRole"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function UserHasRole(roles)
+{
+	var listOfRoles = roles.split(&quot;,&quot;);
+	var numberOfListOfRoles = listOfRoles.length;
+	var userRoles = TheApplication().GetProfileAttr(&quot;TELCO.PositionProfile:Role.AvailableRoles&quot;).split(&quot;,&quot;);
+	var numberOfRoles = 0;
+	
+	while(numberOfListOfRoles &gt; 0)
+	{		
+		numberOfRoles = userRoles.length;
+	
+		while(numberOfRoles&gt;0)
+		{
+			if(Clib.stricmp(userRoles[numberOfRoles-1], listOfRoles[numberOfListOfRoles-1])== 0)
+			{
+				return true;
+			}
+			numberOfRoles = numberOfRoles-1;
+		}
+		numberOfListOfRoles = numberOfListOfRoles-1;
+	}
+	return false;
+}"
+			   SEQUENCE="10"
+			   UPDATED="03/23/2017 14:14:42"
+			   UPDATED_BY="EFONSECA"
+			   CREATED="08/14/2014 21:05:34"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_SERVER_SCRIPT>
+			<APPLICATION_TOOLBAR
+			   INACTIVE="N"
+			   NAME="History"
+			   SEQUENCE="2"
+			   TOOLBAR="History"
+			   UPDATED="11/08/1999 15:10:51"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/08/1999 15:10:51"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_TOOLBAR>
+			<APPLICATION_TOOLBAR
+			   INACTIVE="N"
+			   NAME="Main"
+			   SEQUENCE="1"
+			   TOOLBAR="Main"
+			   UPDATED="11/08/1999 15:10:43"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/08/1999 15:10:43"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_TOOLBAR>
+			<APPLICATION_TOOLBAR
+			   INACTIVE="Y"
+			   NAME="Search"
+			   SEQUENCE="3"
+			   TOOLBAR="Search"
+			   UPDATED="12/15/2000 17:37:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/13/2000 21:02:49"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_TOOLBAR>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="ClientBusinessService0"
+			   VALUE="Message Bar"
+			   UPDATED="08/27/2005 07:34:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2005 07:34:36"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="ClientBusinessService1"
+			   VALUE="Communications Client"
+			   UPDATED="08/27/2005 07:34:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2005 07:34:36"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="ClientBusinessService10"
+			   VALUE="VF Manage Campaign"
+			   UPDATED="09/16/2011 17:54:24"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/16/2011 17:54:24"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="ClientBusinessService11"
+			   VALUE="VF Controls"
+			   UPDATED="09/16/2011 17:54:54"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/16/2011 17:54:54"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="ClientBusinessService12"
+			   VALUE="VF BI Publisher Template"
+			   UPDATED="12/12/2011 12:50:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/12/2011 12:50:13"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="ClientBusinessService13"
+			   VALUE="VF OldOrNew BA"
+			   UPDATED="12/28/2011 19:21:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/28/2011 19:21:19"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="ClientBusinessService14"
+			   VALUE="ACS General Operations"
+			   UPDATED="12/30/2011 13:00:17"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/30/2011 13:00:17"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="ClientBusinessService15"
+			   VALUE="VF TRK PRM Copy BA"
+			   UPDATED="01/10/2012 12:31:08"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/10/2012 12:31:08"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   COMMENTS="BS Utilities for VF TK Project"
+			   INACTIVE="N"
+			   NAME="ClientBusinessService16"
+			   VALUE="VF TRK Utilities"
+			   UPDATED="06/04/2012 16:19:06"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/04/2012 16:19:06"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="ClientBusinessService17"
+			   VALUE="Persistent Customer Dashboard"
+			   UPDATED="04/08/2013 14:06:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/08/2013 14:06:36"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   COMMENTS="CR690 28.07.2013"
+			   INACTIVE="N"
+			   NAME="ClientBusinessService18"
+			   VALUE="VF Order Controls Proxy Service"
+			   UPDATED="07/29/2013 16:24:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/29/2013 16:24:14"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="ClientBusinessService19"
+			   VALUE="TELCO Order Management Utilities"
+			   UPDATED="08/28/2014 12:57:56"
+			   UPDATED_BY="DGUERREIRO"
+			   CREATED="08/28/2014 12:57:56"
+			   CREATED_BY="DGUERREIRO">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="ClientBusinessService2"
+			   VALUE="ContentBase - Asset Publish Service"
+			   UPDATED="08/27/2005 07:34:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2005 07:34:37"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   COMMENTS="RLOURENCO - WA#03 - Added to support Com Invoice Profile BS validations in PRM task"
+			   INACTIVE="N"
+			   NAME="ClientBusinessService20"
+			   VALUE="VF Account General Operations"
+			   UPDATED="09/29/2014 18:00:25"
+			   UPDATED_BY="RLOURENCO"
+			   CREATED="09/29/2014 17:46:14"
+			   CREATED_BY="RLOURENCO">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   COMMENTS="JMARQUES - WA#39 - Added to use in PRM Task Activation Bar"
+			   INACTIVE="N"
+			   NAME="ClientBusinessService21"
+			   VALUE="VFTREBU Convertion Browser BS"
+			   UPDATED="12/19/2014 13:03:58"
+			   UPDATED_BY="JMARQUES"
+			   CREATED="12/19/2014 13:01:34"
+			   CREATED_BY="JMARQUES">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   COMMENTS="JMARQUES - WA#39 - Added to use in PRM Task Activation Bar"
+			   INACTIVE="N"
+			   NAME="ClientBusinessService22"
+			   VALUE="TELCO BusComp Utils"
+			   UPDATED="12/19/2014 16:56:22"
+			   UPDATED_BY="JMARQUES"
+			   CREATED="12/19/2014 16:56:22"
+			   CREATED_BY="JMARQUES">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   COMMENTS="VFTRCBU-13148"
+			   INACTIVE="N"
+			   NAME="ClientBusinessService23"
+			   VALUE="VF Bill Cycle Change Request BS"
+			   UPDATED="07/21/2015 11:10:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="07/21/2015 11:10:07"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="ClientBusinessService24"
+			   VALUE="FINS Teller UI Navigation"
+			   UPDATED="02/11/2017 18:02:07"
+			   UPDATED_BY="JMARQUES"
+			   CREATED="02/11/2017 18:02:07"
+			   CREATED_BY="JMARQUES">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="ClientBusinessService3"
+			   VALUE="ContentBase - Asset Version Publish"
+			   UPDATED="08/27/2005 07:34:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2005 07:34:37"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="ClientBusinessService4"
+			   VALUE="Workflow Process Manager"
+			   UPDATED="08/27/2005 07:34:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2005 07:34:37"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="ClientBusinessService5"
+			   VALUE="Task Assistant UI Service"
+			   UPDATED="08/27/2005 07:34:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2005 07:34:37"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="ClientBusinessService6"
+			   VALUE="ContentBase - Asset Preview Publish Service"
+			   UPDATED="08/27/2005 07:34:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2005 07:34:37"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="ClientBusinessService7"
+			   VALUE="PrintListService"
+			   UPDATED="08/27/2005 07:34:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/27/2005 07:34:37"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="ClientBusinessService8"
+			   VALUE="Task UI Service (SWE)"
+			   UPDATED="08/26/2011 10:30:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/26/2011 10:30:45"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="ClientBusinessService9"
+			   VALUE="ACS NI General Operations"
+			   UPDATED="08/26/2011 10:30:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="08/26/2011 10:30:45"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="HTMLFramesTitle0"
+			   VALUE="_swe:Blank Frame Ignore,_sweclient:Siebel Application Frame"
+			   UPDATED="07/21/2014 11:12:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 22:37:33"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="HTMLFramesTitle1"
+			   VALUE="_swecda:Blank Frame Ignore,_swecdawksp:Blank Frame Ignore"
+			   UPDATED="07/21/2014 11:12:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 22:37:33"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="PDQDisabledView0"
+			   VALUE="Order History View (eSales)"
+			   UPDATED="07/21/2014 14:11:09"
+			   UPDATED_BY="MCOSTA"
+			   CREATED="08/27/2005 07:34:37"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="PDQDisabledView1"
+			   VALUE="Order History View - My Company (eSales)"
+			   UPDATED="07/21/2014 14:11:12"
+			   UPDATED_BY="MCOSTA"
+			   CREATED="08/27/2005 07:34:37"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="PDQDisabledView2"
+			   VALUE="Order History Summary View (eSales)"
+			   UPDATED="07/21/2014 14:11:17"
+			   UPDATED_BY="MCOSTA"
+			   CREATED="08/27/2005 07:34:37"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="PDQDisabledView3"
+			   VALUE="Order Confirmation View (eSales)"
+			   UPDATED="07/21/2014 14:11:18"
+			   UPDATED_BY="MCOSTA"
+			   CREATED="08/27/2005 07:34:37"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="PDQDisabledView4"
+			   VALUE="Order Approval View (eSales)"
+			   UPDATED="07/21/2014 14:11:15"
+			   UPDATED_BY="MCOSTA"
+			   CREATED="08/27/2005 07:34:37"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="PDQDisabledView5"
+			   VALUE="Saved Quotes View (eSales)"
+			   UPDATED="07/21/2014 14:11:15"
+			   UPDATED_BY="MCOSTA"
+			   CREATED="08/27/2005 07:34:37"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="PDQDisabledView6"
+			   VALUE="Saved Quotes View - My Company (eSales)"
+			   UPDATED="07/21/2014 14:11:15"
+			   UPDATED_BY="MCOSTA"
+			   CREATED="08/27/2005 07:34:37"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="PDQDisabledView7"
+			   VALUE="Saved Quote Detail View (eSales)"
+			   UPDATED="07/21/2014 14:11:15"
+			   UPDATED_BY="MCOSTA"
+			   CREATED="08/27/2005 07:34:37"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<APPLICATION_USER_PROP
+			   INACTIVE="N"
+			   NAME="PDQDisabledView8"
+			   VALUE="Quote Summary View (eSales)"
+			   UPDATED="07/21/2014 14:11:13"
+			   UPDATED_BY="MCOSTA"
+			   CREATED="08/27/2005 07:34:37"
+			   CREATED_BY="SADMIN">
+			</APPLICATION_USER_PROP>
+			<PAGE_TAB
+			   COMMENTS="For PRM Purposes"
+			   INACTIVE="Y"
+			   NAME="AMES PRM Account Dealer Screen"
+			   SCREEN="AMES PRM Account Dealer Screen"
+			   SEQUENCE="14"
+			   UPDATED="07/16/2014 19:59:51"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2009 03:14:28"
+			   CREATED_BY="SADMIN">
+				<PAGE_TAB_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TEXT="Account"
+				   TRANSLATE="Y"
+				   UPDATED="02/01/2009 03:14:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 03:14:33"
+				   CREATED_BY="SADMIN">
+				</PAGE_TAB_LOCALE>
+			</PAGE_TAB>
+			<PAGE_TAB
+			   COMMENTS="For PRM Purposes"
+			   INACTIVE="Y"
+			   NAME="AMES PRM Dealer Account Dealer Screen"
+			   SCREEN="AMES PRM Dealer Account Dealer Screen"
+			   SEQUENCE="1"
+			   UPDATED="02/01/2009 03:14:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/01/2009 03:14:28"
+			   CREATED_BY="SADMIN">
+				<PAGE_TAB_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TEXT="Account"
+				   TRANSLATE="Y"
+				   UPDATED="02/01/2009 03:14:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 03:14:33"
+				   CREATED_BY="SADMIN">
+				</PAGE_TAB_LOCALE>
+			</PAGE_TAB>
+			<PAGE_TAB
+			   COMMENTS="For PRMon 17/07/06"
+			   INACTIVE="Y"
+			   NAME="Accounts Screen"
+			   SCREEN="Accounts Screen"
+			   SEQUENCE="16"
+			   TEXT_-_STRING_REFERENCE="SBL_ACCOUNT-1004224420-0HD"
+			   UPDATED="07/16/2014 19:59:51"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2009 03:14:28"
+			   CREATED_BY="SADMIN">
+				<PAGE_TAB_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TEXT="Accounts"
+				   TRANSLATE="Y"
+				   UPDATED="02/01/2009 03:14:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 03:14:33"
+				   CREATED_BY="SADMIN">
+				</PAGE_TAB_LOCALE>
+			</PAGE_TAB>
+			<PAGE_TAB
+			   INACTIVE="Y"
+			   NAME="Asset Management Screen"
+			   SCREEN="Asset Management Screen"
+			   SEQUENCE="23"
+			   UPDATED="07/16/2014 19:59:51"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2009 03:14:28"
+			   CREATED_BY="SADMIN">
+				<PAGE_TAB_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TEXT="Asset"
+				   TRANSLATE="Y"
+				   UPDATED="02/01/2009 03:14:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 03:14:33"
+				   CREATED_BY="SADMIN">
+				</PAGE_TAB_LOCALE>
+			</PAGE_TAB>
+			<PAGE_TAB
+			   COMMENTS="CHAMP Planning"
+			   INACTIVE="Y"
+			   NAME="CHAMP Planning Screen (SCW)"
+			   SCREEN="CHAMP Planning Screen (SCW)"
+			   SEQUENCE="2"
+			   TEXT_-_STRING_REFERENCE="SBL_CHAMP_PLANNING-1004225941-00L"
+			   UPDATED="07/16/2014 19:59:51"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="09/07/2000 19:47:33"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   COMMENTS="Added for CR615"
+			   INACTIVE="N"
+			   NAME="Campaign Handset Stock Query"
+			   SCREEN="Campaign Handset Stock Query"
+			   SEQUENCE="25"
+			   TEXT_-_STRING_REFERENCE="X_VF_CAMPAIGN_HANDSET_STOCK_INFO_VIEW"
+			   UPDATED="07/16/2014 19:59:51"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="10/24/2013 12:42:27"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   INACTIVE="Y"
+			   NAME="Company Collaboration Screen"
+			   SCREEN="Company Collaboration Screen"
+			   SEQUENCE="17"
+			   UPDATED="07/16/2014 19:59:51"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2009 03:14:28"
+			   CREATED_BY="SADMIN">
+				<PAGE_TAB_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TEXT="Partner Collaboration"
+				   TRANSLATE="Y"
+				   UPDATED="02/01/2009 03:14:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 03:14:33"
+				   CREATED_BY="SADMIN">
+				</PAGE_TAB_LOCALE>
+			</PAGE_TAB>
+			<PAGE_TAB
+			   INACTIVE="Y"
+			   NAME="HLS Cases Screen (SCW)"
+			   SCREEN="HLS Cases Screen (SCW)"
+			   SEQUENCE="3"
+			   TEXT_-_STRING_REFERENCE="SBL_CASES-1004225215-01S"
+			   UPDATED="07/16/2014 19:59:51"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="06/03/2003 21:46:30"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   COMMENTS="Opportunities"
+			   INACTIVE="Y"
+			   NAME="Opportunities Screen (SCW)"
+			   SCREEN="Opportunities Screen (SCW)"
+			   SEQUENCE="4"
+			   TEXT_-_STRING_REFERENCE="SBL_OPPORTUNITIES-1004225027-4PH"
+			   UPDATED="07/16/2014 19:59:51"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="11/08/1999 15:13:47"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   INACTIVE="Y"
+			   NAME="PLW Billing Account"
+			   SCREEN="PLW Billing Account"
+			   SEQUENCE="5"
+			   TEXT_-_STRING_REFERENCE="SBL_BILLING_ACCOUNT-1004225051-19I"
+			   UPDATED="07/16/2014 19:59:51"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2009 03:14:28"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   INACTIVE="Y"
+			   NAME="PPR Partner Program Portal Applications Screen"
+			   SCREEN="PPR Partner Program Portal Applications Screen"
+			   SEQUENCE="6"
+			   TEXT_-_STRING_REFERENCE="SBL_PPR_PROGRAM_APPLICATIONS_HOR"
+			   UPDATED="07/16/2014 19:59:51"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/25/2004 13:45:10"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   INACTIVE="Y"
+			   NAME="PPR Partner Program Portal Membership Screen"
+			   SCREEN="PPR Partner Program Portal Membership Screen"
+			   SEQUENCE="7"
+			   TEXT_-_STRING_REFERENCE="SBL_PPR_PROGRAM_MEMBERSHIP_HOR"
+			   UPDATED="07/16/2014 19:59:51"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/25/2004 13:45:10"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   INACTIVE="Y"
+			   NAME="PRM Asset Screen"
+			   SCREEN="PRM Asset Screen"
+			   SEQUENCE="23"
+			   TEXT_-_STRING_REFERENCE="X_PRM_SBL_ASSETS"
+			   UPDATED="07/16/2014 19:59:51"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="09/12/2011 19:57:01"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   COMMENTS="Created: ISCKMOHAN for PRM Demo on 29/01/2013"
+			   INACTIVE="Y"
+			   NAME="PRM Demo Screen"
+			   SCREEN="PRM Demo Screen"
+			   SEQUENCE="27"
+			   UPDATED="07/16/2014 19:59:52"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/31/2013 12:38:04"
+			   CREATED_BY="SADMIN">
+				<PAGE_TAB_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TEXT="Group Management"
+				   TRANSLATE="Y"
+				   UPDATED="01/31/2013 12:38:04"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/31/2013 12:38:04"
+				   CREATED_BY="SADMIN">
+				</PAGE_TAB_LOCALE>
+			</PAGE_TAB>
+			<PAGE_TAB
+			   INACTIVE="Y"
+			   NAME="PRM VF Billing Account"
+			   SCREEN="PRM VF Billing Account"
+			   SEQUENCE="22"
+			   TEXT_-_STRING_REFERENCE="SBL_PAYMENT_PROFILE-0114141154-03F"
+			   UPDATED="07/16/2014 19:59:52"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/26/2011 10:30:45"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   INACTIVE="Y"
+			   NAME="PRM VF TR Account"
+			   SCREEN="PRM VF TR Account"
+			   SEQUENCE="21"
+			   TEXT_-_STRING_REFERENCE="SBL_ACCOUNT-1004224420-0HD"
+			   UPDATED="07/16/2014 19:59:52"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/26/2011 10:30:45"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   INACTIVE="N"
+			   NAME="PRM VF TR MyOrders Screen"
+			   SCREEN="PRM VF TR MyOrders Screen"
+			   SEQUENCE="26"
+			   TEXT_-_STRING_REFERENCE="X_VF_PRM_MYORDERS"
+			   UPDATED="07/16/2014 19:59:52"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="12/12/2011 12:50:14"
+			   CREATED_BY="SADMIN">
+				<PAGE_TAB_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="12/19/2011 13:15:05"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/12/2011 12:50:14"
+				   CREATED_BY="SADMIN">
+				</PAGE_TAB_LOCALE>
+			</PAGE_TAB>
+			<PAGE_TAB
+			   INACTIVE="Y"
+			   NAME="PRM VF TR Order Screen"
+			   SCREEN="PRM VF TR Order Screen"
+			   SEQUENCE="22"
+			   TEXT_-_STRING_REFERENCE="SBL_ORDERS-1004224541-12M"
+			   UPDATED="07/16/2014 19:59:52"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/26/2011 10:30:45"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   COMMENTS="Partner Finder"
+			   INACTIVE="Y"
+			   NAME="Partner Finder Screen"
+			   SCREEN="Partner Finder Screen"
+			   SEQUENCE="15"
+			   TEXT_-_STRING_REFERENCE="SBL_PARTNER_LOCATOR-1004230900-0C0"
+			   UPDATED="07/16/2014 19:59:52"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="09/19/2000 15:39:47"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   COMMENTS="Partner Locator OpenUI"
+			   INACTIVE="Y"
+			   NAME="Partner Finder Screen - OpenUI"
+			   SCREEN="Partner Finder Screen - OpenUI"
+			   SEQUENCE="14"
+			   TEXT_-_STRING_REFERENCE="SBL_PARTNER_LOCATOR-1004230900-0C0"
+			   UPDATED="06/03/2014 23:00:37"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 22:38:29"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   COMMENTS="7.5 Partner Analytics"
+			   INACTIVE="Y"
+			   NAME="Partner Portal Analytics Screen (SCW)"
+			   SCREEN="Partner Portal Analytics Screen (SCW)"
+			   SEQUENCE="8"
+			   TEXT_-_STRING_REFERENCE="SBL_ANALYTICS-1004225940-00B"
+			   UPDATED="07/16/2014 19:59:52"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/12/2002 23:12:23"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   INACTIVE="Y"
+			   NAME="Partner Programs Screen"
+			   SCREEN="Partner Programs Screen"
+			   SEQUENCE="9"
+			   TEXT_-_STRING_REFERENCE="SBL_PARTNER_PROGRAMS-1009090200-36X"
+			   UPDATED="07/16/2014 19:59:52"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/25/2004 13:45:11"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   INACTIVE="Y"
+			   NAME="Sales Order Screen"
+			   SCREEN="Sales Order Screen"
+			   SEQUENCE="19"
+			   TEXT_-_STRING_REFERENCE="SBL_SALES_ORDER-1004224751-0GZ"
+			   UPDATED="07/16/2014 19:59:52"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2009 03:14:28"
+			   CREATED_BY="SADMIN">
+				<PAGE_TAB_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TEXT="Sales Order"
+				   TRANSLATE="Y"
+				   UPDATED="02/01/2009 03:14:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 03:14:33"
+				   CREATED_BY="SADMIN">
+				</PAGE_TAB_LOCALE>
+			</PAGE_TAB>
+			<PAGE_TAB
+			   COMMENTS="For Testing Purposes"
+			   INACTIVE="Y"
+			   NAME="TeXCo Account"
+			   SCREEN="TeXCo Account"
+			   SEQUENCE="18"
+			   UPDATED="07/16/2014 19:59:52"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2009 03:14:29"
+			   CREATED_BY="SADMIN">
+				<PAGE_TAB_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TEXT="Accounts"
+				   TRANSLATE="Y"
+				   UPDATED="02/01/2009 03:14:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 03:14:33"
+				   CREATED_BY="SADMIN">
+				</PAGE_TAB_LOCALE>
+			</PAGE_TAB>
+			<PAGE_TAB
+			   COMMENTS="SVS added for Drilling on Service Request ID"
+			   INACTIVE="Y"
+			   NAME="TeXCo Request"
+			   SCREEN="TeXCo Request"
+			   SEQUENCE="10"
+			   TEXT_-_STRING_REFERENCE="SBL_SERVICE_REQUEST-1004224617-1FC"
+			   UPDATED="07/16/2014 19:59:52"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2009 03:14:29"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   COMMENTS="Literature Catalog"
+			   INACTIVE="Y"
+			   NAME="User Catalog Screen (SCW)"
+			   SCREEN="User Catalog Screen (SCW)"
+			   SEQUENCE="11"
+			   TEXT_-_STRING_REFERENCE="SBL_INFO_CENTER-1004225947-01R"
+			   UPDATED="07/16/2014 19:59:52"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="07/31/2000 14:34:36"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   INACTIVE="N"
+			   NAME="VF PRM VPN Group Screen"
+			   SCREEN="VF PRM VPN Group Screen"
+			   SEQUENCE="30"
+			   TEXT_-_STRING_REFERENCE="X_VF_VF Main VPN Group Screen Name"
+			   UPDATED="07/16/2014 19:59:52"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="03/13/2013 20:13:39"
+			   CREATED_BY="SADMIN">
+				<PAGE_TAB_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/13/2013 20:13:39"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/13/2013 20:13:39"
+				   CREATED_BY="SADMIN">
+				</PAGE_TAB_LOCALE>
+			</PAGE_TAB>
+			<PAGE_TAB
+			   INACTIVE="N"
+			   NAME="VF TK PRM Service Request"
+			   SCREEN="VF TK PRM Service Request"
+			   SEQUENCE="24"
+			   TEXT_-_STRING_REFERENCE="SBL_SERVICE_REQUESTS-1004224821-2SZ"
+			   UPDATED="07/16/2014 19:59:53"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="12/12/2011 12:50:14"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   COMMENTS="Cambaz 2"
+			   INACTIVE="Y"
+			   NAME="VFTR Product Optin Management Screen"
+			   SCREEN="VFTR Product Optin Management Screen"
+			   SEQUENCE="1000"
+			   TEXT_-_STRING_REFERENCE="X_VFTR_PRODUCT_OPTIN_MANAGEMENT"
+			   UPDATED="04/20/2016 13:29:36"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/20/2016 13:29:36"
+			   CREATED_BY="ACAMBAS">
+				<PAGE_TAB_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/20/2016 13:29:36"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="04/20/2016 13:29:36"
+				   CREATED_BY="ACAMBAS">
+				</PAGE_TAB_LOCALE>
+			</PAGE_TAB>
+			<PAGE_TAB
+			   COMMENTS="WA15 FGUEDES"
+			   INACTIVE="N"
+			   NAME="VFTRCBU Customer Score Screen"
+			   SCREEN="VFTRCBU Customer Score Screen"
+			   SEQUENCE="55"
+			   TEXT_-_STRING_REFERENCE="X_VFTRCBU_CUSTOMER_SCORE"
+			   UPDATED="02/22/2016 16:29:18"
+			   UPDATED_BY="FCARRIL"
+			   CREATED="06/30/2015 10:58:11"
+			   CREATED_BY="FGUEDES">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   INACTIVE="N"
+			   NAME="VFTRCBU IMEI BlackList Screen"
+			   SCREEN="VFTRCBU IMEI BlackList Screen"
+			   SEQUENCE="35"
+			   TEXT_-_STRING_REFERENCE="X_VFTRCBU_IMEI_BLACKLIST"
+			   UPDATED="01/26/2015 20:25:31"
+			   UPDATED_BY="EFRADE"
+			   CREATED="01/26/2015 20:25:16"
+			   CREATED_BY="EFRADE">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   INACTIVE="N"
+			   NAME="VFTRCBU PRM GSM Inquiry Screen"
+			   SCREEN="VFTRCBU PRM GSM Inquiry Screen"
+			   SEQUENCE="2"
+			   TEXT_-_STRING_REFERENCE="X_GSM_INQUIRY"
+			   UPDATED="05/28/2015 07:36:27"
+			   UPDATED_BY="DTIMOTEO"
+			   CREATED="05/28/2015 07:36:27"
+			   CREATED_BY="DTIMOTEO">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   COMMENTS="WA18 JSOUSA"
+			   INACTIVE="N"
+			   NAME="VFTRCBU PRM MNP Screen New"
+			   SCREEN="VFTRCBU PRM MNP Screen New"
+			   SEQUENCE="45"
+			   TEXT_-_STRING_REFERENCE="X_VF_MNP_TRSCKING"
+			   UPDATED="04/23/2015 19:52:25"
+			   UPDATED_BY="JSOUSA"
+			   CREATED="04/23/2015 19:51:46"
+			   CREATED_BY="JSOUSA">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   COMMENTS="VFTRCBU-22428"
+			   INACTIVE="N"
+			   NAME="VFTRCBU PRM MSISDN SIM Card Screen"
+			   SCREEN="VFTRCBU PRM MSISDN SIM Card Screen"
+			   SEQUENCE="60"
+			   TEXT_-_STRING_REFERENCE="X_VFTRCBU_MSISDN_SIM_CARD"
+			   UPDATED="02/22/2016 16:29:20"
+			   UPDATED_BY="FCARRIL"
+			   CREATED="02/22/2016 14:26:46"
+			   CREATED_BY="FCARRIL">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   BITMAP_CATEGORY="Home"
+			   INACTIVE="N"
+			   NAME="VFTR_HomeScreen"
+			   SCREEN="VFTR_HomeScreen"
+			   SEQUENCE="1"
+			   TEXT_-_STRING_REFERENCE="X_VF_PRM_UNDERSC_HOME"
+			   UPDATED="07/16/2014 19:59:53"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/26/2011 10:30:45"
+			   CREATED_BY="SADMIN">
+				<PAGE_TAB_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TEXT="_"
+				   TRANSLATE="Y"
+				   UPDATED="04/08/2013 14:06:36"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/08/2013 14:06:36"
+				   CREATED_BY="SADMIN">
+				</PAGE_TAB_LOCALE>
+				<PAGE_TAB_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="TRK"
+				   NAME="TRK-STD"
+				   TEXT="_"
+				   TRANSLATE="Y"
+				   UPDATED="03/10/2014 08:30:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/10/2014 08:30:55"
+				   CREATED_BY="SADMIN">
+				</PAGE_TAB_LOCALE>
+			</PAGE_TAB>
+			<PAGE_TAB
+			   INACTIVE="N"
+			   NAME="VFTR_Siebel Universal Inbox Screen"
+			   SCREEN="VFTR_Siebel Universal Inbox Screen"
+			   SEQUENCE="20"
+			   TEXT_-_STRING_REFERENCE="SBL_INBOX-1004230852-09Z"
+			   UPDATED="07/16/2014 19:59:53"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/26/2011 10:30:45"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   COMMENTS="Home"
+			   INACTIVE="Y"
+			   NAME="eChannel Home Screen"
+			   SCREEN="eChannel Home Screen"
+			   SEQUENCE="13"
+			   TEXT_-_STRING_REFERENCE="SBL_HOME-1004230742-03C"
+			   UPDATED="07/16/2014 19:59:53"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="12/15/1999 21:25:21"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<PAGE_TAB
+			   COMMENTS="Catalog"
+			   INACTIVE="Y"
+			   NAME="eSales Catalog Screen"
+			   SCREEN="eSales Catalog Screen"
+			   SEQUENCE="12"
+			   TEXT_-_STRING_REFERENCE="SBL_PRODUCT_CATALOG-1004225951-02N"
+			   UPDATED="07/16/2014 19:59:53"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/22/2000 02:59:33"
+			   CREATED_BY="SADMIN">
+			</PAGE_TAB>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Bulk Request for Partner Portal"
+			   INACTIVE="N"
+			   NAME="ABO Bulk Request Screen"
+			   SCREEN="ABO Bulk Request Screen"
+			   SEQUENCE="140"
+			   TEXT_-_STRING_REFERENCE="SBL_ABO_BRS"
+			   UPDATED="07/16/2014 20:04:21"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="06/03/2014 22:38:22"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="AMES PRM Account Dealer Screen"
+			   SCREEN="AMES PRM Account Dealer Screen"
+			   SEQUENCE="124"
+			   TEXT_-_STRING_REFERENCE="SBL_ACCOUNT-1004224657-0D1"
+			   UPDATED="07/16/2014 19:59:53"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2009 03:13:25"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TEXT="Account"
+				   TRANSLATE="Y"
+				   UPDATED="02/01/2009 03:14:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 03:14:10"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="AMES PRM Dealer Account Dealer Screen"
+			   SCREEN="AMES PRM Dealer Account Dealer Screen"
+			   SEQUENCE="132"
+			   TEXT_-_STRING_REFERENCE="SBL_ACCOUNT-1004224657-0D1"
+			   UPDATED="07/16/2014 19:59:53"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2009 03:13:25"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TEXT="Account"
+				   TRANSLATE="Y"
+				   UPDATED="02/01/2009 03:14:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 03:14:10"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="For Prm on 17/07/06"
+			   INACTIVE="Y"
+			   NAME="Accounts Screen"
+			   SCREEN="Accounts Screen"
+			   SEQUENCE="133"
+			   TEXT_-_STRING_REFERENCE="SBL_ACCOUNTS-1004224658-0D3"
+			   UPDATED="07/16/2014 19:59:53"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2009 03:13:25"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Accounts"
+			   INACTIVE="Y"
+			   NAME="Accounts Screen (SCW)"
+			   SCREEN="Accounts Screen (SCW)"
+			   SEQUENCE="130"
+			   TEXT_-_STRING_REFERENCE="SBL_ACCOUNTS-1004224419-01T"
+			   UPDATED="07/16/2014 19:59:53"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/01/1999 21:44:53"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Activities"
+			   INACTIVE="Y"
+			   NAME="Activities Screen (SCW)"
+			   SCREEN="Activities Screen (SCW)"
+			   SEQUENCE="2"
+			   TEXT_-_STRING_REFERENCE="SBL_ACTIVITIES-1004224402-0DJ"
+			   UPDATED="07/16/2014 19:59:53"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/01/1999 22:16:32"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Agreements"
+			   INACTIVE="Y"
+			   NAME="Agreement Screen (SCW)"
+			   SCREEN="Agreement Screen (SCW)"
+			   SEQUENCE="3"
+			   TEXT_-_STRING_REFERENCE="SBL_ADMINISTRATION_-_AGREEMENTS-1004230822-023"
+			   UPDATED="07/16/2014 19:59:53"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="03/09/2002 04:54:26"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TEXT="Agreements"
+				   TRANSLATE="Y"
+				   UPDATED="02/01/2009 03:14:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 03:14:10"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Assets"
+			   INACTIVE="N"
+			   NAME="Asset Management Screen"
+			   SCREEN="Asset Management Screen"
+			   SEQUENCE="128"
+			   TEXT_-_STRING_REFERENCE="SBL_ASSETS-1004224605-1C1"
+			   UPDATED="07/16/2014 19:59:53"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2002 02:23:09"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="Business Service Administration Screen"
+			   SCREEN="Business Service Administration Screen"
+			   SEQUENCE="276"
+			   TEXT_-_STRING_REFERENCE="SBL_ADMINISTRATION_-_BUSINESS_SERVICE-1004230824-02K"
+			   UPDATED="03/14/2017 15:28:50"
+			   UPDATED_BY="SNOIVO"
+			   CREATED="03/14/2017 15:27:40"
+			   CREATED_BY="SNOIVO">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/14/2017 15:28:44"
+				   UPDATED_BY="SNOIVO"
+				   CREATED="03/14/2017 15:28:44"
+				   CREATED_BY="SNOIVO">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="CHAMP Planning"
+			   INACTIVE="Y"
+			   NAME="CHAMP Planning Screen (SCW)"
+			   SCREEN="CHAMP Planning Screen (SCW)"
+			   SEQUENCE="5"
+			   TEXT_-_STRING_REFERENCE="SBL_CHAMP_PLANNING-1004225941-00L"
+			   UPDATED="07/16/2014 19:59:53"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="09/07/2000 19:48:16"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Campaign Administration Screen"
+			   SCREEN="Campaign Administration Screen"
+			   SEQUENCE="7"
+			   TEXT_-_STRING_REFERENCE="SBL_CAMPAIGN_MANAGEMENT-1004230840-06R"
+			   UPDATED="07/16/2014 19:59:54"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="10/08/2003 16:25:13"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Campaign Offer Screen - Internal"
+			   SCREEN="Campaign Offer Screen - Internal"
+			   SEQUENCE="9"
+			   UPDATED="07/16/2014 19:59:54"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="11/10/2001 01:42:27"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Campaigns Screen"
+			   INACTIVE="Y"
+			   NAME="Campaigns Screen"
+			   SCREEN="Campaigns Screen"
+			   SEQUENCE="10"
+			   TEXT_-_STRING_REFERENCE="SBL_CAMPAIGNS-1004225204-1J2"
+			   UPDATED="07/16/2014 19:59:54"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="11/02/2000 16:39:32"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM"
+			   INACTIVE="Y"
+			   NAME="Career Management Screen"
+			   SCREEN="Career Management Screen"
+			   SEQUENCE="11"
+			   TEXT_-_STRING_REFERENCE="SBL_CAREER_MANAGEMENT-1004230142-1LH"
+			   UPDATED="07/16/2014 19:59:54"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/25/2004 13:44:23"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM"
+			   INACTIVE="Y"
+			   NAME="Career Management Screen (Drill Down)"
+			   SCREEN="Career Management Screen (Drill Down)"
+			   SEQUENCE="12"
+			   UPDATED="07/16/2014 19:59:54"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/25/2004 13:44:23"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="AC 28-07-2006 Added"
+			   INACTIVE="N"
+			   NAME="Com Work Order"
+			   SCREEN="Com Work Order"
+			   SEQUENCE="129"
+			   TEXT_-_STRING_REFERENCE="SBL_WORK_ORDER-1009090522-5VU"
+			   UPDATED="07/16/2014 19:59:54"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2009 03:13:25"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TEXT="Work Order"
+				   TRANSLATE="Y"
+				   UPDATED="02/01/2009 03:14:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 03:14:10"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="Company Collaboration Screen"
+			   SCREEN="Company Collaboration Screen"
+			   SEQUENCE="126"
+			   TEXT_-_STRING_REFERENCE="SBL_PARTNER_COLLABORATION-1004230900-0BY"
+			   UPDATED="07/16/2014 19:59:54"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/14/2002 07:17:53"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM"
+			   INACTIVE="Y"
+			   NAME="Competency Management Screen"
+			   SCREEN="Competency Management Screen"
+			   SEQUENCE="13"
+			   TEXT_-_STRING_REFERENCE="SBL_COMPETENCY_MANAGEMENT-1004230343-1X4"
+			   UPDATED="07/16/2014 19:59:54"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/25/2004 13:44:23"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Contacts"
+			   INACTIVE="Y"
+			   NAME="Contacts Screen (SCW)"
+			   SCREEN="Contacts Screen (SCW)"
+			   SEQUENCE="14"
+			   TEXT_-_STRING_REFERENCE="SBL_CONTACTS-1004224924-40K"
+			   UPDATED="07/16/2014 19:59:54"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/01/1999 21:45:18"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Added as per FR 12-1344B4W"
+			   INACTIVE="N"
+			   NAME="ContentBase Display Screen"
+			   SCREEN="ContentBase Display Screen"
+			   SEQUENCE="15"
+			   UPDATED="07/16/2014 19:59:54"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="10/26/2005 11:45:17"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Correspondense"
+			   INACTIVE="Y"
+			   NAME="Correspondence Screen"
+			   SCREEN="Correspondence Screen"
+			   SEQUENCE="16"
+			   TEXT_-_STRING_REFERENCE="SBL_CORRESPONDENCE-1004224453-0QC"
+			   UPDATED="07/16/2014 19:59:54"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="11/15/2000 12:52:03"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Cycle Counting"
+			   INACTIVE="Y"
+			   NAME="Cycle Counting Screen"
+			   SCREEN="Cycle Counting Screen"
+			   SEQUENCE="17"
+			   TEXT_-_STRING_REFERENCE="SBL_CYCLE_COUNTS-1004230844-07O"
+			   UPDATED="07/16/2014 19:59:54"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2002 02:23:13"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="Data Administration Screen"
+			   SCREEN="Data Administration Screen"
+			   TEXT_-_STRING_REFERENCE="SBL_ADMINISTRATION_-_DATA-1004225938-008"
+			   UPDATED="07/16/2014 19:59:54"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/26/2011 10:30:45"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="For delegated product admin 7.5 feature"
+			   INACTIVE="Y"
+			   NAME="Delegated Admin Product Screen"
+			   SCREEN="Delegated Admin Product Screen"
+			   SEQUENCE="18"
+			   UPDATED="07/16/2014 19:59:55"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/09/2002 19:58:29"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/24/2003 03:09:54"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/24/2003 03:09:54"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Delegated Admin Screen"
+			   SCREEN="Delegated Admin Screen"
+			   SEQUENCE="19"
+			   TEXT_-_STRING_REFERENCE="SBL_ADMINISTRATION_-_CATALOG-1004230825-02M"
+			   UPDATED="07/16/2014 19:59:55"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/28/2001 01:04:13"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TEXT="Catalog Administration"
+				   TRANSLATE="Y"
+				   UPDATED="02/01/2009 03:14:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 03:14:10"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Delegated Assignment Administration Screen"
+			   SCREEN="Delegated Assignment Administration Screen"
+			   SEQUENCE="20"
+			   TEXT_-_STRING_REFERENCE="SBL_ADMINISTRATION_-_DELEGATED_ASSIGNMENT-1004230827-033"
+			   UPDATED="07/16/2014 19:59:55"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="10/08/2003 16:25:13"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="For delegated commuication profile admin 7.5 feature"
+			   INACTIVE="Y"
+			   NAME="Delegated Communication Admin Screen"
+			   SCREEN="Delegated Communication Admin Screen"
+			   SEQUENCE="21"
+			   TEXT_-_STRING_REFERENCE="SBL_ADMINISTRATION_-_COMMUNICATION-1004230825-02P"
+			   UPDATED="07/16/2014 19:59:55"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/10/2002 01:45:00"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TEXT="Communication Administration"
+				   TRANSLATE="Y"
+				   UPDATED="02/01/2009 03:14:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 03:14:10"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="For delegated literature admin 7.5 feature"
+			   INACTIVE="Y"
+			   NAME="Delegated Literature Admin Screen"
+			   SCREEN="Delegated Literature Admin Screen"
+			   SEQUENCE="22"
+			   UPDATED="07/16/2014 19:59:55"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/17/2002 03:01:21"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="For delegated literature admin 7.5 feature"
+			   INACTIVE="Y"
+			   NAME="Document Administration Screen"
+			   SCREEN="Document Administration Screen"
+			   SEQUENCE="23"
+			   UPDATED="07/16/2014 19:59:55"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/08/2002 22:08:53"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/09/2002 03:43:07"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/09/2002 03:39:20"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM"
+			   INACTIVE="Y"
+			   NAME="ERM Corporate Marketing Dept Screen"
+			   SCREEN="ERM Corporate Marketing Dept Screen"
+			   SEQUENCE="24"
+			   TEXT_-_STRING_REFERENCE="SBL_MARKETING-1004225948-01Z"
+			   UPDATED="07/16/2014 19:59:55"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/25/2004 13:44:23"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM"
+			   INACTIVE="Y"
+			   NAME="ERM Engineering Dept Screen"
+			   SCREEN="ERM Engineering Dept Screen"
+			   SEQUENCE="25"
+			   TEXT_-_STRING_REFERENCE="SBL_ENGINEERING-1004231547-3HC"
+			   UPDATED="07/16/2014 19:59:55"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/25/2004 13:44:23"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM"
+			   INACTIVE="Y"
+			   NAME="ERM Finance and Admin Dept Screen"
+			   SCREEN="ERM Finance and Admin Dept Screen"
+			   SEQUENCE="26"
+			   TEXT_-_STRING_REFERENCE="SBL_FINANCE-1004224512-0V6"
+			   UPDATED="07/16/2014 19:59:55"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/25/2004 13:44:23"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM"
+			   INACTIVE="Y"
+			   NAME="ERM Group News Archive Screen"
+			   SCREEN="ERM Group News Archive Screen"
+			   SEQUENCE="27"
+			   TEXT_-_STRING_REFERENCE="SBL_NEWS_ARCHIVE-1004224532-11F"
+			   UPDATED="07/16/2014 19:59:55"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/25/2004 13:44:23"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM"
+			   INACTIVE="Y"
+			   NAME="ERM Group News Display Screen"
+			   SCREEN="ERM Group News Display Screen"
+			   SEQUENCE="28"
+			   UPDATED="07/16/2014 19:59:55"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/25/2004 13:44:23"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM"
+			   INACTIVE="Y"
+			   NAME="ERM HR Dept Screen"
+			   SCREEN="ERM HR Dept Screen"
+			   SEQUENCE="29"
+			   TEXT_-_STRING_REFERENCE="SBL_HUMAN_RESOURCES-1004225946-01O"
+			   UPDATED="07/16/2014 19:59:56"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/25/2004 13:44:23"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM"
+			   INACTIVE="Y"
+			   NAME="ERM IT Dept Screen"
+			   SCREEN="ERM IT Dept Screen"
+			   SEQUENCE="30"
+			   TEXT_-_STRING_REFERENCE="SBL_IT-1004224519-0WW"
+			   UPDATED="07/16/2014 19:59:56"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/25/2004 13:44:23"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM"
+			   INACTIVE="Y"
+			   NAME="ERM Manufacturing Dept Screen"
+			   SCREEN="ERM Manufacturing Dept Screen"
+			   SEQUENCE="31"
+			   TEXT_-_STRING_REFERENCE="SBL_MANUFACTURING-1004225947-01Y"
+			   UPDATED="07/16/2014 19:59:56"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/25/2004 13:44:23"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM"
+			   INACTIVE="Y"
+			   NAME="ERM Portal Pages Search Screen"
+			   SCREEN="ERM Portal Pages Search Screen"
+			   SEQUENCE="32"
+			   UPDATED="07/16/2014 19:59:56"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/25/2004 13:44:23"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM
+Feature 12- IVOC1H - Added for ERM2CRM"
+			   INACTIVE="Y"
+			   NAME="ERM Sales Dept Screen"
+			   SCREEN="ERM Sales Dept Screen"
+			   SEQUENCE="33"
+			   TEXT_-_STRING_REFERENCE="SBL_SALES-1004224740-2L9"
+			   UPDATED="07/16/2014 19:59:56"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/25/2004 13:44:23"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Inventory"
+			   INACTIVE="Y"
+			   NAME="FS Inventory Location Mgmt Screen"
+			   SCREEN="FS Inventory Location Mgmt Screen"
+			   SEQUENCE="34"
+			   TEXT_-_STRING_REFERENCE="SBL_ADMINISTRATION_-_INVENTORY-1004230830-03P"
+			   UPDATED="07/16/2014 19:59:56"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2002 02:23:17"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TEXT="Inventory"
+				   TRANSLATE="Y"
+				   UPDATED="02/01/2009 03:14:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 03:14:10"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Inventory Transactions"
+			   INACTIVE="Y"
+			   NAME="FS Inventory Transaction Screen"
+			   SCREEN="FS Inventory Transaction Screen"
+			   SEQUENCE="35"
+			   TEXT_-_STRING_REFERENCE="SBL_INVENTORY_TRANSACTIONS-1004230855-0AR"
+			   UPDATED="07/16/2014 19:59:56"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2002 02:23:28"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Part Browser"
+			   INACTIVE="Y"
+			   NAME="FS Part Browser Screen"
+			   SCREEN="FS Part Browser Screen"
+			   SEQUENCE="36"
+			   TEXT_-_STRING_REFERENCE="SBL_PART_BROWSER-1004224755-2VT"
+			   UPDATED="07/16/2014 19:59:56"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2002 02:23:38"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Forecast"
+			   INACTIVE="Y"
+			   NAME="Forecast 2000 User Screen"
+			   SCREEN="Forecast 2000 User Screen"
+			   SEQUENCE="37"
+			   TEXT_-_STRING_REFERENCE="SBL_FORECAST-1004224513-0VF"
+			   UPDATED="07/16/2014 19:59:56"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="09/26/2000 15:09:04"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="Front Office Workflow"
+			   SCREEN="Front Office Workflow"
+			   SEQUENCE="131"
+			   TEXT_-_STRING_REFERENCE="SBL_ADMINISTRATION_-_BUSINESS_PROCESS-1009092156-06E"
+			   UPDATED="07/16/2014 19:59:56"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2009 03:13:26"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TEXT="Workflow"
+				   TRANSLATE="Y"
+				   UPDATED="02/01/2009 03:14:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 03:14:10"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Fulfillment"
+			   INACTIVE="Y"
+			   NAME="Fulfillment Screen"
+			   SCREEN="Fulfillment Screen"
+			   SEQUENCE="38"
+			   TEXT_-_STRING_REFERENCE="SBL_FULFILLMENT-1004224514-0VT"
+			   UPDATED="07/16/2014 19:59:56"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/21/2002 22:54:28"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Fund Request"
+			   INACTIVE="Y"
+			   NAME="Fund Request Screen (SCW)"
+			   SCREEN="Fund Request Screen (SCW)"
+			   SEQUENCE="39"
+			   TEXT_-_STRING_REFERENCE="SBL_FUND_REQUESTS-1004224516-0VX"
+			   UPDATED="07/16/2014 19:59:56"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="12/17/1999 16:22:58"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Funds"
+			   INACTIVE="Y"
+			   NAME="Fund Screen (SCW)"
+			   SCREEN="Fund Screen (SCW)"
+			   SEQUENCE="40"
+			   TEXT_-_STRING_REFERENCE="SBL_FUNDS-1004224325-05R"
+			   UPDATED="07/16/2014 19:59:56"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="12/27/1999 18:42:44"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="HLS Cases Screen (SCW)"
+			   SCREEN="HLS Cases Screen (SCW)"
+			   SEQUENCE="41"
+			   TEXT_-_STRING_REFERENCE="SBL_CASES-1004225215-01S"
+			   UPDATED="07/16/2014 19:59:57"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="06/03/2003 22:25:41"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="SPA 8.1"
+			   INACTIVE="N"
+			   NAME="HTIM Claim Screen (SCW)"
+			   SCREEN="HTIM Claim Screen (SCW)"
+			   SEQUENCE="4"
+			   TEXT_-_STRING_REFERENCE="SBL_SPA_CLAIMS"
+			   UPDATED="07/16/2014 19:59:57"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="05/16/2007 10:52:48"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="HTIM"
+			   INACTIVE="N"
+			   NAME="HTIM Design Projects Screen (PRM)"
+			   SCREEN="HTIM Design Projects Screen (PRM)"
+			   SEQUENCE="6"
+			   TEXT_-_STRING_REFERENCE="SBL_DESIGN_PROGRAM"
+			   UPDATED="07/16/2014 19:59:57"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="06/30/2007 10:02:23"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="HTIM MDF Claim Screen (SCW)"
+			   SCREEN="HTIM MDF Claim Screen (SCW)"
+			   SEQUENCE="42"
+			   TEXT_-_STRING_REFERENCE="SBL_MDF_CLAIM-1009092012-053"
+			   UPDATED="07/16/2014 19:59:57"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/15/2003 22:55:01"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="HTIM MDF Pre-Approval Screen (SCW)"
+			   SCREEN="HTIM MDF Pre-Approval Screen (SCW)"
+			   SEQUENCE="43"
+			   TEXT_-_STRING_REFERENCE="SBL_MDF_PRE-APPROVAL"
+			   UPDATED="07/16/2014 19:59:57"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/20/2003 17:43:01"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="HTIM MDF Program Account Screen (SCW)"
+			   SCREEN="HTIM MDF Program Account Screen (SCW)"
+			   SEQUENCE="44"
+			   TEXT_-_STRING_REFERENCE="SBL_MDF_PROGRAM_ACCOUNT"
+			   UPDATED="07/16/2014 19:59:57"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/20/2003 17:42:18"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="SPA 8.1"
+			   INACTIVE="N"
+			   NAME="HTIM Quote Screen (SCW)"
+			   SCREEN="HTIM Quote Screen (SCW)"
+			   SEQUENCE="8"
+			   TEXT_-_STRING_REFERENCE="SBL_SPA_QUOTES"
+			   UPDATED="07/16/2014 19:59:57"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="05/16/2007 10:52:48"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="ISS Unified Administration Screen"
+			   SCREEN="ISS Unified Administration Screen"
+			   TEXT_-_STRING_REFERENCE="SBL_ADMINISTRATION_-_PRODUCT-1004230832-04B"
+			   UPDATED="07/16/2014 19:59:57"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/26/2011 10:30:45"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Incentive Compensation Earnings Detail Screen"
+			   SCREEN="Incentive Compensation Earnings Detail Screen"
+			   SEQUENCE="45"
+			   UPDATED="07/16/2014 19:59:57"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/22/2002 20:00:14"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Incentive Compensation Output Balance Detail Screen"
+			   SCREEN="Incentive Compensation Output Balance Detail Screen"
+			   SEQUENCE="46"
+			   UPDATED="07/16/2014 19:59:57"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/22/2002 20:00:18"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Incentive Compensation Output Manager Quota Screen"
+			   SCREEN="Incentive Compensation Output Manager Quota Screen"
+			   SEQUENCE="47"
+			   UPDATED="07/16/2014 19:59:57"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="11/15/2000 16:41:54"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/29/2000 10:46:34"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/15/2000 16:42:28"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Incentive Compensation Output Personal Plan Detail Screen"
+			   SCREEN="Incentive Compensation Output Personal Plan Detail Screen"
+			   SEQUENCE="48"
+			   UPDATED="07/16/2014 19:59:57"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/22/2002 20:00:44"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Incentive Compensation Output Personal Plan Rule Detail Screen"
+			   SCREEN="Incentive Compensation Output Personal Plan Rule Detail Screen"
+			   SEQUENCE="49"
+			   UPDATED="07/16/2014 19:59:57"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/22/2002 20:01:19"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Incentive Compensation Output Personal Quota Screen"
+			   SCREEN="Incentive Compensation Output Personal Quota Screen"
+			   SEQUENCE="50"
+			   UPDATED="07/16/2014 19:59:57"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="11/15/2000 16:42:54"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/29/2000 10:46:37"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/15/2000 16:43:21"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Incentive Compensation Output Screen"
+			   SCREEN="Incentive Compensation Output Screen"
+			   SEQUENCE="51"
+			   TEXT_-_STRING_REFERENCE="SBL_INCENTIVE_COMPENSATION-1004230742-03F"
+			   UPDATED="07/16/2014 19:59:58"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="11/15/2000 16:43:22"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Incentive Compensation Quota Screen"
+			   SCREEN="Incentive Compensation Quota Screen"
+			   SEQUENCE="52"
+			   TEXT_-_STRING_REFERENCE="SBL_INCENTIVE_COMPENSATION_QUOTAS-1004230853-0A5"
+			   UPDATED="07/16/2014 19:59:58"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/15/2002 18:48:15"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Information Screen (SCW)"
+			   SCREEN="Information Screen (SCW)"
+			   SEQUENCE="53"
+			   UPDATED="07/16/2014 19:59:58"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="07/12/2001 20:54:10"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="List Management"
+			   INACTIVE="Y"
+			   NAME="List Mgmt"
+			   SCREEN="List Mgmt"
+			   SEQUENCE="54"
+			   TEXT_-_STRING_REFERENCE="SBL_LIST_MANAGEMENT-1004225947-01W"
+			   UPDATED="07/16/2014 19:59:58"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="06/19/2004 21:07:46"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Marketing Plans Screen"
+			   SCREEN="Marketing Plans Screen"
+			   SEQUENCE="55"
+			   TEXT_-_STRING_REFERENCE="SBL_MARKETING_PLANS-1004225948-023"
+			   UPDATED="07/16/2014 19:59:58"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/22/2002 23:08:09"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Marketing Segment Screen"
+			   SCREEN="Marketing Segment Screen"
+			   SEQUENCE="56"
+			   TEXT_-_STRING_REFERENCE="SBL_SEGMENTS-1004225530-00R"
+			   UPDATED="07/16/2014 19:59:58"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="10/08/2003 16:25:13"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="My Dashboard Screen"
+			   SCREEN="My Dashboard Screen"
+			   SEQUENCE="57"
+			   TEXT_-_STRING_REFERENCE="SBL_MY_DASHBOARD-1004225949-026"
+			   UPDATED="07/16/2014 19:59:58"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="05/14/2002 02:05:13"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Offer Screen"
+			   SCREEN="Offer Screen"
+			   SEQUENCE="58"
+			   TEXT_-_STRING_REFERENCE="SBL_MARKETING_OFFERS-1004230857-0B4"
+			   UPDATED="07/16/2014 19:59:58"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/24/2002 19:18:17"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Offers Screen (SCW)"
+			   INACTIVE="Y"
+			   NAME="Offers Screen (SCW)"
+			   SCREEN="Offers Screen (SCW)"
+			   SEQUENCE="59"
+			   TEXT_-_STRING_REFERENCE="SBL_OFFERS-1004224533-11N"
+			   UPDATED="07/16/2014 19:59:58"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="11/02/2000 16:53:51"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Opportunities Detail Campaign Screen (SCW)"
+			   SCREEN="Opportunities Detail Campaign Screen (SCW)"
+			   SEQUENCE="60"
+			   UPDATED="07/16/2014 19:59:58"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="11/14/2001 23:52:29"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Opportunities Screen (SCW)"
+			   SCREEN="Opportunities Screen (SCW)"
+			   SEQUENCE="61"
+			   TEXT_-_STRING_REFERENCE="SBL_OPPORTUNITIES-1004225027-4PH"
+			   UPDATED="07/16/2014 19:59:58"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/01/1999 21:45:09"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="hidden"
+			   INACTIVE="N"
+			   NAME="Order Entry Screen"
+			   SCREEN="Order Entry Screen"
+			   SEQUENCE="62"
+			   UPDATED="07/16/2014 19:59:59"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/21/2002 02:31:35"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="02/21/2002 05:17:31"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/21/2002 02:31:58"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="hidden"
+			   INACTIVE="Y"
+			   NAME="Orders Screen (SCW)"
+			   SCREEN="Orders Screen (SCW)"
+			   SEQUENCE="63"
+			   UPDATED="07/16/2014 19:59:59"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="03/02/2001 04:33:59"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="02/21/2002 05:16:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/02/2001 04:33:59"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Orders Tasks Screen (SCW)"
+			   SCREEN="Orders Tasks Screen (SCW)"
+			   SEQUENCE="64"
+			   TEXT_-_STRING_REFERENCE="SBL_ORDERS-1004224541-12M"
+			   UPDATED="07/16/2014 19:59:59"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/21/2002 05:43:34"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="PPR Partner Program Portal Applications Screen"
+			   SCREEN="PPR Partner Program Portal Applications Screen"
+			   SEQUENCE="65"
+			   TEXT_-_STRING_REFERENCE="SBL_PPR_PROGRAM_APPLICATIONS_HOR"
+			   UPDATED="07/16/2014 19:59:59"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="06/19/2004 21:07:46"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="PPR Partner Program Portal Membership Screen"
+			   SCREEN="PPR Partner Program Portal Membership Screen"
+			   SEQUENCE="66"
+			   TEXT_-_STRING_REFERENCE="SBL_PPR_PROGRAM_MEMBERSHIP_HOR"
+			   UPDATED="07/16/2014 19:59:59"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="06/19/2004 21:07:46"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="PRM Asset Screen"
+			   SCREEN="PRM Asset Screen"
+			   SEQUENCE="300"
+			   TEXT_-_STRING_REFERENCE="X_PRM_SBL_ASSETS"
+			   UPDATED="07/16/2014 19:59:59"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/26/2011 10:30:45"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="PRM VF Billing Account"
+			   SCREEN="PRM VF Billing Account"
+			   SEQUENCE="301"
+			   TEXT_-_STRING_REFERENCE="SBL_PAYMENT_PROFILE-0114141154-03F"
+			   UPDATED="07/16/2014 19:59:59"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/26/2011 10:30:45"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="PRM VF TR Account"
+			   SCREEN="PRM VF TR Account"
+			   SEQUENCE="125"
+			   TEXT_-_STRING_REFERENCE="SBL_ACCOUNTS-1004224419-01T"
+			   UPDATED="07/16/2014 19:59:59"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/26/2011 10:30:45"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="PRM VF TR MyOrders Screen"
+			   SCREEN="PRM VF TR MyOrders Screen"
+			   SEQUENCE="301"
+			   TEXT_-_STRING_REFERENCE="X_VF_PRM_MYORDERS"
+			   UPDATED="07/16/2014 19:59:59"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="12/12/2011 12:50:14"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="12/19/2011 13:15:05"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/12/2011 12:50:14"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="PRM VF TR Order Screen"
+			   SCREEN="PRM VF TR Order Screen"
+			   SEQUENCE="126"
+			   UPDATED="07/16/2014 19:59:59"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/26/2011 10:30:45"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Parametric Search Screen"
+			   SCREEN="Parametric Search Screen"
+			   SEQUENCE="73"
+			   TEXT_-_STRING_REFERENCE="SBL_PARAMETRIC_PRODUCT_SEARCH-1004230900-0BQ"
+			   UPDATED="07/16/2014 19:59:59"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="06/05/2001 01:19:45"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="Partner Finder Screen"
+			   SCREEN="Partner Finder Screen"
+			   SEQUENCE="125"
+			   TEXT_-_STRING_REFERENCE="SBL_PARTNER_LOCATOR-1004230900-0C0"
+			   UPDATED="07/16/2014 19:59:59"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="09/19/2000 15:42:47"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Partner Finder Screen - OpenUI"
+			   SCREEN="Partner Finder Screen - OpenUI"
+			   SEQUENCE="141"
+			   TEXT_-_STRING_REFERENCE="SBL_PARTNER_LOCATOR-1004230900-0C0"
+			   UPDATED="06/03/2014 22:56:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2014 22:38:22"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Partner Message Screen (SCW)"
+			   SCREEN="Partner Message Screen (SCW)"
+			   SEQUENCE="67"
+			   TEXT_-_STRING_REFERENCE="SBL_PARTNER_ALERTS-1004224659-1QL"
+			   UPDATED="07/16/2014 20:00:00"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="10/02/2000 11:57:58"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="7.5 Partner Analytics"
+			   INACTIVE="Y"
+			   NAME="Partner Portal Analytics Screen (SCW)"
+			   SCREEN="Partner Portal Analytics Screen (SCW)"
+			   SEQUENCE="68"
+			   TEXT_-_STRING_REFERENCE="SBL_ANALYTICS-1004225940-00B"
+			   UPDATED="07/16/2014 20:00:00"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/12/2002 23:11:50"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Partner Programs Screen"
+			   SCREEN="Partner Programs Screen"
+			   SEQUENCE="69"
+			   TEXT_-_STRING_REFERENCE="SBL_PARTNER_PROGRAMS-1009090200-36X"
+			   UPDATED="07/16/2014 20:00:00"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="06/19/2004 21:07:46"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Partner Satisfaction Screen (SCW)"
+			   SCREEN="Partner Satisfaction Screen (SCW)"
+			   SEQUENCE="70"
+			   TEXT_-_STRING_REFERENCE="SBL_PARTNER_SATISFACTION-1004230901-0C3"
+			   UPDATED="07/16/2014 20:00:00"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/06/2002 22:52:11"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="Persistent Customer Dashboard Screen"
+			   SCREEN="Persistent Customer Dashboard Screen"
+			   UPDATED="07/16/2014 20:00:00"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/26/2011 10:30:45"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Presentation Screen"
+			   SCREEN="Presentation Screen"
+			   SEQUENCE="71"
+			   TEXT_-_STRING_REFERENCE="SBL_PRESENTATIONS-1004224722-2BU"
+			   UPDATED="07/16/2014 20:00:00"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="11/15/2000 12:52:27"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Presentation Screen (Show Viewbar Text Only)"
+			   SCREEN="Presentation Screen (Show Viewbar Text Only)"
+			   SEQUENCE="72"
+			   UPDATED="07/16/2014 20:00:00"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="11/10/2001 01:38:35"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/10/2001 01:38:35"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/10/2001 01:38:35"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="Pricing"
+			   SCREEN="Pricing"
+			   TEXT_-_STRING_REFERENCE="SBL_PRICING-1004224723-2CC"
+			   UPDATED="07/16/2014 20:00:00"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/26/2011 10:30:45"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="Products Screen"
+			   SCREEN="Products Screen"
+			   TEXT_-_STRING_REFERENCE="SBL_PRODUCTS-1004224726-2DL"
+			   UPDATED="07/16/2014 20:00:00"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/26/2011 10:30:45"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Program Screen"
+			   SCREEN="Program Screen"
+			   SEQUENCE="74"
+			   TEXT_-_STRING_REFERENCE="SBL_PROGRAMS-1004224727-2E3"
+			   UPDATED="07/16/2014 20:00:00"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="10/08/2003 16:25:13"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Projects"
+			   INACTIVE="Y"
+			   NAME="Projects Screen (ePS)"
+			   SCREEN="Projects Screen (ePS)"
+			   SEQUENCE="75"
+			   TEXT_-_STRING_REFERENCE="SBL_PROJECTS-1004224728-2EK"
+			   UPDATED="07/16/2014 20:00:00"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2002 02:23:41"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Proposal Screen"
+			   SCREEN="Proposal Screen"
+			   SEQUENCE="76"
+			   TEXT_-_STRING_REFERENCE="SBL_PROPOSALS-1004224728-2EV"
+			   UPDATED="07/16/2014 20:00:00"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="11/15/2000 12:52:53"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Proposal Screen (Show Viewbar Text Only)"
+			   SCREEN="Proposal Screen (Show Viewbar Text Only)"
+			   SEQUENCE="77"
+			   UPDATED="07/16/2014 20:00:00"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="11/10/2001 01:38:46"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/10/2001 01:38:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/10/2001 01:38:46"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="hidden"
+			   INACTIVE="Y"
+			   NAME="Quotes Screen"
+			   SCREEN="Quotes Screen"
+			   SEQUENCE="78"
+			   UPDATED="07/16/2014 20:00:00"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/21/2002 02:32:02"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="02/21/2002 05:15:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/21/2002 02:32:21"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="hidden"
+			   INACTIVE="Y"
+			   NAME="Quotes Screen (SCW)"
+			   SCREEN="Quotes Screen (SCW)"
+			   SEQUENCE="79"
+			   UPDATED="07/16/2014 20:00:01"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="03/02/2001 03:26:10"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="02/21/2002 05:44:34"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/02/2001 03:26:10"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Quotes Tasks Screen (SCW)"
+			   SCREEN="Quotes Tasks Screen (SCW)"
+			   SEQUENCE="80"
+			   TEXT_-_STRING_REFERENCE="SBL_QUOTES-1004225057-4ZU"
+			   UPDATED="07/16/2014 20:00:01"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/21/2002 05:44:15"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="For XMLP Integration"
+			   INACTIVE="N"
+			   NAME="Report Administration Screen"
+			   SCREEN="Report Administration Screen"
+			   SEQUENCE="135"
+			   TEXT_-_STRING_REFERENCE="SBL_XMLP_REPORT_ADMIN"
+			   UPDATED="07/16/2014 20:00:01"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/03/2007 16:04:35"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="8.0 RC"
+			   INACTIVE="Y"
+			   NAME="Report Server Screen"
+			   SCREEN="Report Server Screen"
+			   SEQUENCE="81"
+			   TEXT_-_STRING_REFERENCE="SBL_REPORT_SERVER-1004230905-0D4"
+			   UPDATED="07/16/2014 20:00:01"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/21/2002 04:14:13"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="For XMLP Integration"
+			   INACTIVE="N"
+			   NAME="Reports Server Screen"
+			   SCREEN="Reports Server Screen"
+			   SEQUENCE="136"
+			   TEXT_-_STRING_REFERENCE="SBL_BIP_REPORTS_SERVER"
+			   UPDATED="07/16/2014 20:00:01"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/03/2007 16:04:35"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Response"
+			   INACTIVE="Y"
+			   NAME="Response Screen"
+			   SCREEN="Response Screen"
+			   SEQUENCE="82"
+			   TEXT_-_STRING_REFERENCE="SBL_&amp;RESPONSES-1004230818-00U"
+			   UPDATED="07/16/2014 20:00:01"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="11/10/2001 01:40:14"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Revenue Analysis Screen"
+			   INACTIVE="Y"
+			   NAME="Revenue Analysis Screen"
+			   SCREEN="Revenue Analysis Screen"
+			   SEQUENCE="83"
+			   TEXT_-_STRING_REFERENCE="SBL_REVENUES-1004224446-0MF"
+			   UPDATED="07/16/2014 20:00:01"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="11/02/2000 17:22:17"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="Runtime Events Administration Screen"
+			   SCREEN="Runtime Events Administration Screen"
+			   SEQUENCE="303"
+			   TEXT_-_STRING_REFERENCE="SBL_ADMINISTRATION_-_RUNTIME_EVENTS-1004230833-04I"
+			   UPDATED="07/16/2014 20:00:01"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="09/29/2011 19:27:44"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Briefings"
+			   INACTIVE="Y"
+			   NAME="SI eBriefings Screen (eApps)"
+			   SCREEN="SI eBriefings Screen (eApps)"
+			   SEQUENCE="84"
+			   TEXT_-_STRING_REFERENCE="SBL_BRIEFINGS-1004230839-06B"
+			   UPDATED="07/16/2014 20:00:01"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="07/20/2001 04:58:33"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Sales Credit Assignment Screen"
+			   SCREEN="Sales Credit Assignment Screen"
+			   SEQUENCE="85"
+			   TEXT_-_STRING_REFERENCE="SBL_INCENTIVE_COMPENSATION_SALES_CREDITING-1004230853-0A7"
+			   UPDATED="07/16/2014 20:00:01"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="06/26/2002 00:48:22"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Sales Hierarchies - Sales Hierarchy Credit Rule Screen (drilldown)"
+			   SCREEN="Sales Hierarchies - Sales Hierarchy Credit Rule Screen (drilldown)"
+			   SEQUENCE="86"
+			   UPDATED="07/16/2014 20:00:01"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="06/26/2002 00:53:29"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Sales Hierarchies - Sales Hierarchy User Screen"
+			   SCREEN="Sales Hierarchies - Sales Hierarchy User Screen"
+			   SEQUENCE="87"
+			   TEXT_-_STRING_REFERENCE="SBL_INCENTIVE_COMPENSATION_SALES_HIERARCHIES-1004230853-0AB"
+			   UPDATED="07/16/2014 20:00:01"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="06/26/2002 00:48:30"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="Search Admin View Screen"
+			   SCREEN="Search Admin View Screen"
+			   SEQUENCE="88"
+			   UPDATED="07/16/2014 20:00:02"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="11/23/2006 22:36:06"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Search Screen"
+			   SCREEN="Search Screen"
+			   SEQUENCE="89"
+			   UPDATED="07/16/2014 20:00:02"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="12/15/2000 15:56:39"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/21/2001 02:49:47"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/15/2000 15:56:53"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="Search View Dummy Screen"
+			   SCREEN="Search View Dummy Screen"
+			   SEQUENCE="90"
+			   UPDATED="07/16/2014 20:00:02"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="11/23/2006 22:36:19"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="Search View Screen"
+			   SCREEN="Search View Screen"
+			   SEQUENCE="91"
+			   UPDATED="07/16/2014 20:00:02"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="11/23/2006 22:36:29"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Service Region"
+			   INACTIVE="Y"
+			   NAME="Service Region Screen"
+			   SCREEN="Service Region Screen"
+			   SEQUENCE="92"
+			   TEXT_-_STRING_REFERENCE="SBL_SERVICE_REGIONS-1004224450-0ND"
+			   UPDATED="07/16/2014 20:00:02"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2002 02:23:43"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TEXT="Service Region"
+				   TRANSLATE="Y"
+				   UPDATED="02/01/2009 03:14:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 03:14:10"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Service Request Screen (SCW)"
+			   SCREEN="Service Request Screen (SCW)"
+			   SEQUENCE="93"
+			   TEXT_-_STRING_REFERENCE="SBL_SERVICE-1004224616-1F1"
+			   UPDATED="07/16/2014 20:00:02"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/01/1999 21:46:26"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Service Request Screen - eService (SCW)"
+			   SCREEN="Service Request Screen - eService (SCW)"
+			   SEQUENCE="94"
+			   TEXT_-_STRING_REFERENCE="SBL_SELF_SERVICE-1004224816-2QV"
+			   UPDATED="07/16/2014 20:00:02"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/28/2001 01:03:51"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Service Solution Screen (SCW)"
+			   SCREEN="Service Solution Screen (SCW)"
+			   SEQUENCE="95"
+			   TEXT_-_STRING_REFERENCE="SBL_SOLUTIONS-1004224817-367"
+			   UPDATED="07/16/2014 20:00:02"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/01/1999 21:45:39"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Siebel Answers Screen"
+			   SCREEN="Siebel Answers Screen"
+			   SEQUENCE="96"
+			   TEXT_-_STRING_REFERENCE="SBL_ANSWERS-1004224441-0A3"
+			   UPDATED="07/16/2014 20:00:02"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="05/14/2002 02:05:54"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Siebel Delivers Screen"
+			   SCREEN="Siebel Delivers Screen"
+			   SEQUENCE="97"
+			   TEXT_-_STRING_REFERENCE="SBL_DELIVERS-1004225943-013"
+			   UPDATED="07/16/2014 20:00:02"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="05/14/2002 02:05:32"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="Smart Script Player Screen (eApps)"
+			   SCREEN="Smart Script Player Screen (eApps)"
+			   SEQUENCE="98"
+			   TEXT_-_STRING_REFERENCE="SBL_SMARTSCRIPTS-1004224748-2PH"
+			   UPDATED="07/16/2014 20:00:02"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/20/2000 19:29:31"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="System Administration Screen"
+			   SCREEN="System Administration Screen"
+			   TEXT_-_STRING_REFERENCE="SBL_APPLICATION_ADMINISTRATION-1004224428-0JR"
+			   UPDATED="07/16/2014 20:00:02"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/26/2011 10:30:45"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Task Assistant Screen"
+			   SCREEN="Task Assistant Screen"
+			   SEQUENCE="99"
+			   TEXT_-_STRING_REFERENCE="SBL_TASK_ASSISTANT-1004230911-0ET"
+			   UPDATED="07/16/2014 20:00:02"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="09/11/2003 18:41:41"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Task Map Screen"
+			   SCREEN="Task Map Screen"
+			   SEQUENCE="100"
+			   TEXT_-_STRING_REFERENCE="SBL_IHELP_MAP"
+			   UPDATED="07/16/2014 20:00:03"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="09/11/2003 18:41:41"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="Task Pane Screen"
+			   SCREEN="Task Pane Screen"
+			   SEQUENCE="1"
+			   TEXT_-_STRING_REFERENCE="SBL_TASK_UI_PANE"
+			   UPDATED="07/16/2014 20:00:03"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="05/28/2008 09:15:15"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Existing one"
+			   INACTIVE="Y"
+			   NAME="TeXCo Account"
+			   SCREEN="TeXCo Account"
+			   SEQUENCE="134"
+			   TEXT_-_STRING_REFERENCE="SBL_ACCOUNTS-1004224658-0D3"
+			   UPDATED="07/16/2014 20:00:03"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2009 03:13:28"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Time Sheets"
+			   INACTIVE="Y"
+			   NAME="Time Sheet Screen (ePS)"
+			   SCREEN="Time Sheet Screen (ePS)"
+			   SEQUENCE="101"
+			   TEXT_-_STRING_REFERENCE="SBL_TIME_SHEETS-1004224841-31Q"
+			   UPDATED="07/16/2014 20:00:03"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2002 02:23:46"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Training User Administration Screen"
+			   SCREEN="Training User Administration Screen"
+			   SEQUENCE="102"
+			   TEXT_-_STRING_REFERENCE="SBL_TRAINING-1004224756-2TT"
+			   UPDATED="07/16/2014 20:00:03"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="06/29/2001 18:25:47"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Universal Deployment Agent Screen"
+			   SCREEN="Universal Deployment Agent Screen"
+			   SEQUENCE="103"
+			   TEXT_-_STRING_REFERENCE="SBL_APPLICATION_DEPLOYMENT_MANAGER"
+			   UPDATED="07/16/2014 20:00:03"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="09/11/2004 21:21:05"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="User Administration Screen (SCW)"
+			   SCREEN="User Administration Screen (SCW)"
+			   SEQUENCE="104"
+			   TEXT_-_STRING_REFERENCE="SBL_ADMINISTRATION-1004225937-007"
+			   UPDATED="07/16/2014 20:00:03"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="12/27/1999 15:00:34"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="User Catalog Detail Screen"
+			   SCREEN="User Catalog Detail Screen"
+			   SEQUENCE="105"
+			   UPDATED="07/16/2014 20:00:03"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2000 14:55:34"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="09/22/2000 04:18:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/22/2000 04:18:01"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="User Catalog Explorer Screen (SCW)"
+			   SCREEN="User Catalog Explorer Screen (SCW)"
+			   SEQUENCE="106"
+			   TEXT_-_STRING_REFERENCE="SBL_INFO_CENTER_EXPLORER-1004230855-0AJ"
+			   UPDATED="07/16/2014 20:00:03"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="06/06/2001 01:18:37"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Literature Catalog"
+			   INACTIVE="Y"
+			   NAME="User Catalog Screen (SCW)"
+			   SCREEN="User Catalog Screen (SCW)"
+			   SEQUENCE="107"
+			   TEXT_-_STRING_REFERENCE="SBL_INFO_CENTER-1004225947-01R"
+			   UPDATED="07/16/2014 20:00:03"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="07/31/2000 14:35:08"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="User Prefrences"
+			   INACTIVE="Y"
+			   NAME="User Preferences Screen"
+			   SCREEN="User Preferences Screen"
+			   SEQUENCE="108"
+			   TEXT_-_STRING_REFERENCE="SBL_USER_PREFERENCES-1004225403-0I0"
+			   UPDATED="07/16/2014 20:00:03"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/22/2002 02:03:56"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="User Profile Screen (eApps)"
+			   SCREEN="User Profile Screen (eApps)"
+			   SEQUENCE="109"
+			   TEXT_-_STRING_REFERENCE="SBL_USER_PROFILE-1004224759-2VV"
+			   UPDATED="07/16/2014 20:00:04"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/31/2000 14:19:19"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="User Registration Screen"
+			   SCREEN="User Registration Screen"
+			   SEQUENCE="110"
+			   UPDATED="07/16/2014 20:00:04"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="11/24/2003 03:09:23"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/24/2003 03:09:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/24/2003 03:09:55"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="36516 - TC-4730 - Data Masking"
+			   INACTIVE="N"
+			   NAME="VF Customer Validation Management Screen"
+			   SCREEN="VF Customer Validation Management Screen"
+			   SEQUENCE="149"
+			   UPDATED="07/16/2014 19:59:50"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="07/16/2014 19:59:50"
+			   CREATED_BY="ACAMBAS">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="hidden"
+			   INACTIVE="N"
+			   NAME="VF PRM Sales Order Screen"
+			   SCREEN="VF PRM Sales Order Screen"
+			   SEQUENCE="127"
+			   UPDATED="07/16/2014 20:00:04"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="06/03/2013 17:02:52"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TEXT="Sales Order"
+				   TRANSLATE="Y"
+				   UPDATED="07/14/2013 01:52:17"
+				   UPDATED_BY="SADMIN"
+				   CREATED="07/14/2013 01:52:17"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="VF PRM VPN Group Screen"
+			   SCREEN="VF PRM VPN Group Screen"
+			   SEQUENCE="310"
+			   TEXT_-_STRING_REFERENCE="X_VF_VF Main VPN Group View Name"
+			   UPDATED="07/16/2014 20:00:04"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="03/13/2013 20:13:39"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/08/2013 14:06:36"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/13/2013 20:13:40"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="VF TK PRM Service Request"
+			   SCREEN="VF TK PRM Service Request"
+			   TEXT_-_STRING_REFERENCE="SBL_SERVICE_REQUESTS-1004224821-2SZ"
+			   UPDATED="07/16/2014 20:00:04"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="12/12/2011 12:50:14"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Cambaz 2"
+			   INACTIVE="Y"
+			   NAME="VFTR Product Optin Management Screen"
+			   SCREEN="VFTR Product Optin Management Screen"
+			   SEQUENCE="1000"
+			   TEXT_-_STRING_REFERENCE="X_VFTR_PRODUCT_OPTIN_MANAGEMENT"
+			   UPDATED="04/20/2016 13:29:36"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/20/2016 13:29:36"
+			   CREATED_BY="ACAMBAS">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/20/2016 13:29:36"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="04/20/2016 13:29:36"
+				   CREATED_BY="ACAMBAS">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="WA15 FGUEDES"
+			   INACTIVE="N"
+			   NAME="VFTRCBU Customer Score Screen"
+			   SCREEN="VFTRCBU Customer Score Screen"
+			   TEXT_-_STRING_REFERENCE="X_VFTRCBU_CUSTOMER_SCORE"
+			   UPDATED="06/30/2015 10:58:11"
+			   UPDATED_BY="FGUEDES"
+			   CREATED="06/30/2015 10:58:11"
+			   CREATED_BY="FGUEDES">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="VFTRCBU GSM Inquiry Screen"
+			   SCREEN="VFTRCBU GSM Inquiry Screen"
+			   SEQUENCE="2"
+			   TEXT_-_STRING_REFERENCE="X_GSM_INQUIRY"
+			   UPDATED="05/28/2015 07:36:27"
+			   UPDATED_BY="DTIMOTEO"
+			   CREATED="05/28/2015 07:36:27"
+			   CREATED_BY="DTIMOTEO">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="VFTRCBU WA#06 2014.10.30 - FGUEDES"
+			   INACTIVE="N"
+			   NAME="VFTRCBU IMEI BlackList Screen"
+			   SCREEN="VFTRCBU IMEI BlackList Screen"
+			   TEXT_-_STRING_REFERENCE="X_VFTRCBU_IMEI_BLACKLIST"
+			   UPDATED="10/30/2014 18:38:29"
+			   UPDATED_BY="FGUEDES"
+			   CREATED="10/30/2014 18:37:59"
+			   CREATED_BY="FGUEDES">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="WA18 JSOUSA 23042015"
+			   INACTIVE="N"
+			   NAME="VFTRCBU PRM MNP Screen New"
+			   SCREEN="VFTRCBU PRM MNP Screen New"
+			   SEQUENCE="320"
+			   TEXT_-_STRING_REFERENCE="X_VF_MNP_TRSCKING"
+			   UPDATED="04/23/2015 18:31:28"
+			   UPDATED_BY="JSOUSA"
+			   CREATED="04/23/2015 18:27:26"
+			   CREATED_BY="JSOUSA">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="VFTRCBU-22428"
+			   INACTIVE="N"
+			   NAME="VFTRCBU PRM MSISDN SIM Card Screen"
+			   SCREEN="VFTRCBU PRM MSISDN SIM Card Screen"
+			   SEQUENCE="340"
+			   TEXT_-_STRING_REFERENCE="X_VFTRCBU_MSISDN_SIM_CARD"
+			   UPDATED="12/22/2015 15:40:56"
+			   UPDATED_BY="RLOURENCO"
+			   CREATED="12/22/2015 15:38:59"
+			   CREATED_BY="RLOURENCO">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="VFTR_Siebel Universal Inbox Screen"
+			   SCREEN="VFTR_Siebel Universal Inbox Screen"
+			   TEXT_-_STRING_REFERENCE="SBL_INBOX-1004230852-09Z"
+			   UPDATED="07/16/2014 20:00:04"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/26/2011 10:30:45"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="Web Marketing Home Screen"
+			   SCREEN="Web Marketing Home Screen"
+			   SEQUENCE="111"
+			   TEXT_-_STRING_REFERENCE="SBL_MARKETING_HOME-1004230857-0B3"
+			   UPDATED="07/16/2014 20:00:04"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="10/08/2003 16:25:14"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="Auctions"
+			   INACTIVE="Y"
+			   NAME="eAuctions Lister Area"
+			   SCREEN="eAuctions Lister Area"
+			   SEQUENCE="112"
+			   TEXT_-_STRING_REFERENCE="SBL_AUCTIONS-1004225940-00I"
+			   UPDATED="07/16/2014 20:00:04"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/04/2001 20:11:46"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="eCalendar Screen"
+			   SCREEN="eCalendar Screen"
+			   SEQUENCE="113"
+			   TEXT_-_STRING_REFERENCE="SBL_CALENDAR-1004224302-02K"
+			   UPDATED="07/16/2014 20:00:04"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="04/04/2000 20:12:12"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="eChannel Employee ReadOnly  Screen"
+			   SCREEN="eChannel Employee ReadOnly  Screen"
+			   SEQUENCE="114"
+			   UPDATED="07/16/2014 20:00:04"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/01/2002 20:46:18"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="eChannel Home Screen"
+			   SCREEN="eChannel Home Screen"
+			   SEQUENCE="123"
+			   TEXT_-_STRING_REFERENCE="SBL_HOME-1004230742-03C"
+			   UPDATED="07/16/2014 20:00:04"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="12/15/1999 22:06:58"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="eMarketing eSmartScript Player Screen"
+			   SCREEN="eMarketing eSmartScript Player Screen"
+			   SEQUENCE="115"
+			   UPDATED="07/16/2014 20:00:04"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/17/2001 02:09:58"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="eSales Catalog Screen"
+			   SCREEN="eSales Catalog Screen"
+			   SEQUENCE="116"
+			   TEXT_-_STRING_REFERENCE="SBL_PRODUCT_CATALOG-1004225951-02N"
+			   UPDATED="07/16/2014 20:00:05"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="12/28/1999 21:30:12"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="eSales Orders Screen"
+			   SCREEN="eSales Orders Screen"
+			   SEQUENCE="117"
+			   UPDATED="07/16/2014 20:00:05"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="03/28/2002 02:45:03"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="was My Saved Orders Screen (SCW); now hidden"
+			   INACTIVE="Y"
+			   NAME="eSales Orders Screen (SCW)"
+			   SCREEN="eSales Orders Screen (SCW)"
+			   SEQUENCE="118"
+			   UPDATED="07/16/2014 20:00:05"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/01/1999 21:45:25"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/28/2002 03:01:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/22/2000 04:17:29"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="N"
+			   NAME="eSales Quotes Screen"
+			   SCREEN="eSales Quotes Screen"
+			   SEQUENCE="119"
+			   UPDATED="07/16/2014 20:00:05"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="03/29/2002 03:13:46"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   COMMENTS="was My Saved Quotes Screen (SCW); now hidden"
+			   INACTIVE="Y"
+			   NAME="eSales Quotes Screen (SCW)"
+			   SCREEN="eSales Quotes Screen (SCW)"
+			   SEQUENCE="120"
+			   UPDATED="07/16/2014 20:00:05"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="08/01/1999 21:47:11"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="02/21/2002 05:13:27"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/22/2000 04:17:42"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="eSales Shopping Cart Screen"
+			   SCREEN="eSales Shopping Cart Screen"
+			   SEQUENCE="121"
+			   UPDATED="07/16/2014 20:00:05"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="12/29/1999 00:24:36"
+			   CREATED_BY="SADMIN">
+				<SCREEN_MENU_ITEM_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="06/05/2001 00:42:47"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/22/2000 04:18:06"
+				   CREATED_BY="SADMIN">
+				</SCREEN_MENU_ITEM_LOCALE>
+			</SCREEN_MENU_ITEM>
+			<SCREEN_MENU_ITEM
+			   INACTIVE="Y"
+			   NAME="eWireless Screen"
+			   SCREEN="eWireless Screen"
+			   SEQUENCE="122"
+			   TEXT_-_STRING_REFERENCE="SBL_MOBILE-1004230857-0B9"
+			   UPDATED="07/16/2014 20:00:05"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="02/28/2001 00:40:05"
+			   CREATED_BY="SADMIN">
+			</SCREEN_MENU_ITEM>
+		</APPLICATION>
+	</PROJECT>
+</REPOSITORY>
+
+
+

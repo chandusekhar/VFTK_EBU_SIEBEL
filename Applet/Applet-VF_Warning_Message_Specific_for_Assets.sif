@@ -1,0 +1,1145 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VF Warning Messages"
+	   UI_FREEZE="N"
+	   UPDATED="08/15/2016 12:15:11"
+	   UPDATED_BY="SSANTOS"
+	   CREATED="10/20/2011 20:31:53"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   BUSINESS_COMPONENT="VF Specific Warning Message"
+		   CLASS="CSSFrameList"
+		   COMMENTS="CR221: applet for administration of template messges"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HEIGHT="4"
+		   INACTIVE="N"
+		   NAME="VF Warning Message Specific for Assets"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LOCKED="N"
+		   SCRIPTED="Y"
+		   TITLE_-_STRING_REFERENCE="X_VF_WARNING_MSG"
+		   TYPE="Standard"
+		   UPGRADE_BEHAVIOR="Preserve"
+		   WIDTH="2"
+		   UPDATED="08/15/2016 12:34:37"
+		   UPDATED_BY="SSANTOS"
+		   CREATED="10/20/2011 20:32:22"
+		   CREATED_BY="SADMIN">
+			<APPLET_LOCALE
+			   APPLICATION_CODE="STD"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   REDO="N"
+			   TRANSLATE="Y"
+			   UPDATED="10/20/2011 20:32:22"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/20/2011 20:32:22"
+			   CREATED_BY="SADMIN">
+			</APPLET_LOCALE>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreInvokeMethod (MethodName)
+{
+//DEF-11566
+
+	if (MethodName == &quot;WriteRecord&quot;)
+	{
+		
+		var position = TheApplication().PositionName();
+		var positionAddRight = TheApplication().InvokeMethod (&quot;LookupValue&quot;, &quot;WRN_MSG_FO_ADD_RIGHT&quot;, position);
+		var FOAAddRight = this.BusComp().GetFieldValue(&quot;Front Office Agent Add Right&quot;);
+	
+		if(FOAAddRight !=&quot;N&quot;) 
+		{
+			if (positionAddRight == &quot;&quot; || positionAddRight ==null)
+			{
+				TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;User Defined Errors&quot;, &quot;0110&quot;));	
+				return (CancelOperation);
+			}
+		}
+	}
+	return (ContinueOperation);
+}"
+			   UPDATED="08/15/2016 12:04:42"
+			   UPDATED_BY="SSANTOS"
+			   CREATED="08/15/2016 12:04:12"
+			   CREATED_BY="SSANTOS">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_USER_PROP
+			   COMMENTS="DEF-11566"
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: DeleteRecord"
+			   VALUE="IIf( [Front Office Agent Delete Right]=&quot;Y&quot;  AND  LookupValue(&quot;WRN_MSG_FO_DEL_RIGHT&quot;, PositionName()&lt;&gt;&quot;&quot; ),  TRUE ,IIf([Front Office Agent Delete Right]=&quot;N&quot;,TRUE,FALSE ))"
+			   UPDATED="08/15/2016 12:03:26"
+			   UPDATED_BY="SSANTOS"
+			   CREATED="05/25/2012 18:37:28"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="Oracle Review October 2011"
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: NewRecord"
+			   VALUE="TRUE"
+			   UPDATED="05/11/2012 17:20:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/11/2012 17:20:44"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Base"
+			   SEQUENCE="0"
+			   TYPE="Base"
+			   WEB_TEMPLATE="Applet List (Base/EditList)"
+			   UPDATED="10/20/2011 20:32:22"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/20/2011 20:32:22"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Created"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="502"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Created"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="CreatedByName"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="512"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="CreatedByName"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="DeleteRecord"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="133"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="DeleteRecord"
+				   TYPE="Control"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Description"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="505"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Description"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Expiry Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="503"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Expiry Date"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Front Office Agent Add Right"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="508"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Front Office Agent Add Right"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Front Office Agent Delete Right"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="509"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Front Office Agent Delete Right"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="504"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application2"
+				   TYPE="Control"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="NewRecord"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="131"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NewRecord"
+				   TYPE="Control"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Priority"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="510"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Priority"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Templ Id"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="501"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Templ Id"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Template Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="504"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Template Name"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Template Name"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="501"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Template Name2"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Validity Period"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="506"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Validity Period"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="expired flg"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="511"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="expired flg"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="not expire flg"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="507"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="not expire flg"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Edit List"
+			   SEQUENCE="1"
+			   TYPE="Edit List"
+			   WEB_TEMPLATE="Applet List (Base/EditList)"
+			   UPDATED="10/20/2011 20:32:22"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/20/2011 20:32:22"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Created"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="503"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Created"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="CreatedByName"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="512"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="CreatedByName"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="DeleteRecord"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="133"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="DeleteRecord"
+				   TYPE="Control"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Description"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="506"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Description"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Expiry Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="504"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Expiry Date"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Front Office Agent Add Right"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="508"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Front Office Agent Add Right"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Front Office Agent Delete Right"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="509"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Front Office Agent Delete Right"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="501"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application"
+				   TYPE="Control"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="NewRecord"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="131"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NewRecord"
+				   TYPE="Control"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Priority"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="510"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Priority"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Templ Id"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="501"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Templ Id"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Template Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="502"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Template Name"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Validity Period"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="505"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Validity Period"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="expired flg"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="511"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="expired flg"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="not expire flg"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="507"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="not expire flg"
+				   TYPE="List Item"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="Y"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="20"
+			   INACTIVE="N"
+			   LEFT="2"
+			   MULTI_LINE="N"
+			   NAME="AppletTitle"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="1"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="N"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="2"
+			   TYPE="Label"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="96"
+			   UPDATED="10/20/2011 20:32:22"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/20/2011 20:32:22"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_DELETE-1004224629-055"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="DeleteRecord"
+			   MULTI_LINE="N"
+			   NAME="DeleteRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="11"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="10/20/2011 20:32:22"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/20/2011 20:32:22"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="590"
+			   INACTIVE="N"
+			   LEFT="6"
+			   MULTI_LINE="N"
+			   NAME="List"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="2"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="28"
+			   TYPE="ListControl"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="1012"
+			   UPDATED="10/20/2011 20:32:22"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/20/2011 20:32:22"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_NEW-1004235437-602"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEdit"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="NewRecord"
+			   MULTI_LINE="N"
+			   NAME="NewRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="10"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="10/20/2011 20:32:22"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/20/2011 20:32:22"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<LIST
+			   HTML_MULTI_ROW_EDIT="N"
+			   HTML_MULTI_ROW_SELECT="N"
+			   INACTIVE="N"
+			   NAME="List"
+			   TOTAL_DISPLAYED="N"
+			   TOTAL_REQUIRED="N"
+			   UPDATED="10/20/2011 20:32:22"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/20/2011 20:32:22"
+			   CREATED_BY="SADMIN">
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_MSG_START_DT"
+				   FIELD="Created"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="Created"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SEQUENCE="3"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="10/20/2011 20:32:22"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/20/2011 20:32:22"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_CREATED_BY"
+				   FIELD="CreatedByName"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="CreatedByName"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="10/20/2011 20:32:22"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/20/2011 20:32:22"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_DESCRIPTION"
+				   FIELD="Description"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="Description"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SEQUENCE="6"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="130"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="10/20/2011 20:32:22"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/20/2011 20:32:22"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_END_DT"
+				   FIELD="Expiry Date"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="Expiry Date"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="10/20/2011 20:32:22"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/20/2011 20:32:22"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   CHECK_BITMAP_IDENTIFIER="CHECK"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_FRONT_OFFICE_AGENT"
+				   FIELD="Front Office Agent Add Right"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_ICON_MAP="CHECK"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="CheckBox"
+				   INACTIVE="N"
+				   NAME="Front Office Agent Add Right"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SEQUENCE="9"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Center"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="40"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="10/20/2011 20:32:22"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/20/2011 20:32:22"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   CHECK_BITMAP_IDENTIFIER="CHECK"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_FRONT_OFFICE_DELETE"
+				   FIELD="Front Office Agent Delete Right"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_ICON_MAP="CHECK"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="CheckBox"
+				   INACTIVE="N"
+				   NAME="Front Office Agent Delete Right"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SEQUENCE="10"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Center"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="40"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="10/20/2011 20:32:22"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/20/2011 20:32:22"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   CHECK_BITMAP_IDENTIFIER="CHECK"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_PRI"
+				   FIELD="Priority Calc"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="CheckBox"
+				   INACTIVE="N"
+				   NAME="Priority"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SEQUENCE="11"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Center"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="10"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="10/20/2011 20:32:22"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/20/2011 20:32:22"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_TEMPLATE_ID-1004225322-12F"
+				   FIELD="Templ Id"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="Templ Id"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_TEMPLATE_NAME"
+				   FIELD="Template Name"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="Template Name"
+				   PICK_APPLET="VF Warning Message Search Template Pick Applet"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SEQUENCE="5"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="10/20/2011 20:32:22"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/20/2011 20:32:22"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_VALIDITY"
+				   FIELD="Validity Period"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="Validity Period"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SEQUENCE="7"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="10/20/2011 20:32:22"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/20/2011 20:32:22"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   CHECK_BITMAP_IDENTIFIER="CHECK"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_EXPIRED"
+				   FIELD="expired flg"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_ICON_MAP="CHECK"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="CheckBox"
+				   INACTIVE="N"
+				   NAME="expired flg"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Center"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="10/20/2011 20:32:22"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/20/2011 20:32:22"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   CHECK_BITMAP_IDENTIFIER="CHECK"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_NON_EXPIRING"
+				   FIELD="not expire flg"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_ICON_MAP="CHECK"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="CheckBox"
+				   INACTIVE="N"
+				   NAME="not expire flg"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SEQUENCE="8"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Center"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="10"
+				   UPDATED="10/20/2011 20:32:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/20/2011 20:32:22"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="10/20/2011 20:32:22"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/20/2011 20:32:22"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+			</LIST>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+

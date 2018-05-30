@@ -1,0 +1,1271 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="0-1"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="0-1"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="Task UI Framework (SWE)"
+	   UI_FREEZE="N"
+	   UPDATED="03/01/2017 20:43:06"
+	   UPDATED_BY="NPEREIRA"
+	   CREATED="08/27/2005 00:40:14"
+	   CREATED_BY="0-1"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   CLASS="CSSSWEFrameTaskPlaybar"
+		   COMMENTS="Task Playbar standard applet"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HEIGHT="4"
+		   INACTIVE="N"
+		   NAME="Task Playbar Applet - Activation"
+		   NO_DELETE="Y"
+		   NO_INSERT="Y"
+		   NO_MERGE="Y"
+		   NO_UPDATE="Y"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="03/01/2017 20:39:19"
+		   SCRIPTED="Y"
+		   TYPE="Playbar"
+		   UPGRADE_ANCESTOR="Task Playbar Applet - Top"
+		   UPGRADE_BEHAVIOR="Preserve"
+		   WIDTH="2"
+		   OBJECT_LOCKED_BY_NAME="NPEREIRA"
+		   UPDATED="03/01/2017 20:43:05"
+		   UPDATED_BY="NPEREIRA"
+		   CREATED="09/29/2011 10:37:03"
+		   CREATED_BY="0-1">
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="Applet_Load"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="Applet_Load"
+			   SCRIPT="function Applet_Load ()
+{
+				
+		//BEGIN GEN_REQ_018
+		var sGroupActTask = TheApplication().GetProfileAttr(&quot;VFPA_TaskInitiated&quot;);
+		if(sGroupActTask == &quot;GROUP_Act_Task&quot;){
+			var sMsgToShow = theApplication().GetProfileAttr(&quot;GROUP_Act_Task_MSG&quot;);
+			theApplication().SWEAlert(sMsgToShow);
+			TheApplication().SetProfileAttr(&quot;VFPA_TaskInitiated&quot;,&quot;&quot;);
+		}
+		//END GEN_REQ_018
+}"
+			   UPDATED="07/24/2013 13:38:05"
+			   UPDATED_BY="0-1"
+			   CREATED="07/24/2013 13:38:05"
+			   CREATED_BY="0-1">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="Applet_PreInvokeMethod"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="Applet_PreInvokeMethod"
+			   SCRIPT="function Applet_PreInvokeMethod (name, inputPropSet)
+{
+	try
+	{
+		if (name == &quot;NavigateNext&quot;)
+		{				
+			var thisBO = this.BusObject();
+			var BC = thisBO.GetBusComp(&quot;Order Entry - Orders&quot;);
+			var strOrderId = BC.GetFieldValue(&quot;Id&quot;);
+			var strDealerCode = BC.GetFieldValue(&quot;VF Dealer Code&quot;);	
+			//---------------------------------------------------------------------------------
+			// FrameWork Action Fields - JMARQUES - 2014/12/22
+			var bsTELCOUtils = theApplication().GetService (&quot;TELCO BusComp Utils&quot;);
+			var psInUtils  = theApplication().NewPropertySet();
+			var psOutUtils = theApplication().NewPropertySet();
+			
+			psInUtils.SetProperty(&quot;BusinessComponent&quot;, &quot;Order Entry - Line Items&quot;);	
+			psInUtils.SetProperty(&quot;BusinessObject&quot;, &quot;Order Entry (Sales)&quot;);	
+			psInUtils.SetProperty(&quot;SearchExpression&quot;, &quot;[Order Header Id] = &apos;&quot; + strOrderId + &quot;&apos; AND [TELCO Action Reason] IS NOT NULL&quot;);	
+			psInUtils.SetProperty(&quot;Query Field 1&quot;, &quot;TELCO Action Type&quot;);
+			
+			psOutUtils = bsTELCOUtils.InvokeMethod(&quot;GetFieldsFromFirstRow&quot;, psInUtils);
+					
+			var sActionType   = psOutUtils.GetProperty(&quot;Query Field Result 1&quot;);
+			
+			psInUtils.SetProperty(&quot;BusinessComponent&quot;, &quot;Order Entry - Orders&quot;);	
+			psInUtils.SetProperty(&quot;BusinessObject&quot;, &quot;Order Entry&quot;);	
+			psInUtils.SetProperty(&quot;SearchExpression&quot;, &quot;[Id] = &apos;&quot; + strOrderId + &quot;&apos;&quot;);	
+			psInUtils.SetProperty(&quot;Query Field 1&quot;, &quot;Order Type&quot;);
+			psInUtils.SetProperty(&quot;Query Field 2&quot;, &quot;VF Shop Code&quot;);
+			psInUtils.SetProperty(&quot;Query Field 3&quot;, &quot;VF Customer Sub Class&quot;);
+			
+			psOutUtils = bsTELCOUtils.InvokeMethod(&quot;GetFieldsFromFirstRow&quot;, psInUtils);
+					
+			var CType    		= psOutUtils.GetProperty(&quot;Query Field Result 1&quot;);
+			var strShopCode	    = psOutUtils.GetProperty(&quot;Query Field Result 2&quot;);
+			var strCustSubClass = psOutUtils.GetProperty(&quot;Query Field Result 3&quot;);	
+			
+			//---------------------------------------------------------------------------------
+			var svc_VFControls = theApplication().GetService (&quot;VF Controls&quot;);
+			var svc_ACSNIGeneralOperations = theApplication().GetService (&quot;ACS NI General Operations&quot;);
+			var pset_InCtrl  = theApplication().NewPropertySet();
+			var pset_OutCtrl = theApplication().NewPropertySet();
+			var pset_Inputs  = theApplication().NewPropertySet();
+			var pset_Outputs = theApplication().NewPropertySet();
+			pset_InCtrl.SetProperty(&quot;OrderId&quot;, strOrderId);
+			pset_OutCtrl = svc_VFControls.InvokeMethod(&quot;CheckSubsCamp&quot;, pset_InCtrl);
+			
+			var pset_In  = theApplication().NewPropertySet();
+			var pset_Out = theApplication().NewPropertySet();	
+			pset_In.SetProperty(&quot;OrderId&quot;, strOrderId);
+			pset_Out = svc_VFControls.InvokeMethod(&quot;SetLineItemBA&quot;, pset_In);
+			
+			var str_Message = &quot;&quot;;
+		
+			pset_Inputs.SetProperty(&quot;Code&quot;, &quot;AD6004&quot;);
+			pset_Inputs.SetProperty(&quot;MessageCategory&quot;, &quot;VF Message Category&quot;);
+			pset_Outputs = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupMsg&quot;, pset_Inputs);
+			str_Message = pset_Outputs.GetProperty(&quot;Message&quot;);
+			var result = pset_OutCtrl.GetProperty(&quot;Result&quot;);
+			if(result == &quot;KO&quot;)
+			{
+				theApplication().SWEAlert(str_Message);
+				return(&quot;CancelOperation&quot;);
+			}
+			//CR152 end
+		
+			//Order Submission confirmation message - TO BE ON TOP
+			var str_Message = &quot;&quot;;
+			pset_Inputs.SetProperty(&quot;Code&quot;, &quot;106&quot;);
+			pset_Inputs.SetProperty(&quot;MessageCategory&quot;, &quot;VF Message Category&quot;);
+			pset_Outputs = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupMsg&quot;, pset_Inputs);
+			//Get the message depending on the Language the user has logged in
+			var str_Message = pset_Outputs.GetProperty(&quot;Message&quot;);
+			if(!(confirm(str_Message)))
+			{
+				return (&quot;CancelOperation&quot;);
+			}
+			else
+			{
+		/******************* Campaign Limit Controls - Start ***********************************/
+				theApplication().SetProfileAttr(&quot;LogControls&quot;,&quot;&quot;);
+				pset_Inputs.SetProperty(&quot;LOV Type&quot;, &quot;FS_ORDER_TYPE&quot;);
+				pset_Inputs.SetProperty(&quot;LOV Name&quot;, &quot;Add New Service&quot;);
+				pset_Outputs = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupValueLang&quot;, pset_Inputs);
+				var sActType = pset_Outputs.GetProperty(&quot;LOV Value&quot;);
+				pset_Inputs.SetProperty(&quot;LOV Type&quot;, &quot;ORDER_SUB_TYPE&quot;);
+				pset_Inputs.SetProperty(&quot;LOV Name&quot;, &quot;111&quot;);
+				pset_Outputs = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupValueLang&quot;, pset_Inputs);
+				var sModOptSubType = pset_Outputs.GetProperty(&quot;LOV Value&quot;);
+				//var CType =  BC.GetFieldValue(&quot;Order Type&quot;); // JMARQUES - Changed Order Type Cal to Order Type
+	
+				if (sActionType == sModOptSubType || CType == sActType)
+				{	
+					//CR152...
+					var psInputSusbsidy  = theApplication().NewPropertySet();
+					var psOutputSusbsidy = theApplication().NewPropertySet();
+					var AssignSubsidyVoucher = theApplication().GetService (&quot;VF Manage Campaign&quot;);
+					
+					psInputSusbsidy.SetProperty(&quot;OrderId&quot;, strOrderId);
+					psOutputSusbsidy = AssignSubsidyVoucher.InvokeMethod(&quot;ifThereIsSubsidyAssignIt&quot;, psInputSusbsidy);
+					if(psOutputSusbsidy.GetProperty(&quot;popupMessage&quot;)) {
+						theApplication().SWEAlert(psOutputSusbsidy.GetProperty(&quot;popupMessage&quot;));
+					}
+					psOutputSusbsidy = null;
+					psInputSusbsidy = null;
+					AssignSubsidyVoucher = null;
+					//...152
+				
+					var pset_InCtrl  = theApplication().NewPropertySet();
+					var pset_OutCtrl = theApplication().NewPropertySet();
+				//	var strShopCode = BC.GetFieldValue(&quot;VF Shop Code&quot;);
+					pset_InCtrl.SetProperty(&quot;OrderId&quot;, strOrderId);
+					pset_InCtrl.SetProperty(&quot;ShopCode&quot;, strDealerCode);
+					pset_OutCtrl = svc_VFControls.InvokeMethod(&quot;LimitControl&quot;, pset_InCtrl);
+					var result = pset_OutCtrl.GetProperty(&quot;Result&quot;);
+					var ErrorMsg = pset_OutCtrl.GetProperty(&quot;ErrorMsg&quot;);
+					var LoginName = pset_OutCtrl.GetProperty(&quot;LoginName&quot;);
+					if (ErrorMsg != &quot;&quot;)
+					{
+						theApplication().SWEAlert(ErrorMsg);
+						return(&quot;CancelOperation&quot;);
+					}
+					if (result != &quot;&quot;)
+					{
+						var i = 0;
+						var ConSC = &quot;&quot;;
+						var LineItemId = &quot;&quot;;
+						var ControlDetId = &quot;&quot;;
+						var TempPro = &quot;&quot;;
+						var ProfAttrLog = &quot;&quot;;
+						var FailedControls = pset_OutCtrl.GetChild(0);
+						var FailedControlsCount = FailedControls.GetPropertyCount();
+						for (i = 1; i &lt;= FailedControlsCount; i++)
+						{
+							TempPro = FailedControls.GetProperty(&quot;FailedControl&quot;+i);
+							var IndTempPro = TempPro.indexOf(&quot;&lt;&quot;);
+							var Ind2TempPro = TempPro.indexOf(&quot; &quot;);
+							var Ind3TempPro = TempPro.indexOf(&quot;&gt;&quot;);
+							LineItemId = TempPro.substring(0,IndTempPro);
+							ControlDetId = TempPro.substring(Ind2TempPro+1,Ind3TempPro);
+							ProfAttrLog = ProfAttrLog + ControlDetId + &quot;_&quot; + LineItemId + &quot;|&quot;;
+							TempPro = TempPro.substring(IndTempPro);
+							ConSC = ConSC + TempPro+&quot;\n\r&quot;;
+						}
+						pset_Inputs.SetProperty(&quot;Code&quot;, &quot;R142_322&quot;);
+						pset_Inputs.SetProperty(&quot;MessageCategory&quot;, &quot;VF Message Category&quot;);
+						pset_Outputs = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupMsg&quot;, pset_Inputs);
+						var SubMsg1 = pset_Outputs.GetProperty(&quot;Message&quot;);
+						pset_Inputs.SetProperty(&quot;Code&quot;, &quot;R142_323&quot;);
+						pset_Inputs.SetProperty(&quot;MessageCategory&quot;, &quot;VF Message Category&quot;);
+						pset_Outputs = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupMsg&quot;, pset_Inputs);
+						var SubMsg2 = pset_Outputs.GetProperty(&quot;Message&quot;);
+						var FMsg = SubMsg1 + &quot;\n\r\n\r\n\r&quot;+ConSC+&quot;\n\r\n\r&quot;+SubMsg2;
+		
+						if(!confirm(FMsg))
+						{
+							return(&quot;CancelOperation&quot;);
+						}
+					             
+		               /*Begin Oracle Review - Scripting 23 */
+		               var oBS ,inpPS, outPS;
+		               inpPS = theApplication().NewPropertySet();
+		               outPS = theApplication().NewPropertySet();
+		               inpPS.SetProperty(&quot;LogControls&quot;,ProfAttrLog);
+		               inpPS.SetProperty(&quot;LimitControlLoginName&quot;,LoginName);
+		               oBS = theApplication().GetService(&quot;VF TRK Utilities&quot;);
+		               oBS.InvokeMethod(&quot;SetProfileAttr&quot;, inpPS, outPS);
+		               /*End Oracle Review - Scripting 23 */ 
+					}
+				}
+		/******************* Campaign Limit Controls - End ***********************************/
+		
+		/******************* Campaign Deactivation Checks - Start ***********************************/
+				var ResMsg = CheckCampaignDeactivation(strOrderId,CType,sActionType);
+				if (ResMsg != &quot;&quot;)
+				{
+					if(!confirm(ResMsg))
+					{
+						return(&quot;CancelOperation&quot;);
+					}
+				}
+		
+		/******************* Campaign Deactivation Checks - End ***********************************/	
+				// A.Eren Search For count of the Kargo Product and give back the part number
+				
+				var Inputs  = theApplication().NewPropertySet();
+				var Outputs = theApplication().NewPropertySet();
+	
+			    Inputs.SetProperty(&quot;orderId&quot;, BC.GetFieldValue(&quot;Id&quot;));
+	
+				Outputs = svc_ACSNIGeneralOperations.InvokeMethod(&quot;checkKargo&quot;, Inputs,Outputs);
+				var Res = Outputs.GetProperty(&quot;Res&quot;);
+				var ResCount = Outputs.GetProperty(&quot;ResCount&quot;);
+				var ResLimit = Outputs.GetProperty(&quot;ResLimit&quot;);  
+			    if(Res == &quot;KO&quot;)
+				{
+					var input  = theApplication().NewPropertySet();
+					var output = theApplication().NewPropertySet();	
+					var strCode				= &quot;233&quot;;
+					input.SetProperty(&quot;Code&quot;, strCode);							
+					input.SetProperty(&quot;MessageCategory&quot;, &quot;VF Message Category&quot;);
+					output = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupMsg&quot;, input);
+			
+					var msg = output.GetProperty(&quot;Message&quot;); 
+					var msg2 = ResLimit + &quot; &quot; + msg + &quot; &quot; +ResCount;
+					theApplication().SWEAlert(msg2); 
+					return (&quot;CancelOperation&quot;);	
+				}
+					
+	            // A.Eren Rule 2 Payment Status Check
+	            
+	            var Inputs  = theApplication().NewPropertySet();
+				var Outputs = theApplication().NewPropertySet();
+				Inputs.SetProperty(&quot;OrderId&quot;, BC.GetFieldValue(&quot;Id&quot;));
+				
+				Outputs = svc_ACSNIGeneralOperations.InvokeMethod(&quot;checkPaymentStatus&quot;, Inputs,Outputs);
+				var Res = Outputs.GetProperty(&quot;Res&quot;);
+					
+			    if(Res == &quot;KO&quot;)
+				{
+					var input  = theApplication().NewPropertySet();
+					var output = theApplication().NewPropertySet();	
+					var strCode				= &quot;234&quot;;
+					input.SetProperty(&quot;Code&quot;, strCode);							
+					input.SetProperty(&quot;MessageCategory&quot;, &quot;VF Message Category&quot;);
+					output = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupMsg&quot;, input);
+			
+					var msg = output.GetProperty(&quot;Message&quot;);									
+			        theApplication().SWEAlert(msg);
+					return (&quot;CancelOperation&quot;);	
+				}
+				else if(Res == &quot;KO2&quot;)
+				{
+					var input  = theApplication().NewPropertySet();
+					var output = theApplication().NewPropertySet();
+					var strCode				= &quot;237&quot;;
+					input.SetProperty(&quot;Code&quot;, strCode);
+					input.SetProperty(&quot;MessageCategory&quot;, &quot;VF Message Category&quot;);
+					output = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupMsg&quot;, input);
+		
+					var msg = output.GetProperty(&quot;Message&quot;);
+					theApplication().SWEAlert(msg);
+					return (&quot;CancelOperation&quot;);
+				}
+		
+				var MTT_Outputs = &quot;&quot;;
+					
+				var pset_Inputs  = theApplication().NewPropertySet();
+				var pset_Outputs = theApplication().NewPropertySet();
+		
+				var str_Message = &quot;&quot;;
+				var approverPosition1 = &quot;&quot;;
+				var approverPosition2 = &quot;&quot;;
+				
+				pset_Inputs.SetProperty(&quot;LOV Type&quot;, &quot;VF_APPROVER_POSITION&quot;);
+				pset_Inputs.SetProperty(&quot;LOV Name&quot;, &quot;MNP Port in Agent 1&quot;);
+				pset_Outputs = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupValue&quot;, pset_Inputs);
+				approverPosition1 = pset_Outputs.GetProperty(&quot;LOV Value&quot;);
+			
+				pset_Inputs.SetProperty(&quot;LOV Type&quot;, &quot;VF_APPROVER_POSITION&quot;);
+				pset_Inputs.SetProperty(&quot;LOV Name&quot;, &quot;MNP Port in Agent 2&quot;);
+				pset_Outputs = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupValue&quot;, pset_Inputs);
+				approverPosition2 = pset_Outputs.GetProperty(&quot;LOV Value&quot;);
+				
+				var userPosition = theApplication().GetProfileAttr(&quot;Position&quot;);
+		
+				if(userPosition == approverPosition1 || userPosition == approverPosition2)
+				{	
+					
+					pset_Inputs.SetProperty(&quot;Code&quot;, &quot;114&quot;);
+					pset_Inputs.SetProperty(&quot;MessageCategory&quot;, &quot;VF Message Category&quot;);
+					pset_Outputs = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupMsg&quot;, pset_Inputs);
+					//Get the message depending on the Language the user has logged in	
+					str_Message = pset_Outputs.GetProperty(&quot;Message&quot;);
+					if(!(confirm(str_Message)))
+					{							
+						return (&quot;CancelOperation&quot;);	
+					}
+					else
+					{
+						return(&quot;ContinueOperation&quot;);
+					}
+				}
+//-----------------------------------------------------------------------------------
+				var bsVFTREBUBrowser = theApplication().GetService(&quot;VFTREBU Convertion Browser BS&quot;);
+				
+				var ps_In  = theApplication().NewPropertySet();
+				var ps_Out = theApplication().NewPropertySet();
+				
+				ps_In.SetProperty(&quot;OrderId&quot;, strOrderId);
+				ps_Out = bsVFTREBUBrowser.InvokeMethod(&quot;checkVPNprod&quot;, ps_In);
+				var booVPNprod = ps_Out.GetProperty(&quot;VPNGroupPresent&quot;);
+				
+				if(booVPNprod == &quot;Y&quot;){
+					
+					ps_Out = null;	
+					ps_In.SetProperty(&quot;orderId&quot;, strOrderId);			
+					ps_Out = bsVFTREBUBrowser.InvokeMethod(&quot;checkPSTN&quot;, ps_In);
+					var RetMsgPSTN = ps_Out.GetProperty(&quot;pstnMessage&quot;);
+
+					if (RetMsgPSTN != &quot;No PSTN&quot;)
+					{
+						if(!confirm(RetMsgPSTN))
+						{
+							return(&quot;CancelOperation&quot;);
+						}
+					}
+		
+					ps_In.SetProperty(&quot;OrderId&quot;, strOrderId);
+					ps_In.SetProperty(&quot;Type&quot;, CType);	
+					ps_Out = bsVFTREBUBrowser.InvokeMethod(&quot;checkVPN&quot;, ps_In);
+					var RetMsg = ps_Out.GetProperty(&quot;vpnMessage&quot;);
+					
+					if (RetMsg != &quot;No Active VPN&quot;)
+					{
+						if(!confirm(RetMsg))
+						{
+							return(&quot;CancelOperation&quot;);
+						}
+					}
+				}
+
+//--------------*************************************** END VPN Check ***********************************/
+				
+				var InputsTest  = theApplication().NewPropertySet();
+				var OutputsTest = theApplication().NewPropertySet();
+			//	var strCustSubClass = BC.GetFieldValue(&quot;VF Customer Sub Class&quot;);
+
+				InputsTest.SetProperty(&quot;OrderId&quot;,strOrderId);
+                InputsTest.SetProperty(&quot;CustomerSubClass&quot;, strCustSubClass);
+                InputsTest.SetProperty(&quot;ShopCode&quot;, strShopCode);
+                InputsTest.SetProperty(&quot;ByPassOrderItemId&quot;, &quot;&quot;);
+                InputsTest.SetProperty(&quot;ByPassControlDetailId&quot;, &quot;&quot;);  
+                                                                                                                             
+                try{                                                                                                      
+                	CheckControls(InputsTest,OutputsTest);                                                           
+                	var VFControlResult = OutputsTest.GetProperty(&quot;VFControlResult&quot;);  
+                    var CanSkip = OutputsTest.GetProperty(&quot;CanSkip&quot;);                                                    
+                    var VFErrorMessage = OutputsTest.GetProperty(&quot;VFErrorMessage&quot;); 
+                    var ByPassOrderItemId = OutputsTest.GetProperty(&quot;ByPassOrderItemId&quot;);
+                    var ByPassControlDetailId = OutputsTest.GetProperty(&quot;ByPassControlDetailId&quot;);
+                    //alert(&quot;VFControlResult:&quot; + VFControlResult + &quot;\nCanSkip:&quot; + CanSkip + &quot;\nVFErrorMessage:&quot; + VFErrorMessage + &quot;\nByPassOrderItemId:&quot; + ByPassOrderItemId + &quot;\nByPassControlDetailId:&quot; + ByPassControlDetailId);                                                               
+                    if(VFControlResult != &quot;Y&quot;)
+                       return (&quot;CancelOperation&quot;);                                                     
+                }
+                catch(e)
+                {
+                    alert(e);
+                    return (&quot;CancelOperation&quot;);      
+                }
+
+				/*************************************** END Controls Check ***********************************/
+				
+			}
+			
+		}
+	}
+	finally
+	{
+		BC = null;
+		svc_VFControls = null;
+		svc_ACSNIGeneralOperations = null;
+		pset_InCtrl  = null;
+		pset_OutCtrl = null;
+		pset_Inputs  = null;
+		pset_Outputs = null;	
+		pset_In  = null;
+		pset_Out = null;			
+		psInputSusbsidy  = null;
+		psOutputSusbsidy = null;
+		AssignSubsidyVoucher = null;
+		svc_VFControls = null;
+		oBS = null;
+		inpPS = null; 
+		outPS = null;				
+		Inputs  = null;
+		Outputs = null;
+		input = null;
+		output = null;	
+		thisBO = null;	
+	}	
+}"
+			   UPDATED="12/22/2014 18:29:39"
+			   UPDATED_BY="JMARQUES"
+			   CREATED="09/29/2011 10:43:12"
+			   CREATED_BY="0-1">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="CheckCampaignDeactivation"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="CheckCampaignDeactivation"
+			   SCRIPT="function CheckCampaignDeactivation(strOrderId,CType,CSubType)
+{
+	try
+	{
+		var OutMsg = &quot;&quot;;
+		var svc_ACSNIGenOper = theApplication().GetService (&quot;ACS NI General Operations&quot;);
+		var pset_In  = theApplication().NewPropertySet();
+		var pset_Out = theApplication().NewPropertySet();
+		pset_In.SetProperty(&quot;LOV Type&quot;, &quot;ORDER_SUB_TYPE&quot;);
+		pset_In.SetProperty(&quot;LOV Name&quot;, &quot;111&quot;);
+		pset_Out = svc_ACSNIGenOper.InvokeMethod(&quot;GetLookupValueLang&quot;, pset_In);				
+		var sModOptSubType = pset_Out.GetProperty(&quot;LOV Value&quot;);
+		pset_In.SetProperty(&quot;LOV Type&quot;, &quot;FS_ORDER_TYPE&quot;);
+		pset_In.SetProperty(&quot;LOV Name&quot;, &quot;Disconnect&quot;);
+		pset_Out = svc_ACSNIGenOper.InvokeMethod(&quot;GetLookupValueLang&quot;, pset_In);
+		var DiscOrderType = pset_Out.GetProperty(&quot;LOV Value&quot;);
+		
+		if (CType == DiscOrderType)
+		{
+			var svc_VFControls = theApplication().GetService (&quot;VF Controls&quot;);
+			pset_In.SetProperty(&quot;OrderId&quot;, strOrderId);
+			pset_In.SetProperty(&quot;Type&quot;, &quot;Disconnect&quot;);
+			pset_Out = svc_VFControls.InvokeMethod(&quot;CheckCampDeactivation&quot;, pset_In);
+			OutMsg = pset_Out.GetProperty(&quot;Result&quot;);
+			svc_VFControls = null;
+		}
+		else if (CSubType == sModOptSubType)
+		{
+			var svc_VFControls = theApplication().GetService (&quot;VF Controls&quot;);
+			pset_In.SetProperty(&quot;OrderId&quot;, strOrderId);
+			pset_In.SetProperty(&quot;Type&quot;, &quot;Modify&quot;);
+			pset_Out = svc_VFControls.InvokeMethod(&quot;CheckCampDeactivation&quot;, pset_In);
+			OutMsg = pset_Out.GetProperty(&quot;Result&quot;);
+			svc_VFControls = null;
+		}
+	}
+	finally
+	{
+		svc_ACSNIGenOper = null;
+		pset_In = null;
+		pset_Out = null;
+		svc_VFControls = null;
+	}
+	return(OutMsg);
+}"
+			   UPDATED="08/22/2012 18:16:34"
+			   UPDATED_BY="0-1"
+			   CREATED="08/22/2012 18:16:34"
+			   CREATED_BY="0-1">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="CheckControls"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="CheckControls"
+			   SCRIPT="function CheckControls(Inputs,Outputs)
+{
+	//alert(&quot;CheckControls basladi...&quot;);
+	var BS = theApplication().GetService(&quot;VF Order Controls Proxy Service&quot;);
+	
+	var VFControlResult= &quot;Y&quot;;	
+	var CanSkip = &quot;Y&quot;;
+	var VFErrorMessage=&quot;&quot;;
+	//alert(&quot;Once: VFControlResult:&quot; + VFControlResult + &quot;CanSkip:&quot; + CanSkip);
+	//alert(&quot;----------------: InputPropertyCount: &quot; + Inputs.GetPropertyCount());
+	do
+	{
+		Inputs.SetProperty(&quot;ByPassControlDetailId&quot;, Outputs.GetProperty(&quot;ByPassControlDetailId&quot;));										
+		Inputs.SetProperty(&quot;ByPassOrderItemId&quot;, Outputs.GetProperty(&quot;ByPassOrderItemId&quot;));	
+		
+		//alert(&quot;ByPassControlDetailId:&quot; + Inputs.GetProperty(&quot;ByPassControlDetailId&quot;) + &quot;ByPassOrderItemId:&quot; + Inputs.GetProperty(&quot;ByPassOrderItemId&quot;));
+		//alert(&quot;Once: PropertyCount: &quot; + Outputs.GetPropertyCount());													
+		var	OutputsTest = BS.InvokeMethod(&quot;CheckOrderControls&quot;,Inputs);
+		
+		Outputs.SetProperty(&quot;VFControlResult&quot;, OutputsTest.GetProperty(&quot;VFControlResult&quot;));
+		Outputs.SetProperty(&quot;CanSkip&quot;, OutputsTest.GetProperty(&quot;CanSkip&quot;));
+		Outputs.SetProperty(&quot;VFErrorMessage&quot;, OutputsTest.GetProperty(&quot;VFErrorMessage&quot;));
+		Outputs.SetProperty(&quot;ByPassOrderItemId&quot;, OutputsTest.GetProperty(&quot;ByPassOrderItemId&quot;));
+		Outputs.SetProperty(&quot;ByPassControlDetailId&quot;, OutputsTest.GetProperty(&quot;ByPassControlDetailId&quot;));
+			
+		//alert(&quot;Sonra: PropertyCount: &quot; + Outputs.GetPropertyCount());
+		VFControlResult = Outputs.GetProperty(&quot;VFControlResult&quot;);
+		CanSkip = Outputs.GetProperty(&quot;CanSkip&quot;);
+		VFErrorMessage = Outputs.GetProperty(&quot;VFErrorMessage&quot;);
+		//alert(&quot;InvokeMethod sonrasi VFControlResult:&quot; + VFControlResult);
+		
+		//alert(&quot;Sonra: VFControlResult:&quot; + VFControlResult + &quot;CanSkip:&quot; + CanSkip);
+		if(VFControlResult == &quot;N&quot;)
+		{
+			if(CanSkip == &quot;N&quot;)
+			{
+				//alert(&quot;Sonra1: VFControlResult:&quot; + VFControlResult + &quot;CanSkip:&quot; + CanSkip);
+				alert(VFErrorMessage);
+				return (&quot;CancelOperation&quot;); 
+			}
+			else if(CanSkip == &quot;Y&quot;)
+			{			
+				//alert(&quot;Sonra2: VFControlResult:&quot; + VFControlResult + &quot;CanSkip:&quot; + CanSkip);
+				
+				var skipMsg = getLookupMessage(&quot;CR690_001&quot;, &quot;VF Message Category&quot;);
+				var msg = confirm(VFErrorMessage + &quot; &quot; + skipMsg); 
+				
+				if(msg) 
+				{ 	
+					//alert(VFErrorMessage);
+					//return (&quot;ContinueOperation&quot;); 
+					var InputsLogTest  = theApplication().NewPropertySet();
+					InputsLogTest.SetProperty(&quot;OrderId&quot;, Inputs.GetProperty(&quot;OrderId&quot;));
+					InputsLogTest.SetProperty(&quot;ByPassOrderItemId&quot;, Outputs.GetProperty(&quot;ByPassOrderItemId&quot;));
+					InputsLogTest.SetProperty(&quot;ByPassControlDetailId&quot;, Outputs.GetProperty(&quot;ByPassControlDetailId&quot;));									
+					BS.InvokeMethod(&quot;logBypassControls&quot;,/*Inputs*/InputsLogTest, OutputsTest);
+					continue;
+				}
+				else 
+				{ 
+					return (&quot;CancelOperation&quot;); 
+				} 
+			}
+		}
+		//alert(&quot;VFControlResult değeri:&quot; + VFControlResult);
+	} while (VFControlResult == &quot;N&quot;)
+
+	return (&quot;ContinueOperation&quot;);
+}"
+			   UPDATED="03/01/2017 20:43:06"
+			   UPDATED_BY="NPEREIRA"
+			   CREATED="07/26/2013 15:52:59"
+			   CREATED_BY="0-1">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="CheckPSTN"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="CheckPSTN"
+			   SCRIPT="function CheckPSTN(strOrderId)
+{
+
+/*******START VPN CHECK*******/
+		/*******VPN DISCONNECT*******/
+	try
+	{		
+		var svc_ACSNIGeneralOperations = theApplication().GetService(&quot;ACS NI General Operations&quot;);
+		var vpnBs = theApplication().GetService(&quot;VF VPN General Service&quot;);
+		var pstnInput = theApplication().NewPropertySet();
+		var pstnOutput = theApplication().NewPropertySet();	
+		
+		pstnInput.SetProperty(&quot;orderId&quot;,strOrderId);			
+		pstnOutput = vpnBs.InvokeMethod(&quot;CheckPSTNActivation&quot;,pstnInput);
+		var RecordFound = pstnOutput.GetProperty(&quot;strRecordFound&quot;);
+		
+		if (RecordFound == &quot;Y&quot;)
+		{
+			pstnInput.SetProperty(&quot;Code&quot;, &quot;R142_361&quot;);
+			pstnInput.SetProperty(&quot;MessageCategory&quot;, &quot;VF Message Category&quot;);
+			pstnOutput = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupMsg&quot;, pstnInput);			
+			var pstnMessage = pstnOutput.GetProperty(&quot;Message&quot;);
+			return(pstnMessage);
+		}
+		else
+		{
+			var pstnMessage = &quot;No PSTN&quot;; 
+			return(pstnMessage);
+		}
+	}
+	finally
+	{
+		svc_ACSNIGeneralOperations = null;
+		vpnBs = null;
+		pstnInput = null;
+		pstnOutput = null;		
+	}
+}"
+			   UPDATED="08/22/2012 18:16:34"
+			   UPDATED_BY="0-1"
+			   CREATED="08/22/2012 18:16:34"
+			   CREATED_BY="0-1">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="CheckVPN"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="CheckVPN"
+			   SCRIPT="function CheckVPN(strOrderId,CType)
+{
+/*******START VPN CHECK*******/
+		/*******VPN DISCONNECT*******/
+	try
+	{
+		var svc_ACSNIGeneralOperations = theApplication().GetService (&quot;ACS NI General Operations&quot;);
+		var vpnBs = theApplication().GetService(&quot;VF VPN General Service&quot;);
+		var vpnInput = theApplication().NewPropertySet();
+		var vpnOutput = theApplication().NewPropertySet();
+		var psetInputsVpn = theApplication().NewPropertySet();
+		var psetOutputsVpn = theApplication().NewPropertySet();
+		psetInputsVpn.SetProperty(&quot;LOV Type&quot;, &quot;FS_ORDER_TYPE&quot;);
+		psetInputsVpn.SetProperty(&quot;LOV Name&quot;, &quot;Disconnect&quot;);
+		psetOutputsVpn = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupValueLang&quot;, psetInputsVpn);
+		sActTypeVpn = psetOutputsVpn.GetProperty(&quot;LOV Value&quot;);
+		
+		if (sActTypeVpn == CType)
+		{			
+			vpnInput.SetProperty(&quot;orderId&quot;,strOrderId);
+			vpnInput.SetProperty(&quot;attrName&quot;,&quot;Group #&quot;);
+			vpnOutput   = vpnBs.InvokeMethod(&quot;RetrieveOLIAttribute&quot;,vpnInput);
+			var groupNo = vpnOutput.GetProperty(&quot;attributeValue&quot;);
+			if (groupNo != &quot;NoValue&quot;)
+			{	vpnOutput 	= theApplication().NewPropertySet();
+				vpnInput.SetProperty(&quot;GroupNumber&quot;,groupNo);
+				vpnOutput   = vpnBs.InvokeMethod(&quot;FindVpnAccount&quot;,vpnInput);
+				var activeLines = vpnOutput.GetProperty(&quot;ActiveVpn&quot;);
+				if (activeLines == &quot;Y&quot;)
+				{
+					vpnInput.SetProperty(&quot;Code&quot;, &quot;R142_358&quot;);
+					vpnInput.SetProperty(&quot;MessageCategory&quot;, &quot;VF Message Category&quot;);
+					vpnOutput = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupMsg&quot;, vpnInput);	
+					var vpnMessage = vpnOutput.GetProperty(&quot;Message&quot;);
+					return(vpnMessage);			
+				}
+				else
+				{
+					var vpnMessage = &quot;No Active VPN&quot;;
+					return(vpnMessage);
+				}
+			}
+			else
+			{
+				var vpnMessage = &quot;No Active VPN&quot;;
+				return(vpnMessage);
+			}
+			
+		}
+		else
+		{
+			var vpnMessage = &quot;No Active VPN&quot;;
+			return(vpnMessage);
+		}		
+		/******END VPN DISCONNECT*****/	
+		/*******END VPN CHECK*********/	
+	}
+	finally
+	{
+		svc_ACSNIGeneralOperations = null;
+		vpnBs = null;
+		vpnInput = null;
+		vpnOutput = null;
+		psetInputsVpn = null;
+		psetOutputsVpn = null;
+	}
+}"
+			   UPDATED="08/22/2012 18:16:34"
+			   UPDATED_BY="0-1"
+			   CREATED="08/22/2012 18:16:34"
+			   CREATED_BY="0-1">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="checkVPNprod"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="checkVPNprod"
+			   SCRIPT="function checkVPNprod(strOrderId)
+{
+	try{
+		//Checks if there is a VPN Group
+		var oBOOrdersHP = theApplication().GetBusObject(&quot;X Order Entry&quot;);
+		var oBCOrdersHP = oBOOrdersHP.GetBusComp(&quot;HP Submit - Order Entry - Line Items&quot;);
+		with(oBCOrdersHP)
+		{
+			ClearToQuery();
+			SetViewMode(AllView);
+			ActivateField(&quot;Order Header Id&quot;);
+			SetSearchSpec(&quot;Order Header Id&quot;,strOrderId);
+			SetSearchSpec(&quot;Part Number&quot;,&quot;3000&quot;);
+			ExecuteQuery(ForwardOnly);
+			if(FirstRecord())
+				theApplication().SetProfileAttr(&quot;VPNGroupPresent&quot;,&quot;Y&quot;);
+			else
+				theApplication().SetProfileAttr(&quot;VPNGroupPresent&quot;,&quot;N&quot;);
+		}
+	}
+	catch(e)
+	{
+		theApplication().SetProfileAttr(&quot;VPNGroupPresent&quot;,&quot;&quot;);
+		throw (e);
+	}
+	finally
+	{
+		oBCOrdersHP = null;
+		oBOOrdersHP =null;
+	}
+}"
+			   UPDATED="08/22/2012 18:16:34"
+			   UPDATED_BY="0-1"
+			   CREATED="12/02/2011 12:30:27"
+			   CREATED_BY="0-1">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="getLookupMessage-All"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="getLookupMessage"
+			   SCRIPT="function getLookupMessage(strCode, strMessageCategory)
+{
+	var strMsg = &quot;&quot;;
+	var Input = theApplication().NewPropertySet();
+	var Output = theApplication().NewPropertySet();
+	var GenOpBS = theApplication().GetService (&quot;ACS NI General Operations&quot;);
+	try
+	{
+		Input.SetProperty(&quot;Code&quot;, strCode);
+		Input.SetProperty(&quot;MessageCategory&quot;, strMessageCategory);
+		Output = GenOpBS.InvokeMethod(&quot;GetLookupMsg&quot;, Input);
+		strMsg = Output.GetProperty(&quot;Message&quot;);
+	}
+	finally
+	{
+		GenOpBS = null;
+		Input = null;
+		Output = null;
+	}
+	return strMsg;
+}"
+			   UPDATED="08/02/2013 14:44:42"
+			   UPDATED_BY="0-1"
+			   CREATED="08/02/2013 14:44:42"
+			   CREATED_BY="0-1">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="LoggingTask"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function LoggingTask(input)
+{
+	try
+	{
+		var TestMode = TheApplication().InvokeMethod (&quot;LookupValue&quot;,&quot;VF_PRM_TASK_LOG_FLAG&quot;,&quot;ENABLE&quot;);
+	
+		if (TestMode != &quot;N&quot;){
+			var BsLog : Service = TheApplication().GetService(&quot;VF PRM Task Log&quot;);
+			var BSLogInputs : PropertySet = TheApplication().NewPropertySet();
+			var BSLogOutputs : PropertySet = TheApplication().NewPropertySet();
+	
+			var TaskNum= TheApplication().GetProfileAttr(&quot;TaskNum&quot;);
+			
+			//Log started task
+			BSLogInputs.SetProperty(&quot;Attrib1&quot;,input);
+			BSLogInputs.SetProperty(&quot;Task Name&quot;,TheApplication().GetProfileAttr(&quot;VFPA_TaskInitiated&quot;));
+			BSLogInputs.SetProperty(&quot;Task Number&quot;,TaskNum);
+			BSLogInputs.SetProperty(&quot;Task Step&quot;,TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;));
+			BsLog.InvokeMethod(&quot;LoggingTask&quot;,BSLogInputs,BSLogOutputs);		
+		}//end if
+	}
+	finally
+	{
+		BSLogInputs = null;
+		BSLogOutputs = null;
+		BsLog = null;
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="07/07/2012 02:06:39"
+			   UPDATED_BY="0-1"
+			   CREATED="06/04/2012 16:18:12"
+			   CREATED_BY="0-1">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_Load"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_Load ()
+{
+	LoggingTask(&quot;LOAD_VIEW&quot;);
+}"
+			   SEQUENCE="2"
+			   UPDATED="07/07/2012 02:05:57"
+			   UPDATED_BY="0-1"
+			   CREATED="07/07/2012 02:05:57"
+			   CREATED_BY="0-1">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreCanInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreCanInvokeMethod (MethodName, &amp;CanInvoke)
+{
+	try
+	{	
+		var psInputs: PropertySet;
+		var psOutputs: PropertySet;
+		var bsGeneralOperations: Service;
+		
+		if (MethodName == &quot;NavigateNext&quot;)
+		{
+			if(TheApplication().GetProfileAttr(&quot;ApplicationName&quot;) == &quot;Siebel eChannel&quot;)
+			{
+				psInputs = TheApplication().NewPropertySet();
+				psOutputs = TheApplication().NewPropertySet();
+				bsGeneralOperations = TheApplication().GetService(&quot;ACS General Operations&quot;);
+				psInputs.SetProperty(&quot;Function&quot;,&quot;0001PRMSubmit&quot;);
+				psInputs.SetProperty(&quot;Name&quot;,&quot;Submit&quot;);
+				bsGeneralOperations.InvokeMethod(&quot;GetParameter_3Inputs&quot;,psInputs,psOutputs);
+				var buttonVisibility = psOutputs.GetProperty(&quot;Cons1&quot;);
+				if(buttonVisibility==&quot;True&quot;)
+				{
+					CanInvoke = &quot;TRUE&quot;;
+				}
+				else
+				{
+					CanInvoke = &quot;FALSE&quot;;				
+				}
+				return( CancelOperation );
+			}
+		}
+	}
+	finally
+	{
+		psInputs = null;
+		psOutputs = null;
+		bsGeneralOperations = null;	
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="3"
+			   UPDATED="04/17/2015 09:09:43"
+			   UPDATED_BY="PSANTOS"
+			   CREATED="04/09/2013 19:34:29"
+			   CREATED_BY="0-1">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreInvokeMethod (MethodName)
+{
+	try
+	{
+		var loInput : PropertySet;
+		var loOutput : PropertySet;
+		var loService : Service;
+		if(MethodName == &quot;CancelTask&quot;) {
+		
+		TheApplication ().SetProfileAttr(&quot;Automatically_Config&quot;,&quot;N&quot;);
+		return(ContinueOperation);
+		}
+		if(MethodName == &quot;PauseTask&quot;) {
+		TheApplication().ActiveBusObject().GetBusComp(&quot;Order Entry - Orders&quot;).WriteRecord();
+		return(ContinueOperation);
+		}
+		if (MethodName == &quot;NavigateNext&quot;)
+		{
+			TheApplication ().SetProfileAttr(&quot;Automatically_Config&quot;,&quot;N&quot;);
+			LoggingTask(&quot;START_NEXT&quot;);
+			LoggingTask(&quot;END_NEXT&quot;);
+		}
+		return (ContinueOperation);
+	}
+	finally
+	{
+		loInput = null;
+		loOutput = null;
+		loService = null;
+	}
+}"
+			   SEQUENCE="4"
+			   UPDATED="06/03/2013 17:02:48"
+			   UPDATED_BY="0-1"
+			   CREATED="09/29/2011 10:37:04"
+			   CREATED_BY="0-1">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Base"
+			   SEQUENCE="0"
+			   TYPE="Base"
+			   WEB_TEMPLATE="Applet Task Playbar - Top"
+			   UPDATED="09/29/2011 10:37:03"
+			   UPDATED_BY="0-1"
+			   CREATED="09/29/2011 10:37:03"
+			   CREATED_BY="0-1">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ButtonCancel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="154"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Cancel"
+				   TYPE="Control"
+				   UPDATED="09/29/2011 10:37:03"
+				   UPDATED_BY="0-1"
+				   CREATED="09/29/2011 10:37:03"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ButtonFinish"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="155"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Finish"
+				   TYPE="Control"
+				   UPDATED="09/29/2011 10:37:03"
+				   UPDATED_BY="0-1"
+				   CREATED="09/29/2011 10:37:03"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ButtonNext"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="152"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Next"
+				   TYPE="Control"
+				   UPDATED="09/29/2011 10:37:03"
+				   UPDATED_BY="0-1"
+				   CREATED="09/29/2011 10:37:03"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ButtonPause"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="150"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Pause"
+				   TYPE="Control"
+				   UPDATED="09/29/2011 10:37:03"
+				   UPDATED_BY="0-1"
+				   CREATED="09/29/2011 10:37:03"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ButtonPrevious"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="151"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Previous"
+				   TYPE="Control"
+				   UPDATED="09/29/2011 10:37:03"
+				   UPDATED_BY="0-1"
+				   CREATED="09/29/2011 10:37:03"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ButtonSubmit"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="153"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Submit"
+				   TYPE="Control"
+				   UPDATED="09/29/2011 10:37:04"
+				   UPDATED_BY="0-1"
+				   CREATED="09/29/2011 10:37:04"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CANCEL-1004230137-1J7"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="CancelTask"
+			   MULTI_LINE="N"
+			   NAME="ButtonCancel"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="09/29/2011 10:37:04"
+			   UPDATED_BY="0-1"
+			   CREATED="09/29/2011 10:37:04"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_FINISH-1004224650-08F"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="FinishTask"
+			   MULTI_LINE="N"
+			   NAME="ButtonFinish"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="09/29/2011 10:37:04"
+			   UPDATED_BY="0-1"
+			   CREATED="09/29/2011 10:37:04"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_SBL_NEXT-1004231538-48J"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="NavigateNext"
+			   MULTI_LINE="N"
+			   NAME="ButtonNext"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/31/2015 21:37:45"
+			   UPDATED_BY="0-1"
+			   CREATED="09/29/2011 10:37:04"
+			   CREATED_BY="0-1">
+				<CONTROL_USER_PROP
+				   INACTIVE="N"
+				   NAME="DynamicLabel"
+				   VALUE="Y"
+				   UPDATED="09/29/2011 10:37:04"
+				   UPDATED_BY="0-1"
+				   CREATED="09/29/2011 10:37:04"
+				   CREATED_BY="0-1">
+				</CONTROL_USER_PROP>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_SBL_PAUSE-1004225107-0K9"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="PauseTask"
+			   MULTI_LINE="N"
+			   NAME="ButtonPause"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/31/2015 21:37:45"
+			   UPDATED_BY="0-1"
+			   CREATED="09/29/2011 10:37:04"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_SBL_PREVIOUD-1005111325-1I5"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="NavigatePrev"
+			   MULTI_LINE="N"
+			   NAME="ButtonPrevious"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/31/2015 21:37:45"
+			   UPDATED_BY="0-1"
+			   CREATED="09/29/2011 10:37:04"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_SUBMIT-1004224803-0IW"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="SubmitTask"
+			   MULTI_LINE="N"
+			   NAME="ButtonSubmit"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="09/29/2011 10:37:04"
+			   UPDATED_BY="0-1"
+			   CREATED="09/29/2011 10:37:04"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="09/29/2011 10:37:04"
+				   UPDATED_BY="0-1"
+				   CREATED="09/29/2011 10:37:04"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+

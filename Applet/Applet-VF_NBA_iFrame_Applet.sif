@@ -1,0 +1,1118 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="0-1"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="0-1"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="New Project for Asset Management"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="Asset Management"
+	   UI_FREEZE="N"
+	   UPDATED="05/16/2017 13:23:22"
+	   UPDATED_BY="JSARMENTO"
+	   CREATED="08/17/1998 18:50:31"
+	   CREATED_BY="0-1"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   BUSINESS_COMPONENT="Asset Mgmt - Asset"
+		   CLASS="CSSFrameListWeb"
+		   COMMENTS="GEN_REQ_705"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HEIGHT="4"
+		   INACTIVE="N"
+		   NAME="VF NBA iFrame Applet"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="05/16/2017 13:18:53"
+		   SCRIPTED="Y"
+		   TYPE="Standard"
+		   UPGRADE_BEHAVIOR="Preserve"
+		   WIDTH="2"
+		   OBJECT_LOCKED_BY_NAME="JSARMENTO"
+		   UPDATED="05/16/2017 13:23:22"
+		   UPDATED_BY="JSARMENTO"
+		   CREATED="02/20/2013 10:16:59"
+		   CREATED_BY="0-1">
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="(declarations)"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="(declarations)"
+			   SCRIPT="var finestra = null;
+var sId = null;"
+			   UPDATED="06/10/2013 01:44:09"
+			   UPDATED_BY="0-1"
+			   CREATED="06/10/2013 01:44:09"
+			   CREATED_BY="0-1">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="Applet_Load"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="Applet_Load"
+			   SCRIPT="function Applet_Load ()
+{
+	if(theApplication().GetProfileAttr(&quot;OpenChordiantOnLoad&quot;) == &quot;Y&quot;)
+	{
+		theApplication().SetProfileAttr(&quot;OpenChordiantOnLoad&quot;, &quot;N&quot;);	
+		Pusula();
+	}
+}"
+			   UPDATED="06/10/2013 01:44:09"
+			   UPDATED_BY="0-1"
+			   CREATED="04/05/2013 13:11:05"
+			   CREATED_BY="0-1">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="Applet_PreInvokeMethod"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="Applet_PreInvokeMethod"
+			   SCRIPT="function Applet_PreInvokeMethod (name, inputPropSet)
+{
+	if(name == &quot;Pusula&quot;)
+	{
+		return(Pusula());
+	}
+	return (&quot;ContinueOperation&quot;);
+}"
+			   UPDATED="06/10/2013 01:44:09"
+			   UPDATED_BY="0-1"
+			   CREATED="06/10/2013 01:44:09"
+			   CREATED_BY="0-1">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="Pusula"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="Pusula"
+			   SCRIPT="function Pusula()
+{
+	var oBS;
+	var oInputs;
+	var oOutputs;
+	var oBO;
+	var oBC;
+	
+	try
+	{		
+		
+		finestra = window.open(&quot;chordiant/popup.htm&quot;, &quot;popup&quot;,&quot;toolbar=no,menubar=no,resizable=no,scrollbars=yes,width=100,height=100,top=2000,left=2000&quot;);
+		
+		oBO = theApplication().ActiveBusObject();
+		oBC = oBO.GetBusComp(&quot;Asset Mgmt - Asset - Header&quot;);
+		sId = oBC.GetFieldValue(&quot;Id&quot;);
+
+		var timer = setInterval(function()
+		{   
+			if(finestra.closed)
+			{  
+				clearInterval(timer); 
+				if(theApplication().GetProfileAttr(&quot;OpenChordiantOnLoad&quot;) == &quot;Y&quot;)
+				{
+ 					refreshSiebel();
+				}
+ 			}  
+		}, 100);
+		
+		return(&quot;CancelOperation&quot;);
+	}
+	catch(e)
+	{
+		var a = 1;
+	}
+	finally
+	{
+		oBS = null;
+		oInputs = null;
+		oOutputs = null;
+	}
+}"
+			   UPDATED="06/10/2013 01:44:09"
+			   UPDATED_BY="0-1"
+			   CREATED="04/05/2013 13:11:05"
+			   CREATED_BY="0-1">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="customAlert"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="customAlert"
+			   SCRIPT="function customAlert(stringa)
+{
+	var oBS;
+	var oInputs;
+	var oOutputs;
+	try
+	{
+		oBS = theApplication().GetService(&quot;ACS NI General Operations&quot;);
+		
+		oInputs = theApplication().NewPropertySet();
+		oOutputs = theApplication().NewPropertySet();
+		
+		oInputs.SetProperty(&quot;LOV Type&quot;,&quot;VF_NBA_DEBUG_MODE&quot;);
+		oInputs.SetProperty(&quot;LOV Name&quot;,&quot;VF_NBA_DEBUG_MODE&quot;);
+		
+		oOutputs = oBS.InvokeMethod(&quot;GetLookupValue&quot;, oInputs);
+		
+		var sDebugMode = oOutputs.GetProperty(&quot;LOV Value&quot;);
+		
+		if(sDebugMode == &quot;Y&quot;)
+		{
+			theApplication().SWEAlert(stringa);
+		}
+		
+	}
+	finally
+	{
+		oBS = null;
+	}
+}"
+			   UPDATED="07/24/2013 13:39:02"
+			   UPDATED_BY="0-1"
+			   CREATED="06/10/2013 01:44:09"
+			   CREATED_BY="0-1">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="refreshSiebel"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="refreshSiebel"
+			   SCRIPT="function refreshSiebel()
+{
+	/*var ps1;
+	var siebSvcs;
+	var ps2;*/
+	try
+	{
+		//oldsolution
+		/*ps1 = theApplication().NewPropertySet();
+		ps2 = theApplication().NewPropertySet();
+		siebSvcs = theApplication().GetService(&quot;ACS NI General Operations&quot;);
+		
+		ps1.SetProperty(&quot;LOV Type&quot;,&quot;VF_CURRENT_LANGUAGE&quot;);
+		ps1.SetProperty(&quot;LOV Name&quot;,&quot;CURRENT_LANGUAGE&quot;);
+		
+		ps2 = siebSvcs.InvokeMethod(&quot;GetLookupValue&quot;,ps1);
+		
+		var sLanguage = ps2.GetProperty(&quot;LOV Value&quot;);
+		
+		var sNewHref = location.protocol+&quot;\/\/&quot;+location.hostname+&quot;\/callcenter_&quot;+sLanguage+&quot;\/start.swe?SWECmd=GotoView&amp;SWEView=VF+Subscriber+Portal+Summary+View&amp;SWERF=1&amp;SWEBU=1&amp;SWEApplet0=VF+Subscriber+Details+Form+Applet&amp;SWERowId0=&quot;+sId;
+		
+		top.location.href = sNewHref;*/ //oldsolution
+		
+		var psInputs;
+		var psOutputs;
+		var bsView;
+		var oBO = theApplication().ActiveBusObject();
+		psInputs = theApplication().NewPropertySet();
+		psOutputs = theApplication().NewPropertySet();
+		bsView = theApplication().GetService(&quot;FINS Teller UI Navigation&quot;);
+		psInputs.SetProperty(&quot;ViewName&quot;, &quot;VF Subscriber Portal Summary View&quot;);
+		psInputs.SetProperty(&quot;BusObj&quot;, oBO.Name());
+		psOutputs = bsView.InvokeMethod(&quot;GotoView&quot;, psInputs);
+		//psInputs.SetProperty(&quot;Refresh All&quot;,&quot;Y&quot;);
+		//psOutputs = bsView.InvokeMethod(&quot;RefreshCurrentApplet&quot;, psInputs);
+	}
+	finally
+	{
+		psInputs = null;
+		psOutputs = null;
+		bsView = null;
+		
+	/*	ps2 = null;
+		ps1 = null;
+		siebSvcs = null;*/
+	}
+}"
+			   UPDATED="02/12/2017 17:40:01"
+			   UPDATED_BY="JMARQUES"
+			   CREATED="06/10/2013 01:44:09"
+			   CREATED_BY="0-1">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_LOCALE
+			   APPLICATION_CODE="STD"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   REDO="N"
+			   TITLE="NBA"
+			   TRANSLATE="Y"
+			   UPDATED="02/20/2013 10:16:59"
+			   UPDATED_BY="0-1"
+			   CREATED="02/20/2013 10:16:59"
+			   CREATED_BY="0-1">
+			</APPLET_LOCALE>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_Load"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_Load ()
+{
+		try
+		{
+			var sNewMSISDN = this.BusComp().GetFieldValue(&quot;VF MSISDN&quot;);
+			var sNewCustomerType = this.BusComp().GetFieldValue(&quot;ACS OOSS Customer Document Type&quot;);//DEF-19424 MOLIVEIRA
+			var tariffPlan= this.BusComp().GetFieldValue(&quot;VF Tariff Plan&quot;);
+			var sOldMSISDN = TheApplication().GetProfileAttr(&quot;VF_NBA_MSISDN&quot;);
+			var sResponse  = TheApplication().GetProfileAttr(&quot;responseVal&quot;);
+			if(sNewMSISDN != sOldMSISDN)
+			{
+				TheApplication().SetProfileAttr(&quot;VF_NBA_MSISDN&quot;,sNewMSISDN);
+				TheApplication().SetProfileAttr(&quot;AssesNo&quot;, &quot;99&quot;);
+				//TheApplication().SetProfileAttr(&quot;CAPT_OFFERS&quot;, &quot;false&quot;);
+			}
+			
+			////////Start DEF-19424 MOLIVEIRA ////////
+			if (sNewCustomerType == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACCOUNT_TYPE&quot;,&quot;101&quot;))
+			{
+				TheApplication().SetProfileAttr(&quot;Customer_Type&quot;,&quot;EBU&quot;);
+			}
+			else 
+			{
+				if ( tariffPlan!=null &amp;&amp; tariffPlan!=&quot;&quot; &amp;&amp; ((tariffPlan.indexOf(&quot;Esnaf&quot;) &gt; -1) || (tariffPlan.indexOf(&quot;ESNAF&quot;) &gt; -1))) {
+					TheApplication().SetProfileAttr(&quot;Customer_Type&quot;,&quot;EBU&quot;);
+				}
+				else {
+					TheApplication().SetProfileAttr(&quot;Customer_Type&quot;,&quot;CBU&quot;);
+				}
+			}			
+			////////End DEF-19424 MOLIVEIRA ////////
+			
+		}
+		catch(e) //to manage differents scenario (from search view or from drilldown (from drilldown the getfieldvalue causes an exception. please do not delete)
+		{
+		}
+		finally
+		{
+			var sVF_NBA_MSISDN = TheApplication().GetProfileAttr(&quot;VF_NBA_MSISDN&quot;);
+			if(sVF_NBA_MSISDN != &quot;&quot;)
+			{
+			
+				var sHistoryMSISDN =  TheApplication().MSISDNPusula.GetProperty(sVF_NBA_MSISDN);
+				
+				if(sHistoryMSISDN == &quot;Y&quot; &amp;&amp; (sResponse == null || sResponse == &quot;&quot;))
+				{
+					TheApplication().SetProfileAttr(&quot;CAPT_OFFERS&quot;, &quot;false&quot;);
+				}
+				else
+				{
+					TheApplication().SetProfileAttr(&quot;CAPT_OFFERS&quot;, &quot;true&quot;);
+					TheApplication().MSISDNPusula.SetProperty(sVF_NBA_MSISDN, &quot;Y&quot;);
+				}
+				
+			}
+		} 
+}"
+			   SEQUENCE="1"
+			   UPDATED="05/16/2017 13:23:22"
+			   UPDATED_BY="JSARMENTO"
+			   CREATED="06/10/2013 01:44:09"
+			   CREATED_BY="0-1">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreCanInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreCanInvokeMethod (MethodName, &amp;CanInvoke)
+{
+	if(MethodName == &quot;Pusula&quot;)
+	{
+		var sContactKey = TheApplication().GetProfileAttr(&quot;conversationID&quot;);
+		var sCTIAgentKey = TheApplication().GetProfileAttr(&quot;Agent_KEY&quot;);
+		var sStatus = this.BusComp().GetFieldValue(&quot;Status&quot;);
+		
+		var sActive = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;IMPL_PHASE&quot;, &quot;Active&quot;);
+		
+		
+		
+		if(sStatus != sActive || sContactKey == &quot;&quot; || sContactKey == &quot;null&quot; || sCTIAgentKey == &quot;&quot; || sCTIAgentKey == &quot;null&quot;)
+		{
+			CanInvoke = &quot;FALSE&quot;;
+		}
+		else
+		{
+			CanInvoke = &quot;TRUE&quot;;
+		}
+		return(CancelOperation);
+	}
+	
+	return (ContinueOperation);
+}"
+			   SEQUENCE="2"
+			   UPDATED="06/10/2013 01:44:09"
+			   UPDATED_BY="0-1"
+			   CREATED="06/10/2013 01:44:09"
+			   CREATED_BY="0-1">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_TOGGLE
+			   APPLET="VF NBA iFrame Applet_Empty"
+			   AUTO_TOGGLE_FIELD="VF_IsStatusActive"
+			   AUTO_TOGGLE_VALUE="N"
+			   INACTIVE="N"
+			   NAME="VF NBA iFrame Applet_Empty"
+			   UPDATED="01/06/2014 10:58:03"
+			   UPDATED_BY="0-1"
+			   CREATED="02/20/2013 10:16:59"
+			   CREATED_BY="0-1">
+			</APPLET_TOGGLE>
+			<APPLET_USER_PROP
+			   INACTIVE="Y"
+			   NAME="CanInvokeMethod: Pusula"
+			   VALUE="[Status] = LookupValue(&quot;IMPL_PHASE&quot;, &quot;Active&quot;)"
+			   UPDATED="06/10/2013 01:44:09"
+			   UPDATED_BY="0-1"
+			   CREATED="04/05/2013 13:11:05"
+			   CREATED_BY="0-1">
+			</APPLET_USER_PROP>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="URL Applet"
+			   SEQUENCE="1"
+			   TYPE="Base"
+			   WEB_TEMPLATE="VF Analytisc Applet Control"
+			   UPDATED="03/04/2013 21:33:15"
+			   UPDATED_BY="0-1"
+			   CREATED="02/20/2013 10:16:59"
+			   CREATED_BY="0-1">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="NBA_View"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="502"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NBA_View"
+				   TYPE="List Item"
+				   UPDATED="02/20/2013 10:16:59"
+				   UPDATED_BY="0-1"
+				   CREATED="02/20/2013 10:16:59"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Pusula"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="501"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Pusula"
+				   TYPE="Control"
+				   UPDATED="03/04/2013 21:33:15"
+				   UPDATED_BY="0-1"
+				   CREATED="03/04/2013 21:33:15"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ShowPopup"
+			   MULTI_LINE="N"
+			   NAME="DeleteRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="1"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="02/20/2013 10:16:59"
+			   UPDATED_BY="0-1"
+			   CREATED="02/20/2013 10:16:59"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Delete"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="02/20/2013 10:16:59"
+				   UPDATED_BY="0-1"
+				   CREATED="02/20/2013 10:16:59"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_EDIT-1004231338-2SY"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="EditRecord"
+			   MULTI_LINE="N"
+			   NAME="EditRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="2"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="02/20/2013 10:16:59"
+			   UPDATED_BY="0-1"
+			   CREATED="02/20/2013 10:16:59"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_GO-1004224654-095"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ExecuteQuery"
+			   MULTI_LINE="N"
+			   NAME="ExecuteQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="3"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="02/20/2013 10:16:59"
+			   UPDATED_BY="0-1"
+			   CREATED="02/20/2013 10:16:59"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RecNavNxt"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="GotoNextSet"
+			   MULTI_LINE="N"
+			   NAME="GotoNextSet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="4"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="02/20/2013 10:16:59"
+			   UPDATED_BY="0-1"
+			   CREATED="02/20/2013 10:16:59"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Next"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="02/20/2013 10:16:59"
+				   UPDATED_BY="0-1"
+				   CREATED="02/20/2013 10:16:59"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RecNavPrv"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="GotoPreviousSet"
+			   MULTI_LINE="N"
+			   NAME="GotoPreviousSet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="5"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="02/20/2013 10:16:59"
+			   UPDATED_BY="0-1"
+			   CREATED="02/20/2013 10:16:59"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Previous"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="02/20/2013 10:16:59"
+				   UPDATED_BY="0-1"
+				   CREATED="02/20/2013 10:16:59"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="NewQuery"
+			   MULTI_LINE="N"
+			   NAME="NewQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="6"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="02/20/2013 10:17:00"
+			   UPDATED_BY="0-1"
+			   CREATED="02/20/2013 10:16:59"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Query"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="02/20/2013 10:17:00"
+				   UPDATED_BY="0-1"
+				   CREATED="02/20/2013 10:17:00"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEdit"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="NewRecord"
+			   MULTI_LINE="N"
+			   NAME="NewRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="7"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="02/20/2013 10:17:00"
+			   UPDATED_BY="0-1"
+			   CREATED="02/20/2013 10:17:00"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="New"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="02/20/2013 10:17:00"
+				   UPDATED_BY="0-1"
+				   CREATED="02/20/2013 10:17:00"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="PositionOnRow"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="PositionOnRow"
+			   MULTI_LINE="N"
+			   NAME="PositionOnRow"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="8"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="02/20/2013 10:17:00"
+			   UPDATED_BY="0-1"
+			   CREATED="02/20/2013 10:17:00"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_PUSULA_STRING"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   METHOD_INVOKED="Pusula"
+			   MULTI_LINE="N"
+			   NAME="Pusula"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/19/2013 15:25:38"
+			   UPDATED_BY="0-1"
+			   CREATED="02/20/2013 10:17:00"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/19/2013 15:25:38"
+				   UPDATED_BY="0-1"
+				   CREATED="02/20/2013 10:17:00"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+				<CONTROL_USER_PROP
+				   INACTIVE="Y"
+				   NAME="Mode"
+				   VALUE="Base"
+				   UPDATED="04/05/2013 13:11:05"
+				   UPDATED_BY="0-1"
+				   CREATED="02/20/2013 10:17:00"
+				   CREATED_BY="0-1">
+				</CONTROL_USER_PROP>
+				<CONTROL_USER_PROP
+				   INACTIVE="Y"
+				   NAME="Popup"
+				   VALUE="VF NBA iFrame Dynamic Applet"
+				   UPDATED="04/05/2013 13:11:05"
+				   UPDATED_BY="0-1"
+				   CREATED="02/20/2013 10:17:00"
+				   CREATED_BY="0-1">
+				</CONTROL_USER_PROP>
+				<CONTROL_USER_PROP
+				   INACTIVE="Y"
+				   NAME="Popup Dimension"
+				   VALUE="800x600"
+				   UPDATED="04/05/2013 13:11:05"
+				   UPDATED_BY="0-1"
+				   CREATED="02/20/2013 10:17:00"
+				   CREATED_BY="0-1">
+				</CONTROL_USER_PROP>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ShowQueryAssistant"
+			   MULTI_LINE="N"
+			   NAME="QueryAssistant"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="9"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="02/20/2013 10:17:00"
+			   UPDATED_BY="0-1"
+			   CREATED="02/20/2013 10:17:00"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Query Assistant"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="02/20/2013 10:17:00"
+				   UPDATED_BY="0-1"
+				   CREATED="02/20/2013 10:17:00"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="UndoQuery"
+			   MULTI_LINE="N"
+			   NAME="UndoQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="10"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="02/20/2013 10:17:00"
+			   UPDATED_BY="0-1"
+			   CREATED="02/20/2013 10:17:00"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Cancel"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="02/20/2013 10:17:00"
+				   UPDATED_BY="0-1"
+				   CREATED="02/20/2013 10:17:00"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonNew"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="UndoRecord"
+			   MULTI_LINE="N"
+			   NAME="UndoRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="11"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="02/20/2013 10:17:00"
+			   UPDATED_BY="0-1"
+			   CREATED="02/20/2013 10:17:00"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Cancel"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="02/20/2013 10:17:00"
+				   UPDATED_BY="0-1"
+				   CREATED="02/20/2013 10:17:00"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEditNew"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="WriteRecord"
+			   MULTI_LINE="N"
+			   NAME="WriteRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="12"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="02/20/2013 10:17:00"
+			   UPDATED_BY="0-1"
+			   CREATED="02/20/2013 10:17:00"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Save"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="02/20/2013 10:17:00"
+				   UPDATED_BY="0-1"
+				   CREATED="02/20/2013 10:17:00"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<LIST
+			   HTML_MULTI_ROW_EDIT="N"
+			   HTML_MULTI_ROW_SELECT="N"
+			   INACTIVE="N"
+			   NAME="List"
+			   TOTAL_DISPLAYED="N"
+			   TOTAL_REQUIRED="N"
+			   UPDATED="02/20/2013 10:17:00"
+			   UPDATED_BY="0-1"
+			   CREATED="02/20/2013 10:17:00"
+			   CREATED_BY="0-1">
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   FIELD="VF NBA"
+				   FIELD_RETRIEVAL_TYPE="Symbolic URL"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="NBA_View"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="02/20/2013 10:17:00"
+				   UPDATED_BY="0-1"
+				   CREATED="02/20/2013 10:17:00"
+				   CREATED_BY="0-1">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   DISPLAY_NAME="NBA View"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="02/20/2013 10:17:00"
+					   UPDATED_BY="0-1"
+					   CREATED="02/20/2013 10:17:00"
+					   CREATED_BY="0-1">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+			</LIST>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+

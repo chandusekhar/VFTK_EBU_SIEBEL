@@ -1,0 +1,3144 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="0-1"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="0-1"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VF TR Poc"
+	   UI_FREEZE="N"
+	   UPDATED="05/08/2017 16:11:12"
+	   UPDATED_BY="JSARMENTO"
+	   CREATED="08/24/2011 19:43:14"
+	   CREATED_BY="0-1"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   BUSINESS_COMPONENT="VF Account Search VBC"
+		   CLASS="CSSSWEFrameMirrorAdd"
+		   COMMENTS="VFTK Amul 20111130 - Created newly for WP01 Ext"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HEIGHT="4"
+		   INACTIVE="N"
+		   NAME="VF PRM Search Form Applet"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="05/08/2017 16:01:33"
+		   SCRIPTED="Y"
+		   TITLE_-_STRING_REFERENCE="SBL_SEARCH-1004225358-0EZ"
+		   TYPE="Standard"
+		   UPGRADE_BEHAVIOR="Admin"
+		   WIDTH="2"
+		   OBJECT_LOCKED_BY_NAME="JSARMENTO"
+		   UPDATED="05/08/2017 16:11:12"
+		   UPDATED_BY="JSARMENTO"
+		   CREATED="03/21/2013 12:00:11"
+		   CREATED_BY="0-1">
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="Applet_InvokeMethod"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="Applet_InvokeMethod"
+			   SCRIPT="function Applet_InvokeMethod (name, inputPropSet)
+{
+	if(name == &quot;Submit&quot;)
+	{
+		var Err = theApplication().GetProfileAttr(&quot;ThrErr&quot;);
+		if(Err != &quot;&quot;)
+		{
+			theApplication().SWEAlert(Err);
+			theApplication().SetProfileAttr(&quot;ThrErr&quot;,&quot;&quot;);
+		}
+	}
+}"
+			   UPDATED="07/24/2013 13:39:31"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:11"
+			   CREATED_BY="0-1">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="Applet_Load"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="Applet_Load"
+			   SCRIPT="function Applet_Load ()
+{
+//ISCSBHATTACHARJEE Added to open dashboard
+  	var svc = theApplication().GetService(&quot;Persistent Customer Dashboard&quot;);
+  	var inputs = theApplication().NewPropertySet();
+  	var outputs =theApplication().NewPropertySet();
+  	outputs = svc.InvokeMethod(&quot;OpenDashboard&quot;, inputs);
+  		if(orderSubmitMNP==&quot;Y&quot;||orderSubmitAct==&quot;Y&quot;||orderSubmitPost==&quot;Y&quot;)//TC-5289
+		{
+			
+			mInputs.SetProperty(&quot;Code&quot;, &quot;025&quot;);
+			mInputs.SetProperty(&quot;MessageCategory&quot;, &quot;ACS Messages&quot;);
+			mOutputs = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupMsg&quot;, mInputs);
+			str_Message = mOutputs.GetProperty(&quot;Message&quot;);
+			alert(str_Message);
+			theApplication().SetProfileAttr(&quot;ShowOrderSubmitPopupMNP&quot;,&quot;&quot;);
+			theApplication().SetProfileAttr(&quot;ShowOrderSubmitPopupAct&quot;,&quot;&quot;);
+			theApplication().SetProfileAttr(&quot;ShowOrderSubmitPopupPost&quot;,&quot;&quot;);
+		}
+		
+}"
+			   UPDATED="03/23/2015 18:30:29"
+			   UPDATED_BY="FGUEDES"
+			   CREATED="03/23/2015 18:30:29"
+			   CREATED_BY="FGUEDES">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="Applet_Load-All"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="Applet_Load"
+			   SCRIPT="function Applet_Load ()
+{
+//ISCSBHATTACHARJEE Added to open dashboard
+  	var svc = theApplication().GetService(&quot;Persistent Customer Dashboard&quot;);
+  	var inputs = theApplication().NewPropertySet();
+  	var outputs =theApplication().NewPropertySet();
+  	outputs = svc.InvokeMethod(&quot;OpenDashboard&quot;, inputs);
+}"
+			   UPDATED="04/16/2013 13:10:06"
+			   UPDATED_BY="0-1"
+			   CREATED="04/16/2013 13:10:06"
+			   CREATED_BY="0-1">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="Applet_PreInvokeMethod"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="Applet_PreInvokeMethod"
+			   SCRIPT="function Applet_PreInvokeMethod (name, inputPropSet)
+{
+// IDC PD Mob_Line 22/03/2013 : Added to show the pop up message
+	if (name == &quot;Submit&quot;)
+	{
+		var str_Message = &quot;&quot;;
+		var svc_ACSNIGeneralOperations = theApplication().GetService(&quot;ACS NI General Operations&quot;);
+		var pset_Inputs = theApplication().NewPropertySet();
+		var pset_Outputs = theApplication().NewPropertySet();
+		pset_Inputs.SetProperty(&quot;Code&quot;,&quot;PRM_STA_09&quot;);
+		pset_Inputs.SetProperty(&quot;MessageCategory&quot;, &quot;VF Message Category&quot;);
+		pset_Outputs = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupMsg&quot;, pset_Inputs);
+		//Get the message depending on the Language the user has logged in
+		str_Message = pset_Outputs.GetProperty(&quot;Message&quot;);
+			
+		if(!(confirm(str_Message)))
+			return (&quot;CancelOperation&quot;);
+      	else
+        	return (&quot;ContinueOperation&quot;);
+     }
+		
+
+	return (&quot;ContinueOperation&quot;);
+}"
+			   UPDATED="03/27/2013 11:42:32"
+			   UPDATED_BY="0-1"
+			   CREATED="03/24/2013 18:23:57"
+			   CREATED_BY="0-1">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_LOCALE
+			   APPLICATION_CODE="STD"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   REDO="N"
+			   TRANSLATE="Y"
+			   UPDATED="03/21/2013 12:00:11"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:11"
+			   CREATED_BY="0-1">
+			</APPLET_LOCALE>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Create"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function Create()
+{
+	/*try
+	{
+		var SearchBO = TheApplication().GetBusObject(&quot;VF TRK PRM Account&quot;);
+		var SearchBC = SearchBO.GetBusComp(&quot;Account&quot;);
+		this.ActivateField(&quot;Citizenship&quot;);
+		var Citizenship = this.GetFieldValue(&quot;Citizenship&quot;);
+		var obj_Lov_Bo = TheApplication().GetBusObject(&quot;List Of Values&quot;);
+		var BC_LOV = obj_Lov_Bo.GetBusComp(&quot;List Of Values&quot;);
+		var sID = &quot;&quot;;
+		var Prefix = &quot;&quot;;
+	
+	
+		with (SearchBC)
+      	{
+	      	NewRecord(NewAfter);
+			
+			with(BC_LOV)
+			{
+				ClearToQuery();
+				SetViewMode(AllView);
+				ActivateField(&quot;Value&quot;);
+				ActivateField(&quot;High&quot;);
+				SetSearchSpec(&quot;Type&quot;,&quot;ACS_GENERATE_ID_CA_PRM&quot;);
+				SetSearchSpec(&quot;Name&quot;,&quot;CUSTOMER_PRM&quot;);
+				ExecuteQuery(ForwardOnly);
+				if(FirstRecord())
+				{
+					sID = BC_LOV.GetFieldValue(&quot;Value&quot;);
+					Prefix = BC_LOV.GetFieldValue(&quot;High&quot;);
+					BC_LOV.SetFieldValue(&quot;Value&quot;,ToNumber(sID)+1);
+					BC_LOV.WriteRecord();
+				}
+			}
+						
+			SetFieldValue(&quot;Name&quot;,Prefix+sID);
+			SetFieldValue(&quot;Market Class&quot;,TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACCOUNT_TYPE&quot;,&quot;102&quot;));
+			SetFieldValue(&quot;VF PRM Home Citizenship&quot;,Citizenship);
+			SetFieldValue(&quot;Temp Phone Number&quot;,&quot;902164856767&quot;);
+			SetFieldValue(&quot;Main Phone Number&quot;,&quot;901234567890&quot;);
+		}
+       	
+       	TheApplication().GotoView(&quot;PRM VF TR Account Detail (Asset)&quot;,SearchBO);
+
+	}
+
+	finally
+	{
+		SearchBO = null;
+		SearchBC = null;
+		Citizenship = null;
+		obj_Lov_Bo = null;
+		BC_LOV = null;
+		sID = null;
+		Prefix = null;
+	}
+	return(CancelOperation);*/
+}"
+			   SEQUENCE="1"
+			   UPDATED="01/12/2016 16:56:41"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="03/21/2013 12:00:11"
+			   CREATED_BY="0-1">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CreateSearchCriteria"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CreateSearchCriteria(sFieldName, sFieldValue, sLogicalOperator, sInitialValue)
+{
+	//36516 (TC-4730) - Function created for context handling.
+	var sResult = &quot;&quot;;
+	
+	if (sFieldValue != &quot;&quot; &amp;&amp; sInitialValue != &quot;&quot;)
+	{
+		sResult = sInitialValue + sLogicalOperator + &quot; &quot; + &quot;[&quot; + sFieldName + &quot;]&quot; + &quot;=&quot; + sFieldValue + &quot; &quot;;
+	}
+	else
+	{
+		sResult = &quot;[VF Searched Criteria]=&quot; + &quot;[&quot; + sFieldName + &quot;]&quot; + &quot;=&quot; + sFieldValue + &quot; &quot;;
+	}
+	return sResult;
+
+}"
+			   SEQUENCE="2"
+			   UPDATED="07/15/2014 17:23:58"
+			   UPDATED_BY="PSILVA"
+			   CREATED="07/15/2014 17:23:58"
+			   CREATED_BY="PSILVA">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CustomerValidation"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CustomerValidation(sCustomerId, sEntity, sContextNavigation, sSearchCriteria)
+{
+	//36516 (TC-4730) - created for: 
+	//1) Check if it&apos;s necessary to navigate to VF Customer Validation Management View.
+	//2) Navigate if required.
+	
+	var bsExpProcess:Service = TheApplication().GetService(&quot;VF OTP Utils&quot;);
+	var sPInputs = TheApplication().NewPropertySet();
+	var sPOutputs = TheApplication().NewPropertySet();
+	var sSearchExp = &quot;&quot;;
+	
+	sSearchCriteria = CreateSearchCriteria(&quot;VF Entity&quot;, sEntity, &quot;/AND&quot;, sSearchCriteria); //36516 (TC-4730)
+	sSearchCriteria = CreateSearchCriteria(&quot;VF Context Navigation&quot;, sContextNavigation, &quot;/AND&quot;, sSearchCriteria); //36516 (TC-4730)
+
+	sSearchExp = &quot;[VF Customer] = &apos;&quot; + sCustomerId + &quot;&apos; AND [VF Searched Criteria] = &apos;&quot; + sSearchCriteria + &quot;&apos;&quot;;
+	
+	sPInputs.SetProperty(&quot;CustomerId&quot;, sCustomerId);
+	sPInputs.SetProperty(&quot;SearchExpression&quot;, sSearchExp);
+	bsExpProcess.InvokeMethod(&quot;CustomerValidation&quot;, sPInputs, sPOutputs);
+	var sResultOutput = sPOutputs.GetProperty(&quot;SkipValidation&quot;);
+
+	sPOutputs = null;
+	sPInputs = null;
+	bsExpProcess = null;
+	
+	return sResultOutput;
+}"
+			   SEQUENCE="3"
+			   UPDATED="07/15/2014 17:23:58"
+			   UPDATED_BY="PSILVA"
+			   CREATED="07/15/2014 17:23:58"
+			   CREATED_BY="PSILVA">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="FillCustomerTypeProfileAttributes"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function FillCustomerTypeProfileAttributes(lsAccType, tariffPlan)
+{
+	try{
+	
+   		if (lsAccType == TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;ACCOUNT_TYPE&quot;, &quot;101&quot;)){
+			TheApplication().SetProfileAttr(&quot;Customer_Type&quot;, &quot;EBU&quot;);
+		}
+		else {
+			if ( tariffPlan!=null &amp;&amp; tariffPlan!=&quot;&quot; &amp;&amp; ((tariffPlan.indexOf(&quot;Esnaf&quot;) &gt; -1) || (tariffPlan.indexOf(&quot;ESNAF&quot;) &gt; -1))) {
+				TheApplication().SetProfileAttr(&quot;Customer_Type&quot;, &quot;EBU&quot;);
+			}
+			else {
+				TheApplication().SetProfileAttr(&quot;Customer_Type&quot;, &quot;CBU&quot;);	
+			}
+		}
+	}	
+	
+
+	catch (e)
+ 	{
+ 	
+ 		throw(e);
+    }
+    
+  }"
+			   SEQUENCE="4"
+			   UPDATED="05/08/2017 16:11:12"
+			   UPDATED_BY="JSARMENTO"
+			   CREATED="05/08/2017 16:11:12"
+			   CREATED_BY="JSARMENTO">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="FillProfileAttributes"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function FillProfileAttributes()
+{
+	try{
+	TheApplication().SetProfileAttr(&quot;LoginName_NBA&quot;,TheApplication().LoginName().toLowerCase());
+
+//	var strTimeStamp = new Date();
+//	strTimeStamp = strTimeStamp.toGMTString();	
+	var strTimeStamp =&quot;&quot;;
+	Clib.strftime(strTimeStamp, &apos;%Y%m%d%H%M%S&apos;, Clib.localtime(Clib.time()));
+	var locMSISDN = ToString(TheApplication().GetProfileAttr(&quot;VF_NBA_MSISDN&quot;));
+	var ShopCode  = ToString(TheApplication().GetProfileAttr(&quot;DealerCode&quot;));
+	var conId =&quot;&quot;;
+	
+	if(ShopCode == &quot;&quot; || ShopCode == null)
+				ShopCode = &quot;COPS&quot;;
+   
+    
+ 
+    //	var SysDate = Clib.time();
+	//	var strTimeStamp = Date.fromSystem(SysDate);
+	 /*   var startYear = ToString(strTimeStamp.getFullYear());                                               
+	   	var startMonth = ToString(strTimeStamp.getMonth() + 1);
+	   	var startDay = ToString(strTimeStamp.getDate());
+	    var startHour = ToString( strTimeStamp.getHours());
+	    var startMinute =ToString(strTimeStamp.getMinutes());
+	   	var startSecond =ToString(strTimeStamp.getSeconds());
+	   	if (startSecond.length == 1)
+	   		{startSecond = &quot;0&quot; + startSecond;
+	   		}
+	   	if (startHour.length == 1)
+	   		{startHour = &quot;0&quot; + startHour;
+	   		}	   	
+	   	if (startMinute.length == 1)
+	   		startMinute = &quot;0&quot; + startMinute;
+	   	if (startDay.length == 1)
+	   		{startDay = &quot;0&quot; + startDay;
+	   		}
+	   	if (startMonth.length == 1)
+	   		{
+	   		startMonth = &quot;0&quot;+ startMonth;
+	   		}
+		strTimeStamp = startYear + startMonth + startDay + startHour + startMinute + startSecond;*/
+		conId = locMSISDN + strTimeStamp ;
+		
+	TheApplication().SetProfileAttr(&quot;conversationID&quot;, conId);
+
+//	TheApplication().SetProfileAttr(&quot;conversationID&quot;, &quot;5&quot;);
+    TheApplication().SetProfileAttr(&quot;AssesNo&quot;, &quot;1&quot;);
+   	//TheApplication().SetProfileAttr(&quot;Customer_Type&quot;,&quot;EBU&quot;); //FCARRIL-VFTRCBU-27188: Commented as profile should be set at fSubmitSearch according to Customer Type
+   //	TheApplication().SetProfileAttr(&quot;Agent_KEY&quot;, TheApplication().LoginName().toLowerCase());
+   TheApplication().SetProfileAttr(&quot;Agent_KEY&quot;, &quot;undefinedforprm&quot;);
+    TheApplication().SetProfileAttr(&quot;ShopCode_NBA&quot;, ShopCode);
+   	TheApplication().SetProfileAttr(&quot;Department_NBA&quot;, &quot;Retail&quot;);
+   	TheApplication().SetProfileAttr(&quot;CAPT_OFFERS&quot;,&quot;true&quot;);
+    TheApplication().SetProfileAttr(&quot;PLACE_1&quot;, &quot;PLACE_1&quot;);
+	TheApplication().SetProfileAttr(&quot;PLACE_2&quot;, &quot;PLACE_2&quot;);
+	TheApplication().SetProfileAttr(&quot;prmReload&quot;, &quot;false&quot;);
+  	TheApplication().SetProfileAttr(&quot;AppName_NBA&quot;, &quot;Siebel_PRM&quot;);
+   	
+	}	
+	
+
+	catch (e)
+ 	{
+ 		//TheApplication().GotoView(&quot;ACS Account List Front Office View&quot;, boAccount);
+ 		throw(e);
+    }
+
+
+
+
+    
+  }"
+			   SEQUENCE="5"
+			   UPDATED="05/08/2017 16:11:12"
+			   UPDATED_BY="JSARMENTO"
+			   CREATED="03/23/2015 18:30:29"
+			   CREATED_BY="FGUEDES">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GoToDrilldown"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GoToDrilldown(AppletName, DrillDownField)
+{
+	//Function created to invoke drilldown
+	try
+	{
+		var InDrill : PropertySet = TheApplication().NewPropertySet();
+		var OutDrill : PropertySet = TheApplication().NewPropertySet();
+		var DrillBS = TheApplication().GetService(&quot;FINS Workflow UI Utilities&quot;);
+		
+		InDrill.SetProperty(&quot;Applet&quot;,AppletName);
+		InDrill.SetProperty(&quot;DrillDown&quot;,DrillDownField);
+		DrillBS.InvokeMethod(&quot;GotoDrillDown&quot;,InDrill,OutDrill);
+	}
+	catch(e)
+	{
+		throw(e.toString());
+	}
+	finally
+	{
+		InDrill = null;
+		OutDrill = null;
+		DrillBS = null;
+	}
+}"
+			   SEQUENCE="8"
+			   UPDATED="05/08/2017 16:11:12"
+			   UPDATED_BY="JSARMENTO"
+			   CREATED="07/15/2014 17:23:58"
+			   CREATED_BY="PSILVA">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GotoCustomerView"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GotoCustomerView(sCustomerId)
+{
+	try
+	{
+		var BO:BusObject = TheApplication().GetBusObject(&quot;VF TRK PRM Account&quot;);
+    	var BC:BusComp = BO.GetBusComp(&quot;Account&quot;);
+                             
+    	BC.SetViewMode(AllView);
+    	BC.ClearToQuery();
+    	BC.SetSearchSpec(&quot;Id&quot;, sCustomerId);
+    	BC.ExecuteQuery(ForwardOnly);
+                             
+    	TheApplication().GotoView(&quot;PRM VF TR Account Detail (Asset)&quot;, BO);
+    }
+    finally
+    {
+    	BC = null;
+    	BO = null;
+    }
+}"
+			   SEQUENCE="7"
+			   UPDATED="05/08/2017 16:11:12"
+			   UPDATED_BY="JSARMENTO"
+			   CREATED="02/01/2015 18:05:18"
+			   CREATED_BY="0-1">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="GotoMNPTrackingNewView"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function GotoMNPTrackingNewView(sMSISDN)
+{
+	try
+	{
+		var BO:BusObject = TheApplication().GetBusObject(&quot;VF MNP Tracking New&quot;);
+    	var BC:BusComp = BO.GetBusComp(&quot;VF MNP Tracking&quot;);
+                             
+    	BC.SetViewMode(AllView);
+    	BC.ClearToQuery();
+   		BC.ActivateField(&quot;VF MSISDN&quot;);
+    	BC.SetSearchSpec(&quot;VF MSISDN&quot;, sMSISDN);
+    	BC.ExecuteQuery(ForwardOnly);
+    	var count = BC.FirstRecord();
+                   	          
+    	TheApplication().GotoView(&quot;VFTRCBU PRM MNP Port Tracking View&quot;, BO);
+    }
+    finally
+    {
+    	BC = null;
+    	BO = null;
+    }
+}"
+			   SEQUENCE="9"
+			   UPDATED="05/08/2017 16:11:12"
+			   UPDATED_BY="JSARMENTO"
+			   CREATED="07/23/2015 09:56:38"
+			   CREATED_BY="0-1">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="IsVIPCustomer"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function IsVIPCustomer(vf_sub_class,sCustomerClass)
+{
+	try
+	{
+		if ( vf_sub_class == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;CUSTOMER_SUBCLASS&quot;,&quot;416&quot;) || vf_sub_class == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;CUSTOMER_SUBCLASS&quot;,&quot;408&quot;)
+			|| sCustomerClass == TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;CUSTOMER_CLASS&quot;,&quot;ACC_CLASS_CON_VIP&quot;)) //VFTRCBU-26342 added validation on Merket Type
+		{
+			TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;ACS Messages&quot;,&quot;124&quot;));
+			return(CancelOperation);
+		}
+	}	
+	catch(e)
+	{
+		throw(e.toString());
+	}
+	finally
+	{
+		
+	}
+	
+	return(ContinueOperation);
+}"
+			   SEQUENCE="10"
+			   UPDATED="05/08/2017 16:11:12"
+			   UPDATED_BY="JSARMENTO"
+			   CREATED="03/21/2013 12:00:11"
+			   CREATED_BY="0-1">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="LogInsert"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function LogInsert(FieldInfo,FieldValue)
+{
+try
+{
+	var LogBO = TheApplication ().GetBusObject(&quot;ACS NI Parameter&quot;);
+	var LogBC = LogBO.GetBusComp (&quot;VF LOG EVENTS&quot;);
+	var View = TheApplication().ActiveViewName();
+	var Login = TheApplication().LoginName();
+	var Process = &quot;Sorgu&quot;;
+	with(LogBC)  
+	{
+		NewRecord(NewAfter);  
+		SetFieldValue(&quot;Field Info&quot;,FieldInfo);
+		SetFieldValue(&quot;Process Info&quot;,Process);
+		SetFieldValue(&quot;User Name&quot;,Login);
+    	SetFieldValue(&quot;View&quot;,View);
+    	SetFieldValue(&quot;Field Value&quot;,FieldValue);
+		WriteRecord();  
+	} 
+
+}
+finally
+{
+	LogBC = null;
+	LogBO = null;
+}
+}"
+			   SEQUENCE="11"
+			   UPDATED="05/08/2017 16:11:12"
+			   UPDATED_BY="JSARMENTO"
+			   CREATED="03/21/2013 12:00:11"
+			   CREATED_BY="0-1">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="PendingActivationOrder"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function PendingActivationOrder(Inputs,Outputs)
+{
+	try 
+	{
+		var BOLineItem : BusObject = TheApplication().GetBusObject(&quot;TELCO Order Item - Simple&quot;);
+		var BCLineItem : BusComp = BOLineItem.GetBusComp(&quot;TELCO Line Items - Simple&quot;);
+		var sCustomerId = &quot;&quot;;
+		var sdonor = &quot;&quot;;
+		
+		var sMSISDN = Inputs.GetProperty(&quot;sMSISDN&quot;);
+		
+		with(BCLineItem) 
+		{
+			SetViewMode(AllView);
+			ClearToQuery();
+			ActivateField(&quot;Owner Account Id&quot;);
+			ActivateField(&quot;Donor Operator&quot;);
+			SetSearchSpec(&quot;MSISDN&quot;, sMSISDN);
+			SetSearchSpec(&quot;Root Order Item Id&quot;, &quot;[Id]&quot;);
+			SetSearchSpec(&quot;TELCO Action Type LIC&quot;, &quot;= &apos;100&apos; OR [TELCO Action Type LIC] = &apos;102&apos; OR [TELCO Action Type LIC] = &apos;106&apos;&quot;);
+			SetSearchSpec(&quot;TELCO Status LIC&quot;, &quot;&lt;&gt; &apos;Complete&apos; AND [TELCO Status LIC] &lt;&gt; &apos;Cancelled&apos;&quot;);
+			ExecuteQuery(ForwardOnly);
+						
+			if(FirstRecord()) {
+				sCustomerId = GetFieldValue(&quot;Owner Account Id&quot;);
+				sdonor = GetFieldValue(&quot;Donor Operator&quot;);
+			}
+			
+			Outputs.SetProperty(&quot;sCustomerId&quot;, sCustomerId);
+			Outputs.SetProperty(&quot;sdonor&quot;, sdonor);	
+		}
+	}
+	finally
+	{
+		BCLineItem = null;
+		BOLineItem = null;
+	}
+}"
+			   SEQUENCE="12"
+			   UPDATED="05/08/2017 16:11:12"
+			   UPDATED_BY="JSARMENTO"
+			   CREATED="02/01/2015 18:04:40"
+			   CREATED_BY="0-1">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="SiebelLogging"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function SiebelLogging(trName, searchSpec)
+{
+	try
+	{
+		var activeFlagRTE = &quot;N&quot;;
+		var activeFlagLOV = &quot;N&quot;;
+		
+		TheApplication().SetProfileAttr(&quot;SIEBEL_LOGGING_TRTYPE&quot;, &quot;Query&quot;);
+		TheApplication().SetProfileAttr(&quot;SIEBEL_LOGGING_TRNAME&quot;, trName);
+		TheApplication().SetProfileAttr(&quot;SIEBEL_LOGGING_BCNAME&quot;, &quot;&quot;);
+		TheApplication().SetProfileAttr(&quot;SIEBEL_LOGGING_FIELDNAME&quot;,&quot;&quot;);
+		TheApplication().SetProfileAttr(&quot;SIEBEL_LOGGING_LOGFIELD&quot;, &quot;&quot;);
+		
+		var rteBO : BusObject;
+		var rteBC : BusComp;
+		
+		rteBO = TheApplication().GetBusObject(&quot;Personalization Events&quot;);
+		rteBC= rteBO.GetBusComp(&quot;Personalization Event&quot;);
+		with(rteBC)
+		{
+			ClearToQuery();
+			SetViewMode(AllView);
+			SetSearchExpr(&quot;[Object Name] = &apos;&quot;+this.Name()+&quot;&apos; AND [VFTR Type] = &apos;SIEBELLOGGING&apos; AND [Event] = &apos;DisplayApplet&apos;&quot;);
+			ExecuteQuery(ForwardBackward);
+			if(FirstRecord())
+			{
+				activeFlagRTE = GetFieldValue(&quot;VFTR Active&quot;);
+			}
+		}	
+		activeFlagLOV = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;VFTR_SIEBEL_LOGGING_ENABLED&quot;, &quot;Siebel Logging Enabled&quot;);
+		if(activeFlagRTE == &quot;Y&quot; &amp;&amp; activeFlagLOV == &quot;Y&quot;)
+		{
+			var wkfService = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+			var wkfIn = TheApplication().NewPropertySet();
+			var wkfOut = TheApplication().NewPropertySet();
+			
+			wkfIn.SetProperty(&quot;ProcessName&quot;, &quot;VFTR Siebel Logging Log File WF&quot;);
+			wkfIn.SetProperty(&quot;searchExp&quot;, searchSpec);
+			wkfService.InvokeMethod(&quot;RunProcess&quot;, wkfIn, wkfOut);
+			}
+	}
+	catch (e)
+	{
+		throw (e);
+	}
+	finally
+	{
+		wkfService = null;
+		wkfIn = null;
+		wkfOut = null;
+		rteBO = null;
+		rteBC = null;
+	}
+}"
+			   SEQUENCE="13"
+			   UPDATED="05/08/2017 16:11:12"
+			   UPDATED_BY="JSARMENTO"
+			   CREATED="02/19/2016 15:31:08"
+			   CREATED_BY="ESANTOS">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="ValidateQueryRules"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function ValidateQueryRules(CustomerId, TaxId, ICCID, BillAcc, MSISDN)
+{
+	//ACAMBAS: VFTRCBU-23235
+	
+	try 
+	{
+		var	BSAccountSearchVBC = TheApplication().GetService(&quot;VF Account Search VBC Service&quot;);
+		var Inputs=TheApplication().NewPropertySet();
+		var Outputs=TheApplication().NewPropertySet();
+		Inputs.SetProperty(&quot;CUSTOMER_ID&quot;,CustomerId);
+		Inputs.SetProperty(&quot;TAX_ID&quot;,TaxId);
+		Inputs.SetProperty(&quot;ICCIID&quot;,ICCID);
+		Inputs.SetProperty(&quot;BILLING_ACCOUNT_ID&quot;,BillAcc);
+		Inputs.SetProperty(&quot;MSISDN&quot;,MSISDN);
+		BSAccountSearchVBC.InvokeMethod(&quot;ValidateQueryRules&quot;,Inputs,Outputs);
+	}
+	finally
+	{
+		Outputs = null;
+		Inputs = null;
+		BSAccountSearchVBC = null;
+	}
+}"
+			   SEQUENCE="14"
+			   UPDATED="05/08/2017 16:11:12"
+			   UPDATED_BY="JSARMENTO"
+			   CREATED="01/11/2016 19:39:30"
+			   CREATED_BY="ACAMBAS">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreCanInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreCanInvokeMethod (MethodName, &amp;CanInvoke)
+{
+try{
+ var psInputs: PropertySet;
+ var psOutputs: PropertySet;
+ var bsGeneralOperations: Service;
+ 
+	if (MethodName == &quot;Submit&quot;){
+	    //    var strRole = TheApplication().GetProfileAttr(&quot;TELCO.PositionProfile:Role.AvailableRoles&quot;);
+			psInputs = TheApplication().NewPropertySet();
+			psOutputs = TheApplication().NewPropertySet();
+			bsGeneralOperations = TheApplication().GetService(&quot;ACS General Operations&quot;);
+			psInputs.SetProperty(&quot;Function&quot;,&quot;0001PRMQuery&quot;);
+			psInputs.SetProperty(&quot;Name&quot;,&quot;Query&quot;);
+		//	psInputs.SetProperty(&quot;Value&quot;,strRole);
+			bsGeneralOperations.InvokeMethod(&quot;GetParameter_3Inputs&quot;,psInputs,psOutputs);
+			var buttonVisibility = psOutputs.GetProperty(&quot;Cons1&quot;);
+			if(buttonVisibility==&quot;True&quot;)
+			{
+				CanInvoke = &quot;TRUE&quot;;
+			}
+			else
+			{
+				CanInvoke = &quot;FALSE&quot;;				
+			}
+			return (CancelOperation);	
+	}
+	return (ContinueOperation);
+
+}
+finally{
+ psOutputs = null;
+ psInputs = null;
+}
+
+	return (ContinueOperation);
+}"
+			   SEQUENCE="15"
+			   UPDATED="05/08/2017 16:11:12"
+			   UPDATED_BY="JSARMENTO"
+			   CREATED="04/09/2013 19:34:41"
+			   CREATED_BY="0-1">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreInvokeMethod (MethodName) 
+{ 		
+	if(MethodName == &quot;ExecuteQuery&quot;)
+	{ 			
+		TheApplication().SetProfileAttr(&quot;Take_Logs&quot;,&quot;Y&quot;); 			
+		return (ContinueOperation); 		
+	} 		
+	if(MethodName == &quot;Submit&quot;) 		
+	{ 
+		//SIEBELLOGGING
+		var MSISDN = &quot;&quot;;
+		var ICCID = &quot;&quot;;
+		var BA = &quot;&quot;;
+		var taxId = &quot;&quot;;
+		var custId = &quot;&quot;;
+		var searchSpec = &quot;&quot;;
+		var trName = &quot;&quot;;
+		MSISDN = this.BusComp().GetFieldValue(&quot;VF MSISDN&quot;);
+		ICCID = this.BusComp().GetFieldValue(&quot;VF ICCID&quot;);
+		BA = this.BusComp().GetFieldValue(&quot;VF Billing Account ID&quot;);
+		taxId = this.BusComp().GetFieldValue(&quot;VF TAX ID&quot;);
+		custId = this.BusComp().GetFieldValue(&quot;VF Customer ID&quot;);
+		
+		if(custId!=&quot;&quot;)
+		{
+			trName = &quot;Customer Information&quot;
+			if(searchSpec == &quot;&quot;)
+		   		searchSpec = &quot;[CSN] = &apos;&quot;+custId+&quot;&apos;&quot;;
+			else searchSpec = searchSpec + &quot; AND [CSN] = &apos;&quot;+custId+&quot;&apos;&quot;;
+		}
+		
+		if(taxId!=&quot;&quot;)
+		{
+			trName = &quot;Customer Information&quot;
+			if(searchSpec == &quot;&quot;)
+		   		searchSpec = &quot;[VF Tax Number] = &apos;&quot;+taxId+&quot;&apos;&quot;;
+			else searchSpec = searchSpec + &quot; AND [VF Tax Number] = &apos;&quot;+taxId+&quot;&apos;&quot;;	
+		}
+		
+		if(BA!=&quot;&quot;)
+		{
+			trName = &quot;Billing Account Information&quot;
+			if(searchSpec == &quot;&quot;)
+		   		searchSpec = &quot;[Account Code] = &apos;&quot;+BA+&quot;&apos;&quot;;
+			else searchSpec = searchSpec + &quot; AND [Account Code] = &apos;&quot;+BA+&quot;&apos;&quot;;
+		}
+	
+		if(MSISDN!=&quot;&quot;)
+		{
+			trName = &quot;Subscription Information&quot;
+			if(searchSpec == &quot;&quot;)
+	   			searchSpec = &quot;[VF MSISDN] = &apos;&quot;+MSISDN+&quot;&apos;&quot;;
+			else searchSpec = searchSpec + &quot; AND [VF MSISDN] = &apos;&quot;+MSISDN+&quot;&apos;&quot;;
+		}
+
+		if(ICCID!=&quot;&quot;)
+		{
+			trName = &quot;Subscription Information&quot;
+			if(searchSpec == &quot;&quot;)
+	   			searchSpec = &quot;[ICCID] = &apos;&quot;+ICCID+&quot;&apos;&quot;;
+			else searchSpec = searchSpec + &quot; AND [ICCID] = &apos;&quot;+ICCID+&quot;&apos;&quot;;
+		}
+		
+		SiebelLogging(trName,searchSpec);
+		
+		//SIEBELLOGGING
+		fSubmitSearch(); //VFTRCBU WA#02
+		return (CancelOperation);	
+	}   
+}"
+			   SEQUENCE="16"
+			   UPDATED="05/08/2017 16:11:12"
+			   UPDATED_BY="JSARMENTO"
+			   CREATED="07/15/2014 19:49:17"
+			   CREATED_BY="PSILVA">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="fSubmitSearch"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function fSubmitSearch() {
+	try {
+		var isEBU = &quot;&quot;;
+		var SearchBO = TheApplication().GetBusObject(&quot;VF TRK PRM Account&quot;);
+		var SearchBC = SearchBO.GetBusComp(&quot;Account&quot;);
+		var BOBilling = TheApplication().GetBusObject(&quot;VF TRK PRM Account&quot;);
+		var SearchBillAcc = BOBilling.GetBusComp(&quot;VF PRM Billing Account&quot;);
+		var SearchAssetBC = SearchBO.GetBusComp(&quot;Asset Mgmt - Asset&quot;);
+		var Bo = TheApplication().GetBusObject(&quot;Asset Management&quot;);
+		var BC = Bo.GetBusComp(&quot;Asset Mgmt - Asset - Header (Simple)&quot;);
+		var CustAcq = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;ACCOUNT_STATUS&quot;, &quot;100&quot;);
+		var CustAct = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;ACCOUNT_STATUS&quot;, &quot;95&quot;);
+		var strAssetSearchExpr = &quot;&quot;;
+		var TcId = &quot;&quot;;
+		var AccountId,lsAccId,lsAccType,AccType,vf_sub_class,sCustomerClass,recordId,BillAcc,ICCID;
+		var PassportNo = &quot;&quot;;
+		var MSISDN = &quot;&quot;;
+		var CustomerId = &quot;&quot;;
+		var TaxId = &quot;&quot;;
+		var len = 0;
+		var ActTaxId = false;
+		var boc : BusObject = this.BusObject();
+		var bcc : BusComp;
+		var InDrill : PropertySet = TheApplication().NewPropertySet();
+		var OutDrill : PropertySet = TheApplication().NewPropertySet();
+		var DrillBS = TheApplication().GetService(&quot;FINS Workflow UI Utilities&quot;);
+		this.BusComp().ActivateField(&quot;VFTRCBU Customer Identification&quot;);
+		var ICCIDMSISDN = &quot;&quot;;
+		var sContext = &quot;&quot;;
+		var sOutputResult = &quot;&quot;;
+		var donor = &quot;&quot;;
+		var sOTPValidView = Clib.strstr(TheApplication().GetProfileAttr(&quot;VF_OTP_VIEWS&quot;), TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;));
+		MSISDN = this.BusComp().GetFieldValue(&quot;VF MSISDN&quot;);
+		TheApplication().SetProfileAttr(&quot;VF_NBA_MSISDN&quot;, MSISDN);
+		FillProfileAttributes();
+		CustomerId = this.BusComp().GetFieldValue(&quot;VF Customer ID&quot;);
+		TaxId = this.BusComp().GetFieldValue(&quot;VF TAX ID&quot;);
+		ICCID = this.BusComp().GetFieldValue(&quot;VF ICCID&quot;)
+		PassportNo = this.BusComp().GetFieldValue(&quot;VFTRCBU Customer Identification&quot;);//VFTRCBU WA#02
+		BillAcc = this.BusComp().GetFieldValue(&quot;VF Billing Account ID&quot;);
+		TheApplication().SetProfileAttr(&quot;Mob_His_Blank&quot;, &quot;Y&quot;);
+
+		if ((MSISDN != &quot;&quot; &amp;&amp; MSISDN.indexOf(&quot;*&quot;) != -1)
+			 || (ICCID != &quot;&quot; &amp;&amp; ICCID.indexOf(&quot;*&quot;) != -1)
+			 || (CustomerId != &quot;&quot; &amp;&amp; CustomerId.indexOf(&quot;*&quot;) != -1)
+			 || (TaxId != &quot;&quot; &amp;&amp; TaxId.indexOf(&quot;*&quot;) != -1)
+			 || (BillAcc != &quot;&quot; &amp;&amp; BillAcc.indexOf(&quot;*&quot;) != -1)
+			 || (PassportNo != &quot;&quot; &amp;&amp; PassportNo.indexOf(&quot;*&quot;) != -1)//VFTRCBU WA#02
+		){
+			TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;VF Message Category&quot;, &quot;CR059_001&quot;));
+			return (CancelOperation);
+		}
+		ValidateQueryRules(CustomerId, TaxId, ICCID, BillAcc, MSISDN);//ACAMBAS:VFTRCBU-23235
+		//search customer using Ids/Passport No or at least one of Ids and the MSISDN
+		if ((TcId != &quot;&quot;) || (PassportNo != &quot;&quot;) || CustomerId != &quot;&quot; || TaxId != &quot;&quot; || (BillAcc != &quot;&quot;)) {
+			SearchBC.ClearToQuery();
+			SearchBC.SetViewMode(AllView);
+			SearchBC.ActivateField(&quot;Org Id&quot;);
+			SearchBC.ActivateField(&quot;VF Sub Class&quot;);
+			SearchBC.ActivateField(&quot;VF Cust Name Calc&quot;);//VFTRCBU-31632-HRODRIGUES
+			if (TcId != &quot;&quot;) {
+				SearchBC.SetSearchSpec(&quot;Contact SSN&quot;, TcId);
+				if (sOTPValidView)//36516 (TC-4730)
+					sContext = CreateSearchCriteria(&quot;Contact SSN&quot;, TcId, &quot;AND&quot;, sContext);//36516TC-4730)
+			}
+			if (PassportNo != &quot;&quot;) {
+				SearchBC.SetSearchSpec(&quot;Doc Number&quot;, PassportNo);
+				if (sOTPValidView)//36516 (TC-4730)
+					sContext = CreateSearchCriteria(&quot;Doc Number&quot;, PassportNo, &quot;AND&quot;, sContext);//36516TC-4730)
+			}
+			if (CustomerId != &quot;&quot;) {
+				SearchBC.SetSearchSpec(&quot;CSN&quot;, CustomerId);
+				if (sOTPValidView)//36516(TC-4730)
+					sContext = CreateSearchCriteria(&quot;CSN&quot;, CustomerId, &quot;AND&quot;, sContext);//36516TC-4730)
+			}
+			if (TaxId != &quot;&quot; &amp;&amp; CustomerId == &quot;&quot;) {
+				ActTaxId = true;
+				SearchBC.SetSearchExpr(&quot;[VF Tax Number]= &apos;&quot; + TaxId + &quot;&apos; AND ([Account Status Code]=&apos;&quot; + CustAcq + &quot;&apos; OR [Account Status Code] = &apos;&quot; + CustAct + &quot;&apos;)&quot;);
+			}
+			if (TaxId != &quot;&quot; &amp;&amp; CustomerId != &quot;&quot;)
+				SearchBC.SetSearchSpec(&quot;VF Tax Number&quot;, TaxId);
+			if (BillAcc != &quot;&quot;) {
+				SearchBillAcc.ClearToQuery();
+				SearchBillAcc.SetViewMode(AllView);
+				SearchBillAcc.ActivateField(&quot;Parent Account Id&quot;);
+				SearchBillAcc.SetSearchSpec(&quot;Account Code&quot;, BillAcc);
+				if (sOTPValidView) //36516 (TC-4730)
+					sContext = CreateSearchCriteria(&quot;Account Code&quot;, BillAcc, &quot;AND&quot;, sContext); //36516(TC-4730)
+				TheApplication().SetProfileAttr(&quot;Take_Logs&quot;, &quot;Y&quot;);
+				SearchBillAcc.ExecuteQuery(ForwardOnly);
+				var len1 = SearchBillAcc.CountRecords();
+				if (len1 == 1) {
+					AccountId = SearchBillAcc.GetFieldValue(&quot;Parent Account Id&quot;);
+					SearchBC.SetSearchSpec(&quot;Id&quot;, AccountId);
+				} else {
+					TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;ACS Messages&quot;, &quot;125&quot;));
+					return (CancelOperation);
+				}
+			}
+			TheApplication().SetProfileAttr(&quot;Take_Logs&quot;, &quot;Y&quot;);
+			RetryTax : SearchBC.ExecuteQuery(ForwardOnly);
+			len = SearchBC.CountRecords();
+			if (len &gt;= 1) {
+				lsAccId = SearchBC.GetFieldValue(&quot;Id&quot;);
+				lsAccType = SearchBC.GetFieldValue(&quot;Market Class&quot;);
+				//FCARRIL:VFTRCBU-27188
+				if (lsAccType == TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;ACCOUNT_TYPE&quot;, &quot;101&quot;))
+					TheApplication().SetProfileAttr(&quot;Customer_Type&quot;, &quot;EBU&quot;);
+				else
+					TheApplication().SetProfileAttr(&quot;Customer_Type&quot;, &quot;CBU&quot;);
+				//END-FCARRIL
+				TheApplication().SetProfileAttr(&quot;SearchedAccId&quot;, lsAccId);
+				TheApplication().SetProfileAttr(&quot;SearchedAccType&quot;, lsAccType);
+				if (MSISDN != &quot;&quot; || ICCID != &quot;&quot;) {
+					strAssetSearchExpr = &quot;[Owner Account Id] = &apos;&quot; + SearchBC.GetFieldValue(&quot;Org Id&quot;) + &quot;&apos;&quot;;
+					if (MSISDN != &quot;&quot; &amp;&amp; ICCID == &quot;&quot;) {
+						strAssetSearchExpr = strAssetSearchExpr + &quot;AND [Serial Number] = &apos;&quot; + MSISDN + &quot;&apos;&quot;;
+						//36516(TC-4730)-Init
+						if (sOTPValidView) {
+							sContext = CreateSearchCriteria(&quot;Serial Number&quot;, MSISDN, &quot;AND&quot;, sContext);
+							sContext = CreateSearchCriteria(&quot;VF OTP MSISDN&quot;, MSISDN, &quot;/AND&quot;, sContext);//36516(TC-4730)-End
+						}
+					} else if (MSISDN == &quot;&quot; &amp;&amp; ICCID != &quot;&quot;) {
+						strAssetSearchExpr = strAssetSearchExpr + &quot; AND [VF ICCID] = &apos;&quot; + ICCID + &quot;&apos;&quot;
+							if (sOTPValidView) //36516 (TC-4730)
+								sContext = CreateSearchCriteria(&quot;VF ICCID&quot;, ICCID, &quot;AND&quot;, sContext);//36516(TC-4730)
+					} else if (MSISDN != &quot;&quot; &amp;&amp; ICCID != &quot;&quot;) {
+						strAssetSearchExpr = strAssetSearchExpr + &quot; AND [Serial Number] = &apos;&quot; + MSISDN + &quot;&apos;  AND [VF ICCID] = &apos;&quot; + ICCID + &quot;&apos;&quot;
+							//36516(TC-4730) - Init
+							if (sOTPValidView) {
+								sContext = CreateSearchCriteria(&quot;Serial Number&quot;, MSISDN, &quot;AND&quot;, sContext);
+								sContext = CreateSearchCriteria(&quot;VF ICCID&quot;, ICCID, &quot;AND&quot;, sContext);
+								sContext = CreateSearchCriteria(&quot;VF OTP MSISDN&quot;, MSISDN, &quot;/AND&quot;, sContext);//36516 TC-4730)-End
+							}
+					}
+					LogInsert(&quot;&gt;&gt;&gt;&gt;SearchExpr: &quot;, strAssetSearchExpr);
+					BC.ClearToQuery();
+					BC.SetViewMode(AllView);
+					BC.ActivateField(&quot;VF Sub Class&quot;);
+					BC.ActivateField(&quot;Market Type&quot;);//VFTRCBU-26342
+					BC.ActivateField(&quot;VF MSISDN&quot;);
+					BC.ActivateField(&quot;VF Tariff Plan&quot;);
+					BC.ActivateField(&quot;VF Cust Name Calc&quot;);//VFTRCBU-31632
+					BC.SetSearchExpr(strAssetSearchExpr);
+					TheApplication().SetProfileAttr(&quot;Take_Logs&quot;, &quot;Y&quot;);
+					BC.ExecuteQuery(ForwardBackward);
+					if (BC.CountRecords() &gt; 0) {
+						//36516 (TC-4730) - Init
+						if (MSISDN == &quot;&quot; &amp;&amp; ICCID != &quot;&quot;) {
+							ICCIDMSISDN = BC.GetFieldValue(&quot;VF MSISDN&quot;);
+							if (sOTPValidView)
+								sContext = CreateSearchCriteria(&quot;VF OTP MSISDN&quot;, ICCIDMSISDN, &quot;/AND&quot;, sContext);
+						}//36516(TC-4730)-End
+						vf_sub_class = BC.GetFieldValue(&quot;VF Sub Class&quot;);
+						sCustomerClass = BC.GetFieldValue(&quot;Market Type&quot;);//VFTRCBU-26342
+						
+						var tariffPlan2=BC.GetFieldValue(&quot;VF Tariff Plan&quot;);
+						FillCustomerTypeProfileAttributes(lsAccType,tariffPlan2);		
+						
+						if(BC.GetFieldValue(&quot;VF Cust Name Calc&quot;) == &quot;***&quot;)//VFTRCBU-31632
+							IsVIPCustomer(vf_sub_class, sCustomerClass);
+						recordId = BC.GetFieldValue(&quot;Owner Account Id&quot;);
+						bcc = boc.GetBusComp(&quot;Account&quot;);
+						bcc.ClearToQuery();
+						bcc.SetViewMode(AllView);
+						bcc.SetSearchSpec(&quot;Id&quot;, recordId);
+						TheApplication().SetProfileAttr(&quot;DrilledAssetId&quot;, BC.GetFieldValue(&quot;Id&quot;));
+						TheApplication().SetProfileAttr(&quot;Take_Logs&quot;, &quot;Y&quot;);
+						bcc.ExecuteQuery(ForwardOnly);
+						if (sOTPValidView)
+							sContext = CreateSearchCriteria(&quot;recordId&quot;, BC.GetFieldValue(&quot;Id&quot;), &quot;AND&quot;, sContext);
+						isEBU = bcc.GetFieldValue(&quot;Market Type&quot;);
+						if (isEBU == TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;CUSTOMER_CLASS&quot;, &quot;EBU&quot;)) {
+							TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;VF Message Category&quot;, &quot;PRM_STA_CC_8&quot;));
+						}
+						//36516 TC-4730)-Init
+						if (sOTPValidView) {
+							if (TaxId == &quot;&quot;) {
+								sOutputResult = CustomerValidation(recordId, &quot;Customer&quot;, recordId, sContext);
+								if (sOutputResult == &quot;Y&quot;) {
+									GoToDrilldown(&quot;VF PRM Search View Temp Applet - Account&quot;, &quot;Id&quot;);
+								}
+							} else {
+								GoToDrilldown(&quot;VF PRM Search View Temp Applet - Account&quot;, &quot;Id&quot;);
+							}
+						} else
+							GoToDrilldown(&quot;VF PRM Search View Temp Applet - Account&quot;, &quot;Id&quot;);
+					} else {
+						TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;ACS Messages&quot;, &quot;125&quot;));
+						return (CancelOperation);
+					}
+				} else {
+					vf_sub_class = SearchBC.GetFieldValue(&quot;VF Sub Class&quot;);
+					sCustomerClass = SearchBC.GetFieldValue(&quot;Market Type&quot;);//VFTRCBU-26342-ESANTOS VFTRCBU-27812 and VFTRCBU-27864
+					if(SearchBC.GetFieldValue(&quot;VF Cust Name Calc&quot;) == &quot;***&quot;)//VFTRCBU-31632-HRODRIGUES
+						IsVIPCustomer(vf_sub_class, sCustomerClass);
+					recordId = SearchBC.GetFieldValue(&quot;Id&quot;);
+					bcc = boc.GetBusComp(&quot;Account&quot;);
+					bcc.ClearToQuery();
+					bcc.SetViewMode(AllView);
+					bcc.SetSearchSpec(&quot;Id&quot;, recordId);
+					TheApplication().SetProfileAttr(&quot;Take_Logs&quot;, &quot;Y&quot;);
+					bcc.ExecuteQuery(ForwardOnly);
+					isEBU = bcc.GetFieldValue(&quot;Market Type&quot;);
+					if (isEBU == TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;CUSTOMER_CLASS&quot;, &quot;EBU&quot;)) {
+						TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;VF Message Category&quot;, &quot;PRM_STA_CC_8&quot;));
+					}
+					//36516TC-4730)-Init
+					if (sOTPValidView) {
+						if (TaxId == &quot;&quot;) {
+							sOutputResult = CustomerValidation(recordId, &quot;Customer&quot;, recordId, sContext);
+							if (sOutputResult == &quot;Y&quot;) {
+								GoToDrilldown(&quot;VF PRM Search View Temp Applet - Account&quot;, &quot;Id&quot;);
+							}
+						} else
+							GoToDrilldown(&quot;VF PRM Search View Temp Applet - Account&quot;, &quot;Id&quot;);
+					} else
+						GoToDrilldown(&quot;VF PRM Search View Temp Applet - Account&quot;, &quot;Id&quot;);
+					//36516(TC-4730)-End
+					return (CancelOperation);
+				}
+			} else {
+				if (ActTaxId) {
+					ActTaxId = false;
+					SearchBC.ClearToQuery();
+					SearchBC.SetViewMode(AllView);
+					SearchBC.ActivateField(&quot;Org Id&quot;);
+					SearchBC.ActivateField(&quot;VF Sub Class&quot;);
+					SearchBC.SetSearchSpec(&quot;VF Tax Number&quot;, TaxId);
+					goto RetryTax;
+				}
+				TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;ACS Messages&quot;, &quot;125&quot;));
+				return (CancelOperation);
+			}
+		} else {
+			if (MSISDN != &quot;&quot; || ICCID != &quot;&quot;) {
+				if (MSISDN != &quot;&quot; &amp;&amp; ICCID == &quot;&quot;) {
+					strAssetSearchExpr = &quot;[VF MSISDN] = &apos;&quot; + MSISDN + &quot;&apos;&quot;;
+					//36516 (TC-4730)-Init
+					if (sOTPValidView) {
+						sContext = CreateSearchCriteria(&quot;VF MSISDN&quot;, MSISDN, &quot;AND&quot;, sContext);
+						sContext = CreateSearchCriteria(&quot;VF OTP MSISDN&quot;, MSISDN, &quot;/AND&quot;, sContext);
+					}
+					//36516 (TC-4730)-End
+				} else if (MSISDN == &quot;&quot; &amp;&amp; ICCID != &quot;&quot;) {
+					strAssetSearchExpr = &quot;[VF ICCID] = &apos;&quot; + ICCID + &quot;&apos;&quot;
+						if (sOTPValidView)//36516(TC-4730)
+							sContext = CreateSearchCriteria(&quot;VF ICCID&quot;, ICCID, &quot;AND&quot;, sContext); //36516(TC-4730)
+				} else if (MSISDN != &quot;&quot; &amp;&amp; ICCID != &quot;&quot;) {
+					strAssetSearchExpr = &quot;[VF MSISDN] = &apos;&quot; + MSISDN + &quot;&apos;  AND [VF ICCID] = &apos;&quot; + ICCID + &quot;&apos;&quot;
+						//36516(TC-4730)-Init
+						if (sOTPValidView) {
+							sContext = CreateSearchCriteria(&quot;VF MSISDN&quot;, MSISDN, &quot;AND&quot;, sContext);
+							sContext = CreateSearchCriteria(&quot;VF ICCID&quot;, ICCID, &quot;AND&quot;, sContext);
+							sContext = CreateSearchCriteria(&quot;VF OTP MSISDN&quot;, MSISDN, &quot;/AND&quot;, sContext);
+						}//36516 (TC-4730)-End
+				}
+				LogInsert(&quot;&gt;&gt;&gt;&gt;SearchExpr: &quot;, strAssetSearchExpr);
+				BC.ClearToQuery();
+				BC.SetViewMode(AllView);
+				BC.ActivateField(&quot;VF MSISDN&quot;);//36516(TC-4730)
+				BC.ActivateField(&quot;VF Donor Operator&quot;);
+				BC.ActivateField(&quot;VF Customer Type&quot;);
+				BC.ActivateField(&quot;VF Tariff Plan&quot;);
+				BC.SetSearchExpr(strAssetSearchExpr);
+				TheApplication().SetProfileAttr(&quot;Take_Logs&quot;, &quot;Y&quot;);
+				BC.ExecuteQuery(ForwardBackward);
+				len = BC.CountRecords();
+				BC.FirstRecord();
+				if (BC.FirstRecord()) {
+					donor = BC.GetFieldValue(&quot;VF Donor Operator&quot;);
+					lsAccType = BC.GetFieldValue(&quot;VF Customer Type&quot;);
+                    var tariffPlan=BC.GetFieldValue(&quot;VF Tariff Plan&quot;);
+					FillCustomerTypeProfileAttributes(lsAccType,tariffPlan);	
+				}
+
+				switch (len) {
+				case 0:
+					if (MSISDN != null &amp;&amp; MSISDN != &quot;&quot;)//JSARMENTO-VFTRCBU-3642
+					{//ACAMBAS-Start
+						InDrill.SetProperty(&quot;sMSISDN&quot;, MSISDN);
+						PendingActivationOrder(InDrill, OutDrill);
+						var sCustomerId = OutDrill.GetProperty(&quot;sCustomerId&quot;);
+						donor = OutDrill.GetProperty(&quot;sdonor&quot;);
+						if (sCustomerId != &quot;&quot;) {
+							if (donor != null &amp;&amp; donor != &quot;&quot;)
+								GotoMNPTrackingNewView(MSISDN);
+							else
+								GotoCustomerView(sCustomerId);
+						} else//ACAMBAS-End
+							TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;ACS Messages&quot;, &quot;125&quot;));
+					} else
+						TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;ACS Messages&quot;, &quot;125&quot;));
+					break;
+				case 1:
+					//36516(TC-4730)-Init
+					if (MSISDN == &quot;&quot; &amp;&amp; ICCID != &quot;&quot;) {
+						ICCIDMSISDN = BC.GetFieldValue(&quot;VF MSISDN&quot;);
+						if (sOTPValidView)
+							sContext = CreateSearchCriteria(&quot;VF OTP MSISDN&quot;, ICCIDMSISDN, &quot;/AND&quot;, sContext);
+					}//36516(TC-4730)-End
+					//DEF-10630-SJOAO-JFONSECA-START
+					
+				
+					//END
+					SearchBC.ClearToQuery();
+					SearchBC.SetViewMode(AllView);
+					SearchBC.ActivateField(&quot;VF Sub Class&quot;);
+					BC.ActivateField(&quot;Market Type&quot;);//VFTRCBU-26342
+					SearchBC.ActivateField(&quot;VF Cust Name Calc&quot;)//VFTRCBU-31632 - HRODRIGUES
+					SearchBC.SetSearchSpec(&quot;Org Id&quot;, BC.GetFieldValue(&quot;Owner Account Id&quot;));
+					TheApplication().SetProfileAttr(&quot;Take_Logs&quot;, &quot;Y&quot;);
+					SearchBC.ExecuteQuery(ForwardOnly);
+					lsAccId = SearchBC.GetFieldValue(&quot;Id&quot;);
+					lsAccType = SearchBC.GetFieldValue(&quot;Market Class&quot;);
+					TheApplication().SetProfileAttr(&quot;SearchedAccId&quot;, lsAccId);
+					TheApplication().SetProfileAttr(&quot;SearchedAccType&quot;, lsAccType);
+					TheApplication().SetProfileAttr(&quot;SearchedMSISDN&quot;, MSISDN); //TLG-2474
+					vf_sub_class = SearchBC.GetFieldValue(&quot;VF Sub Class&quot;);
+					sCustomerClass = BC.GetFieldValue(&quot;Market Type&quot;);//VFTRCBU-26342
+					if(SearchBC.GetFieldValue(&quot;VF Cust Name Calc&quot;) == &quot;***&quot;)//VFTRCBU-31632 - HRODRIGUES
+						IsVIPCustomer(vf_sub_class, sCustomerClass);
+					recordId = SearchBC.GetFieldValue(&quot;Id&quot;);
+					bcc = boc.GetBusComp(&quot;Account&quot;);
+					bcc.ClearToQuery();
+					bcc.SetViewMode(AllView);
+					bcc.SetSearchSpec(&quot;Id&quot;, recordId);
+					TheApplication().SetProfileAttr(&quot;DrilledAssetId&quot;, BC.GetFieldValue(&quot;Id&quot;));
+					TheApplication().SetProfileAttr(&quot;Take_Logs&quot;, &quot;Y&quot;);
+					bcc.ExecuteQuery(ForwardOnly);
+					isEBU = bcc.GetFieldValue(&quot;Market Type&quot;);
+					if (isEBU == TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;CUSTOMER_CLASS&quot;, &quot;EBU&quot;)) {
+						TheApplication().RaiseErrorText(TheApplication().LookupMessage(&quot;VF Message Category&quot;, &quot;PRM_STA_CC_8&quot;));
+					}
+					//36516(TC-4730)-Init
+					if (sOTPValidView) {
+						sOutputResult = CustomerValidation(recordId, &quot;Customer&quot;, recordId, sContext);
+						if (sOutputResult == &quot;Y&quot;) {
+							GoToDrilldown(&quot;VF PRM Search View Temp Applet - Account&quot;, &quot;Id&quot;);
+						}
+					} else
+						GoToDrilldown(&quot;VF PRM Search View Temp Applet - Account&quot;, &quot;Id&quot;);
+					//36516(TC-4730)-End
+					break;
+				default:
+					TheApplication().GotoView(&quot;PRM VF Asset Mgmt - Assets View&quot;, Bo);
+				}
+				return (CancelOperation);
+			}
+		}
+		LogInsert(&quot;&quot;, &quot;&quot;);
+	}
+	finally {
+		PassportNo = null;
+		SearchBO = null;
+		SearchBillAcc = null;
+		SearchBC = null;
+		BillAcc = null;
+		TcId = null;
+		MSISDN = null;
+		CustomerId = null;
+		TaxId = null;
+		len = null;
+		Bo = null;
+		BC = null;
+		strAssetSearchExpr = null;
+		sContext = null;
+		sOutputResult = null;
+		ICCIDMSISDN = null;
+		sOTPValidView = null;
+	}
+}"
+			   SEQUENCE="6"
+			   UPDATED="05/08/2017 16:11:12"
+			   UPDATED_BY="JSARMENTO"
+			   CREATED="03/11/2016 16:58:37"
+			   CREATED_BY="HRODRIGUES">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_USER_PROP
+			   INACTIVE="Y"
+			   NAME="CanInvokeMethod: Submit"
+			   VALUE="TRUE"
+			   UPDATED="04/09/2013 19:34:41"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:11"
+			   CREATED_BY="0-1">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Default Applet Method"
+			   VALUE="Submit"
+			   UPDATED="03/21/2013 12:00:11"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:11"
+			   CREATED_BY="0-1">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Default Enter Key"
+			   VALUE="TRUE"
+			   UPDATED="03/21/2013 12:00:11"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:11"
+			   CREATED_BY="0-1">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="DisableDataLossWarning"
+			   VALUE="TRUE"
+			   UPDATED="03/21/2013 12:00:11"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:11"
+			   CREATED_BY="0-1">
+			</APPLET_USER_PROP>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Edit"
+			   SEQUENCE="0"
+			   TYPE="Edit"
+			   WEB_TEMPLATE="VF Applet Form Grid Layout"
+			   UPDATED="04/06/2015 14:01:49"
+			   UPDATED_BY="EFRADE"
+			   CREATED="03/21/2013 12:00:11"
+			   CREATED_BY="0-1">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ExecuteQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="107"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="ExecuteQuery"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:11"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:11"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="1067"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:11"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:11"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="5003"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application10"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:11"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:11"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="1099"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application11"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:12"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="1115"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application12"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:12"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="21029"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application13"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:12"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="21044"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application14"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:12"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="6069"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application15"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:12"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="6077"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application18"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:12"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="1083"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application2"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:12"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="53012"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application23"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:12"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="53027"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application24"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:12"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="1051"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application3"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:12"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="5035"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application4"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:12"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="5051"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application5"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:12"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="1035"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application6"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:12"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="1018"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application7"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:12"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="5019"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application8"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:12"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="1003"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application9"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:12"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="QueryAssistant"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="126"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="QueryAssistant"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:12"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="Submit"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="17016"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Submit"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="03/23/2015 18:30:29"
+				   UPDATED_BY="FGUEDES"
+				   CREATED="03/23/2015 18:30:29"
+				   CREATED_BY="FGUEDES">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="UndoQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="108"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="UndoQuery"
+				   TYPE="Control"
+				   UPDATED="03/21/2013 12:00:12"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VFBillingAccountID"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="7016"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFBillingAccountID2"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="06/04/2013 00:30:00"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VFBillingAccountID"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="7001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFBillingAccountIDLabel2"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="06/04/2013 00:30:00"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VFCustomerID"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="13016"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFCustomerID2"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="06/04/2013 00:30:00"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VFCustomerID"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="13001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFCustomerIDLabel2"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="06/04/2013 00:30:00"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VFICCID"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="4016"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFICCID"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="06/04/2013 00:30:00"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VFICCID"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="4001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFICCIDLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="06/04/2013 00:30:00"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VFMSISDN"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1016"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFMSISDN"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="12/23/2014 16:54:10"
+				   UPDATED_BY="EFRADE"
+				   CREATED="07/22/2014 14:16:07"
+				   CREATED_BY="HRODRIGUES">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VFMSISDN"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1016"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFMSISDN2"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="03/23/2015 18:30:29"
+				   UPDATED_BY="FGUEDES"
+				   CREATED="03/23/2015 18:30:29"
+				   CREATED_BY="FGUEDES">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VFMSISDN"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFMSISDNLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="12/23/2014 16:54:12"
+				   UPDATED_BY="EFRADE"
+				   CREATED="07/22/2014 14:16:03"
+				   CREATED_BY="HRODRIGUES">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VFMSISDN"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFMSISDNLabel2"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="03/23/2015 18:30:29"
+				   UPDATED_BY="FGUEDES"
+				   CREATED="03/23/2015 18:30:29"
+				   CREATED_BY="FGUEDES">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VFTAXID"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="10016"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTAXID"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="06/04/2013 00:30:00"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VFTAXID"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="10001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTAXIDLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="06/04/2013 00:30:00"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_DELETE-1004224629-055"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="DeleteRecord"
+			   MULTI_LINE="N"
+			   NAME="DeleteRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="7"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/21/2013 12:00:12"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:12"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_EDIT-1004231338-2SY"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="EditRecord"
+			   MULTI_LINE="N"
+			   NAME="EditRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="8"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/21/2013 12:00:12"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:12"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_GO-1004224654-095"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ExecuteQuery"
+			   MULTI_LINE="N"
+			   NAME="ExecuteQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="9"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/21/2013 12:00:12"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:12"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RecNavNxt"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="GotoNextSet"
+			   MULTI_LINE="N"
+			   NAME="GotoNextSet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="10"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/21/2013 12:00:13"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:12"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Next"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/21/2013 12:00:12"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:12"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RecNavPrv"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="GotoPreviousSet"
+			   MULTI_LINE="N"
+			   NAME="GotoPreviousSet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="11"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/21/2013 12:00:13"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:13"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Previous"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/21/2013 12:00:13"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:13"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="NewQuery"
+			   MULTI_LINE="N"
+			   NAME="NewQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="12"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/21/2013 12:00:13"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:13"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Query"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/21/2013 12:00:13"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:13"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEdit"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="NewRecord"
+			   MULTI_LINE="N"
+			   NAME="NewRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="13"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/21/2013 12:00:13"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:13"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="New"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/21/2013 12:00:13"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:13"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="PositionOnRow"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="PositionOnRow"
+			   MULTI_LINE="N"
+			   NAME="PositionOnRow"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="14"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/21/2013 12:00:13"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:13"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ShowQueryAssistant"
+			   MULTI_LINE="N"
+			   NAME="QueryAssistant"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="15"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/21/2013 12:00:13"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:13"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Query Assistant"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/21/2013 12:00:13"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:13"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_SUBMIT-1004224803-0IW"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_ATTRIBUTES="NAME=&quot;btnBilling&quot;"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   METHOD_INVOKED="Submit"
+			   MULTI_LINE="N"
+			   NAME="Submit"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Right"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="08/14/2014 21:05:32"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:13"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_SUBMIT-1004224803-0IW"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   METHOD_INVOKED="Submit"
+			   MULTI_LINE="N"
+			   NAME="Submit2"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Right"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/21/2013 12:00:13"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:13"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_SUBMIT-1004224803-0IW"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   METHOD_INVOKED="Submit"
+			   MULTI_LINE="N"
+			   NAME="Submit3"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Right"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/21/2013 12:00:13"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:13"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="UndoQuery"
+			   MULTI_LINE="N"
+			   NAME="UndoQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="16"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/21/2013 12:00:13"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:13"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Cancel"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/21/2013 12:00:13"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:13"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonNew"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="UndoRecord"
+			   MULTI_LINE="N"
+			   NAME="UndoRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="17"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/21/2013 12:00:13"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:13"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Cancel"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/21/2013 12:00:13"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:13"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_BILLING-1004225050-19G"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="FormSection"
+			   HTML_WIDTH="248"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="0"
+			   MULTI_LINE="N"
+			   NAME="VF Billing"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="24"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/21/2013 12:00:13"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:13"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CUSTOMER-1004230556-1TX"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="FormSection"
+			   HTML_WIDTH="248"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="0"
+			   MULTI_LINE="N"
+			   NAME="VF Customer"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="25"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/21/2013 12:00:13"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:13"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_RECENT_SEARCH"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="FormSection"
+			   HTML_WIDTH="248"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="0"
+			   MULTI_LINE="N"
+			   NAME="VF Recent Search"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="26"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/21/2013 12:00:14"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:14"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_MSISDN-0928155826-0R1"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="FormSection"
+			   HTML_WIDTH="248"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="0"
+			   MULTI_LINE="N"
+			   NAME="VF Subscriber"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="23"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/21/2013 12:00:14"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:14"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_BILLING_ACCOUNT_CODE-0928155812-064"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF Billing Account ID"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_ATTRIBUTES="ONKEYDOWN=&quot;return CheckForEnter (this, event);&quot; LinkedButton=&quot;btnBilling&quot;"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="131"
+			   MULTI_LINE="N"
+			   NAME="VFBillingAccountID"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="1"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="2"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/21/2013 12:00:14"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:14"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/21/2013 12:00:14"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:14"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_COMPANY_NAME-1004230341-1WB"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF Company Name"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_ATTRIBUTES="ONKEYDOWN=&quot;return CheckForEnter (this, event);&quot; LinkedButton=&quot;btnBilling&quot;"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="881"
+			   MULTI_LINE="N"
+			   NAME="VFCompanyName"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="2"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="2"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/21/2013 12:00:14"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:14"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_CORPORATE_NAME_LAST_NAME-0928155816-0BS"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF Company Name / Last Name"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="Y"
+			   LEFT="381"
+			   MULTI_LINE="N"
+			   NAME="VFCompanyName/LastName"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="2"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="2"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/21/2013 12:00:14"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:14"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/21/2013 12:00:14"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:14"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CUSTOMER_ID-1009092506-3V4"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF Customer ID"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_ATTRIBUTES="ONKEYDOWN=&quot;return CheckForEnter (this, event);&quot; LinkedButton=&quot;btnBilling&quot;"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="631"
+			   MULTI_LINE="N"
+			   NAME="VFCustomerID"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="3"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="2"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/21/2013 12:00:14"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:14"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/21/2013 12:00:14"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:14"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_BLACKLIST_FIRST_NAME"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF First Name"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="881"
+			   MULTI_LINE="N"
+			   NAME="VFFirstName"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="4"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="2"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/21/2013 12:00:14"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:14"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/21/2013 12:00:14"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:14"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_ICCID"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF ICCID"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_ATTRIBUTES="ONKEYDOWN=&quot;return CheckForEnter (this, event);&quot; LinkedButton=&quot;btnBilling&quot;"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="231"
+			   MULTI_LINE="N"
+			   NAME="VFICCID"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="20"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/21/2013 12:00:14"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:14"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_IMSIID"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF IMSI"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_ATTRIBUTES="ONKEYDOWN=&quot;return CheckForEnter (this, event);&quot; LinkedButton=&quot;btnBilling&quot;"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="Y"
+			   LEFT="381"
+			   MULTI_LINE="N"
+			   NAME="VFIMSI"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="21"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="28"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="08/13/2015 18:22:35"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:14"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_LAST_NAME-1004225617-01M"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF Last Name"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="881"
+			   MULTI_LINE="N"
+			   NAME="VFLastName"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="19"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="2"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/21/2013 12:00:14"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:14"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_MSISDN-0928155826-0R1"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF MSISDN"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_ATTRIBUTES="ONKEYDOWN=&quot;return CheckForEnter (this, event);&quot; LinkedButton=&quot;btnBilling&quot;"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="131"
+			   MULTI_LINE="N"
+			   NAME="VFMSISDN"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="5"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="28"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/24/2013 18:23:57"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:14"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/21/2013 12:00:14"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:14"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_TAX_ID"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF TAX ID"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_ATTRIBUTES="ONKEYDOWN=&quot;return CheckForEnter (this, event);&quot; LinkedButton=&quot;btnBilling&quot;"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="581"
+			   MULTI_LINE="N"
+			   NAME="VFTAXID"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="22"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="28"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/21/2013 12:00:14"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:14"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_TC_Id"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF TC ID"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="381"
+			   MULTI_LINE="N"
+			   NAME="VFTCID"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="6"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="28"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/21/2013 12:00:15"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:14"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/21/2013 12:00:15"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:15"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VFTRCBU_TCID_PASSPORT"
+			   COMMENTS="VFTRCBU WA#02 2014.08.11 - HRODRIGUES"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Customer Identification"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Customer Identification"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="08/14/2014 21:05:31"
+			   UPDATED_BY="0-1"
+			   CREATED="08/14/2014 21:05:31"
+			   CREATED_BY="0-1">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEditNew"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="WriteRecord"
+			   MULTI_LINE="N"
+			   NAME="WriteRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="18"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/21/2013 12:00:15"
+			   UPDATED_BY="0-1"
+			   CREATED="03/21/2013 12:00:15"
+			   CREATED_BY="0-1">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Save"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/21/2013 12:00:15"
+				   UPDATED_BY="0-1"
+				   CREATED="03/21/2013 12:00:15"
+				   CREATED_BY="0-1">
+				</CONTROL_LOCALE>
+			</CONTROL>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+

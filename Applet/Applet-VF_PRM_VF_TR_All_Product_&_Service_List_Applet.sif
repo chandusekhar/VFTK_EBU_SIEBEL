@@ -1,0 +1,1649 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="11/24/2016 17:14:00"
+   UPDATED_BY="SADMIN"
+   CREATED="11/24/2016 14:49:11"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="PRM VF TR Extension"
+	   UI_FREEZE="N"
+	   UPDATED="03/01/2017 18:15:31"
+	   UPDATED_BY="JFONSECA"
+	   CREATED="11/28/2011 18:43:00"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   BUSINESS_COMPONENT="VFTRCBU Asset Light"
+		   CLASS="CSSFrameList"
+		   COMMENTS="Created for PRM CR059"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HEIGHT="4"
+		   INACTIVE="N"
+		   NAME="VF PRM VF TR All Product &amp; Service List Applet"
+		   NO_DELETE="Y"
+		   NO_INSERT="Y"
+		   NO_MERGE="Y"
+		   NO_UPDATE="Y"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="03/01/2017 18:01:05"
+		   SCRIPTED="Y"
+		   TITLE_-_STRING_REFERENCE="SBL_ALL_PRODUCTS-1004224856-3P6"
+		   TYPE="Standard"
+		   UPGRADE_BEHAVIOR="Preserve"
+		   WIDTH="2"
+		   OBJECT_LOCKED_BY_NAME="JFONSECA"
+		   UPDATED="03/01/2017 18:12:20"
+		   UPDATED_BY="JFONSECA"
+		   CREATED="09/11/2013 21:09:29"
+		   CREATED_BY="SADMIN">
+			<APPLET_LOCALE
+			   APPLICATION_CODE="STD"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   REDO="N"
+			   TRANSLATE="Y"
+			   UPDATED="09/11/2013 21:09:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/11/2013 21:09:29"
+			   CREATED_BY="SADMIN">
+			</APPLET_LOCALE>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_Load"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_Load ()
+{
+	this.BusComp().SetViewMode(AllView);
+	this.BusComp().ClearToQuery();
+	this.BusComp().SetSortSpec(&quot;Status (ASCENDING),VFTRCBU Product Group (ASCENDING)&quot;)
+	this.BusComp().ExecuteQuery(ForwardOnly);
+	
+    return (ContinueOperation);
+}"
+			   SEQUENCE="1"
+			   UPDATED="12/12/2014 11:39:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/12/2014 11:39:44"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreInvokeMethod (MethodName)
+{
+	var oBS     : Service = TheApplication().GetService(&quot;FINS Teller UI Navigation&quot;);
+	var Inputs  : PropertySet = TheApplication().NewPropertySet();
+	var Outputs : PropertySet = TheApplication().NewPropertySet();
+			
+	switch(MethodName)
+	{
+		case &quot;ShowMainProducts&quot;:
+			this.BusComp().SetViewMode(AllView);
+	        this.BusComp().ClearToQuery();
+	        
+	        /*
+	        *	WA#06: AROSA 3-12-2014 added
+	        */
+
+			var strExpr =&quot;[VFTRCBU Product Visibility] = &apos;Y&apos; AND ([Effective End Date] &gt;= (TimeStamp()-180) OR [Effective End Date] IS NULL)&quot;;
+			this.BusComp().SetSearchExpr (strExpr);
+            this.BusComp().SetSortSpec(&quot;Status (ASCENDING),VFTRCBU Product Group (ASCENDING)&quot;)
+			this.BusComp().ExecuteQuery(ForwardOnly);
+			oBS.InvokeMethod(&quot;RefreshCurrentApplet&quot;,Inputs,Outputs);
+			return (CancelOperation);
+      		break;
+        case &quot;ShowAll&quot;:
+			//var BC = TheApplication().GetBusObject(&quot;VF TRK PRM Account&quot;).GetBusComp(&quot;VF Asset Light 2&quot;);
+			var BC = TheApplication().GetBusObject(&quot;VF TRK PRM Account&quot;).GetBusComp(&quot;VFTRCBU Asset Light&quot;);
+            this.BusComp().SetViewMode(AllView);
+	        this.BusComp().ClearToQuery();
+	       // var strExpr2 =&quot;[Status] IS NOT NULL OR [Status] IS NULL&quot;;
+     	//	this.BusComp().SetSearchExpr (strExpr2);
+			this.BusComp().SetSortSpec(&quot;Status (ASCENDING),VFTRCBU Product Group (ASCENDING)&quot;)
+			this.BusComp().ExecuteQuery(ForwardOnly);
+			
+			//execute method RefreshCurrentApplet in order to force the refresh of the applet
+	
+	
+			oBS.InvokeMethod(&quot;RefreshCurrentApplet&quot;,Inputs,Outputs);
+			
+	
+			
+			return (CancelOperation);
+      		break;
+		default:
+	      	return (ContinueOperation);
+      		break;
+	}
+			Outputs = null;
+			Inputs = null;
+			oBS = null;
+}"
+			   SEQUENCE="2"
+			   UPDATED="03/01/2017 18:12:20"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="12/12/2014 11:39:44"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_USER_PROP
+			   COMMENTS="WA#06: AROSA 2-12-2014 added"
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: ShowAll"
+			   VALUE="TRUE"
+			   UPDATED="12/12/2014 11:39:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/12/2014 11:39:44"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="WA#06: AROSA 2-12-2014 added"
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: ShowMainProducts"
+			   VALUE="TRUE"
+			   UPDATED="12/12/2014 11:39:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/12/2014 11:39:44"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="VFTRCBU WA#15 2015.05.27 - TFERNANDES"
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: ShowPopup"
+			   VALUE="[VFTRCBU Product Type] = &apos;HANDSET CONTAINER&apos;"
+			   UPDATED="06/12/2015 12:53:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/12/2015 12:53:57"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Base"
+			   SEQUENCE="0"
+			   TYPE="Base"
+			   WEB_TEMPLATE="Applet List (Base/EditList)"
+			   UPDATED="01/22/2016 18:57:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/11/2013 21:09:29"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="510"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT Siebel eChannel"
+				   TYPE="Control"
+				   UPDATED="01/22/2016 18:57:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/22/2016 18:57:58"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="509"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT Siebel eChannel2"
+				   TYPE="Control"
+				   UPDATED="01/22/2016 18:57:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/22/2016 18:57:58"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="515"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application"
+				   TYPE="Control"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="516"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application2"
+				   TYPE="Control"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="QueryAssistant"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="126"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="QueryAssistant"
+				   TYPE="Control"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Effective End Date"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="505"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Effective End Date"
+				   TYPE="List Item"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Effective End Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="507"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Effective End Date2"
+				   TYPE="List Item"
+				   UPDATED="12/12/2014 11:39:44"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/12/2014 11:39:44"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Group Number"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="508"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Group Number"
+				   TYPE="List Item"
+				   UPDATED="12/12/2014 11:39:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/12/2014 11:39:45"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Install Date"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="504"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Install Date"
+				   TYPE="List Item"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Install Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="506"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Install Date2"
+				   TYPE="List Item"
+				   UPDATED="12/12/2014 11:39:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/12/2014 11:39:45"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Product Name Translated"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="501"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Product Name Translated"
+				   TYPE="List Item"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Status"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="502"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Status"
+				   TYPE="List Item"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Status"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="504"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Status2"
+				   TYPE="List Item"
+				   UPDATED="12/12/2014 11:39:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/12/2014 11:39:45"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Tariff Plan"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="505"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Tariff Plan"
+				   TYPE="List Item"
+				   UPDATED="06/12/2015 12:53:57"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/12/2015 12:53:57"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU All Products"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="110"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU All Products"
+				   TYPE="Control"
+				   UPDATED="12/12/2014 11:39:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/12/2014 11:39:45"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Main Products"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="109"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Main Products"
+				   TYPE="Control"
+				   UPDATED="12/12/2014 11:39:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/12/2014 11:39:45"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Product Code"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="502"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Product Code"
+				   TYPE="List Item"
+				   UPDATED="12/12/2014 11:39:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/12/2014 11:39:45"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Product Group"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="501"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Product Group"
+				   TYPE="List Item"
+				   UPDATED="12/12/2014 11:39:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/12/2014 11:39:45"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Product Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="503"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Product Name"
+				   TYPE="List Item"
+				   UPDATED="12/12/2014 11:39:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/12/2014 11:39:45"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Edit"
+			   SEQUENCE="0"
+			   TYPE="Edit"
+			   WEB_TEMPLATE="Applet List Edit (Edit/New/Query)"
+			   UPDATED="09/11/2013 21:09:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/11/2013 21:09:29"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Effective End Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1297"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Effective End Date"
+				   TYPE="List Item"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ExecuteQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="107"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="ExecuteQuery"
+				   TYPE="Control"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Install Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1298"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Install Date"
+				   TYPE="List Item"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1296"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application"
+				   TYPE="Control"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1297"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application2"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1298"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application3"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1299"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application4"
+				   TYPE="Control"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Product Name Translated"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1296"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Product Name Translated"
+				   TYPE="List Item"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="QueryAssistant"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="126"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="QueryAssistant"
+				   TYPE="Control"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Effective End Date"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1303"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Effective End Date"
+				   TYPE="List Item"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Install Date"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1304"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Install Date"
+				   TYPE="List Item"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Product Name Translated"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1301"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Product Name Translated"
+				   TYPE="List Item"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Status"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1302"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Status"
+				   TYPE="List Item"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Edit List"
+			   SEQUENCE="0"
+			   TYPE="Edit List"
+			   WEB_TEMPLATE="Applet List (Base/EditList)"
+			   UPDATED="01/22/2016 18:57:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/11/2013 21:09:29"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="524"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="522"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application2"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="526"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application3"
+				   TYPE="Control"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="528"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application4"
+				   TYPE="Control"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="QueryAssistant"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="126"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="QueryAssistant"
+				   TYPE="Control"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Effective End Date"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="505"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Effective End Date"
+				   TYPE="List Item"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Effective End Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="507"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Effective End Date2"
+				   TYPE="List Item"
+				   UPDATED="12/31/2015 15:10:35"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Group Number"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="506"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Group Number"
+				   TYPE="List Item"
+				   UPDATED="12/31/2015 15:10:35"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Group Number"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="508"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Group Number2"
+				   TYPE="List Item"
+				   UPDATED="12/31/2015 15:10:35"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/31/2015 15:10:35"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Install Date"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="504"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Install Date"
+				   TYPE="List Item"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Install Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="506"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Install Date2"
+				   TYPE="List Item"
+				   UPDATED="12/31/2015 15:10:35"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Originating Shop Code"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="510"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Originating Shop Code"
+				   TYPE="List Item"
+				   UPDATED="01/22/2016 18:57:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/22/2016 18:57:58"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Product Name Translated"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="501"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Product Name Translated"
+				   TYPE="List Item"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Status"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="502"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Status"
+				   TYPE="List Item"
+				   UPDATED="09/11/2013 21:09:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Status"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="504"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Status2"
+				   TYPE="List Item"
+				   UPDATED="12/31/2015 15:10:35"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:29"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Tariff Plan"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="505"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Tariff Plan"
+				   TYPE="List Item"
+				   UPDATED="12/31/2015 15:10:35"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/31/2015 15:10:35"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU All Products"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="110"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU All Products"
+				   TYPE="Control"
+				   UPDATED="12/12/2014 11:39:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/12/2014 11:39:45"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Main Products"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="109"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Main Products"
+				   TYPE="Control"
+				   UPDATED="12/12/2014 11:39:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/12/2014 11:39:45"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Originating Dealer Code"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="509"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Originating Dealer Code"
+				   TYPE="List Item"
+				   UPDATED="01/22/2016 18:57:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/22/2016 18:57:58"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Product Code"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="502"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Product Code"
+				   TYPE="List Item"
+				   UPDATED="12/31/2015 15:10:35"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/31/2015 15:10:35"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Product Group"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="501"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Product Group"
+				   TYPE="List Item"
+				   UPDATED="12/31/2015 15:10:35"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/31/2015 15:10:35"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Product Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="503"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Product Name"
+				   TYPE="List Item"
+				   UPDATED="12/31/2015 15:10:35"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/31/2015 15:10:35"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Warranty Service"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="111"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Warranty Service"
+				   TYPE="Control"
+				   UPDATED="06/12/2015 12:53:57"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/12/2015 12:53:57"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="WriteRecord"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="136"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="WriteRecord"
+				   TYPE="Control"
+				   UPDATED="09/11/2013 21:09:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:30"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="Y"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="20"
+			   INACTIVE="N"
+			   LEFT="2"
+			   MULTI_LINE="N"
+			   NAME="AppletTitle"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="1"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="N"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="2"
+			   TYPE="Label"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="96"
+			   UPDATED="09/11/2013 21:09:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/11/2013 21:09:30"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_GO-1004224654-095"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ExecuteQuery"
+			   MULTI_LINE="N"
+			   NAME="ExecuteQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="3"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="09/11/2013 21:09:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/11/2013 21:09:30"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="590"
+			   INACTIVE="N"
+			   LEFT="6"
+			   MULTI_LINE="N"
+			   NAME="List"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="2"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="28"
+			   TYPE="ListControl"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="1012"
+			   UPDATED="09/11/2013 21:09:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/11/2013 21:09:30"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="PositionOnRow"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="PositionOnRow"
+			   MULTI_LINE="N"
+			   NAME="PositionOnRow"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="4"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="09/11/2013 21:09:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/11/2013 21:09:30"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ShowQueryAssistant"
+			   MULTI_LINE="N"
+			   NAME="QueryAssistant"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="5"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="09/11/2013 21:09:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/11/2013 21:09:30"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Query Assistant"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="09/11/2013 21:09:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:30"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_LS_SHOW_ALL"
+			   COMMENTS="WA#06: AROSA 28-11-2014 added"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   METHOD_INVOKED="ShowAll"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU All Products"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="12/12/2014 11:39:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/12/2014 11:39:45"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VFTRCBU_SHOW_MAIN_PRODUCTS"
+			   COMMENTS="WA#06: AROSA 28-11-2014 added"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   METHOD_INVOKED="ShowMainProducts"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Main Products"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="12/12/2014 11:39:45"
+			   UPDATED_BY="SADMIN"
+			   CREATED="12/12/2014 11:39:45"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VFTRCBU_WARRANTY_SERVICE"
+			   COMMENTS="VFTRCBU WA#15 2015.05.21 - TFERNANDES"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   METHOD_INVOKED="ShowPopup"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Warranty Service"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="07/16/2015 11:19:12"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/12/2015 12:53:57"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="07/16/2015 11:19:12"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/12/2015 12:53:57"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+				<CONTROL_USER_PROP
+				   INACTIVE="N"
+				   NAME="Popup"
+				   VALUE="VFTRCBU PRM Warranty Service iFrame Applet"
+				   UPDATED="06/12/2015 12:53:57"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/12/2015 12:53:57"
+				   CREATED_BY="SADMIN">
+				</CONTROL_USER_PROP>
+				<CONTROL_USER_PROP
+				   INACTIVE="N"
+				   NAME="Popup Dimension"
+				   VALUE="600 X 600"
+				   UPDATED="06/12/2015 12:53:57"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/12/2015 12:53:57"
+				   CREATED_BY="SADMIN">
+				</CONTROL_USER_PROP>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEditNew"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="WriteRecord"
+			   MULTI_LINE="N"
+			   NAME="WriteRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="6"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="09/11/2013 21:09:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/11/2013 21:09:30"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Save"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="09/11/2013 21:09:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:30"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<LIST
+			   HTML_MULTI_ROW_EDIT="N"
+			   HTML_MULTI_ROW_SELECT="N"
+			   INACTIVE="N"
+			   NAME="List"
+			   TOTAL_DISPLAYED="N"
+			   TOTAL_REQUIRED="N"
+			   UPDATED="01/22/2016 18:57:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/11/2013 21:09:30"
+			   CREATED_BY="SADMIN">
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="PRM CR059 ; WA#06: AROSA 28-11-2014 changed"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_END_DATE-1004225148-0BJ"
+				   FIELD="Effective End Date"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VF Effective End Date"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SEQUENCE="3"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="12/12/2014 11:39:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:30"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="09/11/2013 21:09:30"
+					   UPDATED_BY="SADMIN"
+					   CREATED="09/11/2013 21:09:30"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="PRM CR059"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_GROUP_NUMBER-1004231038-2Z9"
+				   FIELD="Group Number"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VF Group Number"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="09/11/2013 21:09:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:30"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="PRM CR059"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_ACTIVAION_DATE-1004225950-076"
+				   FIELD="Install Date"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VF Install Date"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SEQUENCE="4"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="09/11/2013 21:09:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:30"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="09/11/2013 21:09:30"
+					   UPDATED_BY="SADMIN"
+					   CREATED="09/11/2013 21:09:30"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="CR#33 - NMARQUES"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_ORIG_SHOP_CODE"
+				   FIELD="VF Originating Shop Code"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VF Originating Shop Code"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="N"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/22/2016 18:57:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/22/2016 18:57:58"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="PRM CR059"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_PRODUCT-1009090011-1YA"
+				   FIELD="Product Name Translated"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VF Product Name Translated"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SEQUENCE="1"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="09/11/2013 21:09:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:30"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="09/11/2013 21:09:30"
+					   UPDATED_BY="SADMIN"
+					   CREATED="09/11/2013 21:09:30"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="PRM CR059"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_GSM_STATUS"
+				   FIELD="Status"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VF Status"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SEQUENCE="2"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="09/11/2013 21:09:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:30"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="09/11/2013 21:09:30"
+					   UPDATED_BY="SADMIN"
+					   CREATED="09/11/2013 21:09:30"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="PRM CR059"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_TARIFF_PLAN"
+				   FIELD="VF Tariff Plan"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VF Tariff Plan"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="09/11/2013 21:09:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2013 21:09:30"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="CR#33 - NMARQUES"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_DEALER_CODE"
+				   FIELD="VFTRCBU Originating Dealer Code"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Originating Dealer Code"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="N"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/22/2016 18:57:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/22/2016 18:57:58"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="WA#06: AROSA 28-11-2014 added"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_PRODUCT_CODE-0928155835-11K"
+				   FIELD="VFTRCBU Product Part Num"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Product Code"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="N"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="12/12/2014 11:39:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/12/2014 11:39:45"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="WA#06: AROSA 28-11-2014 added"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_PRODUCT_GROUP"
+				   FIELD="VFTRCBU Product Group"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Product Group"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="12/12/2014 11:39:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/12/2014 11:39:45"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="WA#06: AROSA 28-11-2014 added"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_PRODUCT_NAME"
+				   FIELD="Product Name Translated"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Product Name"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="12/12/2014 11:39:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/12/2014 11:39:45"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+			</LIST>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+

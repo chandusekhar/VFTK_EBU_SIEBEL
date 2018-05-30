@@ -1,0 +1,2025 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="20140703 - VFTRCBU Project for WP#01 objects"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VFTRCBU Customer_Account_Subscriber Management"
+	   UI_FREEZE="N"
+	   UPDATED="01/06/2018 22:12:58"
+	   UPDATED_BY="IBM_MERVEO"
+	   CREATED="08/14/2014 20:13:39"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   BUSINESS_COMPONENT="VFTRCBU Invoice Limit VBC"
+		   CLASS="CSSFrame"
+		   COMMENTS="VFTRCBU 29122014: JIRA VFTRCBU-4627 - FTOSCANO"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HEIGHT="4"
+		   INACTIVE="N"
+		   NAME="VFTRCBU Invoice Limit Details Applet"
+		   NO_DELETE="Y"
+		   NO_INSERT="Y"
+		   NO_MERGE="Y"
+		   NO_UPDATE="N"
+		   OBJECT_LOCKED="N"
+		   SCRIPTED="Y"
+		   TITLE_-_STRING_REFERENCE="X_VF_Invoice_Limit_Title"
+		   TYPE="Standard"
+		   UPGRADE_BEHAVIOR="Preserve"
+		   WIDTH="2"
+		   UPDATED="02/09/2018 20:21:21"
+		   UPDATED_BY="IBM_FSIDDIQUE"
+		   CREATED="03/20/2015 01:54:54"
+		   CREATED_BY="SADMIN">
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="LogInsert"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function LogInsert(FieldInfo,FieldValue)
+{
+	try
+	{/* Oracle Review October 2011 - get the SearchSec from query. Needed for Client Request */
+		var LogBO : BusObject = TheApplication ().GetBusObject(&quot;ACS NI Parameter&quot;);
+		var LogBC : BusComp = LogBO.GetBusComp (&quot;VF LOG EVENTS&quot;);
+		var View = TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;);
+		var Login = TheApplication().LoginName();
+		var Process = &quot;Sorgu&quot;;
+		with(LogBC)
+		{
+			NewRecord(NewAfter);
+			SetFieldValue(&quot;Field Info&quot;,FieldInfo);
+			SetFieldValue(&quot;Process Info&quot;,Process);
+			SetFieldValue(&quot;User Name&quot;,Login);
+	    	SetFieldValue(&quot;View&quot;,View);
+	    	SetFieldValue(&quot;Field Value&quot;,FieldValue);
+			WriteRecord();  
+		} 
+	}
+	finally
+	{
+		LogBC = null;
+		LogBO = null;
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="01/10/2016 16:08:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/10/2016 16:08:47"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="Timestamp"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="/**User-defined function that returns System Date/Time
+ ** in the format understandable by Siebel adapter**/
+function Timestamp()
+{
+ 	var d = Date.fromSystem(Clib.time());
+ 	// Return date in the format MM/DD/YYYY HH:MM:SS
+ 	return Clib.rsprintf(&quot;%02d/%02d/%04d %02d:%02d:%02d&quot;, d.getMonth()+1, d.getDate(), d.getFullYear(), d.getHours(), d.getMinutes(), d.getSeconds()); 
+}"
+			   SEQUENCE="2"
+			   UPDATED="01/10/2016 16:08:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_Load"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_Load ()
+{
+
+  var sAssetVFFinalStatus = this.BusComp().ParentBusComp().GetFieldValue(&quot;VF Final Status&quot;);            //JIRA-VFTRCBU-26901:Added
+  var custType = this.BusComp().ParentBusComp().GetFieldValue(&quot;ACS OOSS Customer Document Type&quot;);
+  var lovCustType = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACCOUNT_TYPE&quot;,&quot;102&quot;);
+  
+  if(sAssetVFFinalStatus != TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_FINAL_STATUS&quot;,&quot;Inactive&quot;) &amp;&amp; custType == lovCustType)	//JIRA-VFTRCBU-26901:Added
+  {     																								//JIRA-VFTRCBU-26901:Added
+	//VFTRCBU 29122014: JIRA VFTRCBU-4627 - FTOSCANO
+	TheApplication().SetProfileAttr(&quot;VFSkipQueryWF&quot;,&quot;N&quot;);
+	this.InvokeMethod(&quot;ExecuteQuery&quot;);
+  }   																									//JIRA-VFTRCBU-26901:Added
+}"
+			   SEQUENCE="3"
+			   UPDATED="12/06/2016 00:08:07"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreCanInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreCanInvokeMethod (MethodName, &amp;CanInvoke)
+{
+	//VFTRCBU 29122014: JIRA VFTRCBU-4627 - FTOSCANO - START
+	if (MethodName == &quot;VFTRCBURequest&quot;) 
+	{
+		try
+		{
+			var xInput = TheApplication().NewPropertySet();
+		    var xOutput = TheApplication().NewPropertySet();
+		    var BSGetRoles = TheApplication().GetService(&quot;ACS General Operations&quot;);
+		    var strPosition;
+		    var thisBC = this.BusComp();
+			var strBillingAccountStatus = thisBC.ParentBusComp().GetFieldValue(&quot;Billing Account Status&quot;);
+			var strBillingAccountType = thisBC.ParentBusComp().GetFieldValue(&quot;Billing Account Type&quot;);
+			//var strSubscriberStatus = thisBC.ParentBusComp().GetFieldValue(&quot;VF Final Status&quot;); VFTRCBU-22944 - 20160109
+			var strSubscriberStatusCalc = thisBC.ParentBusComp().GetFieldValue(&quot;VF Final Status Calc&quot;);
+			
+			var lovBillingAccountStatus = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;BILLING_ACCOUNT_STATUS&quot;,&quot;100&quot;);
+			var lovBillingAccountType = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PAYMENT_MODALITY&quot;,&quot;Postpaid&quot;);
+			var lovSubscriberStatus = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_FINAL_STATUS&quot;,&quot;Active&quot;);
+			
+		   	xInput.SetProperty(&quot;Function&quot;, MethodName);
+		    xInput.SetProperty(&quot;Name&quot;, MethodName);
+		    xInput.SetProperty(&quot;Value&quot;, &quot;&quot;);
+		
+		    BSGetRoles.InvokeMethod(&quot;GetParameter_3Inputs&quot;, xInput, xOutput);
+		    strPosition = xOutput.GetProperty(&quot;Cons1&quot;);
+		    
+		       
+		    if (strPosition == &quot;True&quot;)
+		    {
+		    	if(strBillingAccountStatus == lovBillingAccountStatus &amp;&amp; strBillingAccountType == lovBillingAccountType &amp;&amp; strSubscriberStatusCalc == lovSubscriberStatus)
+				{
+					CanInvoke = &quot;TRUE&quot;;
+				}
+				else {
+					CanInvoke = &quot;FALSE&quot;;
+				}
+			}
+		    else
+		    {
+				CanInvoke = &quot;FALSE&quot;;
+			}
+			return (CancelOperation);
+		}
+		finally
+		{
+			BSGetRoles = null;
+    		xInput = null;
+    		xOutput = null;
+		}
+		
+	}
+	if (MethodName == &quot;VFTRCBUCancel&quot;) 
+	{
+		try
+		{
+			var xInput = TheApplication().NewPropertySet();
+		    var xOutput = TheApplication().NewPropertySet();
+		    var BSGetRoles = TheApplication().GetService(&quot;ACS General Operations&quot;);
+		    var strPosition;
+		    var thisBC = this.BusComp();
+			var strAmount = thisBC.GetFieldValue(&quot;VFTRCBU Amount&quot;);
+			//var strApplyTime = thisBC.GetFieldValue(&quot;VFTRCBU Apply Time&quot;); VFTRCBU-8254
+			var strRequest = thisBC.GetFieldValue(&quot;VFTRCBU Requested Limit&quot;);
+		
+		   	xInput.SetProperty(&quot;Function&quot;, MethodName);
+		    xInput.SetProperty(&quot;Name&quot;, MethodName);
+		    xInput.SetProperty(&quot;Value&quot;, &quot;&quot;);
+		
+		    BSGetRoles.InvokeMethod(&quot;GetParameter_3Inputs&quot;, xInput, xOutput);
+		    strPosition = xOutput.GetProperty(&quot;Cons1&quot;);
+		
+		    if (strPosition == &quot;True&quot;)
+		    {
+		    	if(strAmount != &quot;&quot; /*&amp;&amp; strApplyTime != &quot;&quot;*/ &amp;&amp; strRequest == strAmount) //VFTRCBU-8254
+				{
+					CanInvoke = &quot;TRUE&quot;;
+				}
+				else
+				{
+					CanInvoke = &quot;FALSE&quot;;
+				}
+			}
+		    else
+		    {
+				CanInvoke = &quot;FALSE&quot;;
+			}
+			return (CancelOperation);
+		}
+		finally
+		{
+			BSGetRoles = null;
+		    xInput = null;
+		    xOutput = null;
+		}
+	}	
+	//VFTRCBU 29122014: JIRA VFTRCBU-4627 - FTOSCANO - END
+	return (ContinueOperation);
+}"
+			   SEQUENCE="4"
+			   UPDATED="01/10/2016 16:08:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreInvokeMethod (MethodName)
+{
+	//VFTRCBU 29122014: JIRA VFTRCBU-4627 - FTOSCANO - START
+	if(MethodName==&quot;VFTRCBURequest&quot;)
+	{
+		var thisBC = this.BusComp();
+		var App = TheApplication();
+		var strWFBS	= &quot;&quot;;
+		var psCreateOut = &quot;&quot;;
+		var psCreateIn	= &quot;&quot;;
+		var errCode = &quot;&quot;;			
+		var strRequestedLimit = thisBC.GetFieldValue(&quot;VFTRCBU Requested Limit&quot;);
+		var strAmount = thisBC.GetFieldValue(&quot;VFTRCBU Amount&quot;);
+		var strMSISDN = thisBC.ParentBusComp().GetFieldValue(&quot;VF MSISDN&quot;);
+		var strMSISDNid = thisBC.ParentBusComp().GetFieldValue(&quot;Id&quot;);
+		var strBillingAccount = thisBC.ParentBusComp().GetFieldValue(&quot;Billing Account&quot;);
+		var strShop = TheApplication().GetProfileAttr(&quot;ShopID&quot;);
+		var strQuoteType = thisBC.GetFieldValue(&quot;VFTRCBU Quota Type&quot;);
+		var bsRefreshBC = App.GetService(&quot;SIS OM PMT Service&quot;);
+		var strBO = &quot;Asset Management - Asset Item&quot;;
+		var strBC = &quot;VFTRCBU Invoice Limit History VBC&quot;;
+		var historyIn;
+		var historyOut;
+		var sNoLimit = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VFTRCBU_REQ_LIMIT_AMOUNT&quot;,&quot;No Limit&quot;); //PSANTOS VFTRCBU-31307
+
+		if (strRequestedLimit == &quot;&quot;)
+		{
+			//Requested Limit cannot be empty.
+			var strMessageCategory 	= &quot;VFTRCBU User Defined Errors&quot;;
+			var strCode				= &quot;0153&quot;;
+			var sMsg				= App.LookupMessage(strMessageCategory, strCode);
+			App.RaiseErrorText(sMsg);
+			return (CancelOperation);
+		}
+		else if (strRequestedLimit != &quot;&quot; &amp;&amp; strRequestedLimit == strAmount)
+		{
+			//Requested Limit should be different from Current Limit Amount.
+			var strMessageCategory 	= &quot;VFTRCBU User Defined Errors&quot;;
+			var strCode				= &quot;0154&quot;;
+			var sMsg				= App.LookupMessage(strMessageCategory, strCode);
+			App.RaiseErrorText(sMsg);
+			return (CancelOperation);	
+		}
+		//PFONSECA - 20.07.2016 - Additional validation considering the amount
+		else if (strRequestedLimit != &quot;&quot; &amp;&amp; strAmount == sNoLimit) 
+		{
+			//Activate
+			psCreateIn = App.NewPropertySet();
+			psCreateOut = App.NewPropertySet();
+			strWFBS = App.GetService(&quot;Workflow Process Manager&quot;);
+			psCreateIn.SetProperty(&quot;ProcessName&quot;,&quot;VFTRCBU Activate/Update Invoice Limit WF&quot;);
+		//	psCreateIn.SetProperty(&quot;AccountNumber&quot;, strBillingAccount);//
+			psCreateIn.SetProperty(&quot;MSISDN&quot;, strMSISDN);
+			psCreateIn.SetProperty(&quot;Operation&quot;, &quot;0&quot;);
+		//	psCreateIn.SetProperty(&quot;QuotaType&quot;, strQuoteType);
+		//	psCreateIn.SetProperty(&quot;NotifyType&quot;, &quot;1&quot;);
+		//	psCreateIn.SetProperty(&quot;ApplyTime&quot;, this.Timestamp());
+		//	psCreateIn.SetProperty(&quot;ExpiryTime&quot;, this.Timestamp());
+			psCreateIn.SetProperty(&quot;Amount&quot;, strRequestedLimit);
+			psCreateIn.SetProperty(&quot;Shop&quot;, strShop);		
+						
+			strWFBS.InvokeMethod(&quot;RunProcess&quot;, psCreateIn, psCreateOut);
+			
+			errCode = psCreateOut.GetProperty(&quot;Error Code&quot;);
+			if (errCode == &quot;0&quot;)
+			{
+				TheApplication().SetProfileAttr(&quot;VFSkipQueryWF&quot;,&quot;N&quot;);
+				historyIn = App.NewPropertySet();
+				historyOut = App.NewPropertySet();
+				historyIn.SetProperty(&quot;Business Object Name&quot;,strBO);
+				historyIn.SetProperty(&quot;Business Component Name&quot;,strBC);
+				bsRefreshBC.InvokeMethod(&quot;Refresh Business Component&quot;,historyIn, historyOut);
+
+				//Request is submitted. Invoice Limit notification will be activated in the next invoice cycle 
+				//and notification will be sent via SMS.
+				var strMessageCategory 	= &quot;VFTRCBU User Defined Errors&quot;;
+				var strCode				= &quot;0155&quot;;
+				var sMsg				= App.LookupMessage(strMessageCategory, strCode);
+				App.RaiseErrorText(sMsg);	
+			}
+			return (CancelOperation);
+		}	
+		else if (strRequestedLimit != &quot;&quot; &amp;&amp; strRequestedLimit != strAmount)
+		{
+			//Update/Modify
+			psCreateIn = App.NewPropertySet();
+			psCreateOut = App.NewPropertySet();
+			strWFBS = App.GetService(&quot;Workflow Process Manager&quot;);
+			psCreateIn.SetProperty(&quot;ProcessName&quot;,&quot;VFTRCBU Activate/Update Invoice Limit WF&quot;);
+		//	psCreateIn.SetProperty(&quot;AccountNumber&quot;, strBillingAccount);//
+			psCreateIn.SetProperty(&quot;MSISDN&quot;, strMSISDN);
+			psCreateIn.SetProperty(&quot;Operation&quot;, &quot;1&quot;);
+		//	psCreateIn.SetProperty(&quot;QuotaType&quot;, strQuoteType);//
+		//	psCreateIn.SetProperty(&quot;NotifyType&quot;, &quot;1&quot;);//
+		//	psCreateIn.SetProperty(&quot;ApplyTime&quot;, this.Timestamp());//
+		//	psCreateIn.SetProperty(&quot;ExpiryTime&quot;, this.Timestamp());//
+			psCreateIn.SetProperty(&quot;Amount&quot;, strRequestedLimit);
+			psCreateIn.SetProperty(&quot;Shop&quot;, strShop);
+			
+			strWFBS.InvokeMethod(&quot;RunProcess&quot;, psCreateIn, psCreateOut);
+			
+			errCode = psCreateOut.GetProperty(&quot;Error Code&quot;);
+			if (errCode == &quot;0&quot;)
+			{
+				
+				TheApplication().SetProfileAttr(&quot;VFSkipQueryWF&quot;,&quot;N&quot;);
+				historyIn = App.NewPropertySet();
+				historyOut = App.NewPropertySet();
+				historyIn.SetProperty(&quot;Business Object Name&quot;,strBO);
+				historyIn.SetProperty(&quot;Business Component Name&quot;,strBC);
+				bsRefreshBC.InvokeMethod(&quot;Refresh Business Component&quot;,historyIn, historyOut);
+				
+				
+				//TheApplication().ActiveBusObject().GetBusComp(strBC).ExecuteQuery(ForwardOnly);
+				//Request is submitted. Invoice Limit notification service will be updated in the next invoice cycle 
+				//and notification will be sent via SMS.
+				var strMessageCategory 	= &quot;VFTRCBU User Defined Errors&quot;;
+				var strCode				= &quot;0156&quot;;
+				var sMsg				= App.LookupMessage(strMessageCategory, strCode);
+				App.RaiseErrorText(sMsg);	
+			}
+			return (CancelOperation);			
+		}		
+	}
+	else if	(MethodName==&quot;VFTRCBUCancel&quot;)
+	{
+		var thisBC = this.BusComp();
+		var App = TheApplication();
+		var strWFBS	= &quot;&quot;;
+		var psCreateOut = &quot;&quot;;
+		var psCreateIn	= &quot;&quot;;
+		var errCode = &quot;&quot;;		
+		var strRequestedLimit = thisBC.GetFieldValue(&quot;VFTRCBU Requested Limit&quot;);
+		var strAmount = thisBC.GetFieldValue(&quot;VFTRCBU Amount&quot;);
+		var strMSISDN = thisBC.ParentBusComp().GetFieldValue(&quot;VF MSISDN&quot;);
+		var strMSISDNid = thisBC.ParentBusComp().GetFieldValue(&quot;Id&quot;);
+		var strBillingAccount = thisBC.ParentBusComp().GetFieldValue(&quot;Billing Account&quot;);
+		var strShop = thisBC.ParentBusComp().GetFieldValue(&quot;VF Originating Shop Code&quot;);
+		var strQuoteType = thisBC.GetFieldValue(&quot;VFTRCBU Quota Type&quot;);
+		var bsRefreshBC = App.GetService(&quot;SIS OM PMT Service&quot;);
+
+		psCreateIn = App.NewPropertySet();
+		psCreateOut = App.NewPropertySet();
+		strWFBS = App.GetService(&quot;Workflow Process Manager&quot;);
+		psCreateIn.SetProperty(&quot;ProcessName&quot;,&quot;VFTRCBU Activate/Update Invoice Limit WF&quot;);
+	//	psCreateIn.SetProperty(&quot;AccountNumber&quot;, strBillingAccount);//
+		psCreateIn.SetProperty(&quot;MSISDN&quot;, strMSISDN);
+		psCreateIn.SetProperty(&quot;Operation&quot;, &quot;2&quot;); // changed by JFONSECA from 4 to 2 - 08.04.2015
+	//	psCreateIn.SetProperty(&quot;QuotaType&quot;, strQuoteType);
+	//	psCreateIn.SetProperty(&quot;NotifyType&quot;, &quot;1&quot;);
+	//	psCreateIn.SetProperty(&quot;ApplyTime&quot;, this.Timestamp());
+	//	psCreateIn.SetProperty(&quot;ExpiryTime&quot;, this.Timestamp());
+	//	psCreateIn.SetProperty(&quot;Amount&quot;, strRequestedLimit);
+		psCreateIn.SetProperty(&quot;Shop&quot;, strShop);
+		
+		strWFBS.InvokeMethod(&quot;RunProcess&quot;, psCreateIn, psCreateOut);
+		
+		errCode = psCreateOut.GetProperty(&quot;Error Code&quot;);
+		if (errCode == &quot;0&quot;)
+		{
+
+			TheApplication().SetProfileAttr(&quot;VFSkipQueryWF&quot;,&quot;N&quot;);
+			historyIn = App.NewPropertySet();
+			historyOut = App.NewPropertySet();
+			historyIn.SetProperty(&quot;Business Object Name&quot;,strBO);
+			historyIn.SetProperty(&quot;Business Component Name&quot;,strBC);
+			bsRefreshBC.InvokeMethod(&quot;Refresh Business Component&quot;,historyIn, historyOut);
+			
+			//Cancellation request is submitted. Notification SMS will be sent at the execution of the request.
+			var strMessageCategory 	= &quot;VFTRCBU User Defined Errors&quot;;
+			var strCode				= &quot;0157&quot;;
+			var sMsg				= App.LookupMessage(strMessageCategory, strCode);
+			App.RaiseErrorText(sMsg);	
+		}	
+		return (CancelOperation);
+	}
+	return (ContinueOperation);
+	//VFTRCBU 29122014: JIRA VFTRCBU-4627 - FTOSCANO - END
+}"
+			   SEQUENCE="5"
+			   UPDATED="07/28/2016 16:21:08"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_USER_PROP
+			   COMMENTS="VFTRCBU 29122014: JIRA VFTRCBU-4627 - FTOSCANO"
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: ExecuteQuery"
+			   VALUE="FALSE"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="VFTRCBU 29122014: JIRA VFTRCBU-4627 - FTOSCANO"
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: NewQuery"
+			   VALUE="FALSE"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="VFTRCBU 29122014: JIRA VFTRCBU-4627 - FTOSCANO"
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: RefineQuery"
+			   VALUE="FALSE"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="VFTRCBU 29122014: JIRA VFTRCBU-4627 - FTOSCANO"
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: UndoQuery"
+			   VALUE="FALSE"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="VFTRCBU 29122014: JIRA VFTRCBU-4627 - FTOSCANO"
+			   INACTIVE="Y"
+			   NAME="CanInvokeMethod: VFTRCBUCancel"
+			   VALUE="[VFTRCBU Requested Limit] = [VFTRCBU Amount] AND [VFTRCBU Amount]  IS  NOT  NULL AND [VFTRCBU Apply Time] IS  NOT  NULL"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="VFTRCBU 29122014: JIRA VFTRCBU-4627 - FTOSCANO"
+			   INACTIVE="Y"
+			   NAME="CanInvokeMethod: VFTRCBURequest"
+			   VALUE="TRUE"
+			   UPDATED="01/10/2016 16:08:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="VFTRCBU 29122014: JIRA VFTRCBU-4627 - FTOSCANO"
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: WriteRecord"
+			   VALUE="FALSE"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Edit"
+			   SEQUENCE="0"
+			   TYPE="Edit"
+			   WEB_TEMPLATE="Applet Form Grid Layout"
+			   UPDATED="04/02/2015 14:55:13"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="4082"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application"
+				   TYPE="Control"
+				   UPDATED="04/02/2015 14:55:12"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/02/2015 14:55:12"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="4067"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application2"
+				   TYPE="Control"
+				   UPDATED="04/02/2015 14:55:13"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/02/2015 14:55:13"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Cancel Invoice Limit"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="111"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Cancel Invoice Limit"
+				   TYPE="Control"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Request Limit"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="110"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Request Limit"
+				   TYPE="Control"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VFTRCBU Requested Limit"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="4018"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Requested Limit"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VFTRCBU Requested Limit"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="4003"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Requested LimitLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VFTRCBUAmount"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="4050"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBUAmount"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VFTRCBUAmount"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="4035"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBUAmountLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VFTRCBUApplyTime"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="4082"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBUApplyTime"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VFTRCBUApplyTime"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="4067"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBUApplyTimeLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Amount"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="131"
+			   MULTI_LINE="N"
+			   NAME="Created"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="1"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="2"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Created"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Created By"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="381"
+			   MULTI_LINE="N"
+			   NAME="CreatedBy"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="2"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="2"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Created By"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="DeleteRecord"
+			   MULTI_LINE="N"
+			   NAME="DeleteRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="14"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Delete"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_EDIT-1004231338-2SY"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="EditRecord"
+			   MULTI_LINE="N"
+			   NAME="EditRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="15"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_GO-1004224654-095"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ExecuteQuery"
+			   MULTI_LINE="N"
+			   NAME="ExecuteQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="16"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RecNavNxt"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="GotoNextSet"
+			   MULTI_LINE="N"
+			   NAME="GotoNextSet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="17"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Next"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RecNavPrv"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="GotoPreviousSet"
+			   MULTI_LINE="N"
+			   NAME="GotoPreviousSet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="18"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Previous"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Id"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="631"
+			   MULTI_LINE="N"
+			   NAME="Id"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="3"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="2"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Id"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="NewQuery"
+			   MULTI_LINE="N"
+			   NAME="NewQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="19"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Query"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEdit"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="NewRecord"
+			   MULTI_LINE="N"
+			   NAME="NewRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="20"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="New"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="PositionOnRow"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="PositionOnRow"
+			   MULTI_LINE="N"
+			   NAME="PositionOnRow"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="21"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ShowQueryAssistant"
+			   MULTI_LINE="N"
+			   NAME="QueryAssistant"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="22"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Query Assistant"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="UndoQuery"
+			   MULTI_LINE="N"
+			   NAME="UndoQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="23"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Cancel"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonNew"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="UndoRecord"
+			   MULTI_LINE="N"
+			   NAME="UndoRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="24"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Cancel"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Updated"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="881"
+			   MULTI_LINE="N"
+			   NAME="Updated"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="4"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="2"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Updated"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Updated By"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="131"
+			   MULTI_LINE="N"
+			   NAME="UpdatedBy"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="5"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="28"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Updated By"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_CANCEL_LIMIT"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="VFTRCBUCancel"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Cancel Invoice Limit"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="17"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_REQUEST_LIMIT"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   METHOD_INVOKED="VFTRCBURequest"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Request Limit"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_REQUESTED_LIMIT"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Requested Limit"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="1"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Requested Limit"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Account Number"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="381"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBUAccountNumber"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="Y"
+			   SEQUENCE="6"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="28"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="VFTRCBU Account Number"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_CURRENT_LIMIT"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Amount"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="2"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="631"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBUAmount"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="Y"
+			   SEQUENCE="7"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="28"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VFTRCBU_APPLY_TIME"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Apply Time"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="3"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="881"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBUApplyTime"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="Y"
+			   SEQUENCE="8"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="28"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Expiry Time"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="131"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBUExpiryTime"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="Y"
+			   SEQUENCE="9"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="54"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="VFTRCBU Expiry Time"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU MSISDN"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="381"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBUMSISDN"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="Y"
+			   SEQUENCE="10"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="54"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="VFTRCBU MSISDN"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Notify Type"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="631"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBUNotifyType"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="Y"
+			   SEQUENCE="11"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="54"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="VFTRCBU Notify Type"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Operation"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="881"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBUOperation"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="Y"
+			   SEQUENCE="12"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="54"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="VFTRCBU Operation"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Quota Type"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="131"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBUQuotaType"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="Y"
+			   SEQUENCE="13"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="80"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="VFTRCBU Quota Type"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_SAVE-1004225832-051"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEditNew"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="WriteRecord"
+			   MULTI_LINE="N"
+			   NAME="WriteRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="25"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="03/20/2015 01:54:55"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/20/2015 01:54:55"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="03/20/2015 01:54:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/20/2015 01:54:55"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+

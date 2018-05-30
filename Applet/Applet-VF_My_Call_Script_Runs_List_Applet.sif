@@ -1,0 +1,3980 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VF Account Management"
+	   UI_FREEZE="N"
+	   UPDATED="05/03/2017 12:15:33"
+	   UPDATED_BY="JSARMENTO"
+	   CREATED="11/02/2009 12:09:53"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   BUSINESS_COMPONENT="Call Script Runs"
+		   CLASS="CSSFrameCallScriptRuns"
+		   COMMENTS="7.5.2.200 UI ENHANCEMENT"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HTML_NUMBER_OF_ROWS="1"
+		   HEIGHT="4"
+		   INACTIVE="N"
+		   NAME="VF My Call Script Runs List Applet"
+		   NO_DELETE="Y"
+		   NO_INSERT="Y"
+		   NO_MERGE="Y"
+		   NO_UPDATE="Y"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="05/02/2017 12:15:12"
+		   SCRIPTED="Y"
+		   TITLE_-_STRING_REFERENCE="X_SERV_REQ_QUEST_ANS"
+		   TYPE="Standard"
+		   UPGRADE_ANCESTOR="My Call Script Runs List Applet"
+		   UPGRADE_BEHAVIOR="Admin"
+		   WIDTH="2"
+		   OBJECT_LOCKED_BY_NAME="JSARMENTO"
+		   UPDATED="05/03/2017 10:50:35"
+		   UPDATED_BY="JSARMENTO"
+		   CREATED="04/13/2010 11:25:18"
+		   CREATED_BY="SADMIN">
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="Applet_PreInvokeMethod"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="Applet_PreInvokeMethod"
+			   SCRIPT="function Applet_PreInvokeMethod (name, inputPropSet)
+{
+	try
+	{
+		var svc_ACSNIGeneralOperations, pset_Inputs, pset_Outputs;
+		if(name == &quot;ResumeScript&quot;)
+		{
+			var viewname = theApplication().GetProfileAttr(&quot;ActiveViewName&quot;);
+			if(viewname == &quot;TeXCo Account Contact Log View&quot;)
+			{
+				var parentApplet = theApplication().FindApplet(&quot;PLW Com Account Entry Applet - Poste&quot;);
+				var parentSRApplet = theApplication().FindApplet(&quot;PLW Account Service Request List Applet&quot;);
+				if ( (parentApplet != null) &amp;&amp; ( parentSRApplet != null) )
+				{
+					var strAccountNum = parentApplet.BusComp().GetFieldValue(&quot;Account Number&quot;);
+					theApplication().SetProfileAttr(&quot;SSAccountNum&quot;, strAccountNum);
+					var strSRNum = parentSRApplet.BusComp().GetFieldValue(&quot;SR Number&quot;);
+					theApplication().SetProfileAttr(&quot;SRNum&quot;, strSRNum);
+				}
+				else
+				{
+					svc_ACSNIGeneralOperations = theApplication().GetService (&quot;ACS NI General Operations&quot;);
+					pset_Inputs  = theApplication().NewPropertySet();
+					pset_Outputs = theApplication().NewPropertySet();
+					var str_Message = &quot;&quot;; 
+					pset_Inputs.SetProperty(&quot;Code&quot;, &quot;AD9013&quot;);
+					pset_Inputs.SetProperty(&quot;MessageCategory&quot;, &quot;VF Message Category&quot;);
+					pset_Outputs = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupMsg&quot;, pset_Inputs);
+					//Get the message depending on the Language the user has logged in 
+					str_Message = pset_Outputs.GetProperty(&quot;Message&quot;);
+					theApplication().SWEAlert(str_Message);
+					return (&quot;CancelOperation&quot;); 
+				}
+			}
+			if(viewname == &quot;VF Service Request Smart Script View&quot;)
+			{
+				var parentSRNoteApplet = theApplication().FindApplet(&quot;PLW Com TT Service Request Detail Applet - Note&quot;);
+				if (parentSRNoteApplet != null)
+				{
+					var strSRNum = parentSRNoteApplet.BusComp().GetFieldValue(&quot;SR Number&quot;);
+					theApplication().SetProfileAttr(&quot;SRNumber&quot;, strSRNum);
+				}
+				else
+				{
+					
+					/*var parentSRNoteApplet2 = theApplication().FindApplet(&quot;VF Service Request Detail Applet - Note&quot;);
+					if (parentSRNoteApplet2 != null)
+					{
+						var strSRNum = parentSRNoteApplet2.BusComp().GetFieldValue(&quot;SR Number&quot;);
+						theApplication().SetProfileAttr(&quot;SRNumber&quot;, strSRNum);
+					}
+					else {
+						svc_ACSNIGeneralOperations = theApplication().GetService (&quot;ACS NI General Operations&quot;);
+						pset_Inputs  = theApplication().NewPropertySet();
+						pset_Outputs = theApplication().NewPropertySet();
+						var str_Message = &quot;&quot;; 
+						pset_Inputs.SetProperty(&quot;Code&quot;, &quot;AD9013&quot;);
+						pset_Inputs.SetProperty(&quot;MessageCategory&quot;, &quot;VF Message Category&quot;);
+						pset_Outputs = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupMsg&quot;, pset_Inputs);
+						//Get the message depending on the Language the user has logged in 
+						str_Message = pset_Outputs.GetProperty(&quot;Message&quot;);
+						theApplication().SWEAlert(str_Message);
+						return (&quot;CancelOperation&quot;); 
+					}*/			
+				}
+			}
+			theApplication().SetProfileAttr(&quot;VFRefreshSR&quot;,&quot;Y&quot;);
+		} 
+		return (&quot;ContinueOperation&quot;);
+	}
+	finally
+	{
+		svc_ACSNIGeneralOperations = null;
+		pset_Inputs  = null;
+		pset_Outputs = null;
+	}
+}"
+			   UPDATED="12/28/2016 12:21:45"
+			   UPDATED_BY="ESANTOS"
+			   CREATED="04/13/2010 11:25:18"
+			   CREATED_BY="SADMIN">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_LOCALE
+			   APPLICATION_CODE="STD"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   REDO="N"
+			   TRANSLATE="Y"
+			   UPDATED="11/17/2010 19:51:22"
+			   UPDATED_BY="SADMIN"
+			   CREATED="11/17/2010 19:51:22"
+			   CREATED_BY="SADMIN">
+			</APPLET_LOCALE>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="TripletSmartScript"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function TripletSmartScript()
+{
+	try
+		{
+			
+			var App = TheApplication();
+		//	var Appl = &quot;Application [TeXCo Application]&quot;;
+			var parentBus : BusComp;
+			parentBus = this.BusComp().ParentBusComp();
+			var sssAccntId =&quot;&quot;;
+			var sssBillAccntId =&quot;&quot;;
+			var sAssetId =&quot;&quot;;
+			var sCustomerClass = &quot;&quot;; //VFTRCBU-21727 - 20012016
+			
+			
+			if(parentBus != null)
+			{
+			
+				var parentBusName = parentBus.Name();
+
+				if(parentBusName == &quot;Account&quot;)
+				{
+					sssAccntId = parentBus.GetFieldValue(&quot;Id&quot;);
+				}
+				if(parentBusName == &quot;Billing Account&quot;)
+				{
+					sssBillAccntId = parentBus.GetFieldValue(&quot;Id&quot;);
+				}
+				if(parentBusName == &quot;Asset Mgmt - Asset&quot;)
+				{
+					sAssetId = parentBus.GetFieldValue(&quot;Id&quot;);
+				}
+				if(parentBusName == &quot;Service Request&quot;)
+				{
+					parentBus.ActivateField(&quot;Account Id&quot;);
+					parentBus.ActivateField(&quot;VF Market Class Calc&quot;); //JFONSECA - VFTRCBU-25047 - Changed from Market Class to Market Class Calc
+				
+					//sCustomerClass = parentBus.GetFieldValue(&quot;Market Class&quot;);//VFTRCBU-21727 - 20012016
+					sCustomerClass = parentBus.GetFieldValue(&quot;VF Market Class Calc&quot;); //JFONSECA - VFTRCBU-25047
+					sssAccntId = parentBus.GetFieldValue(&quot;Account Id&quot;);
+					sssBillAccntId = parentBus.GetFieldValue(&quot;Billing Account Id&quot;);
+					sAssetId = parentBus.GetFieldValue(&quot;Asset Id&quot;);
+				}
+
+			}
+			//VFTRCBU-21727 - 20012016
+	   		var In = TheApplication().NewPropertySet();
+    	 	var Out = TheApplication().NewPropertySet();
+    	 	var LookupN = TheApplication().GetService(&quot;ACS General Operations&quot;);
+    	  
+    	  	In.SetProperty(&quot;LOV&quot;,&quot;VFTRCBU_SR_MARKET_CLASS&quot;); 
+		  	In.SetProperty(&quot;Val&quot;,sCustomerClass);
+		  	LookupN.InvokeMethod(&quot;LookupName&quot;,In,Out);
+		  	sCustomerClass = Out.GetProperty(&quot;Name&quot;);
+
+			TheApplication().SetSharedGlobal(&quot;sssAccId&quot;, sssAccntId);
+			TheApplication().SetSharedGlobal(&quot;sssBAId&quot;, sssBillAccntId);
+			TheApplication().SetSharedGlobal(&quot;sssAssetId&quot;, sAssetId);
+	
+			var strSrId = parentBus.GetFieldValue(&quot;Id&quot;);
+			TheApplication().SetSharedGlobal(&quot;sssSRId&quot;, strSrId);
+			var strBillCyc = parentBus.GetFieldValue(&quot;VF Bill Cycle&quot;);
+			TheApplication().SetSharedGlobal(&quot;sssBillCyc&quot;, strBillCyc);
+			var strBillType = parentBus.GetFieldValue(&quot;VF Bill Type&quot;);
+			TheApplication().SetSharedGlobal(&quot;sssBillType&quot;, strBillType);
+			var strTariff = parentBus.GetFieldValue(&quot;VF Tariff Plan&quot;);
+			TheApplication().SetSharedGlobal(&quot;sssTariff&quot;, strTariff);
+			var strSRNo = parentBus.GetFieldValue(&quot;SR Number&quot;);
+			TheApplication().SetSharedGlobal(&quot;sssSRNo&quot;, strSRNo);
+			var strType = &quot;&quot;;
+			strType	   = parentBus.GetFieldValue(&quot;SR Type&quot;);			
+			var strArea    = parentBus.GetFieldValue(&quot;Area&quot;);
+			var strSubArea = parentBus.GetFieldValue(&quot;Sub-Area&quot;);
+			var boCallScript : BusObject = App.GetBusObject (&quot;Call Scripts&quot;);//ORACLE REVIEW 2013
+			var boSRTriplet  : BusObject = App.GetBusObject(&quot;ACS SR Tripplet&quot;);//ORACLE REVIEW 2013
+			
+			var bcSRType	 : BusComp   = boSRTriplet.GetBusComp(&quot;ACS SR Type List Of Values&quot;);//ORACLE REVIEW 2013
+			var bcSRArea	 : BusComp   = boSRTriplet.GetBusComp(&quot;ACS SR Area List Of Values&quot;);//ORACLE REVIEW 2013
+		
+			var bcSRSubArea  : BusComp   = boSRTriplet.GetBusComp(&quot;ACS SR Sub-Area List Of Values&quot;);//ORACLE REVIEW 2013
+	  	
+		    var strTypeValue	= &quot;&quot;;
+	       	var strAreaValue	= &quot;&quot;;
+	       	var strSubAreaValue = &quot;&quot;;
+			var strSubAreaSmartScript = &quot;&quot;;
+			var strSubAreaSmartScriptLabel = &quot;&quot;;
+       	
+	       	bcSRType.ClearToQuery();
+	        bcSRType.SetViewMode(AllView);
+	        bcSRType.ActivateField(&quot;Type&quot;);
+	        //VFTRCBU-21727 - 20012016 - add: sCustomerClass
+	        var strSRTypeSrcExpr = &quot;[Value] = &apos;&quot;+strType+&quot;&apos; AND [Type]=&apos;&quot;+App.InvokeMethod(&quot;LookupValue&quot;,&quot;LOV_TYPE&quot;,&quot;SR_AREA&quot;)+&quot;&apos; AND [Market Class]= &apos;&quot;+sCustomerClass+&quot;&apos;&quot;;
+	        bcSRType.SetSearchExpr(strSRTypeSrcExpr);  
+	        
+	        bcSRArea.ClearToQuery();
+	        bcSRArea.SetViewMode(AllView);
+	        bcSRArea.ActivateField(&quot;Type&quot;);
+	        var strSRAreaSrcExpr = &quot;[Value] = &apos;&quot;+strArea+&quot;&apos; AND [Type]=&apos;&quot;+App.InvokeMethod(&quot;LookupValue&quot;,&quot;LOV_TYPE&quot;,&quot;SR_AREA&quot;)+&quot;&apos;&quot;;
+	        bcSRArea.SetSearchExpr(strSRAreaSrcExpr); 
+	          
+	       /* bcSRSubArea.ClearToQuery();
+	        bcSRSubArea.SetViewMode(AllView);
+	        bcSRSubArea.ActivateField(&quot;Value&quot;);
+	        bcSRSubArea.ActivateField(&quot;Type&quot;);	
+	        bcSRSubArea.ActivateField(&quot;VF WebDescription&quot;);		        
+	        var strSRSubAreaExpr=&quot;[Value] = &apos;&quot;+strSubArea+&quot;&apos; AND [Type]=&apos;&quot;+App.InvokeMethod(&quot;LookupValue&quot;,&quot;LOV_TYPE&quot;,&quot;SR_AREA&quot;)+&quot;&apos;&quot;;
+			bcSRSubArea.SetSearchExpr(strSRSubAreaExpr);*/
+	        
+			bcSRType.ExecuteQuery(ForwardOnly);
+			if (bcSRType.FirstRecord())
+			{
+				strTypeValue = bcSRType.GetFieldValue(&quot;Value&quot;);
+				if (bcSRArea.FirstRecord())
+				{
+					strAreaValue = bcSRArea.GetFieldValue(&quot;Value&quot;);
+					
+					bcSRSubArea.ClearToQuery();
+	        		bcSRSubArea.SetViewMode(AllView);
+	        		bcSRSubArea.ActivateField(&quot;Value&quot;);
+	        		bcSRSubArea.ActivateField(&quot;Type&quot;);	
+	        		bcSRSubArea.ActivateField(&quot;VF WebDescription&quot;);		        
+	        		var strSRSubAreaExpr=&quot;[Value] = &apos;&quot;+strSubArea+&quot;&apos; AND [Type]=&apos;&quot;+App.InvokeMethod(&quot;LookupValue&quot;,&quot;LOV_TYPE&quot;,&quot;SR_AREA&quot;)+&quot;&apos;&quot;;
+					bcSRSubArea.SetSearchExpr(strSRSubAreaExpr);
+					bcSRSubArea.ExecuteQuery(ForwardOnly);
+					
+					if(bcSRSubArea.FirstRecord())
+					{
+						strSubAreaValue = bcSRSubArea.GetFieldValue(&quot;Value&quot;);
+						strSubAreaSmartScript = bcSRSubArea.GetFieldValue(&quot;Smart Script&quot;);
+						strSubAreaSmartScriptLabel = bcSRSubArea.GetFieldValue(&quot;VF WebDescription&quot;);
+					}
+				}								
+			}		
+			
+	       	if(strType == strTypeValue)
+	       	{
+
+	       		if(strArea == strAreaValue)
+	       		{
+	       			
+	       			if(strSubArea == strSubAreaValue)
+	       			{
+
+	       				if (strSubAreaSmartScript.length &gt; 0)
+	       				{
+							TheApplication().SetProfileAttr(&quot;LaunchSmartScript&quot;, &quot;Y&quot;); 
+							TheApplication().SetProfileAttr(&quot;SmartScriptName&quot;, strSubAreaSmartScript); 
+							TheApplication().SetProfileAttr(&quot;SmartScriptNameLabel&quot;, strSubAreaSmartScriptLabel);
+		       			}
+		       			else
+		       			{
+							TheApplication().SetProfileAttr(&quot;LaunchSmartScript&quot;, &quot;N&quot;); 
+							TheApplication().SetProfileAttr(&quot;SmartScriptName&quot;, &quot;&quot;); 
+							TheApplication().SetProfileAttr(&quot;SmartScriptNameLabel&quot;, strSubAreaSmartScriptLabel);		       				
+		       			}
+	       			}
+	       		}
+	       	}
+	       
+	   }
+	   finally
+	   {
+	   	
+	   	bcSRSubArea = null;
+	   	bcSRArea = null;
+	   	bcSRType = null;
+	   	boSRTriplet = null;
+	   	boCallScript = null;
+	   		
+	   }
+
+}"
+			   SEQUENCE="1"
+			   UPDATED="04/11/2017 17:36:24"
+			   UPDATED_BY="SSANTOS"
+			   CREATED="03/31/2015 21:38:21"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreCanInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreCanInvokeMethod (MethodName, &amp;CanInvoke)
+{
+try{
+
+	var parentbus : BusComp;
+	parentbus = this.BusComp().ParentBusComp();
+	var parentbusName=&quot;&quot;;
+	parentbusName = parentbus.Name();
+	var bc = this.BusComp();
+	var strClosed	= TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;SR_STATUS&quot;,&quot;Closed&quot;);
+ 
+	if (MethodName == &quot;ResumeScript&quot; &amp;&amp; parentbusName == &quot;Service Request&quot; ){
+	
+	//	var SerReqBO:BusObject = TheApplication().GetBusObject(&quot;Service Request&quot;);
+	//	var SerReqBC:BusComp	= SerReqBO.GetBusComp(&quot;Service Request&quot;);	
+	
+	        var strStatus = parentbus.GetFieldValue(&quot;Status&quot;);
+		
+			if(strStatus == strClosed)
+			{
+				CanInvoke = &quot;FALSE&quot;;
+			}
+			else
+			{
+				var id2 = parentbus.GetFieldValue(&quot;Id&quot;);
+				
+				with (bc) {
+					SetViewMode(AllView);
+					ClearToQuery();
+					SetSearchSpec (&quot;Target Row Id&quot;, id2);
+		 			ExecuteQuery(ForwardOnly);
+				
+					if (FirstRecord()){
+						CanInvoke = &quot;TRUE&quot;;	
+					}
+					else {
+						CanInvoke = &quot;FALSE&quot;;
+					}
+				
+				}
+				//CanInvoke = &quot;TRUE&quot;;	
+							
+			}
+			return (CancelOperation);	
+	}
+	
+	if (MethodName == &quot;Generate&quot;  ){
+	
+		var strStatus2 = parentbus.GetFieldValue(&quot;Status&quot;);
+
+		if(strStatus2 == &quot;Closed&quot;)
+		{
+			CanInvoke = &quot;FALSE&quot;;
+		}
+		else
+		{
+				
+			var id = parentbus.GetFieldValue(&quot;Id&quot;);
+				
+			with (bc) {
+				SetViewMode(AllView);
+				ClearToQuery();
+				SetSearchSpec (&quot;Target Row Id&quot;, id);
+		 		ExecuteQuery(ForwardOnly);
+				
+				if (FirstRecord()){
+					CanInvoke = &quot;FALSE&quot;;	
+				}
+				else {
+					
+					var SSPlayerView = TheApplication().ActiveViewName();
+					// DEF-3233 - retrofits
+					if (SSPlayerView != &quot;VF Service Request Smart Script View&quot; &amp;&amp; SSPlayerView != &quot;VF PRM Service Request Smart Script View&quot;) {
+						CanInvoke = &quot;TRUE&quot;;
+					}
+					else {
+						CanInvoke = &quot;FALSE&quot;;
+					}
+
+				}
+				
+			}
+							
+		}
+		return (CancelOperation);	
+	}
+	 
+
+	return (ContinueOperation);
+
+}
+finally{
+ 
+//	SerReqBO = null;
+ //	SerReqBC= null;
+	parentbus= null;
+}
+}"
+			   SEQUENCE="2"
+			   UPDATED="04/12/2017 10:54:15"
+			   UPDATED_BY="SSANTOS"
+			   CREATED="03/31/2015 21:38:21"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreInvokeMethod (MethodName)
+{
+	try
+	{
+	       
+		var parentBus : BusComp;
+		var SRBO : BusObject;
+		var SRBC : BusComp;
+		var tarRowId;
+		if (MethodName == &quot;ResumeScript&quot;)
+		{
+
+			var strSRId = &quot;&quot;;
+			var strSrvReqId = &quot;&quot;;
+			var strAccId = &quot;&quot;;
+			var parentBusName=&quot;&quot;;
+			var srFromBulk = &quot;&quot;;
+			SRBO = TheApplication().GetBusObject(&quot;Service Request&quot;);
+			SRBC = SRBO.GetBusComp(&quot;Service Request (Simple)&quot;);
+			parentBus = this.BusComp().ParentBusComp();
+			
+			if( parentBus != null)
+			{
+				parentBusName = parentBus.Name();
+				if(parentBusName == &quot;Contact&quot;  ||
+					parentBusName == &quot;Service Request&quot;)
+				{
+					strSRId = parentBus.GetFieldValue(&quot;Id&quot;)
+					//VFTRCBU-36933-START
+					with (SRBC)
+					{
+						SetViewMode(AllView);
+				    	ActivateField(&quot;VFTRCBU SR From Bulk&quot;);
+						ClearToQuery();
+						SetSearchExpr(&quot;[Id] = &apos;&quot;+strSRId+&quot;&apos;&quot;);
+						ExecuteQuery(ForwardOnly);
+						if (FirstRecord())
+						{
+							srFromBulk = GetFieldValue(&quot;VFTRCBU SR From Bulk&quot;);
+						}		
+					}		
+					
+					
+					if(srFromBulk == &quot;Y&quot;)
+					{
+						this.InvokeMethod(&quot;Generate&quot;);
+						return(CancelOperation);
+					}
+					//VFTRCBU-36933-END
+					strSrvReqId = parentBus.GetFieldValue(&quot;SR Number&quot;);
+					strAccId = parentBus.GetFieldValue(&quot;Account Number&quot;);
+					var accId = parentBus.GetFieldValue(&quot;Account Id&quot;);
+					TheApplication().SetSharedGlobal(&quot;sssAccId&quot;, accId);
+					
+					TheApplication().SetProfileAttr(&quot;SRNumber&quot;, strSrvReqId);
+					
+					 tarRowId = parentBus.GetFieldValue(&quot;Id&quot;);  	//DEF-2880
+					TheApplication().SetProfileAttr(&quot;ServiceRequestId&quot;, tarRowId);
+					TheApplication().SetSharedGlobal(&quot;sssSRId&quot;, tarRowId);
+		            
+				}
+				else
+				{
+					return (CancelOperation);
+				}	
+			}
+			else
+			{
+				return (CancelOperation);
+			}	
+	
+			//Setting profile attributes	
+			var oBS : Service;
+			var inpPS : PropertySet; 
+			var outPS : PropertySet;
+			inpPS = TheApplication().NewPropertySet();
+			outPS = TheApplication().NewPropertySet();
+			oBS = TheApplication().GetService(&quot;VF TRK Utilities&quot;);
+			inpPS.SetProperty(&quot;SRNum&quot;,strSrvReqId);
+			inpPS.SetProperty(&quot;VFRefreshSR&quot;,&quot;Y&quot;);
+			inpPS.SetProperty(&quot;SSAcctNum&quot;,strAccId);
+			inpPS.SetProperty(&quot;VFTKServiceRequestId&quot;, strSRId);
+			oBS.InvokeMethod(&quot;SetProfileAttr&quot;, inpPS, outPS);
+			
+			
+			var SRId = strSRId;
+			
+			with (SRBC)
+			{
+				SetViewMode(AllView);
+		    	ActivateField(&quot;Amount&quot;);
+				ClearToQuery();
+				SetSearchExpr(&quot;[Id] = &apos;&quot;+SRId+&quot;&apos;&quot;);
+				ExecuteQuery(ForwardOnly);
+				if (FirstRecord())
+				{
+					SetFieldValue(&quot;Amount&quot;,0);
+					WriteRecord();
+				}		
+			}		
+		}
+		
+		if (MethodName == &quot;Generate&quot;){
+			parentBus = this.BusComp().ParentBusComp();
+			var parentbusName=&quot;&quot;;
+			parentbusName = parentBus.Name();	
+	        var strStatus = parentBus.GetFieldValue(&quot;Status&quot;);
+
+	        //Added as per CR171		
+			var BcPick : BusComp;
+			BcPick = parentBus.GetPicklistBusComp(&quot;Sub-Area&quot;);
+			var sub = parentBus.GetFieldValue(&quot;Sub-Area&quot;);
+			/*with (BcPick)
+				{
+					SetViewMode(AllView);
+					ClearToQuery();
+					SetSearchSpec(&quot;Value&quot;,sub);
+					ExecuteQuery(ForwardOnly);
+					if (FirstRecord())
+					{
+					
+						Pick();
+					}
+			}*/
+			
+			var CurrentType = parentBus.GetFieldValue(&quot;SR Type&quot;);
+			var CurrentArea = parentBus.GetFieldValue(&quot;Area&quot;);	
+			
+			if ((CurrentType != &quot;&quot;) &amp;&amp; (CurrentArea != &quot;&quot;))
+			{
+				var SubAreaPick : BusComp;
+				SubAreaPick = parentBus.GetPicklistBusComp(&quot;VF Sub Area Id Calc&quot;);
+				
+				//Added as per CR171			
+				with (SubAreaPick)
+				{
+					SetViewMode(AllView);
+					ClearToQuery();
+					SetSearchExpr(&quot;[Function] = &apos;VF Sub Area Triplet&apos; AND [Attrib01] = &apos;&quot;+CurrentType+&quot;&apos; AND [Attrib02] = &apos;&quot;+CurrentArea+&quot;&apos; AND [Comments] = &apos;&quot;+sub+&quot;&apos;&quot;);
+					ExecuteQuery(ForwardOnly);
+					if (FirstRecord())
+					{
+						Pick();
+					}					
+				}//Added as per CR171
+			}
+			TripletSmartScript();
+	
+			var sLaunchSS = TheApplication().GetProfileAttr(&quot;LaunchSmartScript&quot;); 
+			var strSubAreaSmartScript = TheApplication().GetProfileAttr(&quot;SmartScriptName&quot;); 
+
+			if(sLaunchSS == &quot;Y&quot; &amp;&amp; strSubAreaSmartScript != &quot;&quot;)
+			{
+		
+				TheApplication().SetProfileAttr(&quot;CanSRbeAssigned&quot;,&quot;N&quot;);
+				var accId2 = parentBus.GetFieldValue(&quot;Account Id&quot;);
+				strSRId = parentBus.GetFieldValue(&quot;Id&quot;);
+				var strAccId2 = parentBus.GetFieldValue(&quot;Account Number&quot;);
+				
+				var strSRNum = parentBus.GetFieldValue(&quot;SR Number&quot;);
+				TheApplication().SetProfileAttr(&quot;SRNumber&quot;, strSRNum);
+				TheApplication().SetProfileAttr(&quot;VFRefreshSR&quot;,&quot;Y&quot;);
+				
+				//Setting profile attributes	
+				var oBS2 : Service;
+				var inpPS2 : PropertySet; 
+				var outPS2 : PropertySet;
+				inpPS2 = TheApplication().NewPropertySet();
+				outPS2 = TheApplication().NewPropertySet();
+				oBS2 = TheApplication().GetService(&quot;VF TRK Utilities&quot;);
+				inpPS2.SetProperty(&quot;SRNum&quot;,strSRNum);
+				inpPS2.SetProperty(&quot;VFRefreshSR&quot;,&quot;Y&quot;);
+				inpPS2.SetProperty(&quot;SSAcctNum&quot;,strAccId2);
+				inpPS2.SetProperty(&quot;VFTKServiceRequestId&quot;, strSRId);
+				oBS2.InvokeMethod(&quot;SetProfileAttr&quot;, inpPS2, outPS2);
+				
+				TheApplication().SetSharedGlobal(&quot;sssAccId&quot;, accId2);
+		
+				//var tarRowId = this.BusComp().GetFieldValue(&quot;Target Row Id&quot;);
+				 tarRowId = parentBus.GetFieldValue(&quot;Id&quot;);
+				
+				TheApplication().SetProfileAttr(&quot;ServiceRequestId&quot;, tarRowId);	
+				TheApplication().SetSharedGlobal(&quot;sssSRId&quot;, tarRowId);
+				TheApplication().SetProfileAttr(&quot;SmartScriptSavingRequired&quot;,&quot;Y&quot;);
+					
+				TheApplication().SetProfileAttr(&quot;ExecuteSmartScript&quot;,&quot;Y&quot;);// DD Issue #19 PRM
+				var SSPlayerView = TheApplication().ActiveViewName();
+				
+				TheApplication().SetProfileAttr(&quot;ServiceRequestId&quot;,parentBus.GetFieldValue(&quot;Id&quot;));
+				TheApplication().InvokeMethod (&quot;RunSmartScript&quot;,strSubAreaSmartScript,&quot;&quot;,&quot;TRK&quot;,&quot;USD&quot;,SSPlayerView,&quot;&quot;);
+			
+			}
+		
+			
+			return (CancelOperation);	
+		}
+		
+		
+		return (ContinueOperation);
+	}
+	finally
+	{
+	    parentBus = null;
+		SRBC = null;
+		SRBO = null;
+		outPS = null;
+		inpPS = null;
+		oBS = null;
+	}
+}"
+			   SEQUENCE="3"
+			   UPDATED="05/03/2017 10:50:35"
+			   UPDATED_BY="JSARMENTO"
+			   CREATED="04/13/2010 11:25:18"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="WebGotoPlayerApplet"
+			   VALUE="Smart Script Player Applet (Player Only)"
+			   UPDATED="04/13/2010 11:25:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:19"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="WebGotoPlayerView"
+			   VALUE="Smart Script Player View (eApps)"
+			   UPDATED="04/13/2010 11:25:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:19"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Base"
+			   TYPE="Base"
+			   WEB_TEMPLATE="Applet List (Base/EditList)"
+			   UPDATED="03/31/2015 21:38:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:19"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ButtonResume"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="109"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="ButtonResume"
+				   TYPE="Control"
+				   UPDATED="04/13/2010 11:25:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:20"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Campaign Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="515"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Campaign Name"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:20"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Contact First Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="507"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Contact First Name"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:20"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Contact Last Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="506"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Contact Last Name"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:20"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Duration"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="516"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Duration"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:20"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Duration UOM Code"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="517"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Duration UOM Code"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:20"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Generate"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="110"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Generate"
+				   TYPE="Control"
+				   UPDATED="03/31/2015 21:38:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/31/2015 21:38:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="GotoNextSet"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="123"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="GotoNextSet"
+				   TYPE="Control"
+				   UPDATED="04/13/2010 11:25:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:20"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="GotoPreviousSet"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="122"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="GotoPreviousSet"
+				   TYPE="Control"
+				   UPDATED="04/13/2010 11:25:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:20"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Language Code"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="504"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Language Code"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:20"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="NewQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="106"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NewQuery"
+				   TYPE="Control"
+				   UPDATED="04/13/2010 11:25:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:20"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Owner First Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="513"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Owner First Name"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:20"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Owner Full Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="508"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Owner Full Name"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:20"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Owner Id"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="510"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Owner Id"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:20"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Owner Last Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="512"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Owner Last Name"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:20"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Path Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="502"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Path Name"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:20"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Position Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="514"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Position Name"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="PositionOnRow"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="144"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="PositionOnRow"
+				   TYPE="Control"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="QueryAssistant"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="126"
+				   NAME="Query Assistant"
+				   TYPE="Control"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="SessionFileDate"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="509"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="SessionFileDate"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="SessionFileName"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="511"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="SessionFileName"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Start Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="503"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Start Date"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Status Code"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="505"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Status Code"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ToggleListRowCount"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="151"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="ToggleListRowCount"
+				   TYPE="Control"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Edit"
+			   TYPE="Edit"
+			   WEB_TEMPLATE="Applet List Edit (Edit/New/Query)"
+			   UPDATED="04/13/2016 18:26:26"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="11/17/2010 19:51:22"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ButtonResume"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="109"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="ButtonResume"
+				   TYPE="Control"
+				   UPDATED="11/17/2010 19:51:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ButtonResume"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="135"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="ButtonResume2"
+				   TYPE="Control"
+				   UPDATED="11/17/2010 19:51:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:22"
+				   CREATED_BY="SADMIN">
+					<APPLET_WEB_TEMPLATE_ITEM_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   ITEM_IDENTIFIER="109"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="11/17/2010 19:51:22"
+					   UPDATED_BY="SADMIN"
+					   CREATED="11/17/2010 19:51:22"
+					   CREATED_BY="SADMIN">
+					</APPLET_WEB_TEMPLATE_ITEM_LOCALE>
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ButtonResume"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="109"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="ButtonResume3"
+				   TYPE="Control"
+				   UPDATED="11/17/2010 19:51:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:22"
+				   CREATED_BY="SADMIN">
+					<APPLET_WEB_TEMPLATE_ITEM_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   ITEM_IDENTIFIER="109"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="11/17/2010 19:51:22"
+					   UPDATED_BY="SADMIN"
+					   CREATED="11/17/2010 19:51:22"
+					   CREATED_BY="SADMIN">
+					</APPLET_WEB_TEMPLATE_ITEM_LOCALE>
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Campaign Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="515"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Campaign Name"
+				   TYPE="List Item"
+				   UPDATED="11/17/2010 19:51:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="CancelQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="108"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="CancelQuery"
+				   TYPE="Control"
+				   UPDATED="11/17/2010 19:51:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Contact First Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="507"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Contact First Name"
+				   TYPE="List Item"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Contact Last Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="506"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Contact Last Name"
+				   TYPE="List Item"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Duration"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="516"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Duration"
+				   TYPE="List Item"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Duration UOM Code"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="517"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Duration UOM Code"
+				   TYPE="List Item"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ExecuteQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="107"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="ExecuteQuery"
+				   TYPE="Control"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="GotoNextSet"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="123"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="GotoNextSet"
+				   TYPE="Control"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="GotoPreviousSet"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="122"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="GotoPreviousSet"
+				   TYPE="Control"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Language Code"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="504"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Language Code"
+				   TYPE="List Item"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1296"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application"
+				   TYPE="Control"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+					<APPLET_WEB_TEMPLATE_ITEM_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   ITEM_IDENTIFIER="1296"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="11/17/2010 19:51:23"
+					   UPDATED_BY="SADMIN"
+					   CREATED="11/17/2010 19:51:23"
+					   CREATED_BY="SADMIN">
+					</APPLET_WEB_TEMPLATE_ITEM_LOCALE>
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2297"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application2"
+				   TYPE="Control"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+					<APPLET_WEB_TEMPLATE_ITEM_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   ITEM_IDENTIFIER="2297"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="11/17/2010 19:51:23"
+					   UPDATED_BY="SADMIN"
+					   CREATED="11/17/2010 19:51:23"
+					   CREATED_BY="SADMIN">
+					</APPLET_WEB_TEMPLATE_ITEM_LOCALE>
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="NewQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="106"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NewQuery"
+				   TYPE="Control"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Owner First Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="513"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Owner First Name"
+				   TYPE="List Item"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Owner Full Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="508"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Owner Full Name"
+				   TYPE="List Item"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Owner Id"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="510"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Owner Id"
+				   TYPE="List Item"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Owner Last Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="512"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Owner Last Name"
+				   TYPE="List Item"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Path Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="502"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Path Name"
+				   TYPE="List Item"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Path Name"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2296"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Path Name2"
+				   TYPE="List Item"
+				   UPDATED="04/13/2016 18:26:26"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+					<APPLET_WEB_TEMPLATE_ITEM_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   ITEM_IDENTIFIER="1301"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="11/17/2010 19:51:23"
+					   UPDATED_BY="SADMIN"
+					   CREATED="11/17/2010 19:51:23"
+					   CREATED_BY="SADMIN">
+					</APPLET_WEB_TEMPLATE_ITEM_LOCALE>
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Position Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="514"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Position Name"
+				   TYPE="List Item"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="PositionOnRow"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="144"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="PositionOnRow"
+				   TYPE="Control"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="QueryAssistant"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="126"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Query Assistant"
+				   TYPE="Control"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="SessionFileDate"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="509"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="SessionFileDate"
+				   TYPE="List Item"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="SessionFileName"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="511"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="SessionFileName"
+				   TYPE="List Item"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Start Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="503"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Start Date"
+				   TYPE="List Item"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Start Date"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1297"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Start Date2"
+				   TYPE="List Item"
+				   UPDATED="04/13/2016 18:26:26"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+					<APPLET_WEB_TEMPLATE_ITEM_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   ITEM_IDENTIFIER="2301"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="11/17/2010 19:51:23"
+					   UPDATED_BY="SADMIN"
+					   CREATED="11/17/2010 19:51:23"
+					   CREATED_BY="SADMIN">
+					</APPLET_WEB_TEMPLATE_ITEM_LOCALE>
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Status Code"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="505"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Status Code"
+				   TYPE="List Item"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Status Code"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1298"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Status Code2"
+				   TYPE="List Item"
+				   UPDATED="04/13/2016 18:26:26"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+					<APPLET_WEB_TEMPLATE_ITEM_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   ITEM_IDENTIFIER="1801"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="11/17/2010 19:51:23"
+					   UPDATED_BY="SADMIN"
+					   CREATED="11/17/2010 19:51:23"
+					   CREATED_BY="SADMIN">
+					</APPLET_WEB_TEMPLATE_ITEM_LOCALE>
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Target Row Id"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="501"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Target Row Id"
+				   TYPE="List Item"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ToggleListRowCount"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="151"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="ToggleListRowCount"
+				   TYPE="Control"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Edit List"
+			   TYPE="Edit List"
+			   WEB_TEMPLATE="Applet List (Base/EditList)"
+			   UPDATED="03/31/2015 21:38:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:21"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ButtonResume"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="109"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="ButtonResume"
+				   TYPE="Control"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Campaign Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="515"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Campaign Name"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="CancelQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="108"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="CancelQuery"
+				   TYPE="Control"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Contact First Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="507"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Contact First Name"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Contact Last Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="506"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Contact Last Name"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Duration"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="516"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Duration"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Duration UOM Code"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="517"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Duration UOM Code"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ExecuteQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="107"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="ExecuteQuery"
+				   TYPE="Control"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Generate"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="110"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Generate"
+				   TYPE="Control"
+				   UPDATED="03/31/2015 21:38:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/31/2015 21:38:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="GotoNextSet"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="123"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="GotoNextSet"
+				   TYPE="Control"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="GotoPreviousSet"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="122"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="GotoPreviousSet"
+				   TYPE="Control"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Language Code"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="504"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Language Code"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="502"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application"
+				   TYPE="Control"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="508"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application2"
+				   TYPE="Control"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="505"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application3"
+				   TYPE="Control"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="511"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application4"
+				   TYPE="Control"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="512"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application5"
+				   TYPE="Control"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="514"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application6"
+				   TYPE="Control"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="NewQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="106"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NewQuery"
+				   TYPE="Control"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Owner First Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="513"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Owner First Name"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Owner Full Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="508"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Owner Full Name"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Owner Id"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="510"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Owner Id"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Owner Last Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="512"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Owner Last Name"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Path Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="502"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Path Name"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="Position Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="514"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Position Name"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="PositionOnRow"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="144"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="PositionOnRow"
+				   TYPE="Control"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="QueryAssistant"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="126"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Query Assistant"
+				   TYPE="Control"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="SessionFileDate"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="509"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="SessionFileDate"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COMMENTS="Global UI Change 6: display list of columns"
+				   CONTROL="SessionFileName"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="511"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="SessionFileName"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Start Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="503"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Start Date"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Status Code"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="505"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Status Code"
+				   TYPE="List Item"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Status Code"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="504"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Status Code2"
+				   TYPE="List Item"
+				   UPDATED="11/17/2010 19:51:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/17/2010 19:51:23"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Target Row Id"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="501"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Target Row Id"
+				   TYPE="List Item"
+				   UPDATED="05/06/2010 16:26:06"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/06/2010 16:26:06"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ToggleListRowCount"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="151"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="ToggleListRowCount"
+				   TYPE="Control"
+				   UPDATED="04/13/2010 11:25:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:21"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="Y"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HEIGHT="20"
+			   INACTIVE="N"
+			   LEFT="2"
+			   MULTI_LINE="N"
+			   NAME="AppletTitle"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="1"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="N"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="2"
+			   TYPE="Label"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="96"
+			   UPDATED="04/13/2010 11:25:22"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:22"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:22"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_RESUME-1005112515-2E0"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="20"
+			   INACTIVE="N"
+			   LEFT="128"
+			   METHOD_INVOKED="ResumeScript"
+			   MULTI_LINE="N"
+			   NAME="ButtonResume"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="3"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="4"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/13/2010 11:25:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:22"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:23"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CANCEL-1004230137-1J7"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="UndoQuery"
+			   MULTI_LINE="N"
+			   NAME="CancelQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="4"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:23"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:23"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:23"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+				<CONTROL_USER_PROP
+				   INACTIVE="N"
+				   NAME="Url"
+				   VALUE="javascript:history.back()"
+				   UPDATED="04/13/2010 11:25:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:23"
+				   CREATED_BY="SADMIN">
+				</CONTROL_USER_PROP>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_DELETE-1004224629-055"
+			   COMMENTS="Modified by 7.7 Standardize Button Attributes Tools Patch: Switched from definition: &apos;DeleteRecord - Incorrect3: DeleteRecord - Correct1&apos;:to definition:&apos;DeleteRecord - Correct1&apos;"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="DeleteRecord"
+			   MULTI_LINE="N"
+			   NAME="DeleteRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="5"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:24"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:23"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:24"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_EDIT-1004231338-2SY"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Link"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="EditRecord"
+			   MULTI_LINE="N"
+			   NAME="EditRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="6"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:24"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:24"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:24"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_GO-1004224654-095"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ExecuteQuery"
+			   MULTI_LINE="N"
+			   NAME="ExecuteQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="7"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:24"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:25"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_GENERATE-1004224652-08P"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   METHOD_INVOKED="Generate"
+			   MULTI_LINE="N"
+			   NAME="Generate"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/31/2015 21:38:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/31/2015 21:38:21"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="03/31/2015 21:38:21"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/31/2015 21:38:21"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_BITMAP="RECNAV_NEXTSET_ON"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISABLED_BITMAP="RECNAV_NEXTSET_OFF"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RecNavNxt"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="GotoNextSet"
+			   MULTI_LINE="N"
+			   NAME="GotoNextSet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="8"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:25"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Next"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:25"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_PREVIOUS-0928173032-1K4"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_BITMAP="RECNAV_PREVSET_ON"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISABLED_BITMAP="RECNAV_PREVSET_OFF"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RecNavPrv"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="GotoPreviousSet"
+			   MULTI_LINE="N"
+			   NAME="GotoPreviousSet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="9"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:25"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:25"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CONTACT_FIRST_NAME-1004230405-20W"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="LabelContactFirstName"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:25"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:25"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   REDO="N"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:25"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:25"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CONTACT_LAST_NAME-1004230409-21D"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="LabelContactLastName"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:25"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   REDO="N"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:26"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_LANGUAGE_:-1004233445-54T"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="LabelLanguage"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:26"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:26"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_OWNER_FIRST_NAME-1004231647-4K1"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="LabelOwnerFirstName"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:26"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   REDO="N"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:26"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:26"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_OWNER_NAME-1004231649-4KL"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="LabelOwnerFullName"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:27"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:26"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   REDO="N"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:27"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:27"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_OWNER_ID-1004225655-01V"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="LabelOwnerId"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:27"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:27"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   REDO="N"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:27"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:27"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_OWNER_LAST_NAME-1004231648-4KG"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="LabelOwnerLastName"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:27"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:27"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   REDO="N"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:27"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:27"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_SAVED_DATE-1004232622-66Q"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="LabelSavedDate"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:27"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:27"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   REDO="N"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:27"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:27"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_SCRIPT-1004232631-67S"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="LabelScript"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:27"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:27"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   REDO="N"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:27"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:27"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_START_DATE-1004225315-106"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="LabelStartDate"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:27"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:27"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   REDO="N"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:27"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:27"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_STATUS-1004224352-0BB"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="LabelStatus"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:27"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:27"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   REDO="N"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:27"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:27"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HEIGHT="590"
+			   INACTIVE="N"
+			   LEFT="6"
+			   MULTI_LINE="N"
+			   NAME="List"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="2"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="28"
+			   TYPE="ListControl"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="1012"
+			   UPDATED="04/13/2010 11:25:28"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:27"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:28"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:28"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_QUERY-1005111820-1VI"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEdit"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="NewQuery"
+			   MULTI_LINE="N"
+			   NAME="NewQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="10"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:28"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:28"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:28"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:28"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_NEW-1004235437-602"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEdit"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="NewRecord"
+			   MULTI_LINE="N"
+			   NAME="NewRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="11"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:28"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:28"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:28"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:28"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_BITMAP="ROW_OFF"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISABLED_BITMAP="ROW_ON"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="PositionOnRow"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="PositionOnRow"
+			   MULTI_LINE="N"
+			   NAME="PositionOnRow"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:28"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:28"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   CAPTION_-_STRING_REFERENCE="SBL_QUERY_ASSISTANT-1004224746-2EA"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="ShowQueryAssistant"
+			   NAME="QueryAssistant"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VISIBLE="Y"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:28"
+			   CREATED_BY="SADMIN">
+				<CONTROL_USER_PROP
+				   INACTIVE="N"
+				   NAME="Mode"
+				   VALUE="Edit"
+				   UPDATED="04/13/2010 11:25:28"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:28"
+				   CREATED_BY="SADMIN">
+				</CONTROL_USER_PROP>
+				<CONTROL_USER_PROP
+				   INACTIVE="N"
+				   NAME="Popup"
+				   VALUE="Query Assistant"
+				   UPDATED="04/13/2010 11:25:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:29"
+				   CREATED_BY="SADMIN">
+				</CONTROL_USER_PROP>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_RESET-1005000208-6SL"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ResetRecord"
+			   MULTI_LINE="N"
+			   NAME="ResetRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="12"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:29"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:29"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_BITMAP="BTTNS_MORE"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ICON_MAP="ToggleListRowCount"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Link"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="ToggleListRowCount"
+			   MULTI_LINE="N"
+			   NAME="ToggleListRowCount"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="N"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:29"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CANCEL-1004230137-1J7"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonNew"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="UndoRecord"
+			   MULTI_LINE="N"
+			   NAME="UndoRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="13"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:29"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:29"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:29"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:29"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL__EDIT_TITLE_-1004224528-069"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   MULTI_LINE="N"
+			   NAME="WebEditTitle"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="14"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:29"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:30"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL__NEW_TITLE_-1004224612-08J"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   MULTI_LINE="N"
+			   NAME="WebNewTitle"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="15"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:30"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:30"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_FIND_SESSION-1004232131-4CN"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   MULTI_LINE="N"
+			   NAME="WebQueryTitle"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="16"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:30"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:30"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_SAVE-1004225832-051"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEditNew"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="WriteRecord"
+			   MULTI_LINE="N"
+			   NAME="WriteRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="17"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/13/2010 11:25:30"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:30"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="04/13/2010 11:25:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:30"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<LIST
+			   INACTIVE="N"
+			   NAME="List"
+			   TOTAL_DISPLAYED="N"
+			   TOTAL_REQUIRED="N"
+			   UPDATED="11/17/2010 19:51:24"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/13/2010 11:25:30"
+			   CREATED_BY="SADMIN">
+				<LIST_COLUMN
+				   AVAILABLE="N"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="Global UI change 6: display list of columns"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_CAMPAIGN-1004230231-15Q"
+				   FIELD="Campaign Name"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Campaign Name"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SEQUENCE="10"
+				   SHOW_IN_LIST="N"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="11/17/2010 19:51:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:30"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="N"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_CONTACT_FIRST_NAME-1004230405-20W"
+				   FIELD="Contact First Name"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Contact First Name"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SEQUENCE="12"
+				   SHOW_IN_LIST="N"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="11/17/2010 19:51:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:31"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="N"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_CONTACT_LAST_NAME-1004230409-21D"
+				   FIELD="Contact Last Name"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Contact Last Name"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SEQUENCE="11"
+				   SHOW_IN_LIST="N"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="11/17/2010 19:51:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:31"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="N"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="Global UI change 6: display list of columns"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_DURATION-1004225147-0BC"
+				   FIELD="Duration"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Duration"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SEQUENCE="14"
+				   SHOW_IN_LIST="N"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Right"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="10"
+				   UPDATED="11/17/2010 19:51:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:31"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="N"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="Global UI change 6: display list of columns"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_DURATION_IN-1004231041-2RK"
+				   FIELD="Duration UOM Code"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Duration UOM Code"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SEQUENCE="15"
+				   SHOW_IN_LIST="N"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="10"
+				   UPDATED="11/17/2010 19:51:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:31"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_LANGUAGE-1004224522-0YA"
+				   FIELD="Language Code"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Language Code"
+				   PICK_APPLET="Language Pick Applet"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SEQUENCE="5"
+				   SHOW_IN_LIST="N"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="10"
+				   UPDATED="11/17/2010 19:51:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:32"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="N"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="Global UI change 6: display list of columns"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_OWNER_FIRST_NAME-1004231647-4K1"
+				   FIELD="Owner First Name"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Owner First Name"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SEQUENCE="8"
+				   SHOW_IN_LIST="N"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="15"
+				   UPDATED="11/17/2010 19:51:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:32"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_OWNER_NAME-1004231649-4KL"
+				   FIELD="Owner Full Name"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Owner Full Name"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="N"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="11/17/2010 19:51:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:32"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="N"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_OWNER_ID-1004225655-01V"
+				   FIELD="Owner Id"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Owner Id"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SEQUENCE="1"
+				   SHOW_IN_LIST="N"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="10"
+				   UPDATED="11/17/2010 19:51:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:32"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="Global UI change 6: display list of columns"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_OWNER_LAST_NAME-1004231648-4KG"
+				   FIELD="Owner Last Name"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Owner Last Name"
+				   PICK_APPLET="Position Pick Applet (SmartScript)"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SEQUENCE="7"
+				   SHOW_IN_LIST="N"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="15"
+				   UPDATED="04/13/2010 11:25:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:33"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_SCRIPT-1004232631-67S"
+				   FIELD="Path Name"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Path Name"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SEQUENCE="4"
+				   SHOW_IN_LIST="N"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="11/17/2010 19:51:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:33"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="Global UI change 6: display list of columns"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_POSITION-1004224550-157"
+				   FIELD="Position Name"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Position Name"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SEQUENCE="9"
+				   SHOW_IN_LIST="N"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="04/13/2010 11:25:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:33"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="N"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_SAVED_DATE-1004232622-66Q"
+				   FIELD="SessionFileDate"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="SessionFileDate"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SEQUENCE="2"
+				   SHOW_IN_LIST="N"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="11/17/2010 19:51:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:33"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_SESSION_FILE_NAME-1004232724-6DE"
+				   FIELD="SessionFileName"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="SessionFileName"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SEQUENCE="3"
+				   SHOW_IN_LIST="N"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="04/13/2010 11:25:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:33"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_STARTED-1004233021-6N8"
+				   FIELD="Start Date"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Start Date"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SEQUENCE="13"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="11/17/2010 19:51:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:33"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_STATUS_CODE-1004233221-6OV"
+				   FIELD="Status Code"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Status Code"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SEQUENCE="6"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="10"
+				   UPDATED="11/17/2010 19:51:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/13/2010 11:25:34"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="N"
+				   BITMAP_COLUMN_HEADING="N"
+				   FIELD="Target Row Id"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Target Row Id"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="N"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="11/17/2010 19:51:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="05/06/2010 16:26:06"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   DISPLAY_NAME="Target Row Id"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="05/06/2010 16:26:06"
+					   UPDATED_BY="SADMIN"
+					   CREATED="05/06/2010 16:26:06"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+			</LIST>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+

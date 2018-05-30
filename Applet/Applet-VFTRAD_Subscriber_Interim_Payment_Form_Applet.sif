@@ -1,0 +1,2037 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="11/24/2016 17:14:00"
+   UPDATED_BY="SADMIN"
+   CREATED="11/24/2016 14:49:11"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="CCB228 - JFONSECA"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VFTRCBU Subscriber Invoices"
+	   UI_FREEZE="N"
+	   UPDATED="06/05/2017 18:22:09"
+	   UPDATED_BY="CJANEIRO"
+	   CREATED="04/05/2017 11:12:26"
+	   CREATED_BY="JFONSECA"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   BUSINESS_COMPONENT="VFTRAD Interim Payment VBC"
+		   CLASS="CSSFrameList"
+		   COMMENTS="CCB228 - CJANEIRO"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HEIGHT="4"
+		   INACTIVE="N"
+		   NAME="VFTRAD Subscriber Interim Payment Form Applet"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="06/02/2017 14:19:32"
+		   SCRIPTED="Y"
+		   TITLE_-_STRING_REFERENCE="X_VF_INVOICE"
+		   TYPE="Standard"
+		   UPGRADE_BEHAVIOR="Preserve"
+		   WIDTH="2"
+		   OBJECT_LOCKED_BY_NAME="CJANEIRO"
+		   UPDATED="06/05/2017 17:21:36"
+		   UPDATED_BY="CJANEIRO"
+		   CREATED="04/21/2017 15:13:46"
+		   CREATED_BY="CJANEIRO">
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="Applet_InvokeMethod-All"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="Applet_InvokeMethod"
+			   SCRIPT="function Applet_InvokeMethod (name, inputPropSet)
+{
+	theApplication().SetProfileAttr(&quot;IPInvTypeID&quot;, &quot;&quot;);
+}"
+			   UPDATED="04/21/2017 15:13:46"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:46"
+			   CREATED_BY="CJANEIRO">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="Applet_Load"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="Applet_Load"
+			   SCRIPT="function Applet_Load ()
+{
+	//Created by Parasuram for PW 15 - Interim Payment functionality.
+	var strPA = theApplication().GetProfileAttr(&quot;IntError&quot;);
+	if(strPA != &quot;&quot;)
+	{
+		theApplication().SetProfileAttr(&quot;IntError&quot;,&quot;&quot;);
+		theApplication().SWEAlert(strPA);
+	}
+}"
+			   UPDATED="04/21/2017 15:13:46"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:46"
+			   CREATED_BY="CJANEIRO">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="Applet_PreInvokeMethod"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="Applet_PreInvokeMethod"
+			   SCRIPT="function Applet_PreInvokeMethod (name, inputPropSet)
+{
+	//Created by Parasuram for PW 15 - Interim Payment functionality.
+	//This method invokes the ACS NI Gen Operations BS and 
+   try
+   {
+	   if(name == &quot;InvoiceInquiry_old&quot;) //06112014 - RPIRES - Added &quot;_old&quot; for JIRA VFTRCBU-3442
+	   {	   
+	  	 	var oBS ,inpPS, outPS;				
+			var bsGen=theApplication().GetService(&quot;ACS NI General Operations&quot;);
+			var psIn=theApplication().NewPropertySet();
+			var psOut=theApplication().NewPropertySet();
+			var thisBC = this.BusComp();
+			var strStart = thisBC.GetFieldValue(&quot;PERIOD_START_DATE&quot;);
+			var strEnd = thisBC.GetFieldValue(&quot;PERIOD_END_DATE&quot;);
+			
+	  		/*Begin Oracle Review - Scripting 23 */
+             inpPS = theApplication().NewPropertySet();
+             outPS = theApplication().NewPropertySet();
+             inpPS.SetProperty(&quot;IPBillingCode&quot;,&quot;&quot;);
+             inpPS.SetProperty(&quot;IPStartDate&quot;,strStart);
+             inpPS.SetProperty(&quot;IPEndDate&quot;,strEnd);
+             inpPS.SetProperty(&quot;IPInvTypeID&quot;,&quot;Y&quot;);
+             oBS = theApplication().GetService(&quot;VF TRK Utilities&quot;);
+             oBS.InvokeMethod(&quot;SetProfileAttr&quot;, inpPS, outPS);
+              /*End Oracle Review - Scripting 23 */
+	              
+			psOut=bsGen.InvokeMethod(&quot;CallInterimPaymentWf&quot;,psIn);
+			var sErrMsg=theApplication().GetProfileAttr(&quot;IntError&quot;);
+			if(sErrMsg!=&quot;&quot;)
+			{
+				theApplication().SetProfileAttr(&quot;IntError&quot;, &quot;&quot;);
+				theApplication().SWEAlert(sErrMsg);
+			}			
+			/*Begin Oracle Review - Scripting 23 */
+              inpPS = theApplication().NewPropertySet();
+              outPS = theApplication().NewPropertySet();
+              inpPS.SetProperty(&quot;IPStartDate&quot;,&quot;&quot;);
+              inpPS.SetProperty(&quot;IPEndDate&quot;,&quot;&quot;);
+              inpPS.SetProperty(&quot;IPInvTypeID&quot;,&quot;&quot;);
+              oBS.InvokeMethod(&quot;SetProfileAttr&quot;, inpPS, outPS);
+              /*End Oracle Review - Scripting 23 */
+               
+			return (&quot;CancelOperation&quot;);
+		}
+	}
+	finally
+	{
+		oBS = null;
+		inpPS = null;
+		outPS = null;
+		bsGen = null;
+		psIn = null;
+		psOut = null;
+		thisBC = null;
+	}
+	return (&quot;ContinueOperation&quot;);
+}"
+			   UPDATED="04/21/2017 15:13:46"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:46"
+			   CREATED_BY="CJANEIRO">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_LOCALE
+			   APPLICATION_CODE="STD"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   REDO="N"
+			   TRANSLATE="Y"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+			</APPLET_LOCALE>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_Load"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_Load ()
+{
+
+	try{
+		TheApplication().SetProfileAttr(&quot;VFSkipQueryWF&quot;,&quot;N&quot;);
+		TheApplication().SetProfileAttr(&quot;VFTRCBU_GET_EMPTY_INVOICE&quot;,&quot;Y&quot;);
+		
+		var AssetBC : BusComp;
+		var MSISDN = &quot;&quot;;
+		var sFinalSS = &quot;&quot;;
+		var BillingAccount = &quot;&quot;;
+		var BillingAccountId = &quot;&quot;;		
+				
+		MSISDN = TheApplication().GetProfileAttr(&quot;VFTRAD_CONTEXT_MSISDN&quot;);
+		
+		if(MSISDN == &quot;&quot; || MSISDN == null)
+		{
+			AssetBC = this.BusComp().ParentBusComp();
+			BillingAccount = AssetBC.GetFieldValue(&quot;Billing Account Code&quot;);
+			BillingAccountId = AssetBC.GetFieldValue(&quot;Billing Account Id&quot;);
+			
+			TheApplication().SetProfileAttr(&quot;VFTRAD_CONTEXT_MSISDN_BA&quot;,BillingAccount);
+			TheApplication().SetProfileAttr(&quot;VFTRAD_CONTEXT_MSISDN_BA_ID&quot;,BillingAccountId);
+			TheApplication().SetProfileAttr(&quot;VFTRAD_CONTEXT_EMPTY&quot;,&quot;Y&quot;);
+		}
+		else
+		{
+			AssetBC = this.BusObject().GetBusComp(&quot;Asset Mgmt - Asset&quot;);
+			AssetBC.SetViewMode(AllView);
+			AssetBC.ClearToQuery();
+			AssetBC.SetSearchExpr(&quot;[VF MSISDN] = &apos;&quot; + MSISDN + &quot;&apos;&quot;);
+			AssetBC.ExecuteQuery(ForwardOnly);
+		
+			if(AssetBC.FirstRecord())
+			{		
+				BillingAccount = AssetBC.GetFieldValue(&quot;Billing Account Code&quot;);
+				BillingAccountId = AssetBC.GetFieldValue(&quot;Billing Account Id&quot;);
+			}
+		}
+		
+		if(BillingAccountId != &quot;&quot;)
+		{
+		sFinalSS = &quot;[BILLING_ACCOUNT_ID] = &apos;&quot; + BillingAccountId + &quot;&apos;&quot;
+		}				
+		
+		if(BillingAccount != &quot;&quot;)
+		{
+		sFinalSS = sFinalSS + &quot; AND [BILLING_ACCOUNT_NUM] = &apos;&quot; + BillingAccount + &quot;&apos;&quot;
+		}
+		
+		this.BusComp().SetViewMode(AllView);
+		this.BusComp().ClearToQuery();
+		this.BusComp().SetSearchExpr(sFinalSS);
+		this.BusComp().ExecuteQuery(ForwardBackward);
+		
+	}
+	catch(e)
+	{
+		throw(e)
+	}
+	finally
+	{
+		AssetBC = null;
+		MSISDN = null;
+		sFinalSS = null;
+	}	
+}"
+			   SEQUENCE="1"
+			   UPDATED="06/05/2017 17:21:36"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="05/03/2017 14:21:45"
+			   CREATED_BY="CJANEIRO">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreCanInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreCanInvokeMethod (MethodName, &amp;CanInvoke)
+{
+	try
+	{
+		var psInputs : PropertySet =TheApplication().NewPropertySet();
+		var psOutputs : PropertySet =TheApplication().NewPropertySet();
+		var bsGeneralOperations : Service;
+		
+		if(MethodName == &quot;InvoiceInquiry&quot; || MethodName == &quot;OutbalInquiry&quot;)
+		{
+		  var activeView=TheApplication().GetProfileAttr(&quot;ActiveViewName&quot;);
+		  var isReadOnly=TheApplication().InvokeMethod(&quot;IsViewReadOnly&quot;, activeView);
+		  if (isReadOnly != &quot;TRUE&quot;)
+		  { 
+				var StrRole=TheApplication().GetProfileAttr(&quot;PositionType&quot;);
+				psInputs=TheApplication().NewPropertySet();
+				psOutputs=TheApplication().NewPropertySet();
+				bsGeneralOperations = TheApplication().GetService (&quot;ACS General Operations&quot;);
+				psInputs.SetProperty (&quot;Function&quot;, MethodName);
+				psInputs.SetProperty (&quot;Name&quot;, MethodName);
+				psInputs.SetProperty (&quot;Value&quot;, StrRole);
+				bsGeneralOperations.InvokeMethod (&quot;GetParameter_3Inputs&quot;, psInputs, psOutputs);
+		        var buttonVisibility = psOutputs.GetProperty (&quot;Cons1&quot;);		     
+			    if(buttonVisibility.toUpperCase()==&quot;FALSE&quot;)
+			    {
+			      	CanInvoke=&quot;FALSE&quot;;
+			    }
+			    else
+			    {
+			     	CanInvoke=&quot;TRUE&quot;;
+			    }
+			}
+			else
+			{
+				CanInvoke=&quot;FALSE&quot;;
+			}
+			return(CancelOperation);
+		}
+	}
+	catch(e)
+	{
+		throw(e);
+	}	
+	finally
+	{
+		psInputs = null;
+		psOutputs = null;
+		bsGeneralOperations = null;
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="2"
+			   UPDATED="05/04/2017 18:15:54"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreInvokeMethod (MethodName)
+{
+	try
+	{
+		var psInputs : PropertySet;
+		var psOutputs : PropertySet;
+		var bsIP : Service;
+   	 			
+		switch(MethodName)
+		{
+		
+			case &quot;InvoiceInquiry&quot;:
+		    	TheApplication().Trace(&quot;InvoiceInquiry Applet&quot;);
+				TheApplication().SetProfileAttr(&quot;VFSkipQueryWF&quot;,&quot;N&quot;);
+				TheApplication().SetProfileAttr(&quot;VFTRCBU_GET_EMPTY_INVOICE&quot;,&quot;N&quot;);
+				       
+		        return (ContinueOperation);
+				break;
+				
+			case &quot;OutbalInquiry&quot;:
+			
+					this.BusComp().ParentBusComp().ActivateField(&quot;Account Code&quot;);
+					this.BusComp().ParentBusComp().ActivateField(&quot;Customer Account Number&quot;);
+					
+					TheApplication().SetProfileAttr(&quot;IPBillingCode&quot;,this.BusComp().ParentBusComp().GetFieldValue(&quot;Account Code&quot;));
+					TheApplication().SetProfileAttr(&quot;IPCustomerCode&quot;,this.BusComp().ParentBusComp().GetFieldValue(&quot;Customer Account Number&quot;));
+					
+					psInputs=TheApplication().NewPropertySet();
+					psOutputs=TheApplication().NewPropertySet();
+					
+					bsIP = TheApplication().GetService(&quot;VF Interim Payment VBC Service&quot;);
+					bsIP.InvokeMethod(&quot;OutstandingBalInq&quot;, psInputs, psOutputs);
+					
+					var sOutBal=psOutputs.GetProperty(&quot;sOutBal&quot;);
+					var sOutBalLastUpd=psOutputs.GetProperty(&quot;sOutBalLastUpd&quot;);
+
+					if(sOutBal!=&quot;&quot;)
+					{
+					
+						this.BusComp().SetFieldValue(&quot;VF_TOT_OUTBAL&quot;,          sOutBal);
+						this.BusComp().SetFieldValue(&quot;VF_TOT_OUTBAL_LAST_UPD&quot;, sOutBalLastUpd);
+						this.BusComp().WriteRecord();
+
+					}
+					return(CancelOperation);
+					break;
+		}
+		
+		return(CancelOperation);
+	}
+	catch(e)
+	{
+		throw (e);
+	}
+	finally
+	{
+		psInputs = null;
+		psOutputs = null;
+		bsIP = null;
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="3"
+			   UPDATED="05/23/2017 13:37:31"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Base"
+			   SEQUENCE="0"
+			   TYPE="Base"
+			   WEB_TEMPLATE="Applet Form Grid Layout"
+			   UPDATED="04/21/2017 15:13:46"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:46"
+			   CREATED_BY="CJANEIRO">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:47"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:47"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="5001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application2"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:47"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:47"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="9001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:47"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:47"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="13001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application4"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:47"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:47"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="17001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application5"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:47"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:47"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="21001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application6"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:47"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:47"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="25001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application7"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:47"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:47"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="29001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application8"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:47"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:47"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="QueryAssistant"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="126"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="QueryAssistant"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:47"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:47"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF End Date"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="29001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF End Date"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF End Date"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF End DateLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Start Date"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="5001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Start Date"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Start Date"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="9001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Start DateLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Total Outstanding Balance"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="13001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Total Outstanding Balance"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Total Outstanding Balance Last Update Date"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="21001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Total Outstanding Balance Last Update Date"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Total Outstanding Balance Last Update Date"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="25001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Total Outstanding Balance Last Update DateLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Total Outstanding Balance"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="17001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Total Outstanding BalanceLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Edit"
+			   SEQUENCE="0"
+			   TYPE="Edit"
+			   WEB_TEMPLATE="Applet Form Grid Layout"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ExecuteQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="107"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="ExecuteQuery"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="18068"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application10"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="31043"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application11"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="107"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application12"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="108"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application13"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="126"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application14"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="7028"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application15"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="3028"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application16"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="9001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="13001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application4"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="21001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application5"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="25001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application6"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="29001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application7"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="17001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application8"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="33028"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application9"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Payment Installment"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="111"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Payment Installment"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="QueryAssistant"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="126"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="QueryAssistant"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="UndoQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="108"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="UndoQuery"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF End Date"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="29001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF End Date"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF End Date"
+				   EXPRESSION="TeXCo Application"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="5016"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF End Date2"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF End Date"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF End DateLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF End Date"
+				   EXPRESSION="TeXCo Application"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="5001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF End DateLabel2"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Invoice Inquiry"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="109"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Invoice Inquiry"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Outstanding Balance Inquiry"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="110"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Outstanding Balance Inquiry"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Start Date"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="5001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Start Date"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Start Date"
+				   EXPRESSION="TeXCo Application"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2016"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Start Date2"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Start Date"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="9001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Start DateLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Start Date"
+				   EXPRESSION="TeXCo Application"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Start DateLabel2"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Total Outstanding Balance"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="13001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Total Outstanding Balance"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Total Outstanding Balance Last Update Date"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="21001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Total Outstanding Balance Last Update Date"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Total Outstanding Balance Last Update Date"
+				   EXPRESSION="TeXCo Application"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2056"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Total Outstanding Balance Last Update Date2"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Total Outstanding Balance Last Update Date"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="25001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Total Outstanding Balance Last Update DateLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Total Outstanding Balance Last Update Date"
+				   EXPRESSION="TeXCo Application"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2041"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Total Outstanding Balance Last Update DateLabel2"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Total Outstanding Balance"
+				   EXPRESSION="TeXCo Application"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="5056"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Total Outstanding Balance2"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Total Outstanding Balance"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="17001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Total Outstanding BalanceLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Total Outstanding Balance"
+				   EXPRESSION="TeXCo Application"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="5041"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Total Outstanding BalanceLabel2"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_DELETE-1004224629-055"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="DeleteRecord"
+			   MULTI_LINE="N"
+			   NAME="DeleteRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="8"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_EDIT-1004231338-2SY"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="EditRecord"
+			   MULTI_LINE="N"
+			   NAME="EditRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="9"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_GO-1004224654-095"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ExecuteQuery"
+			   MULTI_LINE="N"
+			   NAME="ExecuteQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="10"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RecNavNxt"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="GotoNextSet"
+			   MULTI_LINE="N"
+			   NAME="GotoNextSet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="11"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Next"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RecNavPrv"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="GotoPreviousSet"
+			   MULTI_LINE="N"
+			   NAME="GotoPreviousSet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="12"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Previous"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="NewQuery"
+			   MULTI_LINE="N"
+			   NAME="NewQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="13"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Query"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEdit"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="NewRecord"
+			   MULTI_LINE="N"
+			   NAME="NewRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="14"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="New"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_PAYMENT_INSTALLMENTS"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="Y"
+			   LEFT="0"
+			   METHOD_INVOKED="PayInstalments"
+			   MULTI_LINE="N"
+			   NAME="Payment Installment"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="PositionOnRow"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="PositionOnRow"
+			   MULTI_LINE="N"
+			   NAME="PositionOnRow"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="15"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ShowQueryAssistant"
+			   MULTI_LINE="N"
+			   NAME="QueryAssistant"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="16"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Query Assistant"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="UndoQuery"
+			   MULTI_LINE="N"
+			   NAME="UndoQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="17"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Cancel"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonNew"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="UndoRecord"
+			   MULTI_LINE="N"
+			   NAME="UndoRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="18"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Cancel"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_END_DATE-1004225148-0BJ"
+			   DEFAULT_BUTTON="N"
+			   FIELD="PERIOD_END_DATE"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VF End Date"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_INVOICE_INQUIRY"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="InvoiceInquiry"
+			   MULTI_LINE="N"
+			   NAME="VF Invoice Inquiry"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_OUTSTANDING_BALANCE_INQUIRY"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="OutbalInquiry"
+			   MULTI_LINE="N"
+			   NAME="VF Outstanding Balance Inquiry"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_START_DATE-1004225315-106"
+			   DEFAULT_BUTTON="N"
+			   FIELD="PERIOD_START_DATE"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VF Start Date"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_TOTAL_OUTSTANDING_BALANCE"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF_TOT_OUTBAL"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VF Total Outstanding Balance"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_TOTAL_OUTSTANDING_BALANCE_LAST_UPDATE_DATE"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF_TOT_OUTBAL_LAST_UPD"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VF Total Outstanding Balance Last Update Date"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEditNew"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="WriteRecord"
+			   MULTI_LINE="N"
+			   NAME="WriteRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="19"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/21/2017 15:13:48"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/21/2017 15:13:48"
+			   CREATED_BY="CJANEIRO">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Save"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/21/2017 15:13:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="04/21/2017 15:13:48"
+				   CREATED_BY="CJANEIRO">
+				</CONTROL_LOCALE>
+			</CONTROL>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+

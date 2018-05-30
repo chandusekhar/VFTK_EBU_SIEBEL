@@ -1,0 +1,1268 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="11/24/2016 17:14:00"
+   UPDATED_BY="0-1"
+   CREATED="11/24/2016 14:49:11"
+   CREATED_BY="0-1"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VFTRCBU Products and Services"
+	   UI_FREEZE="N"
+	   UPDATED="01/16/2017 19:07:50"
+	   UPDATED_BY="ACAMBAS"
+	   CREATED="02/03/2015 21:18:36"
+	   CREATED_BY="0-1"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   BUSINESS_COMPONENT="Payments"
+		   CLASS="CSSSWEFrameOrder"
+		   COMMENTS="ACAMBAS: VFTRADM-815 - Based on applet &apos;VFTRCBU Order Payment Detail - Credit Card Form Applet&apos;"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HEIGHT="2"
+		   INACTIVE="N"
+		   NAME="VFTRAD Order Payment Detail - Credit Card Form Applet"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="01/16/2017 19:00:53"
+		   SCRIPTED="Y"
+		   TITLE_-_STRING_REFERENCE="X_VFTRCBU_CREDIT_CARD_DETAILS"
+		   TYPE="Standard"
+		   UPGRADE_ANCESTOR="VFTRCBU Order Payment Detail - Credit Card Form Applet"
+		   UPGRADE_BEHAVIOR="Preserve"
+		   WIDTH="2"
+		   OBJECT_LOCKED_BY_NAME="ACAMBAS"
+		   UPDATED="01/16/2017 19:07:50"
+		   UPDATED_BY="ACAMBAS"
+		   CREATED="01/11/2017 12:20:47"
+		   CREATED_BY="ACAMBAS">
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="New Query (SWE)"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_NEW_QUERY-1004225223-0LU"
+			   NAME="1"
+			   POSITION="1"
+			   SUPPRESS_MENU_ITEM="Y"
+			   UPDATED="01/11/2017 12:20:48"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="Execute Query (SWE)"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_RUN_QUERY-1004224751-0GX"
+			   NAME="2"
+			   POSITION="2"
+			   SUPPRESS_MENU_ITEM="Y"
+			   UPDATED="01/11/2017 12:20:48"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="Refine Query (SWE)"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_REFINE_QUERY-1004224741-0EF"
+			   NAME="3"
+			   POSITION="3"
+			   SUPPRESS_MENU_ITEM="Y"
+			   UPDATED="01/11/2017 12:20:48"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="(declarations)"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="var sPending = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;FS_ORDER_STATUS&quot;, &quot;Pending&quot;); //ACAMBAS: VFTRADM-815
+var sScenarioSValidationError = TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;FS_ORDER_STATUS&quot;, &quot;Scenarios Validations Error&quot;); //ACAMBAS: VFTRADM-815"
+			   SEQUENCE="1"
+			   UPDATED="01/16/2017 19:07:17"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/16/2017 19:07:13"
+			   CREATED_BY="ACAMBAS">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CheckButtonStatus"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CheckButtonStatus(psIn, psOut)
+{
+	try
+	{
+		var oBoActive     = TheApplication().GetBusObject(&quot;Order Entry (Sales)&quot;);
+		var oBcLineItem   = oBoActive.GetBusComp(&quot;TELCO Line Items - Simple&quot;);	
+		var sUpfrontPayment = &quot;&quot;; //ACAMBAS: VFTRADM-815		
+		
+		
+		if(this.BusComp().ParentBusComp() != null) 
+		{
+			var sOrderId = this.BusComp().ParentBusComp().GetFieldValue(&quot;Id&quot;);
+			var sOrderStatus = this.BusComp().ParentBusComp().GetFieldValue(&quot;Status&quot;);
+			
+			with (oBcLineItem)
+			{
+				ClearToQuery();
+				SetViewMode(AllView);
+				ActivateField(&quot;Order Header Id&quot;);
+				ActivateField(&quot;VF Product Type&quot;);
+				ActivateField(&quot;Parent Order Item Id&quot;);
+				ActivateField(&quot;Action Code&quot;);
+				ActivateField(&quot;X Customer Segment&quot;);
+				ActivateField(&quot;Account Id&quot;);
+				ActivateField(&quot;VFTRAD Upfront Payment&quot;); //ACAMBAS: VFTRADM-815
+				SetSearchSpec(&quot;VF Product Type&quot;, TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_PROD_CAT_TYPE&quot;,&quot;HANDSET PROMO&quot;));
+				SetSearchSpec(&quot;Action Code&quot;, TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;DELTA_ACTION_CODE&quot;,&quot;New&quot;));
+				SetSearchSpec(&quot;Parent Order Item Id&quot;, &quot;IS NULL&quot;);
+				SetSearchSpec(&quot;Order Header Id&quot;, sOrderId);
+				ExecuteQuery(ForwardOnly);
+				
+				if(FirstRecord())
+				{			
+					sUpfrontPayment = GetFieldValue(&quot;VFTRAD Upfront Payment&quot;);	//ACAMBAS: VFTRADM-815
+					TheApplication().SetProfileAttr(&quot;STTStoreMarketClass&quot;, GetFieldValue(&quot;X Customer Segment&quot;));
+					TheApplication().SetProfileAttr(&quot;STTStoreTransactionId&quot;, GetFieldValue(&quot;Account Id&quot;));
+               	
+		        	if(!this.BusComp().FirstRecord())
+		        	{
+		        		if((sOrderStatus == sPending || sOrderStatus == sScenarioSValidationError) &amp;&amp; (sUpfrontPayment != &quot;&quot; &amp;&amp; ToNumber(sUpfrontPayment) &gt; 0))
+		        		{
+							psOut.SetProperty(&quot;CanInvoke&quot;, &quot;TRUE&quot;);
+						}
+					}
+	            }	 
+	        }
+	   }
+    } 
+	catch(e)
+	{
+	  TheApplication().RaiseErrorText(e.toString() +&quot; - VFTRAD Order Payment Detail – Credit Card Form Applet :: CheckButtonStatus&quot;);
+	}
+	finally
+	{
+		oBcLineItem   = null;
+		oBoActive     = null;
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="01/16/2017 19:07:13"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="ValidateCreditCardInfomation"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function ValidateCreditCardInfomation(psIn, psOut)
+{
+	try
+	{
+		var oBoActive     = TheApplication().GetBusObject(&quot;Order Entry (Sales)&quot;);
+		var oBcLineItem   = oBoActive.GetBusComp(&quot;TELCO Line Items - Simple&quot;);
+		var sOrderId = this.BusComp().ParentBusComp().GetFieldValue(&quot;Id&quot;);
+		var sOrderStatus = this.BusComp().ParentBusComp().GetFieldValue(&quot;Status&quot;);
+		var sUpfrontPayment = &quot;&quot;; //ACAMBAS: VFTRADM-815
+		var sValidCC = &quot;&quot;;
+			
+		with (oBcLineItem)
+		{
+			ClearToQuery();
+			SetViewMode(AllView);
+			ActivateField(&quot;Order Header Id&quot;);
+			ActivateField(&quot;VF Product Type&quot;);
+			ActivateField(&quot;Parent Order Item Id&quot;);
+			ActivateField(&quot;Action Code&quot;);
+			ActivateField(&quot;Id&quot;);
+			ActivateField(&quot;VFTRCBU Credit Card Validation Flag&quot;);
+			ActivateField(&quot;VFTRAD Upfront Payment&quot;); //ACAMBAS: VFTRADM-815
+			SetSearchSpec(&quot;VF Product Type&quot;,TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_PROD_CAT_TYPE&quot;,&quot;HANDSET PROMO&quot;));
+			SetSearchSpec(&quot;Action Code&quot;,TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;DELTA_ACTION_CODE&quot;,&quot;New&quot;));
+			SetSearchSpec(&quot;Parent Order Item Id&quot;, &quot;IS NULL&quot;);
+			SetSearchSpec(&quot;Order Header Id&quot;, sOrderId);
+			ExecuteQuery(ForwardOnly);
+			
+			if(FirstRecord())
+			{
+				sValidCC = GetFieldValue(&quot;VFTRCBU Credit Card Validation Flag&quot;);
+	            sUpfrontPayment = GetFieldValue(&quot;VFTRAD Upfront Payment&quot;);	//ACAMBAS: VFTRADM-815  
+				
+				if((this.BusComp().FirstRecord()) &amp;&amp; (sOrderStatus == sPending || sOrderStatus == sScenarioSValidationError) &amp;&amp; 
+					(sUpfrontPayment != &quot;&quot; &amp;&amp; ToNumber(sUpfrontPayment) &gt; 0) &amp;&amp; (sValidCC != &quot;Y&quot;))
+					psOut.SetProperty(&quot;CanInvoke&quot;, &quot;TRUE&quot;);
+            }	 
+        }
+    } 
+	catch(e)
+	{
+	  TheApplication().RaiseErrorText(e.toString() +&quot; - VFTRAD Order Payment Detail – Credit Card Form Applet :: ValidateCreditCardInfomation&quot;);
+	}
+	finally
+	{
+		oBcLineItem   = null;
+		oBoActive     = null;
+	}
+}"
+			   SEQUENCE="3"
+			   UPDATED="01/16/2017 19:07:50"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_InvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_InvokeMethod (MethodName)
+{
+	if(MethodName == &quot;EditRecord&quot;) 
+	{		
+		this.BusComp().SetFieldValue(&quot;VFTRCBU CC Payment Type&quot;,&quot;&quot;);
+		this.BusComp().SetFieldValue(&quot;VFTRCBU Account Number&quot;,&quot;&quot;);
+		this.BusComp().SetFieldValue(&quot;VFTRCBU Bank Name&quot;,&quot;&quot;);
+		this.BusComp().SetFieldValue(&quot;Verification Number&quot;,&quot;&quot;);
+		this.BusComp().SetFieldValue(&quot;Expiration Date&quot;,&quot;&quot;);
+	}	
+		
+}"
+			   SEQUENCE="4"
+			   UPDATED="01/16/2017 19:07:13"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreCanInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreCanInvokeMethod (MethodName, &amp;CanInvoke)
+{	
+	try 
+	{
+		var psIn :PropertySet = TheApplication().NewPropertySet();
+	   	var psOut:PropertySet = TheApplication().NewPropertySet();
+		
+		if(MethodName == &quot;NewRecord&quot;)
+		{	
+			CheckButtonStatus(psIn, psOut);
+			
+			if(psOut.GetProperty(&quot;CanInvoke&quot;) != &quot;TRUE&quot;) {
+				CanInvoke = &quot;FALSE&quot;;	
+			}
+			else {
+				CanInvoke = &quot;TRUE&quot;;
+			}
+					
+			return(CancelOperation);		
+		}
+		else if(MethodName == &quot;EditRecord&quot;)
+		{
+			ValidateCreditCardInfomation(psIn, psOut);
+			
+			if(psOut.GetProperty(&quot;CanInvoke&quot;) != &quot;TRUE&quot;) {
+				CanInvoke = &quot;FALSE&quot;;	
+			}
+			else {
+				CanInvoke = &quot;TRUE&quot;;
+			}
+			
+			return(CancelOperation);	
+		}
+		
+		return (ContinueOperation);
+	}
+	catch(e) {
+		TheApplication().RaiseErrorText(e.toString() +&quot; - VFTRAD Order Payment Detail – Credit Card Form Applet :: WebApplet_PreCanInvokeMethod&quot;);
+	}
+	finally {
+		psIn  = null;
+		psOut = null;
+	}
+}"
+			   SEQUENCE="5"
+			   UPDATED="01/16/2017 19:07:13"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreInvokeMethod (MethodName)
+{
+	return (ContinueOperation);
+}"
+			   SEQUENCE="6"
+			   UPDATED="01/16/2017 19:07:13"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Base"
+			   TYPE="Base"
+			   WEB_TEMPLATE="Applet Form 4 Column (Edit/New) - Expanded"
+			   UPDATED="01/12/2017 18:05:54"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:47"
+			   CREATED_BY="ACAMBAS">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="EditRecord"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="132"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="EditRecord"
+				   TYPE="Control"
+				   UPDATED="01/11/2017 12:20:47"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/11/2017 12:20:47"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="NewRecord"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="131"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NewRecord"
+				   TYPE="Control"
+				   UPDATED="01/11/2017 12:20:47"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/11/2017 12:20:47"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Bank Name"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1298"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Bank Name"
+				   TYPE="Control"
+				   UPDATED="01/11/2017 12:20:47"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/11/2017 12:20:47"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU CC Payment Type"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1296"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU CC Payment Type"
+				   TYPE="Control"
+				   UPDATED="01/11/2017 12:20:47"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/11/2017 12:20:47"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Credit Card Num"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1297"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Credit Card Num"
+				   TYPE="Control"
+				   UPDATED="01/11/2017 12:20:47"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/11/2017 12:20:47"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Expiration Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2296"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Expiration Date"
+				   TYPE="Control"
+				   UPDATED="01/11/2017 12:20:47"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/11/2017 12:20:47"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Verification Number"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2297"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Verification Number"
+				   TYPE="Control"
+				   UPDATED="01/11/2017 12:20:48"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/11/2017 12:20:48"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Edit"
+			   TYPE="Edit"
+			   WEB_TEMPLATE="Applet Form 4 Column (Edit/New) - Expanded"
+			   UPDATED="01/11/2017 12:20:48"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Bank Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1298"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Bank Name"
+				   TYPE="Control"
+				   UPDATED="01/11/2017 12:20:48"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/11/2017 12:20:48"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU CC Payment Type"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1296"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU CC Payment Type"
+				   TYPE="Control"
+				   UPDATED="01/11/2017 12:20:48"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/11/2017 12:20:48"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Credit Card Num"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1297"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Credit Card Num"
+				   TYPE="Control"
+				   UPDATED="01/11/2017 12:20:48"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/11/2017 12:20:48"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Expiration Date - Edit"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2296"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Expiration Date - Edit"
+				   TYPE="Control"
+				   UPDATED="01/11/2017 12:20:48"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/11/2017 12:20:48"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Validate Credit Card Button"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="107"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Validate Credit Card Button"
+				   TYPE="Control"
+				   UPDATED="01/11/2017 12:20:48"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/11/2017 12:20:48"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Verification Number"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2297"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Verification Number"
+				   TYPE="Control"
+				   UPDATED="01/11/2017 12:20:48"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/11/2017 12:20:48"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_EDIT-1004231338-2SY"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="EditRecord"
+			   MULTI_LINE="N"
+			   NAME="EditRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="11"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="01/11/2017 12:20:48"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_NEXT"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_BITMAP="RECNAV_NEXT_ON"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISABLED_BITMAP="RECNAV_NEXT_OFF"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RecNavNxt"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="GotoNextSet"
+			   MULTI_LINE="N"
+			   NAME="GotoNextSet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="50"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="N"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="01/11/2017 12:20:48"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="01/11/2017 12:20:48"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/11/2017 12:20:48"
+				   CREATED_BY="ACAMBAS">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_PREVIOUD-1005111325-1I5"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_BITMAP="RECNAV_PREV_ON"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISABLED_BITMAP="RECNAV_PREV_OFF"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RecNavPrv"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="GotoPreviousSet"
+			   MULTI_LINE="N"
+			   NAME="GotoPreviousSet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="52"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="01/11/2017 12:20:48"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="01/11/2017 12:20:48"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/11/2017 12:20:48"
+				   CREATED_BY="ACAMBAS">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="FormSection"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="HTML FormSection"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="11"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="01/11/2017 12:20:48"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="FormSection"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="HTML FormSection2"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="12"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="01/11/2017 12:20:48"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="FormSection"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="HTML FormSection3"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="13"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="01/11/2017 12:20:48"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="FormSection"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="HTML FormSection4"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="14"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="01/11/2017 12:20:48"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_NEW-1004235437-602"
+			   COMMENTS="RCRISPIM: Created for WA#15
+"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEdit"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="NewRecord"
+			   MULTI_LINE="N"
+			   NAME="NewRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="9"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="01/11/2017 12:20:48"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/11/2017 12:20:48"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/11/2017 12:20:48"
+				   CREATED_BY="ACAMBAS">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   COMMENTS="PSANTOS VFTRCBU-26762"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Payment Account Id"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Payment Account Id"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="01/11/2017 12:20:48"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_BANK_NAME-1004225021-16U"
+			   COMMENTS="WA#15 - CJANEIRO"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Bank Name"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Password"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Bank Name"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="01/11/2017 12:20:48"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VFTRCBU_PAYMENT_TYPE"
+			   COMMENTS="RCRISPIM: Created for WA#15
+"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU CC Payment Type"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="175"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU CC Payment Type"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="01/11/2017 12:20:48"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/11/2017 12:20:48"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/11/2017 12:20:48"
+				   CREATED_BY="ACAMBAS">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CREDIT_CARD_#-1004225139-091"
+			   COMMENTS="RCRISPIM: Created for WA#15
+"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Account Number"
+			   FIELD_TYPE="BC Field"
+			   GROUP="Y"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="2"
+			   HTML_TYPE="Password"
+			   HTML_WIDTH="175"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="144"
+			   LEFT_TEXT="N"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Credit Card Num"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="9"
+			   SHOW_POPUP="N"
+			   SORT="N"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="82"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="264"
+			   UPDATED="01/11/2017 12:20:48"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CREDIT_CARD_#-1004225139-091"
+			   COMMENTS="RCRISPIM: Created for WA#15
+"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Account Number"
+			   FIELD_TYPE="BC Field"
+			   GROUP="Y"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="2"
+			   HTML_TYPE="Field"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="Y"
+			   LEFT="144"
+			   LEFT_TEXT="N"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Credit Card Num - Display"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="9"
+			   SHOW_POPUP="N"
+			   SORT="N"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="82"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="264"
+			   UPDATED="01/11/2017 12:20:48"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_CC_EXPIRATION_DATE"
+			   COMMENTS="RCRISPIM: Created for WA#15
+"
+			   DEFAULT_BUTTON="N"
+			   DISPLAY_FORMAT="MM/YYYY"
+			   FIELD="VFTRCBU Expiration Date"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="4"
+			   HTML_TYPE="Password"
+			   HTML_WIDTH="175"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="300"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Expiration Date"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="11"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="109"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="107"
+			   UPDATED="01/11/2017 12:22:42"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   COMMENTS="ACS_Removal"
+				   INACTIVE="Y"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/11/2017 12:20:48"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/11/2017 12:20:48"
+				   CREATED_BY="ACAMBAS">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_CC_EXPIRATION_DATE"
+			   COMMENTS="RCRISPIM: Created for WA#15
+"
+			   DEFAULT_BUTTON="N"
+			   DISPLAY_FORMAT="MM/YYYY"
+			   FIELD="Expiration Date"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="4"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="175"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="300"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Expiration Date - Edit"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="11"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="109"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="107"
+			   UPDATED="01/11/2017 12:22:45"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   COMMENTS="ACS_Removal"
+				   INACTIVE="Y"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/11/2017 12:20:48"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/11/2017 12:20:48"
+				   CREATED_BY="ACAMBAS">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_VALIDATE-1004224809-0KG"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="N"
+			   HTML_TYPE="MiniButtonEdit"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="CheckCC"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Validate Credit Card Button"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="1"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="01/11/2017 12:20:48"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="Y"
+			   CAPTION_-_STRING_REFERENCE="SBL_CARD_VERIFICATION_#-1004230141-1LA"
+			   COMMENTS="RCRISPIM: Created for WA#15
+"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Verification Number"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="13"
+			   HTML_TYPE="Password"
+			   HTML_WIDTH="175"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="152"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Verification Number"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="19"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="366"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="130"
+			   UPDATED="01/11/2017 12:20:48"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/11/2017 12:20:48"
+			   CREATED_BY="ACAMBAS">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="CCV"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/11/2017 12:20:48"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/11/2017 12:20:48"
+				   CREATED_BY="ACAMBAS">
+				</CONTROL_LOCALE>
+			</CONTROL>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+

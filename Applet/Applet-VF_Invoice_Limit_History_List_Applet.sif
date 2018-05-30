@@ -1,0 +1,689 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="LOCKED BY VTAO UI UPGRADE"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   LOCKED_DATE="08/11/2017 16:03:48"
+	   NAME="Account (SSE)"
+	   UI_FREEZE="N"
+	   UPDATED="01/16/2018 10:27:49"
+	   UPDATED_BY="IBM_OSMANS"
+	   CREATED="01/01/1980 00:00:00"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   BUSINESS_COMPONENT="VF Invoice Limit History VBC"
+		   CLASS="CSSFrameList"
+		   COMMENTS="New: CR701 Invoice Limit"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HEIGHT="4"
+		   INACTIVE="N"
+		   NAME="VF Invoice Limit History List Applet"
+		   NO_DELETE="Y"
+		   NO_INSERT="Y"
+		   NO_MERGE="Y"
+		   NO_UPDATE="Y"
+		   OBJECT_LOCKED="N"
+		   SCRIPTED="Y"
+		   TITLE_-_STRING_REFERENCE="X_VF_INVOICE_LIMIT_HISTORY"
+		   TYPE="Standard"
+		   UPGRADE_BEHAVIOR="Preserve"
+		   WIDTH="2"
+		   UPDATED="01/18/2018 11:27:41"
+		   UPDATED_BY="IBM_OSMANS"
+		   CREATED="04/23/2013 22:24:10"
+		   CREATED_BY="SADMIN">
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CanInvokeInvoice"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CanInvokeInvoice(userRole, methodName)
+{
+try{
+	var psInputs : PropertySet;
+	var psOutputs : PropertySet;
+	var bsGeneralOperations : Service;
+	psInputs = TheApplication().NewPropertySet();
+	psOutputs = TheApplication().NewPropertySet();
+	bsGeneralOperations = TheApplication().GetService(&quot;ACS General Operations&quot;);
+	psInputs.SetProperty(&quot;Function&quot;,methodName);
+	psInputs.SetProperty(&quot;Name&quot;,methodName);
+	psInputs.SetProperty(&quot;Value&quot;,userRole);
+	bsGeneralOperations.InvokeMethod(&quot;GetParameter_3Inputs&quot;,psInputs,psOutputs);
+	var hasRole = psOutputs.GetProperty(&quot;Cons1&quot;);
+	return hasRole;
+}
+finally
+{
+	psInputs = null;
+	psOutputs = null;
+	bsGeneralOperations = null;
+}
+}"
+			   SEQUENCE="1"
+			   UPDATED="05/28/2013 19:01:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/28/2013 19:01:26"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreCanInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreCanInvokeMethod (MethodName, &amp;CanInvoke)
+{
+	try
+	{
+		var strBAStatus = &quot;&quot;;
+		var strBAPostpaid = &quot;&quot;;
+		var strCustomerType = TheApplication().GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;);
+		if (strCustomerType == &quot;Consumer&quot; || strCustomerType == &quot;Bireysel&quot;)
+		{
+		 CanInvoke = &quot;FALSE&quot;; 
+		}
+		else
+		{
+		if (MethodName == &quot;VFRetrieveLimitHistory&quot; )
+		{      
+			if (TheApplication().ActiveViewName()==&quot;PRM VF Billing Account Invoice Limit View&quot;)
+			{                                                       	                                               
+				strBAStatus = this.BusObject().GetBusComp(&quot;VF PRM Billing Account&quot;).GetFieldValue(&quot;Account Status Code&quot;);
+	        	strBAPostpaid = this.BusObject().GetBusComp(&quot;VF PRM Billing Account&quot;).GetFieldValue(&quot;TeXCo Account Type&quot;);
+	        }
+	        else
+	        {
+	    	    strBAStatus = this.BusObject().GetBusComp(&quot;Billing Account&quot;).GetFieldValue(&quot;Account Status Code&quot;);
+	        	strBAPostpaid = this.BusObject().GetBusComp(&quot;Billing Account&quot;).GetFieldValue(&quot;TeXCo Account Type&quot;);
+	        }
+	        	var strBilling = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;BILLING_ACCOUNT_STATUS&quot;,&quot;100&quot;);
+		        var strPostpaid  = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PAYMENT_MODALITY&quot;,&quot;Postpaid&quot;);
+		        if (strBAStatus==strBilling &amp;&amp; strBAPostpaid==strPostpaid)	   
+		        {
+		        	var strRole = TheApplication().GetProfileAttr(&quot;TELCO.PositionProfile:Role.AvailableRoles&quot;);
+					var isEnable =CanInvokeInvoice(strRole,&quot;VFRetrieveLimitHistory&quot;);
+		         
+			   	     if(isEnable==&quot;True&quot;)
+			   	     {
+			   	     	CanInvoke = &quot;TRUE&quot;;     
+			   	     }
+			   	     else
+			   	     {
+			   	     	CanInvoke = &quot;FALSE&quot;;   
+			   	     }  
+			     }
+			     else
+			     {
+			       	CanInvoke = &quot;FALSE&quot;;   
+			     }	       
+			     return (CancelOperation);
+		}
+		}
+	}
+	catch(e)
+	{
+		TheApplication().RaiseErrorText(&quot;Error Occurred &quot;+e.toString());
+		throw e;
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="2"
+			   UPDATED="01/11/2018 22:44:07"
+			   UPDATED_BY="IBM_OSMANS"
+			   CREATED="05/28/2013 19:01:26"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreInvokeMethod (MethodName)
+{
+	try
+	{
+		if (MethodName == &quot;VFRetrieveLimitHistory&quot;)
+		{
+			var strBACode =&quot;&quot;;
+			strBACode = TheApplication().GetProfileAttr(&quot;BACode_InvLim&quot;);
+			TheApplication().SetProfileAttr(&quot;LimitHistoryInquiry&quot;,&quot;Y&quot;);	
+			TheApplication().SetProfileAttr(&quot;BA_CODE&quot;,strBACode);				
+			this.BusComp ().ClearToQuery ();
+			this.BusComp().SetSearchSpec(&quot;CONTACT_MSISDN&quot;,&quot;&quot;);		
+			this.BusComp().ExecuteQuery (ForwardBackward);
+			return (CancelOperation);
+		}
+	}
+	catch(e)
+	{
+		throw e;
+	}
+	finally
+	{
+		strBACode =null;
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="3"
+			   UPDATED="07/16/2013 11:52:14"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:24:10"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: ExecuteQuery"
+			   VALUE="IIf(GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;) = &quot;Consumer&quot; OR GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;) = &quot;Bireysel&quot;, FALSE , TRUE)"
+			   UPDATED="01/11/2018 22:23:29"
+			   UPDATED_BY="IBM_OSMANS"
+			   CREATED="12/29/2017 14:13:14"
+			   CREATED_BY="IBM_OSMANS">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: NewQuery"
+			   VALUE="IIf(GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;) = &quot;Consumer&quot; OR GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;) = &quot;Bireysel&quot;, FALSE , TRUE)"
+			   UPDATED="01/11/2018 22:23:33"
+			   UPDATED_BY="IBM_OSMANS"
+			   CREATED="12/29/2017 14:13:14"
+			   CREATED_BY="IBM_OSMANS">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: NewRecord"
+			   VALUE="IIf(GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;) = &quot;Consumer&quot; OR GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;) = &quot;Bireysel&quot;, FALSE , TRUE)"
+			   UPDATED="01/11/2018 22:23:38"
+			   UPDATED_BY="IBM_OSMANS"
+			   CREATED="12/29/2017 14:13:14"
+			   CREATED_BY="IBM_OSMANS">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: RefineQuery"
+			   VALUE="IIf(GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;) = &quot;Consumer&quot; OR GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;) = &quot;Bireysel&quot;, FALSE , TRUE)"
+			   UPDATED="01/11/2018 22:23:41"
+			   UPDATED_BY="IBM_OSMANS"
+			   CREATED="12/29/2017 14:13:14"
+			   CREATED_BY="IBM_OSMANS">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="Y"
+			   NAME="CanInvokeMethod: VFRetrieveLimitHistory"
+			   VALUE="[CanEnableRetrieveLimit] = &quot;Y&quot;"
+			   UPDATED="05/28/2013 19:01:26"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:24:10"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: WriteRecord"
+			   VALUE="IIf(GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;) = &quot;Consumer&quot; OR GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;) = &quot;Bireysel&quot;, FALSE , TRUE)"
+			   UPDATED="01/11/2018 22:42:51"
+			   UPDATED_BY="IBM_OSMANS"
+			   CREATED="12/29/2017 14:13:14"
+			   CREATED_BY="IBM_OSMANS">
+			</APPLET_USER_PROP>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="VF Invoice Limit History List Applet"
+			   SEQUENCE="1"
+			   TYPE="Base"
+			   WEB_TEMPLATE="Applet List (Base/EditList)"
+			   UPDATED="04/23/2013 22:24:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:24:10"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Change Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="501"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Change Date"
+				   TYPE="List Item"
+				   UPDATED="04/23/2013 22:24:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:24:10"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Channel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="504"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Channel"
+				   TYPE="List Item"
+				   UPDATED="04/23/2013 22:24:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:24:10"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Contact MSISDN"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="507"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Contact MSISDN"
+				   TYPE="List Item"
+				   UPDATED="04/23/2013 22:24:10"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:24:10"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Requesting User"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="505"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Requesting User"
+				   TYPE="List Item"
+				   UPDATED="04/23/2013 22:24:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:24:11"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Retrieve Limit History"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="109"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Retrieve Limit History"
+				   TYPE="Control"
+				   UPDATED="04/23/2013 22:24:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:24:11"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Shop"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="506"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Shop"
+				   TYPE="List Item"
+				   UPDATED="04/23/2013 22:24:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:24:11"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Transaction Type"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="503"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Transaction Type"
+				   TYPE="List Item"
+				   UPDATED="04/23/2013 22:24:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:24:11"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Updated Limit"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="502"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Updated Limit"
+				   TYPE="List Item"
+				   UPDATED="04/23/2013 22:24:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:24:11"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="CanEnableRetrieveLimit"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="CanEnableRetrieveLimit"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/23/2013 22:24:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:24:11"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Field"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="HTML Field"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="3"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/23/2013 22:24:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:24:11"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_RETRIEVE_LIMIT_HISTORY"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   METHOD_INVOKED="VFRetrieveLimitHistory"
+			   MULTI_LINE="N"
+			   NAME="VF Retrieve Limit History"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/23/2013 22:24:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:24:11"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<LIST
+			   HTML_MULTI_ROW_EDIT="N"
+			   HTML_MULTI_ROW_SELECT="N"
+			   INACTIVE="N"
+			   NAME="List"
+			   TOTAL_DISPLAYED="N"
+			   TOTAL_REQUIRED="N"
+			   UPDATED="04/23/2013 22:24:11"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:24:11"
+			   CREATED_BY="SADMIN">
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_CHANGE_DATE"
+				   FIELD="VF Change Date"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VF Change Date"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="04/23/2013 22:24:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:24:11"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="04/23/2013 22:24:11"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/23/2013 22:24:11"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_CHANNEL"
+				   FIELD="VF Channel"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VF Channel"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="04/23/2013 22:24:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:24:11"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_CONTACT_MSISDN"
+				   FIELD="VF Contact MSISDN"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VF Contact MSISDN"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="04/23/2013 22:24:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:24:11"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_REQUESTING_USER"
+				   FIELD="VF Requesting User"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VF Requesting User"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="04/23/2013 22:24:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:24:11"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_SHOP"
+				   FIELD="VF Shop"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VF Shop"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="04/23/2013 22:24:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:24:11"
+				   CREATED_BY="SADMIN">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_TRANSACTION_TYPE"
+				   FIELD="VF Transaction Type"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VF Transaction Type"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="04/23/2013 22:24:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:24:11"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="04/23/2013 22:24:11"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/23/2013 22:24:11"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_UPDATED_LIMIT"
+				   FIELD="VF Updated Limit"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VF Updated Limit"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="04/23/2013 22:24:11"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:24:11"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="04/23/2013 22:24:11"
+					   UPDATED_BY="SADMIN"
+					   CREATED="04/23/2013 22:24:11"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+			</LIST>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+

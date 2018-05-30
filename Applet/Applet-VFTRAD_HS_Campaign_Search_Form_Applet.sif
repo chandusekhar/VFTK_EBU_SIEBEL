@@ -1,0 +1,1066 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="05/20/2015 12:00:07"
+   UPDATED_BY="SADMIN"
+   CREATED="05/19/2015 19:58:21"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="ACAMBAS: PD039"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VFTRAD Activate HS Campaign TBUI"
+	   UI_FREEZE="N"
+	   UPDATED="07/10/2017 17:00:37"
+	   UPDATED_BY="VF_SKILICSAL"
+	   CREATED="07/07/2017 16:19:07"
+	   CREATED_BY="VF_SKILICSAL"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   BUSINESS_COMPONENT="VFTRAD Activate HS Campaign TBC"
+		   CLASS="CSSSWEFrameTask"
+		   COMMENTS="ACAMBAS: PD039"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HEIGHT="4"
+		   INACTIVE="N"
+		   NAME="VFTRAD HS Campaign Search Form Applet"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LOCKED="N"
+		   SCRIPTED="Y"
+		   TYPE="Task"
+		   UPGRADE_BEHAVIOR="Preserve"
+		   WIDTH="2"
+		   UPDATED="07/10/2017 17:51:48"
+		   UPDATED_BY="VF_SKILICSAL"
+		   CREATED="07/10/2017 10:07:17"
+		   CREATED_BY="VF_SKILICSAL">
+			<APPLET_LOCALE
+			   APPLICATION_CODE="STD"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   REDO="N"
+			   TRANSLATE="Y"
+			   UPDATED="07/10/2017 10:07:17"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="07/10/2017 10:07:17"
+			   CREATED_BY="VF_SKILICSAL">
+			</APPLET_LOCALE>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreInvokeMethod(MethodName) {
+
+	if (MethodName == &quot;Submit&quot;) {
+		try {
+			var oBO = TheApplication().ActiveBusObject();
+			var oCampaignSearchBC = this.BusComp();
+			var sErrorMessage = &quot;&quot;;
+			var sRequestId = &quot;&quot;;
+			var sICCBId = &quot;&quot;;
+			
+			var In = TheApplication().NewPropertySet();
+    	  	var Out = TheApplication().NewPropertySet();
+    	 	var LookupNam = TheApplication().GetService(&quot;ACS General Operations&quot;);
+
+			with (oCampaignSearchBC) {
+				//Validate mandatory fields
+				var sTariffOption = oCampaignSearchBC.GetFieldValue(&quot;Tariff Option&quot;);
+				var sEquipType = oCampaignSearchBC.GetFieldValue(&quot;Equipment Type&quot;);
+				var sEquipBrand = oCampaignSearchBC.GetFieldValue(&quot;Equipment Brand&quot;);
+				var sEquipModel = oCampaignSearchBC.GetFieldValue(&quot;Equipment Model&quot;);
+
+				if (sTariffOption == &quot;&quot; || sTariffOption == null) {
+					sErrorMessage = TheApplication().LookupMessage(&quot;VFTRAD Message Category&quot;, &quot;VFTRAD_29&quot;);
+					TheApplication().RaiseErrorText(sErrorMessage);
+				} else if (sEquipType == &quot;&quot; || sEquipType == null) {
+					sErrorMessage = TheApplication().LookupMessage(&quot;VFTRAD Message Category&quot;, &quot;VFTRAD_30&quot;);
+					TheApplication().RaiseErrorText(sErrorMessage);
+				} else if (sEquipBrand == &quot;&quot; || sEquipBrand == null) {
+					sErrorMessage = TheApplication().LookupMessage(&quot;VFTRAD Message Category&quot;, &quot;VFTRAD_31&quot;);
+					TheApplication().RaiseErrorText(sErrorMessage);
+				} else if (sEquipModel == &quot;&quot; || sEquipModel == null) {
+					sErrorMessage = TheApplication().LookupMessage(&quot;VFTRAD Message Category&quot;, &quot;VFTRAD_32&quot;);
+					TheApplication().RaiseErrorText(sErrorMessage);
+				}
+
+				//INVOKE RULES ENGINE SERVICE
+				var psIn : PropertySet = TheApplication().NewPropertySet();
+				var psOut : PropertySet = TheApplication().NewPropertySet();
+				var bSWF = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+				var sBillingAccountCode = oCampaignSearchBC.GetFieldValue(&quot;Billing Account Code&quot;);
+				var sCustomerCode = oCampaignSearchBC.GetFieldValue(&quot;Customer Code&quot;);
+				var sMsisdn = oCampaignSearchBC.GetFieldValue(&quot;MSISDN&quot;);
+				var sCampaignDuration = oCampaignSearchBC.GetFieldValue(&quot;Campaign Duration&quot;);
+				var sCampaignType = oCampaignSearchBC.GetFieldValue(&quot;Campaign Type&quot;);
+				var sPaymentMethod = oCampaignSearchBC.GetFieldValue(&quot;Payment Method&quot;);
+				var sRootId = oCampaignSearchBC.GetFieldValue(&quot;Root Asset Id&quot;);
+				var sTariffFlag = &quot;N&quot;;
+
+				if (sTariffOption == TheApplication().InvokeMethod(&quot;LookupValue&quot;, &quot;VFTRAD_HS_ACTIV_TARIFF_OPTION&quot;, &quot;With Tariff Change&quot;))
+					sTariffFlag = &quot;Y&quot;;
+
+				psIn.SetProperty(&quot;ProcessName&quot;, &quot;VFTRAD Get Composite Campaign WF&quot;);
+				psIn.SetProperty(&quot;BillingAccountCode&quot;, sBillingAccountCode);
+				psIn.SetProperty(&quot;CampaignDuration&quot;, sCampaignDuration);
+				psIn.SetProperty(&quot;CustomerCode&quot;, sCustomerCode);
+				psIn.SetProperty(&quot;EquipamentBrand&quot;, sEquipBrand);
+				psIn.SetProperty(&quot;EquipamentModel&quot;, sEquipModel);
+				psIn.SetProperty(&quot;EquipamentType&quot;, sEquipType);
+				psIn.SetProperty(&quot;GSMNumber&quot;, sMsisdn);
+				psIn.SetProperty(&quot;RootId&quot;, sRootId);
+				psIn.SetProperty(&quot;TariffFlag&quot;, sTariffFlag);
+				
+				if(sCampaignType != null &amp;&amp; sCampaignType != &apos;&apos;)
+				{
+					In.SetProperty(&quot;LOV&quot;,&quot;VFTRAD_CAMPAIGN_TYPE&quot;);
+			  		In.SetProperty(&quot;Val&quot;,sCampaignType);
+			  		LookupNam.InvokeMethod(&quot;LookupName&quot;,In,Out);
+					psIn.SetProperty(&quot;CampaignType&quot;, Out.GetProperty(&quot;Name&quot;));
+				}
+				
+				if(sPaymentMethod != null &amp;&amp; sPaymentMethod != &apos;&apos;)
+				{
+					In.Reset();
+					Out.Reset();
+					In.SetProperty(&quot;LOV&quot;,&quot;VF_PAYMENT_METHOD&quot;);
+			  		In.SetProperty(&quot;Val&quot;,sPaymentMethod);
+			  		LookupNam.InvokeMethod(&quot;LookupName&quot;,In,Out);
+					psIn.SetProperty(&quot;PaymentMethod&quot;, Out.GetProperty(&quot;Name&quot;));
+				}
+
+				bSWF.InvokeMethod(&quot;RunProcess&quot;, psIn, psOut);
+
+				if (psOut.GetProperty(&quot;Error Code&quot;) == &quot;-100&quot;) //No campaign found
+				{
+					sErrorMessage = TheApplication().LookupMessage(&quot;VFTRAD Message Category&quot;, &quot;VFTRAD_36&quot;)
+						sRequestId = &quot;-1&quot;;
+				} else {
+					sRequestId = psOut.GetProperty(&quot;RequestId&quot;);
+					sICCBId = psOut.GetProperty(&quot;ICCBIdHandset&quot;);
+				}
+
+				SetFieldValue(&quot;Rules Engine Request Id&quot;, sRequestId);
+				SetFieldValue(&quot;ICCB Id&quot;, sICCBId);
+				SetFieldValue(&quot;Invoke Rule Engine Flag&quot;, &quot;N&quot;);
+				SetFieldValue(&quot;Other Warning Message&quot;, sErrorMessage);
+				WriteRecord();
+
+				SetViewMode(AllView);
+				ClearToQuery();
+				SetSearchExpr(&quot;[Rules Engine Request Id] = &apos;&quot; + sRequestId + &quot;&apos;&quot;);
+				ExecuteQuery(ForwardOnly);
+
+				if (sErrorMessage != &quot;&quot;) {
+					TheApplication().RaiseErrorText(sErrorMessage);
+				}
+
+			}
+			return (CancelOperation);
+		}
+		finally {
+			psIn = null;
+			psOut = null;
+			bSWF = null;
+			oBO = null;
+			oCampaignSearchBC = null;
+			In = null;
+			Out = null;
+			LookupNam = null;
+		}
+	}
+
+	return (ContinueOperation);
+}"
+			   UPDATED="07/10/2017 10:07:17"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="07/10/2017 10:07:17"
+			   CREATED_BY="VF_SKILICSAL">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: Submit"
+			   VALUE="TRUE"
+			   UPDATED="07/10/2017 10:07:18"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="07/10/2017 10:07:18"
+			   CREATED_BY="VF_SKILICSAL">
+			</APPLET_USER_PROP>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Edit"
+			   SEQUENCE="0"
+			   TYPE="Edit"
+			   WEB_TEMPLATE="Applet Form Grid Layout"
+			   UPDATED="07/10/2017 10:07:18"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="07/10/2017 10:07:18"
+			   CREATED_BY="VF_SKILICSAL">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="Campaign Duration"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="4076"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Campaign Duration"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="07/10/2017 10:07:18"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:18"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="Campaign Duration"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="4061"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Campaign DurationLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="07/10/2017 10:07:18"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:18"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="Campaign Type"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1076"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Campaign Type"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="07/10/2017 10:07:18"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:18"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="Campaign Type"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1061"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Campaign TypeLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="07/10/2017 10:07:18"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:18"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="Equipment Brand"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="4046"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Equipment Brand"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="07/10/2017 10:07:18"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:18"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="Equipment Brand"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="4031"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Equipment BrandLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="07/10/2017 10:07:18"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:18"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="Equipment Brand"
+				   EXPRESSION="Siebel eChannel"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="4031"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Equipment BrandLabel2"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="07/10/2017 10:07:18"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:18"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="Equipment Model"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="7046"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Equipment Model"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="07/10/2017 10:07:18"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:18"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="Equipment Model"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="7031"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Equipment ModelLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="07/10/2017 10:07:18"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:18"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="Equipment Model"
+				   EXPRESSION="Siebel eChannel"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="7031"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Equipment ModelLabel2"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="07/10/2017 10:07:18"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:18"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="Equipment Type"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1046"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Equipment Type"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="07/10/2017 10:07:18"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:18"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="Equipment Type"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1031"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Equipment TypeLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="07/10/2017 10:07:18"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:18"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="Hide Field 1"
+				   EXPRESSION="Siebel eChannel"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="4016"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Hide Field 1"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="07/10/2017 10:07:18"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:18"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="Hide Field 2"
+				   EXPRESSION="Siebel eChannel"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="7016"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Hide Field 2"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="07/10/2017 10:07:18"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:18"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="4006"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT Siebel eChannel"
+				   TYPE="Control"
+				   UPDATED="07/10/2017 10:07:18"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:18"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="7006"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT Siebel eChannel2"
+				   TYPE="Control"
+				   UPDATED="07/10/2017 10:07:18"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:18"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="Payment Method"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="7076"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Payment Method"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="07/10/2017 10:07:18"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:18"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="Payment Method"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="7061"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Payment MethodLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="07/10/2017 10:07:18"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:18"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="Submit Button"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="7096"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Submit Button"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="07/10/2017 10:07:18"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:18"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="25"
+				   CONTROL="Tariff Option"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1006"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Tariff Option"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="07/10/2017 10:07:18"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:18"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VFTRAD_CAMPAIGN_DURATION"
+			   DEFAULT_BUTTON="N"
+			   DISPLAY_FORMAT="##"
+			   FIELD="Campaign Duration"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Field"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Campaign Duration"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="07/10/2017 10:07:19"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="07/10/2017 10:07:18"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="07/10/2017 10:07:19"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:19"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="FormSection"
+			   HTML_WIDTH="240"
+			   HEIGHT="24"
+			   INACTIVE="Y"
+			   MULTI_LINE="N"
+			   NAME="Campaign Form Section"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Left"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="07/10/2017 10:07:19"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="07/10/2017 10:07:19"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Campaign Criteria"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="07/10/2017 10:07:19"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:19"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CAMPAIGN_TYPE-1004230232-167"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Campaign Type"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Campaign Type"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="07/10/2017 10:07:19"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="07/10/2017 10:07:19"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="07/10/2017 10:07:19"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:19"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_BRAND_REQ"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Equipment Brand"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Equipment Brand"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="07/10/2017 10:07:19"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="07/10/2017 10:07:19"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="07/10/2017 10:07:19"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:19"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VFTRAD_EQUIPMENT_MODEL_REQ"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Equipment Model"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Equipment Model"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="07/10/2017 10:07:19"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="07/10/2017 10:07:19"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="07/10/2017 10:07:19"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:19"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VFTRAD_EQUIPMENT_TYPE_REQ"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Equipment Type"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Equipment Type"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="07/10/2017 10:07:19"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="07/10/2017 10:07:19"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="07/10/2017 10:07:19"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:19"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="FormSection"
+			   HTML_WIDTH="240"
+			   HEIGHT="24"
+			   INACTIVE="Y"
+			   MULTI_LINE="N"
+			   NAME="Handset Form Section"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Left"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="07/10/2017 10:07:19"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="07/10/2017 10:07:19"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Handset Criteria"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="07/10/2017 10:07:19"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:19"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Hidden"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Hide Field 1"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="07/10/2017 10:07:19"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="07/10/2017 10:07:19"
+			   CREATED_BY="VF_SKILICSAL">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Hidden"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Hide Field 2"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="07/10/2017 10:07:19"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="07/10/2017 10:07:19"
+			   CREATED_BY="VF_SKILICSAL">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_PAYMENT_METHOD"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Payment Method"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Payment Method"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="07/10/2017 10:07:20"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="07/10/2017 10:07:19"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="07/10/2017 10:07:20"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="07/10/2017 10:07:20"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_SUBMIT-1004224803-0IW"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   METHOD_INVOKED="Submit"
+			   MULTI_LINE="N"
+			   NAME="Submit Button"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="07/10/2017 10:07:20"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="07/10/2017 10:07:20"
+			   CREATED_BY="VF_SKILICSAL">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Tariff Option"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RadioButton"
+			   HTML_WIDTH="200"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Tariff Option"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="240"
+			   UPDATED="07/10/2017 10:07:20"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="07/10/2017 10:07:20"
+			   CREATED_BY="VF_SKILICSAL">
+			</CONTROL>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+

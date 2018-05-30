@@ -1,0 +1,314 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LANGUAGE_LOCKED="ENU"
+	   LOCKED="Y"
+	   LOCKED_DATE="01/20/2018 13:16:16"
+	   NAME="VFTRADM Enterprise IQ IFrame"
+	   UI_FREEZE="N"
+	   LOCKED_BY_NAME="IBM_MSAFA"
+	   UPDATED="01/30/2018 12:35:42"
+	   UPDATED_BY="IBM_MSAFA"
+	   CREATED="10/11/2017 15:44:36"
+	   CREATED_BY="VF_AYILDIZ"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   BUSINESS_COMPONENT="Account"
+		   CLASS="CSSFrameListWeb"
+		   COMMENTS="VFTRADM Enterprise IQ - AYILDIZ"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HEIGHT="768"
+		   INACTIVE="N"
+		   NAME="VFTRAD Enterprise IQ IFrame Applet"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LOCKED="N"
+		   SCRIPTED="Y"
+		   TITLE_-_STRING_REFERENCE="X_VFTRADM_ENTERPRISE_IQ"
+		   TYPE="Standard"
+		   UPGRADE_BEHAVIOR="Admin"
+		   WIDTH="2"
+		   UPDATED="02/05/2018 20:22:59"
+		   UPDATED_BY="IBM_MSAFA"
+		   CREATED="01/20/2018 12:28:40"
+		   CREATED_BY="IBM_MSAFA">
+			<APPLET_METHOD_MENU_ITEM
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_&amp;DISABLE_CLEANSING-1004224548-00A"
+			   NAME="1"
+			   POSITION="1"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/20/2018 12:28:40"
+			   UPDATED_BY="IBM_MSAFA"
+			   CREATED="01/20/2018 12:28:40"
+			   CREATED_BY="IBM_MSAFA">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_Load"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_Load ()
+{
+try
+	{
+		
+		var psCreateIn : PropertySet;
+		var psCreateOut : PropertySet;
+		psCreateIn = TheApplication().NewPropertySet();
+		psCreateOut = TheApplication().NewPropertySet();
+		var bService = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		var accId = &quot;&quot;;
+		var tokenId = &quot;&quot;;
+		
+		TheApplication().SetProfileAttr(&quot;TOKEN_ID_Enterprise_IQ&quot;,&quot;&quot;);
+		TheApplication().SetProfileAttr(&quot;ACCOUNT_ID&quot;,&quot;&quot;);
+		//begin ibmmsafa
+		var eiqMode = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_EIQ_MODE_IFRAME&quot;,&quot;Eiq_Mode&quot;);
+		var pageId = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_PAGE_ID_IFRAME&quot;,&quot;Page_Id&quot;);
+		TheApplication().SetProfileAttr(&quot;EIQ_MODE_Enterprise_IQ&quot;,&quot;&quot;);
+		TheApplication().SetProfileAttr(&quot;PAGE_ID_Enterprise_IQ&quot;,&quot;&quot;);
+		//end ibmmsafa
+		accId = this.BusComp().GetFieldValue(&quot;CSN&quot;);
+    	
+    	TheApplication().SetProfileAttr(&quot;ACCOUNT_ID&quot;, accId);
+    	
+		if(accId != null || accId != &quot;&quot;)
+		{
+			psCreateIn.SetProperty(&quot;ProcessName&quot;,&quot;VF Generic SSO Service Workflow&quot;);
+			psCreateIn.SetProperty(&quot;sApp&quot;,&quot;enterpriseIQ&quot;);
+			bService.InvokeMethod(&quot;RunProcess&quot;,psCreateIn,psCreateOut);
+			tokenId = psCreateOut.GetProperty(&quot;Token&quot;);
+			TheApplication().SetProfileAttr(&quot;TOKEN_ID_Enterprise_IQ&quot;,tokenId);
+			//begin ibmmsafa
+			TheApplication().SetProfileAttr(&quot;EIQ_MODE_Enterprise_IQ&quot;,eiqMode);
+			TheApplication().SetProfileAttr(&quot;PAGE_ID_Enterprise_IQ&quot;,pageId);
+			//end ibmmsafa
+		}
+	}
+	catch(e){
+		throw(e);
+	}
+	finally
+	{
+	 	psCreateIn =  null;
+		psCreateOut	=  null;
+		bService = null;
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="01/30/2018 12:35:42"
+			   UPDATED_BY="IBM_MSAFA"
+			   CREATED="01/20/2018 12:28:41"
+			   CREATED_BY="IBM_MSAFA">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="NoDataHide"
+			   VALUE="Y"
+			   UPDATED="01/20/2018 12:28:41"
+			   UPDATED_BY="IBM_MSAFA"
+			   CREATED="01/20/2018 12:28:41"
+			   CREATED_BY="IBM_MSAFA">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="NoDataRequiredFields"
+			   VALUE="VFTRADM Enterprise IQ"
+			   UPDATED="01/20/2018 12:28:41"
+			   UPDATED_BY="IBM_MSAFA"
+			   CREATED="01/20/2018 12:28:41"
+			   CREATED_BY="IBM_MSAFA">
+			</APPLET_USER_PROP>
+			<APPLET_WEB_TEMPLATE
+			   COMMENTS="VFTRADM Enterprise IQ - AYILDIZ"
+			   INACTIVE="N"
+			   NAME="URL Applet"
+			   SEQUENCE="1"
+			   TYPE="Base"
+			   WEB_TEMPLATE="Analytics Applet"
+			   UPDATED="01/20/2018 12:28:41"
+			   UPDATED_BY="IBM_MSAFA"
+			   CREATED="01/20/2018 12:28:41"
+			   CREATED_BY="IBM_MSAFA">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRADM Enterprise IQ"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="501"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRADM Enterprise IQ"
+				   TYPE="List Item"
+				   UPDATED="01/20/2018 12:28:41"
+				   UPDATED_BY="IBM_MSAFA"
+				   CREATED="01/20/2018 12:28:41"
+				   CREATED_BY="IBM_MSAFA">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_ANALYTICS_ADMINISTRATION-1004224904-0TW"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="AppletTitle"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="2"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="Label"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="01/20/2018 12:28:42"
+			   UPDATED_BY="IBM_MSAFA"
+			   CREATED="01/20/2018 12:28:42"
+			   CREATED_BY="IBM_MSAFA">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_LIST-1004224327-06F"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="List"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="1"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="ListControl"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="1024"
+			   UPDATED="01/20/2018 12:28:42"
+			   UPDATED_BY="IBM_MSAFA"
+			   CREATED="01/20/2018 12:28:42"
+			   CREATED_BY="IBM_MSAFA">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VFTRADM_ENTERPRISE_IQ"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRADM Enterprise IQ"
+			   FIELD_RETRIEVAL_TYPE="Symbolic URL"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="Y"
+			   MULTI_LINE="N"
+			   NAME="VFTRADM Enterprise IQ"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="01/20/2018 12:28:43"
+			   UPDATED_BY="IBM_MSAFA"
+			   CREATED="01/20/2018 12:28:43"
+			   CREATED_BY="IBM_MSAFA">
+			</CONTROL>
+			<LIST
+			   HTML_MULTI_ROW_EDIT="N"
+			   HTML_MULTI_ROW_SELECT="N"
+			   INACTIVE="N"
+			   NAME="List"
+			   TOTAL_DISPLAYED="N"
+			   TOTAL_REQUIRED="N"
+			   UPDATED="01/20/2018 12:28:43"
+			   UPDATED_BY="IBM_MSAFA"
+			   CREATED="01/20/2018 12:28:43"
+			   CREATED_BY="IBM_MSAFA">
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRAD_ENTERPRISE_IQ"
+				   FIELD="VFTRAD Enterprise IQ"
+				   FIELD_RETRIEVAL_TYPE="Symbolic URL"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRADM Enterprise IQ"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/20/2018 12:28:43"
+				   UPDATED_BY="IBM_MSAFA"
+				   CREATED="01/20/2018 12:28:43"
+				   CREATED_BY="IBM_MSAFA">
+				</LIST_COLUMN>
+			</LIST>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+

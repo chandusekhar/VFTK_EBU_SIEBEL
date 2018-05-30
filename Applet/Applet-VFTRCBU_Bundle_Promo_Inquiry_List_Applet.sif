@@ -1,0 +1,1644 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="11/24/2016 17:14:00"
+   UPDATED_BY="SADMIN"
+   CREATED="11/24/2016 14:49:11"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="20140703 - VFTRCBU Project for WP#01 objects"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VFTRCBU Customer_Account_Subscriber Management"
+	   UI_FREEZE="N"
+	   UPDATED="06/14/2017 17:23:06"
+	   UPDATED_BY="CJANEIRO"
+	   CREATED="08/14/2014 20:13:39"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   BUSINESS_COMPONENT="VFTRCBU Bundle Promo Inquiry VBC"
+		   CLASS="CSSFrameList"
+		   COMMENTS="VFTRCBU 19052015: GAP01 - IMARTINS"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HEIGHT="4"
+		   INACTIVE="N"
+		   NAME="VFTRCBU Bundle Promo Inquiry List Applet"
+		   NO_DELETE="Y"
+		   NO_INSERT="N"
+		   NO_MERGE="Y"
+		   NO_UPDATE="N"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="06/14/2017 17:01:46"
+		   SCRIPTED="Y"
+		   TITLE_-_STRING_REFERENCE="X_VFTRCBU_BUNDLE_INQUIRY_CONSUMER"
+		   TYPE="Standard"
+		   UPGRADE_BEHAVIOR="Admin"
+		   WIDTH="2"
+		   OBJECT_LOCKED_BY_NAME="CJANEIRO"
+		   UPDATED="06/14/2017 17:22:46"
+		   UPDATED_BY="CJANEIRO"
+		   CREATED="06/03/2015 14:22:51"
+		   CREATED_BY="SADMIN">
+			<APPLET_LOCALE
+			   APPLICATION_CODE="STD"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   REDO="N"
+			   TRANSLATE="Y"
+			   UPDATED="06/03/2015 14:22:51"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:22:51"
+			   CREATED_BY="SADMIN">
+			</APPLET_LOCALE>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_Load"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_Load ()
+{
+	//VFTRCBU 20052015: GAP01 - IMARTINS
+	TheApplication().SetProfileAttr(&quot;VFTRCBU_EMPTY_REQUEST&quot;,&quot;Y&quot;);
+	TheApplication().SetProfileAttr(&quot;VFSkipQueryWF&quot;,&quot;N&quot;);
+	TheApplication().SetProfileAttr(&quot;VFTRAD_CONTEXT_EMPTY&quot;,&quot;Y&quot;);
+}"
+			   SEQUENCE="1"
+			   UPDATED="06/14/2017 17:22:46"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="06/03/2015 14:22:51"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreCanInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreCanInvokeMethod (MethodName, &amp;CanInvoke)
+{
+	//VFTRCBU 20052015: GAP01 - IMARTINS
+	
+	var strStatus;
+	var strInquiry;
+	var strSendSMS;
+	
+	if (MethodName == &quot;SendSMS&quot;)
+	{
+		//PSILVA VFTRCBU-23174 - Check if this field is filled
+		strSendSMS = this.BusComp().GetFieldValue(&quot;VFTRCBU SMS Type Pick&quot;);
+		//RLOURENCO VFTRCBU-17947 - changed GetFieldValue from VF Final Status to VF Final Status Calc
+		strStatus = this.BusComp().ParentBusComp().GetFieldValue(&quot;VF Final Status Calc&quot;);
+		
+		if (strStatus != TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_FINAL_STATUS&quot;,&quot;Active&quot;))
+			CanInvoke = &quot;FALSE&quot;;
+		else
+		{
+			if (strSendSMS == &quot;&quot;)
+				CanInvoke = &quot;FALSE&quot;;
+			else
+				CanInvoke = &quot;TRUE&quot;;
+		}
+
+		return (CancelOperation);
+	}
+
+	
+	if (MethodName == &quot;RunQuery&quot;)
+	{
+
+		strInquiry = this.BusComp().GetFieldValue(&quot;VFTRCBU Inquiry Type Pick&quot;);
+		//RLOURENCO VFTRCBU-17947 - changed GetFieldValue from VF Final Status to VF Final Status Calc
+		strStatus = this.BusComp().ParentBusComp().GetFieldValue(&quot;VF Final Status Calc&quot;);
+
+		if (strStatus != TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_FINAL_STATUS&quot;,&quot;Active&quot;))
+		{
+			CanInvoke = &quot;FALSE&quot;;
+		}
+		else
+		{
+			if (strInquiry == &quot;&quot;)
+				CanInvoke = &quot;FALSE&quot;;
+			else
+				CanInvoke = &quot;TRUE&quot;;
+		}
+		return (CancelOperation);
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="2"
+			   UPDATED="01/15/2016 18:59:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:22:51"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreInvokeMethod (MethodName)
+{
+	//VFTRCBU 20052015: GAP01 - IMARTINS
+	if(MethodName==&quot;RunQuery&quot;){
+	
+		TheApplication().SetProfileAttr(&quot;VFTRCBU_EMPTY_REQUEST&quot;,&quot;N&quot;);
+		
+		this.BusComp().SetSearchSpec(&quot;VFTRCBU Inquiry Type Pick&quot;,this.BusComp().GetFieldValue(&quot;VFTRCBU Inquiry Type Pick&quot;));
+		this.InvokeMethod(&quot;ExecuteQuery&quot;);
+		return (CancelOperation);
+	}
+	
+	if(MethodName == &quot;SendSMS&quot;) // IMARTINS implemented as per CA19 Avengers
+	{
+		var svc = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		var Input = TheApplication().NewPropertySet();
+		var Output = TheApplication().NewPropertySet();
+
+		//this.BusComp().ActivateField(&quot;VFTRCBU MSISDN&quot;);
+		Input.SetProperty(&quot;ProcessName&quot;,&quot;VFTRCBU Send Bundle Invoice SMS WF&quot;);
+		Input.SetProperty(&quot;VF Billing Account&quot;, &quot;&quot;);
+		Input.SetProperty(&quot;VF MSISDN&quot;, this.BusComp().ParentBusComp().GetFieldValue(&quot;VF MSISDN&quot;));
+		Input.SetProperty(&quot;VF Service Type&quot;, this.BusComp().GetFieldValue(&quot;VFTRCBU SMS Type LIC&quot;));
+		svc.InvokeMethod(&quot;RunProcess&quot;, Input, Output);
+		/*NPEREIRA 30092015 - GAP01 Bundle Promo Inquiry - JIRA: VFTRCBU-17827*/
+		if (Output.GetProperty(&quot;Error Code&quot;) == &quot;0&quot;) 
+		{
+			var sErrorMsg = TheApplication().LookupMessage(&quot;VFTRCBU User Defined Errors&quot;, &quot;0609&quot;); 
+			TheApplication().RaiseErrorText(sErrorMsg);
+		}
+		return(CancelOperation);
+	}
+	
+	return (ContinueOperation);
+}"
+			   SEQUENCE="3"
+			   UPDATED="10/31/2015 23:10:20"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:22:51"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Base"
+			   SEQUENCE="0"
+			   TYPE="Base"
+			   WEB_TEMPLATE="Applet List (Base/EditList)"
+			   UPDATED="02/15/2017 16:54:49"
+			   UPDATED_BY="JMARTINHO"
+			   CREATED="06/03/2015 14:22:51"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="AppletTitle"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="131"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="AppletTitle"
+				   TYPE="Control"
+				   UPDATED="04/07/2016 12:41:18"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/07/2016 12:41:18"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="NewQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="141"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NewQuery"
+				   TYPE="Control"
+				   UPDATED="06/03/2015 14:22:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Bundle Type"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="503"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Bundle Type"
+				   TYPE="List Item"
+				   UPDATED="06/03/2015 14:22:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Commercial Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="502"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Commercial Name"
+				   TYPE="List Item"
+				   UPDATED="06/03/2015 14:22:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Direction"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="504"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Direction"
+				   TYPE="List Item"
+				   UPDATED="06/03/2015 14:22:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Expire Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="509"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Expire Date"
+				   TYPE="List Item"
+				   UPDATED="02/15/2017 16:54:47"
+				   UPDATED_BY="JMARTINHO"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU HD Passport"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="510"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU HD Passport"
+				   TYPE="List Item"
+				   UPDATED="02/15/2017 16:54:49"
+				   UPDATED_BY="JMARTINHO"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Initial Amount"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="505"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Initial Amount"
+				   TYPE="List Item"
+				   UPDATED="06/03/2015 14:22:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Inquiry Type Label"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="139"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Inquiry Type Label"
+				   TYPE="Control"
+				   UPDATED="06/03/2015 14:22:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Inquiry Type Pick"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="140"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Inquiry Type Pick"
+				   TYPE="Control"
+				   UPDATED="06/03/2015 14:22:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Offer Id"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="501"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Offer Id"
+				   TYPE="List Item"
+				   UPDATED="06/03/2015 14:22:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Remaining Amount"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="507"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Remaining Amount"
+				   TYPE="List Item"
+				   UPDATED="06/03/2015 14:22:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU SMS Type Label"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="109"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU SMS Type Label"
+				   TYPE="Control"
+				   UPDATED="06/03/2015 14:22:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU SMS Type Pick"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="110"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU SMS Type Pick"
+				   TYPE="Control"
+				   UPDATED="06/03/2015 14:22:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Send SMS"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="111"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Send SMS"
+				   TYPE="Control"
+				   UPDATED="06/03/2015 14:22:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Start Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="508"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Start Date"
+				   TYPE="List Item"
+				   UPDATED="02/15/2017 16:54:46"
+				   UPDATED_BY="JMARTINHO"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Used Amount"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="506"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Used Amount"
+				   TYPE="List Item"
+				   UPDATED="06/03/2015 14:22:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Edit List"
+			   SEQUENCE="0"
+			   TYPE="Edit List"
+			   WEB_TEMPLATE="Applet List (Base/EditList)"
+			   UPDATED="02/15/2017 16:55:00"
+			   UPDATED_BY="JMARTINHO"
+			   CREATED="06/03/2015 14:22:51"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="NewQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="111"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NewQuery"
+				   TYPE="Control"
+				   UPDATED="08/07/2015 03:36:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="NewQuery"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="111"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NewQuery2"
+				   TYPE="Control"
+				   UPDATED="08/07/2015 03:36:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/07/2015 03:36:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Bundle Type"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="503"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Bundle Type"
+				   TYPE="List Item"
+				   UPDATED="06/03/2015 14:22:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Commercial Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="502"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Commercial Name"
+				   TYPE="List Item"
+				   UPDATED="06/03/2015 14:22:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Direction"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="504"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Direction"
+				   TYPE="List Item"
+				   UPDATED="06/03/2015 14:22:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Expire Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="509"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Expire Date"
+				   TYPE="List Item"
+				   UPDATED="02/15/2017 16:54:58"
+				   UPDATED_BY="JMARTINHO"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU HD Passport"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="510"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU HD Passport"
+				   TYPE="List Item"
+				   UPDATED="02/15/2017 16:55:00"
+				   UPDATED_BY="JMARTINHO"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Initial Amount"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="505"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Initial Amount"
+				   TYPE="List Item"
+				   UPDATED="06/03/2015 14:22:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Inquiry Type Label"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="109"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Inquiry Type Label"
+				   TYPE="Control"
+				   UPDATED="08/07/2015 03:36:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Inquiry Type Label"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="109"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Inquiry Type Label2"
+				   TYPE="Control"
+				   UPDATED="08/07/2015 03:36:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/07/2015 03:36:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Inquiry Type Pick"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="110"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Inquiry Type Pick"
+				   TYPE="Control"
+				   UPDATED="08/07/2015 03:36:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Inquiry Type Pick"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="110"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Inquiry Type Pick2"
+				   TYPE="Control"
+				   UPDATED="08/07/2015 03:36:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/07/2015 03:36:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Offer Id"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="501"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Offer Id"
+				   TYPE="List Item"
+				   UPDATED="06/03/2015 14:22:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Remaining Amount"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="507"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Remaining Amount"
+				   TYPE="List Item"
+				   UPDATED="06/03/2015 14:22:51"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU SMS Type Label"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="139"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU SMS Type Label"
+				   TYPE="Control"
+				   UPDATED="08/07/2015 03:36:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU SMS Type Label"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="139"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU SMS Type Label2"
+				   TYPE="Control"
+				   UPDATED="08/07/2015 03:36:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/07/2015 03:36:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU SMS Type Pick"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="140"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU SMS Type Pick"
+				   TYPE="Control"
+				   UPDATED="08/07/2015 03:36:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:51"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU SMS Type Pick"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="140"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU SMS Type Pick2"
+				   TYPE="Control"
+				   UPDATED="08/07/2015 03:36:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/07/2015 03:36:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Send SMS"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="141"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Send SMS"
+				   TYPE="Control"
+				   UPDATED="08/07/2015 03:36:23"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Send SMS"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="141"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Send SMS2"
+				   TYPE="Control"
+				   UPDATED="08/07/2015 03:36:22"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/07/2015 03:36:22"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Start Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="508"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Start Date"
+				   TYPE="List Item"
+				   UPDATED="02/15/2017 16:54:58"
+				   UPDATED_BY="JMARTINHO"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Used Amount"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="506"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Used Amount"
+				   TYPE="List Item"
+				   UPDATED="06/03/2015 14:22:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VFTRCBU_BUNDLE_INQUIRY_CONSUMER"
+			   DEFAULT_BUTTON="N"
+			   GROUP="Y"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HEIGHT="20"
+			   INACTIVE="N"
+			   LEFT="2"
+			   MULTI_LINE="N"
+			   NAME="AppletTitle"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="1"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="N"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="2"
+			   TYPE="Label"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="96"
+			   UPDATED="04/07/2016 12:41:18"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:22:52"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ExecuteQuery"
+			   MULTI_LINE="N"
+			   NAME="ExecuteQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="3"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/03/2015 14:22:52"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:22:52"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Go"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="06/03/2015 14:22:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="590"
+			   INACTIVE="N"
+			   LEFT="6"
+			   MULTI_LINE="N"
+			   NAME="List"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="2"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="28"
+			   TYPE="ListControl"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="1012"
+			   UPDATED="06/03/2015 14:22:52"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:22:52"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_INQUIRY"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="RunQuery"
+			   MULTI_LINE="N"
+			   NAME="NewQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="4"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/03/2015 14:22:52"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:22:52"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="06/03/2015 14:22:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEdit"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ShowPopup"
+			   MULTI_LINE="N"
+			   NAME="NewRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="14"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/03/2015 14:22:52"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:22:52"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="New"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="06/03/2015 14:22:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="UndoQuery"
+			   MULTI_LINE="N"
+			   NAME="UndoQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="5"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/03/2015 14:22:52"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:22:52"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Cancel"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="06/03/2015 14:22:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_INQUIRY_TYPE"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Inquiry Type Label"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="06/03/2015 14:22:52"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:22:52"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Inquiry Type Pick"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Inquiry Type Pick"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="06/03/2015 14:22:52"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:22:52"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VFTRCBU_SMS_TYPE"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU SMS Type Label"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="06/03/2015 14:22:52"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:22:52"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU SMS Type Pick"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU SMS Type Pick"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="06/03/2015 14:22:52"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:22:52"
+			   CREATED_BY="SADMIN">
+				<CONTROL_USER_PROP
+				   INACTIVE="N"
+				   NAME="Enabled"
+				   VALUE="TRUE"
+				   UPDATED="06/03/2015 14:22:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+				</CONTROL_USER_PROP>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_SEND_SMS"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="SendSMS"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Send SMS"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="4"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="06/03/2015 14:22:52"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/03/2015 14:22:52"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="06/03/2015 14:22:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<LIST
+			   HTML_MULTI_ROW_EDIT="N"
+			   HTML_MULTI_ROW_SELECT="N"
+			   INACTIVE="N"
+			   NAME="List"
+			   TOTAL_DISPLAYED="N"
+			   TOTAL_REQUIRED="N"
+			   UPDATED="02/15/2017 15:40:18"
+			   UPDATED_BY="JMARTINHO"
+			   CREATED="06/03/2015 14:22:52"
+			   CREATED_BY="SADMIN">
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_BUNDLE_INQUIRY_TYPE"
+				   FIELD="VFTRCBU Bundle Type"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Bundle Type"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SEQUENCE="1"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="06/03/2015 14:22:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="06/03/2015 14:22:52"
+					   UPDATED_BY="SADMIN"
+					   CREATED="06/03/2015 14:22:52"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_Commercial_Name"
+				   FIELD="VFTRCBU Commercial Name"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Commercial Name"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SEQUENCE="2"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="06/03/2015 14:22:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="06/03/2015 14:22:52"
+					   UPDATED_BY="SADMIN"
+					   CREATED="06/03/2015 14:22:52"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_DIRECTION"
+				   FIELD="VFTRCBU Direction"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Direction"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SEQUENCE="3"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="06/03/2015 14:22:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="06/03/2015 14:22:52"
+					   UPDATED_BY="SADMIN"
+					   CREATED="06/03/2015 14:22:52"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_EXPIRE_DATE"
+				   FIELD="VFTRCBU Expire Date"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Expire Date"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SEQUENCE="4"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="06/03/2015 14:22:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="06/03/2015 14:22:52"
+					   UPDATED_BY="SADMIN"
+					   CREATED="06/03/2015 14:22:52"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   CHECK_BITMAP_IDENTIFIER="CHECK"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_HD_PASSPORT"
+				   FIELD="VFTRCBU HD Passport"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_ICON_MAP="CHECK"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="CheckBox"
+				   INACTIVE="N"
+				   NAME="VFTRCBU HD Passport"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SEQUENCE="5"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Center"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="CheckBox"
+				   WIDTH="10"
+				   UPDATED="06/03/2015 14:22:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="06/03/2015 14:22:52"
+					   UPDATED_BY="SADMIN"
+					   CREATED="06/03/2015 14:22:52"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_INITIAL_AMOUNT"
+				   FIELD="VFTRCBU Initial Amount"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Initial Amount"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SEQUENCE="6"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="06/03/2015 14:22:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="06/03/2015 14:22:52"
+					   UPDATED_BY="SADMIN"
+					   CREATED="06/03/2015 14:22:52"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   FIELD="VFTRCBU MSISDN"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU MSISDN"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SEQUENCE="7"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="06/03/2015 14:22:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   DISPLAY_NAME="VFTRCBU MSISDN"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="06/03/2015 14:22:52"
+					   UPDATED_BY="SADMIN"
+					   CREATED="06/03/2015 14:22:52"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_OFFER_ID-1004231600-4D0"
+				   FIELD="VFTRCBU Offer Id"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Offer Id"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SEQUENCE="8"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="06/03/2015 14:22:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="06/03/2015 14:22:52"
+					   UPDATED_BY="SADMIN"
+					   CREATED="06/03/2015 14:22:52"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_REMAINING_AMOUNT"
+				   FIELD="VFTRCBU Remaining Amount"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Remaining Amount"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SEQUENCE="9"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="06/03/2015 14:22:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="06/03/2015 14:22:52"
+					   UPDATED_BY="SADMIN"
+					   CREATED="06/03/2015 14:22:52"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_START_DATE"
+				   FIELD="VFTRCBU Start Date"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Start Date"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SEQUENCE="10"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="06/03/2015 14:22:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="06/03/2015 14:22:52"
+					   UPDATED_BY="SADMIN"
+					   CREATED="06/03/2015 14:22:52"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_UNITS"
+				   FIELD="VFTRCBU Units"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="Y"
+				   NAME="VFTRCBU Units"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SEQUENCE="11"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="02/15/2017 15:40:18"
+				   UPDATED_BY="JMARTINHO"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="06/03/2015 14:22:52"
+					   UPDATED_BY="SADMIN"
+					   CREATED="06/03/2015 14:22:52"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_USED_AMOUNT"
+				   FIELD="VFTRCBU Used Amount"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Used Amount"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SEQUENCE="12"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="06/03/2015 14:22:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/03/2015 14:22:52"
+				   CREATED_BY="SADMIN">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="06/03/2015 14:22:52"
+					   UPDATED_BY="SADMIN"
+					   CREATED="06/03/2015 14:22:52"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+			</LIST>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+

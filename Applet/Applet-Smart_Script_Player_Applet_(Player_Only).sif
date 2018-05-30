@@ -1,0 +1,995 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="LOCKED BY VTAO UI UPGRADE"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="eSmartScript"
+	   UI_FREEZE="N"
+	   UPDATED="05/03/2017 12:15:33"
+	   UPDATED_BY="JSARMENTO"
+	   CREATED="11/15/1999 17:24:22"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   BUSINESS_COMPONENT="Smart Script Player"
+		   CLASS="CSSFrameWebCallScriptPlayer"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HEIGHT="4"
+		   INACTIVE="N"
+		   NAME="Smart Script Player Applet (Player Only)"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="05/03/2017 10:12:36"
+		   SCRIPTED="Y"
+		   TITLE_-_STRING_REFERENCE="SBL_SMARTSCRIPT-1004224619-1G5"
+		   TYPE="Standard"
+		   UPGRADE_BEHAVIOR="Admin"
+		   WIDTH="2"
+		   OBJECT_LOCKED_BY_NAME="JSARMENTO"
+		   UPDATED="05/03/2017 12:14:27"
+		   UPDATED_BY="JSARMENTO"
+		   CREATED="10/11/2000 17:02:22"
+		   CREATED_BY="SADMIN">
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_InvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_InvokeMethod (MethodName)
+{
+	try
+	{
+		var bs : Service = TheApplication().GetService(&quot;ACS General Operations&quot;);
+		var In : PropertySet = TheApplication().NewPropertySet();
+		var Out : PropertySet = TheApplication().NewPropertySet();
+		
+			
+		if (MethodName == &quot;FinishScript&quot; || MethodName == &quot;SaveScript&quot;){
+			bs.InvokeMethod(&quot;RefreshSmartScriptContext&quot;,In,Out);
+		}	
+	 }
+
+	finally
+	{
+		bs = null;
+	 	In = null;
+	 	Out = null;
+ 	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="05/03/2017 12:11:32"
+			   UPDATED_BY="JSARMENTO"
+			   CREATED="04/03/2013 11:43:38"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreInvokeMethod (MethodName)
+{
+	try	
+	{
+		var strSRId = &quot;&quot;;
+		var srBO = TheApplication().GetBusObject(&quot;Service Request&quot;);
+		var srBC = srBO.GetBusComp(&quot;Service Request&quot;);
+	
+		if (MethodName == &quot;SaveScript&quot;)
+		{
+		    TheApplication().SetProfileAttr(&quot;CanNewBePress&quot;,&quot;Y&quot;);
+			TheApplication().SetProfileAttr(&quot;CanSRbeAssigned&quot;,&quot;Y&quot;);
+	 		TheApplication().SetProfileAttr(&quot;SmartScriptSavingRequired&quot;,&quot;N&quot;);
+	 		TheApplication().SetProfileAttr(&quot;ssSaveCheck&quot;,&quot;N&quot;);
+	 		TheApplication().SetProfileAttr(&quot;ssSaveCheckResume&quot;,&quot;N&quot;);
+	 		TheApplication().SetProfileAttr(&quot;SSRun&quot;,&quot;N&quot;); //RPIRES - VFTRCBU-24985
+	 		TheApplication().SetProfileAttr(&quot;strPathIdCH&quot;,&quot;&quot;); //RPIRES - VFTRCBU-24985
+			TheApplication().SetProfileAttr(&quot;strSubAreaSSch&quot;,&quot;&quot;); //RPIRES - VFTRCBU-24985
+			TheApplication().SetProfileAttr(&quot;CanCloseSmartScript&quot;,&quot;Y&quot;); //SNOIVO-VFTRCBU-36569
+			
+			
+			//VFTRCBU-36933		
+			strSRId = TheApplication().GetProfileAttr(&quot;ServiceRequestId&quot;);
+			with(srBC)
+			{
+				SetViewMode(AllView);
+		    	ActivateField(&quot;VFTRCBU SR From Bulk&quot;);
+				ClearToQuery();
+				SetSearchExpr(&quot;[Id] = &apos;&quot;+strSRId+&quot;&apos;&quot;);
+				ExecuteQuery(ForwardBackward);
+				if (FirstRecord())
+				{
+					SetFieldValue(&quot;VFTRCBU SR From Bulk&quot;, &quot;N&quot;);
+					WriteRecord();
+				}
+			}
+			//VFTRCBU-36933
+				
+		  	//DEF-2880 END
+		  	 
+			/*TheApplication().SetProfileAttr(&quot;FinishLater&quot;,&quot;Y&quot;);
+			var CallScriptsBO: BusObject = TheApplication().GetBusObject(&quot;Call Scripts&quot;);
+			var bcCallScript: BusComp  = CallScriptsBO.GetBusComp(&quot;Call Script Runs&quot;);
+			var bcCallAnswer: BusComp  = CallScriptsBO.GetBusComp(&quot;Call Script Run Answers&quot;);
+		
+			var bcPath: BusComp = CallScriptsBO.GetBusComp(&quot;Call Script Paths&quot;);
+			var strSubAreaSmartScript = TheApplication().GetProfileAttr(&quot;SmartScriptName&quot;);
+			var sSaved = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;CALL_SCRIPT_SAVE_STATUS&quot;,&quot;Saved&quot;);
+			var sSRId = TheApplication().GetSharedGlobal(&quot;sssSRId&quot;);
+			
+			TheApplication().SetProfileAttr(&quot;CanSRbeAssigned&quot;,&quot;Y&quot;); // Used in &quot;VF Assignment Manager&quot; BS and &quot;TripletSmartScript&quot; in &quot;Service Request&quot; BC (TLGA-3682)
+		
+			var sPathId = &quot;&quot;;
+			with(bcPath)
+			{	
+				ClearToQuery();
+				SetViewMode(AllView);
+				SetSearchSpec(&quot;Name&quot;, strSubAreaSmartScript);
+				ExecuteQuery(ForwardOnly);
+				var isRecord = FirstRecord();
+				if(isRecord)			
+					sPathId = GetFieldValue(&quot;Id&quot;);		 
+			}
+			
+			TheApplication().SetProfileAttr(&quot;CanSRbeAssigned&quot;,&quot;Y&quot;);*/
+			//this.InvokeMethod(&quot;FinishScript&quot;);
+			//TheApplication().SetProfileAttr(&quot;FinishLater&quot;,&quot;&quot;);		
+			//var strSessionNum = TheApplication().GetSharedGlobal(&quot;SessionNum&quot;); // Set in &quot;Call Script Runs&quot; BC
+			//TheApplication().RaiseErrorText(&quot;Deneme1:&quot; + strSessionNum);
+			
+		/*	with(bcCallScript){	
+						
+				ClearToQuery();
+				SetViewMode (AllView);
+				ActivateField(&quot;Status Code&quot;);
+				//SetSearchSpec(&quot;Target Row Id&quot;, sSRId);
+				SetSearchSpec(&quot;Id&quot;, strSessionNum);
+				
+				ExecuteQuery(ForwardOnly);
+				if(FirstRecord()){
+					//SetFieldValue(&quot;Status Code&quot;, sSaved);
+					//WriteRecord();		
+					var isRecord3 = FirstRecord();
+						
+					while (isRecord3){
+	
+						with (bcCallAnswer){
+							ClearToQuery();
+							SetViewMode (AllView);
+							SetSearchSpec(&quot;Session Id&quot;, strSessionNum);
+							//SetSearchSpec(&quot;Target Row Id&quot;, sSRId);
+							
+							ExecuteQuery(ForwardOnly);
+							if(FirstRecord()){
+								
+								var isRecord2 = FirstRecord();
+								while (isRecord2){
+									bcCallAnswer.ActivateField(&quot;Question Must Answer&quot;);
+									bcCallAnswer.ActivateField(&quot;Answer Text&quot;);
+									var mandatory = bcCallAnswer.GetFieldValue(&quot;Question Must Answer&quot;);
+									var answer = bcCallAnswer.GetFieldValue(&quot;Answer Text&quot;);
+										
+									if (mandatory == &quot;Must Answer&quot; &amp;&amp; (answer == null || answer ==&quot;&quot;)) {
+										TheApplication().RaiseErrorText(&quot;Zorunlu alanları doldurunuz&quot;);
+										return (CancelOperation);
+   									}
+   									isRecord2 = bcCallAnswer.NextRecord();
+								}
+								TheApplication().SetProfileAttr(&quot;CanSRbeAssigned&quot;,&quot;Y&quot;); 
+							}
+						}
+	
+   						isRecord3 = bcCallScript.NextRecord();
+					}	
+				}   								 													
+			}*/
+			
+			//return (CancelOperation);
+		}
+		
+		//SNOIVO- VFTRCBU-36569 - START
+		if (MethodName == &quot;CancelScript&quot;)
+		{
+		TheApplication().SetProfileAttr(&quot;CanCloseSmartScript&quot;,&quot;Y&quot;);
+		}
+		
+		if (MethodName == &quot;SetPlayMode&quot;)
+		{
+		TheApplication().SetProfileAttr(&quot;CanCloseSmartScript&quot;,&quot;N&quot;);
+		}
+		//SNOIVO- VFTRCBU-36569 - END
+		
+		if (MethodName == &quot;FinishScript&quot;)
+		{
+			TheApplication().SetProfileAttr(&quot;CanCloseSmartScript&quot;,&quot;Y&quot;); //SNOIVO-VFTRCBU-36569
+			TheApplication().SetProfileAttr(&quot;CanSRbeAssigned&quot;,&quot;Y&quot;); // Used in &quot;VF Assignment Manager&quot; BS and &quot;TripletSmartScript&quot; in &quot;Service Request&quot; BC (TLGA-3682)
+			
+			//VFTRCBU-36933		
+			strSRId = TheApplication().GetProfileAttr(&quot;ServiceRequestId&quot;);
+			with(srBC)
+			{
+				SetViewMode(AllView);
+		    	ActivateField(&quot;VFTRCBU SR From Bulk&quot;);
+				ClearToQuery();
+				SetSearchExpr(&quot;[Id] = &apos;&quot;+strSRId+&quot;&apos;&quot;);
+				ExecuteQuery(ForwardBackward);
+				if (FirstRecord())
+				{
+					SetFieldValue(&quot;VFTRCBU SR From Bulk&quot;, &quot;N&quot;);
+					WriteRecord();
+				}
+			}
+			//VFTRCBU-36933
+			
+			
+			/*var sFinishLater = TheApplication().GetProfileAttr(&quot;FinishLater&quot;);
+			if(sFinishLater != &quot;Y&quot;)
+			{
+				var CallScriptsBOBusObj: BusObject = TheApplication().GetBusObject(&quot;Call Scripts&quot;);
+				var BusCompCallScript: BusComp = CallScriptsBOBusObj.GetBusComp(&quot;Call Script Runs&quot;);
+				var sFinished = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;CALL_SCRIPT_SAVE_STATUS&quot;,&quot;Finished&quot;);
+				var strSaved = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;CALL_SCRIPT_SAVE_STATUS&quot;,&quot;Saved&quot;);
+				var strSRId = TheApplication().GetProfileAttr(&quot;ServiceRequestId&quot;);
+				if (strSRId ==&quot;&quot;) 
+					strSRId = TheApplication().GetSharedGlobal(&quot;sssSRId&quot;);
+				with(BusCompCallScript)
+				{
+					ClearToQuery();
+					SetViewMode (AllView);
+					ActivateField(&quot;Status Code&quot;);
+					SetSearchSpec(&quot;Target Row Id&quot;, strSRId);
+					SetSearchSpec(&quot;Status Code&quot;, strSaved);
+					ExecuteQuery(ForwardOnly);
+					if(FirstRecord())
+					{
+						SetFieldValue(&quot;Status Code&quot;,sFinished);
+						WriteRecord();
+					}    
+				}
+			}
+			TheApplication().SetProfileAttr(&quot;FinishLater&quot;,&quot;&quot;);
+			return (ContinueOperation);*/
+		}
+
+	}//End Try
+	finally
+	{
+		/*bcCallScript = null;
+		BusCompCallScript = null;
+		bcPath = null;
+		CallScriptsBO = null;
+		CallScriptsBOBusObj = null;*/
+		srBO = null;
+	 	srBC = null;
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="05/03/2017 12:14:27"
+			   UPDATED_BY="JSARMENTO"
+			   CREATED="03/07/2013 14:48:15"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Base"
+			   SEQUENCE="0"
+			   TYPE="Base"
+			   WEB_TEMPLATE="Smart Script Player Applet (Player Only)"
+			   UPDATED="02/22/2017 16:30:54"
+			   UPDATED_BY="JSARMENTO"
+			   CREATED="10/11/2000 17:02:25"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="CancelScript"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="2"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="CancelScript"
+				   TYPE="Control"
+				   UPDATED="07/01/2013 19:38:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/11/2000 17:02:26"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="FinishScript"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="FinishScript"
+				   TYPE="Control"
+				   UPDATED="06/05/2003 21:18:57"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/11/2000 17:02:26"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="LabelRequiredInformation"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1500"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="LabelRequiredInformation"
+				   TYPE="Control"
+				   UPDATED="06/05/2003 21:18:57"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/11/2000 17:02:26"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT Siebel eChannel"
+				   TYPE="Control"
+				   UPDATED="01/15/2014 13:14:50"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/15/2014 13:14:50"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application"
+				   TYPE="Control"
+				   UPDATED="12/25/2013 09:15:30"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/25/2013 09:15:30"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="NewRecord"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="8"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NewRecord"
+				   TYPE="Control"
+				   UPDATED="02/22/2017 16:30:54"
+				   UPDATED_BY="JSARMENTO"
+				   CREATED="02/22/2017 16:30:54"
+				   CREATED_BY="JSARMENTO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="NextSection"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="4"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NextSection"
+				   TYPE="Control"
+				   UPDATED="06/05/2003 21:18:57"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/11/2000 17:02:27"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="PreviousSection"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="3"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="PreviousSection"
+				   TYPE="Control"
+				   UPDATED="06/05/2003 21:18:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/11/2000 17:02:27"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="SaveScript"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="5"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="SaveScript"
+				   TYPE="Control"
+				   UPDATED="06/05/2003 21:18:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/11/2000 18:23:39"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<APPLET_WEB_TEMPLATE
+			   COMMENTS="namic pick fields in eSmartScript player"
+			   INACTIVE="N"
+			   NAME="Edit"
+			   SEQUENCE="0"
+			   TYPE="Edit"
+			   WEB_TEMPLATE="Smart Script Player Applet (Player Only)"
+			   UPDATED="01/15/2014 13:14:50"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/11/2000 17:02:27"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="CancelScript"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="2"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="CancelScript"
+				   TYPE="Control"
+				   UPDATED="07/01/2013 19:38:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/11/2000 17:02:27"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="CustomControl"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="8"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="CustomControl"
+				   TYPE="Control"
+				   UPDATED="09/11/2003 11:03:52"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/11/2003 11:03:52"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="FinishScript"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="FinishScript"
+				   TYPE="Control"
+				   UPDATED="03/03/2013 17:22:54"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/03/2013 17:22:54"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="LabelRequiredInformation"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1500"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="LabelRequiredInformation"
+				   TYPE="Control"
+				   UPDATED="06/05/2003 21:18:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/11/2000 17:02:27"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT Siebel eChannel"
+				   TYPE="Control"
+				   UPDATED="01/15/2014 13:14:50"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/15/2014 13:14:50"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application"
+				   TYPE="Control"
+				   UPDATED="11/11/2010 19:22:28"
+				   UPDATED_BY="SADMIN"
+				   CREATED="11/11/2010 19:22:28"
+				   CREATED_BY="SADMIN">
+					<APPLET_WEB_TEMPLATE_ITEM_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   ITEM_IDENTIFIER="2"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="11/11/2010 19:22:28"
+					   UPDATED_BY="SADMIN"
+					   CREATED="11/11/2010 19:22:28"
+					   CREATED_BY="SADMIN">
+					</APPLET_WEB_TEMPLATE_ITEM_LOCALE>
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application2"
+				   TYPE="Control"
+				   UPDATED="12/25/2013 09:15:31"
+				   UPDATED_BY="SADMIN"
+				   CREATED="12/25/2013 09:15:31"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="NextSection"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="4"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NextSection"
+				   TYPE="Control"
+				   UPDATED="04/20/2010 13:57:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/20/2010 13:57:24"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="PreviousSection"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="3"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="PreviousSection"
+				   TYPE="Control"
+				   UPDATED="04/20/2010 13:57:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/20/2010 13:57:24"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="SaveScript"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="5"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="SaveScript"
+				   TYPE="Control"
+				   UPDATED="06/05/2003 21:18:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/11/2000 18:23:47"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_FINISH_LATER-1004224651-08H"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="22"
+			   INACTIVE="N"
+			   LEFT="938"
+			   METHOD_INVOKED="CancelScript"
+			   MULTI_LINE="N"
+			   NAME="CancelScript"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="4"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TARGET_VIEW_FRAME="_sweview"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="597"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="80"
+			   UPDATED="12/09/2013 15:07:51"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/11/2000 17:02:23"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="10/11/2003 02:08:45"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/11/2000 17:02:24"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CLASS="SSCoSmartScriptCC"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="CustomControl"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="CustomControl"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="09/11/2003 13:47:40"
+			   UPDATED_BY="SADMIN"
+			   CREATED="09/11/2003 13:47:40"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_FINISH-1004224650-08F"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="22"
+			   INACTIVE="N"
+			   LEFT="853"
+			   METHOD_INVOKED="FinishScript"
+			   MULTI_LINE="N"
+			   NAME="FinishScript"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="3"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TARGET_VIEW_FRAME="_sweview"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="597"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="80"
+			   UPDATED="01/31/2009 23:05:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/11/2000 17:02:24"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="10/10/2003 14:41:20"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/11/2000 17:02:24"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_REQUIRED_INFORMATION-1005112254-2BX"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Label"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="LabelRequiredInformation"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="N"
+			   TAB_STOP="N"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="Label"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="0"
+			   UPDATED="01/31/2009 23:05:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/11/2000 17:02:24"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="10/10/2003 14:17:55"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/11/2000 17:02:24"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Hidden"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   METHOD_INVOKED="NewRecord"
+			   MULTI_LINE="N"
+			   NAME="NewRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="02/22/2017 16:29:59"
+			   UPDATED_BY="JSARMENTO"
+			   CREATED="02/22/2017 16:29:23"
+			   CREATED_BY="JSARMENTO">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="New"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="02/22/2017 16:29:51"
+				   UPDATED_BY="JSARMENTO"
+				   CREATED="02/22/2017 16:29:51"
+				   CREATED_BY="JSARMENTO">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_NEXT-1004231538-48J"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="SSNxt"
+			   HEIGHT="22"
+			   INACTIVE="N"
+			   LEFT="683"
+			   METHOD_INVOKED="NextSection"
+			   MULTI_LINE="N"
+			   NAME="NextSection"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="1"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="597"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="80"
+			   UPDATED="01/31/2009 23:05:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/11/2000 17:02:25"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="10/10/2003 13:26:16"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/11/2000 17:02:25"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_PREVIOUD-1005111325-1I5"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="SSPrv"
+			   HEIGHT="22"
+			   INACTIVE="N"
+			   LEFT="768"
+			   METHOD_INVOKED="PreviousSection"
+			   MULTI_LINE="N"
+			   NAME="PreviousSection"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="2"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="597"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="80"
+			   UPDATED="01/31/2009 23:05:02"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/11/2000 17:02:25"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="10/10/2003 00:54:24"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/11/2000 17:02:25"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_QUERY_ASSISTANT-0928173050-1NF"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="ShowQueryAssistant"
+			   MULTI_LINE="N"
+			   NAME="QueryAssistant"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="02/01/2009 00:14:01"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/31/2009 23:05:02"
+			   CREATED_BY="SADMIN">
+				<CONTROL_USER_PROP
+				   INACTIVE="N"
+				   NAME="Mode"
+				   VALUE="Edit"
+				   UPDATED="02/01/2009 00:14:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 00:14:01"
+				   CREATED_BY="SADMIN">
+				</CONTROL_USER_PROP>
+				<CONTROL_USER_PROP
+				   INACTIVE="N"
+				   NAME="Popup"
+				   VALUE="Query Assistant"
+				   UPDATED="02/01/2009 00:14:01"
+				   UPDATED_BY="SADMIN"
+				   CREATED="02/01/2009 00:14:01"
+				   CREATED_BY="SADMIN">
+				</CONTROL_USER_PROP>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_SAVE-1004225832-051"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   METHOD_INVOKED="SaveScript"
+			   MULTI_LINE="N"
+			   NAME="SaveScript"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="5"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TARGET_VIEW_FRAME="_sweview"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="12/25/2013 09:15:31"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/11/2000 18:22:31"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   VISIBLE="Y"
+				   UPDATED="10/10/2003 14:42:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/11/2000 18:23:16"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+

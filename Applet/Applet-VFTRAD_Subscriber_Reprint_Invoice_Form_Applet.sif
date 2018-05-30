@@ -1,0 +1,1118 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="11/24/2016 17:14:00"
+   UPDATED_BY="SADMIN"
+   CREATED="11/24/2016 14:49:11"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="CCB228 - JFONSECA"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VFTRCBU Subscriber Invoices"
+	   UI_FREEZE="N"
+	   UPDATED="05/24/2017 14:52:00"
+	   UPDATED_BY="CJANEIRO"
+	   CREATED="04/05/2017 11:12:26"
+	   CREATED_BY="JFONSECA"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   BUSINESS_COMPONENT="VFTRAD Invoice Re-Print VBC"
+		   CLASS="CSSFrame"
+		   COMMENTS="CCB228 - JFONSECA"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HEIGHT="1"
+		   INACTIVE="N"
+		   NAME="VFTRAD Subscriber Reprint Invoice Form Applet"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="05/24/2017 11:11:34"
+		   SCRIPTED="Y"
+		   TITLE_-_STRING_REFERENCE="X_VF_INVOICE_REPRINT_REQ"
+		   TYPE="Standard"
+		   UPGRADE_BEHAVIOR="Preserve"
+		   WIDTH="2"
+		   OBJECT_LOCKED_BY_NAME="CJANEIRO"
+		   UPDATED="05/24/2017 11:12:59"
+		   UPDATED_BY="CJANEIRO"
+		   CREATED="04/10/2017 11:55:50"
+		   CREATED_BY="JFONSECA">
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="Applet_InvokeMethod"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="Applet_InvokeMethod"
+			   SCRIPT="function Applet_InvokeMethod (name, inputPropSet)
+{
+	if(name == &quot;Submit&quot;)
+	{	
+	
+		var svc_ACSNIGeneralOperations = theApplication().GetService (&quot;ACS NI General Operations&quot;);
+		var pset_Inputs  = theApplication().NewPropertySet();
+		var pset_Outputs = theApplication().NewPropertySet();
+		var str_Message = &quot;&quot;;
+							
+		pset_Inputs.SetProperty(&quot;Code&quot;, &quot;AD9005&quot;);
+		pset_Inputs.SetProperty(&quot;MessageCategory&quot;, &quot;VF Message Category&quot;);
+		pset_Outputs = svc_ACSNIGeneralOperations.InvokeMethod(&quot;GetLookupMsg&quot;, pset_Inputs);
+		var str_Message = pset_Outputs.GetProperty(&quot;Message&quot;);	
+		theApplication().SWEAlert(str_Message);
+		return(&quot;ContinueOperation&quot;);
+			
+	}
+	return (&quot;CancelOperation&quot;);	
+}"
+			   UPDATED="05/17/2017 10:22:50"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:50"
+			   CREATED_BY="JFONSECA">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_LOCALE
+			   APPLICATION_CODE="STD"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   REDO="N"
+			   TRANSLATE="Y"
+			   UPDATED="04/10/2017 11:55:50"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:50"
+			   CREATED_BY="JFONSECA">
+			</APPLET_LOCALE>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_Load"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_Load ()
+{
+	TheApplication().SetProfileAttr(&quot;VFSkipQueryWF&quot;,&quot;N&quot;);
+	TheApplication().SetProfileAttr(&quot;EmptyResponseReprint&quot;,&quot;Y&quot;);
+}"
+			   SEQUENCE="1"
+			   UPDATED="05/11/2017 17:23:46"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="05/08/2017 16:05:45"
+			   CREATED_BY="JFONSECA">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreCanInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreCanInvokeMethod (MethodName, &amp;CanInvoke)
+{
+	
+	if (MethodName==&quot;Submit&quot;)	
+	{
+		var bo = TheApplication().ActiveBusObject();
+		var bc = bo.GetBusComp(&quot;Asset Mgmt - Asset&quot;);
+		bc.ActivateField(&quot;VFTRAD Media Type&quot;);
+		var mediaType = bc.GetFieldValue(&quot;VFTRAD Media Type&quot;);
+		var media_105 = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;BILL_MEDIA_TYPE&quot;,&quot;105&quot;);
+		var media_107 = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;BILL_MEDIA_TYPE&quot;,&quot;107&quot;);
+		
+		if (mediaType == media_105 || mediaType == media_107) {
+		   CanInvoke = &quot;FALSE&quot;;
+		}
+		else {
+		   CanInvoke = &quot;TRUE&quot;;
+		}
+			
+		return (CancelOperation);
+	}
+	
+	return (ContinueOperation);
+}"
+			   SEQUENCE="2"
+			   UPDATED="05/12/2017 19:16:06"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:51"
+			   CREATED_BY="JFONSECA">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreInvokeMethod (MethodName)
+{
+	try
+	{
+		if (MethodName == &quot;Submit&quot;)
+		{
+		
+		TheApplication().SetProfileAttr(&quot;VFSkipQueryWF&quot;,&quot;N&quot;);
+		
+		
+			var strBillingCode =&quot;&quot;;
+			var sBillAccntId =&quot;&quot;;
+			var thisBC : BusComp = this.BusComp();
+			var bcBA : BusComp = this.BusObject().GetBusComp(&quot;Billing Account&quot;);
+			var sReqType = thisBC.GetFieldValue(&quot;REQUEST_TYPE&quot;); //Traffic/Traffic+Details
+			var sProfAttrReqType = &quot;&quot;; 
+			var sDelMode = thisBC.GetFieldValue(&quot;DELIVERY_MODE&quot;); //Mail/Fax/Posta
+			var sProfAttrDelMode = &quot;&quot;;
+			var sFax = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_REPRINT_DEL_MODE&quot;,&quot;Fax&quot;);
+			var sPostAddr = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_REPRINT_DEL_MODE&quot;,&quot;Mail&quot;);
+			var sEmail = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_REPRINT_DEL_MODE&quot;,&quot;E-mail&quot;);
+			var sSummary = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_REPRINT_REQ_TYPE&quot;,&quot;Main pages only&quot;);
+			var sDetail = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_REPRINT_REQ_TYPE&quot;,&quot;Main pages + traffic detail&quot;);
+			if(sDelMode == sEmail){
+				sProfAttrDelMode = &quot;EMAIL&quot;;
+				if (thisBC.GetFieldValue(&quot;EMAIL_ADDRESS&quot;) == &quot;&quot;)
+				{		
+					var strMessageCategory = &quot;VFTRCBU User Defined Errors&quot;;
+					var strCode = &quot;0268&quot;;
+					var sMsg = TheApplication().LookupMessage(strMessageCategory, strCode);
+					TheApplication().RaiseErrorText(sMsg);              
+					return (CancelOperation);
+				}
+			}
+			else if(sDelMode == sPostAddr)
+				sProfAttrDelMode = &quot;POSTA&quot;;
+			else if(sDelMode == sFax)
+				sProfAttrDelMode = &quot;FAKS&quot;;
+			
+			if(sReqType == sSummary)
+				sProfAttrReqType = &quot;SUMMARY&quot;;
+			else if(sReqType == sDetail)
+				sProfAttrReqType = &quot;DETAIL&quot;;
+			
+			var bcAsset : BusComp = this.BusObject().GetBusComp(&quot;Asset Mgmt - Asset&quot;);
+			sBillAccntId = bcAsset.GetFieldValue(&quot;Billing Account Id&quot;);
+			
+			TheApplication().SetProfileAttr(&quot;InvReprintBillId&quot;,sBillAccntId);
+			TheApplication().SetProfileAttr(&quot;InvReprintReqType&quot;,sProfAttrReqType);
+			TheApplication().SetProfileAttr(&quot;InvReprintDelMode&quot;,sProfAttrDelMode);
+			TheApplication().SetProfileAttr(&quot;InvReprintPostalAddr&quot;,thisBC.GetFieldValue(&quot;POSTAL_ADDRESS&quot;));
+			TheApplication().SetProfileAttr(&quot;InvReprintFaxNr&quot;,thisBC.GetFieldValue(&quot;FAX_NUMBER&quot;));
+			TheApplication().SetProfileAttr(&quot;InvReprintEmail&quot;,thisBC.GetFieldValue(&quot;EMAIL_ADDRESS&quot;));
+			TheApplication().SetProfileAttr(&quot;EmptyResponseReprint&quot;,&quot;N&quot;);
+			
+		}
+	}
+	catch(e)
+	{
+		throw(e);
+	}
+	finally
+	{
+		strBillingCode = null;
+		thisBC = null;
+		bcBA = null;
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="3"
+			   UPDATED="05/24/2017 11:12:59"
+			   UPDATED_BY="CJANEIRO"
+			   CREATED="04/10/2017 11:55:51"
+			   CREATED_BY="JFONSECA">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_USER_PROP
+			   COMMENTS="Modified as per GEN_REQ_802 : IDC-GPS :01/29/2013 :Previous Value was&quot;TRUE&quot; without any condition"
+			   INACTIVE="Y"
+			   NAME="CanInvokeMethod: Submit"
+			   VALUE="IIf( [VF Media Type Calc]=&quot;Y&quot;,  TRUE , FALSE )"
+			   UPDATED="04/10/2017 11:55:51"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:51"
+			   CREATED_BY="JFONSECA">
+			</APPLET_USER_PROP>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Base"
+			   SEQUENCE="0"
+			   TYPE="Base"
+			   WEB_TEMPLATE="Applet Form 4 Column (Base) - Expanded"
+			   UPDATED="05/10/2017 17:40:22"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:50"
+			   CREATED_BY="JFONSECA">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="EMAIL_ADDRESS"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1301"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="EMAIL_ADDRESS"
+				   TYPE="Control"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="POSTAL_ADDRESS"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1297"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="POSTAL_ADDRESS"
+				   TYPE="Control"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="REQUEST_TYPE"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1296"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="REQUEST_TYPE"
+				   TYPE="Control"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Edit"
+			   SEQUENCE="0"
+			   TYPE="Edit"
+			   WEB_TEMPLATE="Applet Form 4 Column (Base) - Expanded"
+			   UPDATED="05/10/2017 17:40:24"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:50"
+			   CREATED_BY="JFONSECA">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="DELIVERY_MODE"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1297"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="DELIVERY_MODE"
+				   TYPE="Control"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="EMAIL_ADDRESS"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2298"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="EMAIL_ADDRESS"
+				   TYPE="Control"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="FAX_NUMBER"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2297"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="FAX_NUMBER"
+				   TYPE="Control"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="LABEL_DLVR_MODE"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="LABEL_DLVR_MODE"
+				   TYPE="Control"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="LABEL_DLVR_MODE_DETAILS"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2001"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="LABEL_DLVR_MODE_DETAILS"
+				   TYPE="Control"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="POSTAL_ADDRESS"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2296"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="POSTAL_ADDRESS"
+				   TYPE="Control"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="REQUEST_TYPE"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1296"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="REQUEST_TYPE"
+				   TYPE="Control"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Submit"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="5801"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Submit"
+				   TYPE="Control"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Media Type"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2299"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Media Type"
+				   TYPE="Control"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+					<APPLET_WEB_TEMPLATE_ITEM_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   ITEM_IDENTIFIER="2299"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="04/10/2017 11:55:50"
+					   UPDATED_BY="JFONSECA"
+					   CREATED="04/10/2017 11:55:50"
+					   CREATED_BY="JFONSECA">
+					</APPLET_WEB_TEMPLATE_ITEM_LOCALE>
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF submit reprint Message"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1003"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF submit reprint Message"
+				   TYPE="Control"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_DLVR_MODE"
+			   DEFAULT_BUTTON="N"
+			   FIELD="DELIVERY_MODE"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="381"
+			   MULTI_LINE="N"
+			   NAME="DELIVERY_MODE"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="4"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="2"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/10/2017 11:55:50"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:50"
+			   CREATED_BY="JFONSECA">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_E-MAIL_ADDRESS-1009090006-1PT"
+			   DEFAULT_BUTTON="N"
+			   FIELD="EMAIL_ADDRESS"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="131"
+			   MULTI_LINE="N"
+			   NAME="EMAIL_ADDRESS"
+			   OWNER_DRAW="N"
+			   PICK_APPLET="VF Customer Email Addresses"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="10"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="28"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/10/2017 11:55:50"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:50"
+			   CREATED_BY="JFONSECA">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_FAX_NUMBER-0928155822-0JB"
+			   DEFAULT_BUTTON="N"
+			   FIELD="FAX_NUMBER"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="881"
+			   MULTI_LINE="N"
+			   NAME="FAX_NUMBER"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="8"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="2"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/10/2017 11:55:50"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:50"
+			   CREATED_BY="JFONSECA">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_DLVR_MODE_UPCASE"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="FormSection"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="LABEL_DLVR_MODE"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/10/2017 11:55:50"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:50"
+			   CREATED_BY="JFONSECA">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X__VF_DLVR_MODE_DETAILS"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="FormSection"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="LABEL_DLVR_MODE_DETAILS"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="Label"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/10/2017 11:55:50"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:50"
+			   CREATED_BY="JFONSECA">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="Y"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="256"
+			   MULTI_LINE="N"
+			   NAME="LabelDELIVERY_MODE"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="3"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="N"
+			   TEXT_ALIGNMENT="Right"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="4"
+			   TYPE="Label"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/10/2017 11:55:50"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:50"
+			   CREATED_BY="JFONSECA">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="Y"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="6"
+			   MULTI_LINE="N"
+			   NAME="LabelEMAIL_ADDRESS"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="9"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="N"
+			   TEXT_ALIGNMENT="Right"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="30"
+			   TYPE="Label"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/10/2017 11:55:50"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:50"
+			   CREATED_BY="JFONSECA">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="Y"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="756"
+			   MULTI_LINE="N"
+			   NAME="LabelFAX_NUMBER"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="7"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="N"
+			   TEXT_ALIGNMENT="Right"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="4"
+			   TYPE="Label"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/10/2017 11:55:50"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:50"
+			   CREATED_BY="JFONSECA">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="Y"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="506"
+			   MULTI_LINE="N"
+			   NAME="LabelPOSTAL_ADDRESS"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="5"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="N"
+			   TEXT_ALIGNMENT="Right"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="4"
+			   TYPE="Label"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/10/2017 11:55:50"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:50"
+			   CREATED_BY="JFONSECA">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="Y"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="6"
+			   MULTI_LINE="N"
+			   NAME="LabelREQUEST_TYPE"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="1"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="N"
+			   TEXT_ALIGNMENT="Right"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="4"
+			   TYPE="Label"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/10/2017 11:55:50"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:50"
+			   CREATED_BY="JFONSECA">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_POSTAL_ADDRESS-1009090256-401"
+			   DEFAULT_BUTTON="N"
+			   FIELD="POSTAL_ADDRESS"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="631"
+			   MULTI_LINE="N"
+			   NAME="POSTAL_ADDRESS"
+			   OWNER_DRAW="N"
+			   PICK_APPLET="VF Customer Postal Addresses"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="6"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="2"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/10/2017 11:55:50"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:50"
+			   CREATED_BY="JFONSECA">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_REQUEST_TYPE-0928173052-1Q1"
+			   DEFAULT_BUTTON="N"
+			   FIELD="REQUEST_TYPE"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="131"
+			   MULTI_LINE="N"
+			   NAME="REQUEST_TYPE"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="2"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="2"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/10/2017 11:55:50"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:50"
+			   CREATED_BY="JFONSECA">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_SUBMIT-1004224803-0IW"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   METHOD_INVOKED="Submit"
+			   MULTI_LINE="N"
+			   NAME="Submit"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/10/2017 11:55:50"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:50"
+			   CREATED_BY="JFONSECA">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_MEDIA_TYPE-1004234312-5NO"
+			   COMMENTS="GEN_REQ_802 : IDC-GPS :01/29/2013: Created new"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF Media Type Calc"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="Y"
+			   MULTI_LINE="N"
+			   NAME="VF Media Type"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/10/2017 11:55:50"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:50"
+			   CREATED_BY="JFONSECA">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF submit reprint Message"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Hidden"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="131"
+			   MULTI_LINE="N"
+			   NAME="VF submit reprint Message"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SEQUENCE="2"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="2"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/10/2017 11:55:50"
+			   UPDATED_BY="JFONSECA"
+			   CREATED="04/10/2017 11:55:50"
+			   CREATED_BY="JFONSECA">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="VF submit reprint Message"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/10/2017 11:55:50"
+				   UPDATED_BY="JFONSECA"
+				   CREATED="04/10/2017 11:55:50"
+				   CREATED_BY="JFONSECA">
+				</CONTROL_LOCALE>
+			</CONTROL>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+

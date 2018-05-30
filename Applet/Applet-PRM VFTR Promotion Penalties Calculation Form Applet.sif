@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <REPOSITORY
    NAME="Siebel Repository"
@@ -1684,3 +1685,1691 @@
 
 
 
+=======
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VFTRCBU Products and Services"
+	   UI_FREEZE="N"
+	   UPDATED="12/29/2017 20:50:20"
+	   UPDATED_BY="IBM_ANALINO"
+	   CREATED="02/02/2015 22:35:32"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   BUSINESS_COMPONENT="VFTRCBU Promotion Penalty VBC"
+		   CLASS="CSSFrame"
+		   COMMENTS="WA#15 FTOSCANO 24-07-2015"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HEIGHT="3"
+		   INACTIVE="N"
+		   NAME="PRM VFTR Promotion Penalties Calculation Form Applet"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="12/29/2017 12:53:28"
+		   SCRIPTED="Y"
+		   TITLE_-_STRING_REFERENCE="X_PENALTY_CALCULATION"
+		   TYPE="Standard"
+		   UPGRADE_BEHAVIOR="Preserve"
+		   WIDTH="2"
+		   OBJECT_LOCKED_BY_NAME="IBM_ANALINO"
+		   UPDATED="12/29/2017 20:50:20"
+		   UPDATED_BY="IBM_ANALINO"
+		   CREATED="11/23/2017 14:12:53"
+		   CREATED_BY="VF_SKILICSAL">
+			<APPLET_LOCALE
+			   APPLICATION_CODE="STD"
+			   INACTIVE="N"
+			   LANGUAGE_CODE="ENU"
+			   NAME="ENU-STD"
+			   REDO="N"
+			   TRANSLATE="Y"
+			   UPDATED="11/23/2017 14:12:53"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:12:53"
+			   CREATED_BY="VF_SKILICSAL">
+			</APPLET_LOCALE>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_Load"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_Load ()
+{
+	//VFTRCBU 29122014: WA#15 - FTOSCANO
+	TheApplication().SetProfileAttr(&quot;VFSkipQueryWF&quot;,&quot;N&quot;);
+	TheApplication().SetProfileAttr(&quot;VFTRCBU_PROM_EMPTY_REQUEST&quot;,&quot;&quot;);
+}"
+			   SEQUENCE="1"
+			   UPDATED="11/23/2017 14:12:54"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:12:54"
+			   CREATED_BY="VF_SKILICSAL">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreCanInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreCanInvokeMethod (MethodName, &amp;CanInvoke)
+{
+	if (MethodName == &quot;VFTRCBUQuery&quot;) 
+	{
+		try
+		{
+			var thisBC = this.BusComp();
+			var	total=0;
+			var boItem : BusObject         = TheApplication().GetBusObject(&quot;VF TRK PRM Account&quot;);
+			var bcItem : BusComp           = boItem.GetBusComp(&quot;VFTRCBU Agreements&quot;);
+			
+			var boItemAsset : BusObject         = TheApplication().ActiveBusObject();
+			var bcItemAsset : BusComp           = boItemAsset.GetBusComp(&quot;Asset Mgmt - Asset&quot;);
+			var strAccountType					= bcItemAsset.GetFieldValue(&quot;Account Type&quot;);
+			var sItemMSISDN           = bcItemAsset.GetFieldValue(&quot;VF MSISDN&quot;);
+			var MSISDN_PRM = TheApplication().SetProfileAttr(&quot;MSISDN_PRM&quot;,sItemMSISDN);
+		    var bHasItem          = false;
+			var 	strAgreementId      = &quot;&quot;;
+			var 	strAgreementStatus = &quot;&quot;;
+			bcItem.SetViewMode(AllView);
+			bcItem.ClearToQuery();
+			bcItem.ActivateField(&quot;VFTRCBU MSISDN&quot;);
+			bcItem.SetSearchSpec(&quot;VFTRCBU MSISDN&quot;, sItemMSISDN);
+			bcItem.ExecuteQuery(ForwardOnly);
+			bHasItem = bcItem.FirstRecord();
+			
+			while (bHasItem)
+			{
+				strAgreementId       = bcItem.GetFieldValue(&quot;Id&quot;);
+				strAgreementStatus= bcItem.GetFieldValue(&quot;Agreement Status&quot;);
+				/*IBM_ANALINO DEF-24712 START*/				
+				if(strAgreementStatus==TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;SRV_AGREE_STATUS&quot;,&quot;Active&quot;)){				
+					thisBC.SetFieldValue(&quot;VFTRCBU Agreement Id&quot;,strAgreementId);
+					total=total+1;
+				}
+			 	if(total==0){
+			 		bHasItem = bcItem.NextRecord();
+			 	}else{
+			 		break;
+			 	}
+				/*IBM_ANALINO DEF-24712 END*/
+			}
+		    if (strAgreementId != &quot;&quot; &amp;&amp; strAgreementStatus == (TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;SRV_AGREE_STATUS&quot;,&quot;Active&quot;)) &amp;&amp;  strAccountType == (TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;ACCOUNT_TYPE&quot;,&quot;102&quot;)))
+			{
+				CanInvoke = &quot;TRUE&quot;;
+			}
+		    else
+				CanInvoke = &quot;FALSE&quot;;
+						    
+			return (CancelOperation);				
+		}
+		finally
+		{
+		}
+	}
+	return (ContinueOperation);
+}"
+			   SEQUENCE="2"
+			   UPDATED="12/29/2017 20:50:20"
+			   UPDATED_BY="IBM_ANALINO"
+			   CREATED="11/23/2017 14:12:54"
+			   CREATED_BY="VF_SKILICSAL">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreInvokeMethod (MethodName)
+{
+	//VFTRCBU 29122014: WA#15 - FTOSCANO - START
+	if(MethodName==&quot;VFTRCBUQuery&quot;)
+	{
+		var thisBC = this.BusComp();
+		var App = TheApplication();
+		var strWFBS	= &quot;&quot;;
+		var strEndDate = thisBC.GetFieldValue(&quot;VFTRCBU End Date&quot;);
+		var strAgreementId = thisBC.GetFieldValue(&quot;VFTRCBU Agreement Id&quot;);
+		var psCreateOut = &quot;&quot;;
+		var psCreateIn	= &quot;&quot;;
+		var errCode = &quot;&quot;;
+
+		if (strEndDate == &quot;&quot;)
+		{
+			TheApplication().SetProfileAttr(&quot;VFSkipQueryWF&quot;,&quot;N&quot;);
+			TheApplication().SetProfileAttr(&quot;VFTRCBU_PROM_EMPTY_REQUEST&quot;,&quot;Y&quot;);	
+			
+			//ACAMBAS: VFTRCBU-20594 - Start
+			thisBC.ClearToQuery();
+			thisBC.SetViewMode(AllView);
+			thisBC.ExecuteQuery(ForwardOnly);
+			//ACAMBAS: VFTRCBU-20594 - End
+			TheApplication().SetProfileAttr(&quot;VFTRCBU_PROM_EMPTY_REQUEST&quot;,&quot;N&quot;); //JFONSECA - 11.12.2015
+		}
+		else
+		{
+			TheApplication().Trace(&quot;WebApplet_PreInvokeMethod: Date Filled!&quot;);
+			
+			
+			TheApplication().SetProfileAttr(&quot;VFSkipQueryWF&quot;,&quot;N&quot;);
+			TheApplication().SetProfileAttr(&quot;VFTRCBU_PROM_EMPTY_REQUEST&quot;,&quot;N&quot;);
+			
+			//ACAMBAS: VFTRCBU-20594 - Start
+		/*	//IOName=VFTRCBU Promotion Penalty VBC IO;DataMapName=VFTRCBU Promotion Penalty Data Map;RequireContext=Y
+			psCreateIn = App.NewPropertySet();
+			psCreateOut = App.NewPropertySet();
+			strWFBS = App.GetService(&quot;Workflow Process Manager&quot;);
+			psCreateIn.SetProperty(&quot;ProcessName&quot;,&quot;VFTRCBU Promotion Penalty WF&quot;);
+			psCreateIn.SetProperty(&quot;IOName&quot;,&quot;VFTRCBU Promotion Penalty VBC IO&quot;);
+			psCreateIn.SetProperty(&quot;DataMapName&quot;,&quot;VFTRCBU Promotion Penalty Data Map&quot;);
+			psCreateIn.SetProperty(&quot;RequireContext&quot;,&quot;Y&quot;);
+			psCreateIn.SetProperty(&quot;VFTRCBU End Date&quot;, strEndDate);			
+			strWFBS.InvokeMethod(&quot;RunProcess&quot;, psCreateIn, psCreateOut);*/
+			var MSISDN_PRM=TheApplication().GetProfileAttr(&quot;MSISDN_PRM&quot;);
+			thisBC.ClearToQuery();
+			thisBC.SetViewMode(AllView);
+			thisBC.SetSearchSpec(&quot;VFTRCBU MSISDN&quot;,MSISDN_PRM);
+			thisBC.SetSearchSpec(&quot;VFTRCBU End Date&quot;, strEndDate);
+			thisBC.SetSearchSpec(&quot;EligibilityFlg&quot;, &quot;Y&quot;);
+			thisBC.SetSearchSpec(&quot;VFTRCBU Agreement Id&quot;,strAgreementId );	
+			thisBC.ExecuteQuery(ForwardOnly);
+			
+			thisBC.ClearToQuery();
+			TheApplication().SetProfileAttr(&quot;VFSkipQueryWF&quot;,&quot;N&quot;);
+			//TheApplication().SetProfileAttr(&quot;VFTRCBU_PROM_EMPTY_REQUEST&quot;,&quot;Y&quot;);
+			TheApplication().SetProfileAttr(&quot;VFTRCBU_PROM_EMPTY_REQUEST&quot;,&quot;N&quot;); //JFONSECA - 11.12.2015
+			
+			//ACAMBAS: VFTRCBU-20594 - End
+		}
+		return (CancelOperation);
+	}
+	return (ContinueOperation);
+	//VFTRCBU 29122014: WA#15 - FTOSCANO - END
+}"
+			   SEQUENCE="3"
+			   UPDATED="11/23/2017 14:12:54"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:12:54"
+			   CREATED_BY="VF_SKILICSAL">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: ExecuteQuery"
+			   VALUE="FALSE"
+			   UPDATED="11/23/2017 14:12:54"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:12:54"
+			   CREATED_BY="VF_SKILICSAL">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: NewQuery"
+			   VALUE="FALSE"
+			   UPDATED="11/23/2017 14:12:54"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:12:54"
+			   CREATED_BY="VF_SKILICSAL">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: RefineQuery"
+			   VALUE="FALSE"
+			   UPDATED="11/23/2017 14:12:54"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:12:54"
+			   CREATED_BY="VF_SKILICSAL">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: UndoQuery"
+			   VALUE="FALSE"
+			   UPDATED="11/23/2017 14:12:54"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:12:54"
+			   CREATED_BY="VF_SKILICSAL">
+			</APPLET_USER_PROP>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Edit"
+			   SEQUENCE="0"
+			   TYPE="Edit"
+			   WEB_TEMPLATE="Applet Form Grid Layout"
+			   UPDATED="11/23/2017 14:12:55"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:12:54"
+			   CREATED_BY="VF_SKILICSAL">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="110"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT Siebel eChannel"
+				   TYPE="Control"
+				   UPDATED="11/23/2017 14:12:54"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:54"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="6066"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application"
+				   TYPE="Control"
+				   UPDATED="11/23/2017 14:12:54"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:54"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="9066"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application2"
+				   TYPE="Control"
+				   UPDATED="11/23/2017 14:12:54"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:54"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="12066"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application3"
+				   TYPE="Control"
+				   UPDATED="11/23/2017 14:12:54"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:54"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="15066"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application4"
+				   TYPE="Control"
+				   UPDATED="11/23/2017 14:12:54"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:54"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="15051"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application5"
+				   TYPE="Control"
+				   UPDATED="11/23/2017 14:12:55"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:55"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="12051"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application6"
+				   TYPE="Control"
+				   UPDATED="11/23/2017 14:12:55"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:55"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="9051"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application7"
+				   TYPE="Control"
+				   UPDATED="11/23/2017 14:12:55"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:55"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   EXPRESSION="NOT TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="6051"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NOT TeXCo Application8"
+				   TYPE="Control"
+				   UPDATED="11/23/2017 14:12:55"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:55"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="NewQuery"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="Y"
+				   ITEM_IDENTIFIER="109"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NewQuery"
+				   TYPE="Control"
+				   UPDATED="11/23/2017 14:12:55"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:55"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="21"
+				   CONTROL="VFTRCBU End Date"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="3024"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU End Date"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="11/23/2017 14:12:55"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:55"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VFTRCBU End Date"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="3009"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU End DateLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="11/23/2017 14:12:55"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:55"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Query"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="111"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Query"
+				   TYPE="Control"
+				   UPDATED="11/23/2017 14:12:55"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:55"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="21"
+				   CONTROL="VFTRCBU Total Penalty"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="7024"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Total Penalty"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="11/23/2017 14:12:55"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:55"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VFTRCBU Total Penalty"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="7009"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Total PenaltyLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="11/23/2017 14:12:55"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:55"
+				   CREATED_BY="VF_SKILICSAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="DeleteRecord"
+			   MULTI_LINE="N"
+			   NAME="DeleteRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="7"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="11/23/2017 14:12:56"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:12:56"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Delete"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/23/2017 14:12:56"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:56"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_EDIT-1004231338-2SY"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="EditRecord"
+			   MULTI_LINE="N"
+			   NAME="EditRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="8"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="11/23/2017 14:12:57"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:12:57"
+			   CREATED_BY="VF_SKILICSAL">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_GO-1004224654-095"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ExecuteQuery"
+			   MULTI_LINE="N"
+			   NAME="ExecuteQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="9"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="11/23/2017 14:12:57"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:12:57"
+			   CREATED_BY="VF_SKILICSAL">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RecNavNxt"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="GotoNextSet"
+			   MULTI_LINE="N"
+			   NAME="GotoNextSet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="10"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="11/23/2017 14:12:57"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:12:57"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Next"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/23/2017 14:12:57"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:57"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RecNavPrv"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="GotoPreviousSet"
+			   MULTI_LINE="N"
+			   NAME="GotoPreviousSet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="11"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="11/23/2017 14:12:58"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:12:57"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Previous"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/23/2017 14:12:58"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:58"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="Y"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   LEFT="6"
+			   MULTI_LINE="N"
+			   NAME="LabelVFTRCBUCCInstalmentsDisplay"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="5"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="N"
+			   TEXT_ALIGNMENT="Right"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="26"
+			   TYPE="Label"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="11/23/2017 14:12:58"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:12:58"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="VFTRCBU CC Instalments Display"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/23/2017 14:12:58"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:58"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_QUERY-1005111820-1VI"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="Y"
+			   LEFT="0"
+			   METHOD_INVOKED="NewQuery"
+			   MULTI_LINE="N"
+			   NAME="NewQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="12"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="11/23/2017 14:12:58"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:12:58"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/23/2017 14:12:58"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:58"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEdit"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="NewRecord"
+			   MULTI_LINE="N"
+			   NAME="NewRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="13"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="11/23/2017 14:12:59"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:12:58"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="New"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/23/2017 14:12:59"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:59"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="PositionOnRow"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="PositionOnRow"
+			   MULTI_LINE="N"
+			   NAME="PositionOnRow"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="14"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="11/23/2017 14:12:59"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:12:59"
+			   CREATED_BY="VF_SKILICSAL">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_PROMOTION-1004224942-09S"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Promotion"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="300"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Promotion"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="11/23/2017 14:12:59"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:12:59"
+			   CREATED_BY="VF_SKILICSAL">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ShowQueryAssistant"
+			   MULTI_LINE="N"
+			   NAME="QueryAssistant"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="15"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="11/23/2017 14:12:59"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:12:59"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Query Assistant"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/23/2017 14:12:59"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:12:59"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VFTRCBU_COMMITMENT_DEACTIVATION_PENALTIES"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="FormSection"
+			   HTML_WIDTH="700"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="SectionPenalties"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="300"
+			   UPDATED="11/23/2017 14:12:59"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:12:59"
+			   CREATED_BY="VF_SKILICSAL">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="UndoQuery"
+			   MULTI_LINE="N"
+			   NAME="UndoQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="16"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="11/23/2017 14:13:00"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:13:00"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Cancel"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/23/2017 14:13:00"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:13:00"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonNew"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="UndoRecord"
+			   MULTI_LINE="N"
+			   NAME="UndoRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="17"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="11/23/2017 14:13:00"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:13:00"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Cancel"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/23/2017 14:13:00"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:13:00"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_END_DATE"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU End Date"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="168"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU End Date"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="11/23/2017 14:13:00"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:13:00"
+			   CREATED_BY="VF_SKILICSAL">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_FEE-1009100219-8NH"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Fee"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="168"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Fee"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="11/23/2017 14:13:01"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:13:00"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/23/2017 14:13:01"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:13:01"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VFTRCBU_REMAINING_INTALLMENTS"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Instalments"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="168"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Instalment"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="11/23/2017 14:13:01"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:13:01"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/23/2017 14:13:01"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:13:01"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_PENALTY_HOR"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Penalty Sum"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="168"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Penalty Sum"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="11/23/2017 14:13:01"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:13:01"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="VFTRCBU Penalty Sum"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/23/2017 14:13:01"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:13:01"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_QUERY-1005111820-1VI"
+			   COMMENTS="FTOSCANO - WA#15"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="VFTRCBUQuery"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Query"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="12"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="11/23/2017 14:13:01"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:13:01"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/23/2017 14:13:01"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:13:01"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_PENALTY_HOR"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Related Agreement Id"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="168"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Related Agreement Id"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="11/23/2017 14:13:01"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:13:01"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="VFTRCBU Related Agreement Id"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/23/2017 14:13:01"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:13:01"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_PENALTY_HOR"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Related Penalty Count"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="168"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Related Penalty Count"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="11/23/2017 14:13:02"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:13:01"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="VFTRCBU Related Penalty Count"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/23/2017 14:13:01"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:13:01"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_PENALTY_HOR"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Related Penalty Total"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="168"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Related Penalty Total"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="11/23/2017 14:13:02"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:13:02"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="VFTRCBU Related Penalty Total"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/23/2017 14:13:02"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:13:02"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VFTRCBU_SUBSIDY"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Subsidy"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="168"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Subsidy"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="11/23/2017 14:13:02"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:13:02"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/23/2017 14:13:02"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:13:02"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_PENALTY_HOR"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Penalty"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="168"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Total Penalty"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="11/23/2017 14:13:02"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:13:02"
+			   CREATED_BY="VF_SKILICSAL">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_TRANSITION-1005113430-43O"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Transition"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="168"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VFTRCBU Transition"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="11/23/2017 14:13:02"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:13:02"
+			   CREATED_BY="VF_SKILICSAL">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEditNew"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="WriteRecord"
+			   MULTI_LINE="N"
+			   NAME="WriteRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="18"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="11/23/2017 14:13:02"
+			   UPDATED_BY="VF_SKILICSAL"
+			   CREATED="11/23/2017 14:13:02"
+			   CREATED_BY="VF_SKILICSAL">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Save"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="11/23/2017 14:13:02"
+				   UPDATED_BY="VF_SKILICSAL"
+				   CREATED="11/23/2017 14:13:02"
+				   CREATED_BY="VF_SKILICSAL">
+				</CONTROL_LOCALE>
+			</CONTROL>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+
+>>>>>>> Stashed changes

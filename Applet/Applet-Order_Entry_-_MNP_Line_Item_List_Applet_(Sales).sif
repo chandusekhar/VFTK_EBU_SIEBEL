@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <REPOSITORY
    COMMENTS="Siebel 8.1.1.11 repository"
@@ -5351,3 +5352,5358 @@
 
 
 
+=======
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="20150105:WA#18"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VFTRCBU Orders MNP"
+	   UI_FREEZE="N"
+	   UPDATED="10/26/2016 16:51:06"
+	   UPDATED_BY="JMARTINHO"
+	   CREATED="01/05/2015 16:22:01"
+	   CREATED_BY="MSOUSA"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   BUSINESS_COMPONENT="Order Entry - Line Items"
+		   CLASS="CSSSWEFrameListQuoteItemEC"
+		   COMMENTS="VFTRCBU WA#18 - MPONTE 2015.01.08"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HTML_NUMBER_OF_ROWS="4"
+		   HEIGHT="3"
+		   INACTIVE="N"
+		   INSERT_POSITION="AFTER"
+		   NAME="Order Entry - MNP Line Item List Applet (Sales)"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="10/26/2016 10:51:34"
+		   SCRIPTED="Y"
+		   TITLE_-_STRING_REFERENCE="SBL_LINE_ITEMS-1004224327-06C"
+		   TYPE="Standard"
+		   UPGRADE_ANCESTOR="Order Entry - Line Item List Applet (Sales)"
+		   UPGRADE_BEHAVIOR="Preserve"
+		   WIDTH="2"
+		   OBJECT_LOCKED_BY_NAME="JSANTOS"
+		   UPDATED="10/26/2016 10:52:23"
+		   UPDATED_BY="JSANTOS"
+		   CREATED="01/08/2015 17:12:56"
+		   CREATED_BY="MPONTE">
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="Applet_Load"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="Applet_Load"
+			   SCRIPT="function Applet_Load () //WP1 Mertopolis YGhazi 16/06/2011
+{
+	try
+	{
+		var bsUtilities    = null;
+		var psUtilitiesIn  = null;
+		var psUtilitiesOut = null;
+		var sErrorCode     = &quot;&quot;;
+		var sErrorText     = &quot;&quot;;
+
+ 		if (theApplication().GetProfileAttr(&quot;MetropolisFlag&quot;) == &quot;Y&quot;)
+ 		{
+			theApplication().SWEAlert(&quot;Metropolis eklemek imkansiz&quot;);
+
+			bsUtilities    = theApplication().GetService(&quot;TELCO Order Management Utilities&quot;);
+			psUtilitiesIn  = theApplication().NewPropertySet();
+			psUtilitiesOut = null;
+
+			psUtilitiesOut = bsUtilities.InvokeMethod(&quot;BrowserLoadMetropolis&quot;, psUtilitiesIn);
+
+			sErrorCode = psUtilitiesOut.GetProperty(&quot;Error Code&quot;);
+			sErrorText = psUtilitiesOut.GetProperty(&quot;Error Message&quot;);
+
+			if (sErrorCode != &quot;0&quot;)
+			{
+				theApplication().SWEAlert(sErrorText);
+			}
+		}
+	}
+	catch(oException)
+	{
+		theApplication().SWEAlert(oException.errText);
+	}
+	finally
+	{
+		psUtilitiesOut = null;
+		psUtilitiesIn  = null;
+		bsUtilities    = null;
+	}
+}"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_BROWSER_SCRIPT
+			   BROWSER_GROUP="All"
+			   INACTIVE="N"
+			   NAME="Applet_PreInvokeMethod"
+			   NEEDS_HIGH_INTERACTIVITY="Y"
+			   PROCEDURE="Applet_PreInvokeMethod"
+			   SCRIPT="function Applet_PreInvokeMethod (name, inputPropSet)
+{
+	try
+	{
+		var bsUtilities    = null;
+		var psUtilitiesIn  = null;
+		var psUtilitiesOut = null;
+		var bsPublisher    = null;
+		var psPublisherIn  = null;
+		var psPublisherOut = null;
+		var sErrorCode     = &quot;&quot;;
+		var sErrorText     = &quot;&quot;;
+		var sQuestion      = &quot;&quot;;
+	   
+		if (name == &quot;EditPopup&quot;)
+		{
+			bsUtilities    = theApplication().GetService(&quot;TELCO Order Management Utilities&quot;);
+			psUtilitiesIn  = theApplication().NewPropertySet();
+			psUtilitiesOut = null;
+
+			psUtilitiesOut = bsUtilities.InvokeMethod(&quot;BrowserPreEditPopup&quot;, psUtilitiesIn);
+
+			sErrorCode = psUtilitiesOut.GetProperty(&quot;Error Code&quot;);
+			sErrorText = psUtilitiesOut.GetProperty(&quot;Error Message&quot;);
+
+			if (sErrorCode != &quot;0&quot;)
+			{
+				theApplication().SWEAlert(sErrorText);
+				return(&quot;CancelOperation&quot;);
+			}
+		}
+		
+		if (name == &quot;Portal&quot;)
+		{
+			bsUtilities    = theApplication().GetService(&quot;TELCO Order Management Utilities&quot;);
+			psUtilitiesIn  = theApplication().NewPropertySet();
+			psUtilitiesOut = null;
+
+			psUtilitiesOut = bsUtilities.InvokeMethod(&quot;BrowserPreCustomerPortal&quot;, psUtilitiesIn);
+
+			sErrorCode = psUtilitiesOut.GetProperty(&quot;Error Code&quot;);
+			sErrorText = psUtilitiesOut.GetProperty(&quot;Error Message&quot;);
+			sQuestion  = psUtilitiesOut.GetProperty(&quot;Question Message&quot;);
+
+			if (sErrorCode != &quot;0&quot;)
+			{
+				theApplication().SWEAlert(sErrorText);
+				return(&quot;CancelOperation&quot;);
+			}
+
+			if (sQuestion != null &amp;&amp; sQuestion != &quot;&quot; &amp;&amp; (!confirm(sQuestion)))
+			{
+				return(&quot;CancelOperation&quot;);
+			}
+		}
+		
+		if (name == &quot;GenerateForm&quot;)
+		{
+			bsPublisher    = theApplication().GetService(&quot;VF BI Publisher Template&quot;);
+			psPublisherIn  = theApplication().NewPropertySet();
+			psPublisherOut = null;
+
+			psPublisherIn.SetProperty(&quot;SIM&quot;, this.BusComp().GetFieldValue(&quot;Id&quot;));
+
+			psPublisherOut = bsPublisher.InvokeMethod(&quot;GetTemplate&quot;, psPublisherIn);
+
+			var URL4 = psPublisherOut.GetProperty(&quot;URL4&quot;);
+			//var URL5 = psPublisherOut.GetProperty(&quot;URL5&quot;);//PSANTOS VFTRCBU-23917 //JIRA-24936:Begin: Comment out this variable.
+			//var URL6 = psPublisherOut.GetProperty(&quot;URL6&quot;);//PSANTOS VFTRCBU-23917
+			var URL8 = psPublisherOut.GetProperty(&quot;URL8&quot;);
+			var URL9 = psPublisherOut.GetProperty(&quot;URL9&quot;);
+
+			if (URL4 != &quot;&quot;)
+			{
+				var oIE = new ActiveXObject(&quot;InternetExplorer.Application&quot;);
+				oIE.Navigate2(URL4);
+				oIE.Visible = true;
+			}
+			
+			/*** JIRA-24936:Begin: Remove call to display the form &quot;CBU_MNP_TA&quot; (displayed only via the button &quot;Generate TA Form&quot;)
+			if (URL5 != &quot;&quot;)
+			{
+				var oIE = new ActiveXObject(&quot;InternetExplorer.Application&quot;);
+				oIE.Navigate2(URL5);
+				oIE.Visible = true;
+			}
+			**** JIRA-24936:End: */
+			
+			/*if (URL6 != &quot;&quot;) //PSANTOS VFTRCBU-23917
+			{
+				var oIE2 = new ActiveXObject(&quot;InternetExplorer.Application&quot;);
+				oIE2.Navigate2(URL6);
+				oIE2.Visible = true;
+			}*/
+			if (URL8 != &quot;&quot;)
+			{
+				var oIE3 = new ActiveXObject(&quot;InternetExplorer.Application&quot;);
+				oIE3.Navigate2(URL8);
+				oIE3.Visible = true;
+			}
+			//JIRA-VFTRCBU-31222:Begin:Add Credit Card Form
+			if (URL9 != &quot;&quot;)
+			{
+				var oIE9 = new ActiveXObject(&quot;InternetExplorer.Application&quot;);
+				oIE9.Navigate2(URL9);
+				oIE9.Visible = true;
+			}
+			//JIRA-VFTRCBU-31222:End
+
+
+		}
+
+		return(&quot;ContinueOperation&quot;);
+	}
+	catch(oException)
+	{
+		theApplication().SWEAlert(oException.errText);
+	}
+	finally
+	{
+		psPublisherOut = null;
+		psPublisherIn  = null;
+		bsPublisher    = null;
+		psUtilitiesOut = null;
+		psUtilitiesIn  = null;
+		bsUtilities    = null;
+	}			
+}"
+			   UPDATED="07/08/2016 18:30:41"
+			   UPDATED_BY="MSOUSA"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_BROWSER_SCRIPT>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="Fulfill All Line Item (SWE)"
+			   COMMENTS="12-IOZ7CT"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_FULFILL_ALL-1004232252-4JV"
+			   NAME="12"
+			   POSITION="12"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="MoveUp"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_MOVE_UP-1004224712-0BV"
+			   NAME="20"
+			   POSITION="20"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="MoveDown"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_MOVE_DOWN-1004224711-0BO"
+			   NAME="21"
+			   POSITION="21"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="Renumber (SWE)"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_RENUMBER-1004224745-0FL"
+			   NAME="22"
+			   POSITION="22"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="Add Items"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_ADD_ITEMS-1004224823-0LT"
+			   NAME="23"
+			   POSITION="23"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="MergeIntoOnePackage"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_PACKAGE-0114142215-02C"
+			   NAME="24"
+			   POSITION="24"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="RemoveFromPackage"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_UNPACKAGE"
+			   NAME="25"
+			   POSITION="25"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="ReconfigureCxProd"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_CUSTOMIZE-1004224629-050"
+			   NAME="26"
+			   POSITION="26"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="Reprice"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_REPRICE-1004224746-0FT"
+			   NAME="27"
+			   POSITION="27"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="Reprice All (SWE)2"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_REPRICE_ALL-1004224746-0FW"
+			   NAME="28"
+			   POSITION="28"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="Order Line Items - Profile"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_PROFILE-1004224726-2DO"
+			   NAME="29"
+			   POSITION="29"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="ServiceProduct"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_SERVICE-1004224616-1F1"
+			   NAME="30"
+			   POSITION="30"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="UngroupProdSvc"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_UNGROUP-1005113501-463"
+			   NAME="31"
+			   POSITION="31"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="Edit Promotion"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_EDIT_PROMOTION-1004231439-35P"
+			   NAME="32"
+			   POSITION="32"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="Auto-Asset"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_AUTO-ASSET-1004224952-14G"
+			   NAME="33"
+			   POSITION="33"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="Upgrade Promotion In Order"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_UPGRADE_PROMOTION"
+			   NAME="34"
+			   POSITION="34"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="Modify"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_MODIFY-1004234357-5SQ"
+			   NAME="72"
+			   POSITION="72"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="Quotes and Orders Validate"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_VERIFY-1004224810-0KJ"
+			   NAME="78"
+			   POSITION="78"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="VerifyEntitlement"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_PICK_ENTITLEMENT-1004224711-1X5"
+			   NAME="85"
+			   POSITION="85"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_METHOD_MENU_ITEM
+			   COMMAND="Add To Promotion"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_ADD_TO_PROMOTION"
+			   NAME="86"
+			   POSITION="86"
+			   SUPPRESS_MENU_ITEM="N"
+			   UPDATED="01/08/2015 17:12:56"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_METHOD_MENU_ITEM>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="InvokeCopyRecord"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function InvokeCopyRecord()
+{
+	try
+	{
+		var bsCopy              = null;
+		var psCopyIn            = null;
+		var psCopyOut           = null;
+		var sExtInvSysRef       = BusComp().GetFieldValue(&quot;External Inventory System Ref&quot;);
+		var sOrderId            = BusComp().GetFieldValue(&quot;Order Header Id&quot;);
+		var sRootItemId         = BusComp().GetFieldValue(&quot;Root Order Item Id&quot;);
+		var sSourceConfigHeader = BusComp().GetFieldValue(&quot;External Configurator Reference 1&quot;);
+		var sSourceConfigRevNbr = BusComp().GetFieldValue(&quot;External Configurator Reference 2&quot;);
+		var sDestConfigRevNbr   = &quot;&quot;;
+		var sDestConfigHeader   = &quot;&quot;;
+
+		if (sExtInvSysRef == null || sExtInvSysRef == &quot;&quot;) 
+		{
+			return;
+		}
+
+		bsCopy    = TheApplication().GetService(&quot;CZIntegCopyConfigService&quot;);
+		psCopyIn  = TheApplication().NewPropertySet ();
+		psCopyOut = TheApplication().NewPropertySet ();
+
+		psCopyIn.SetProperty(&quot;RootItemId&quot;,                sRootItemId);
+		psCopyIn.SetProperty(&quot;QuoteorOrderorAgreementId&quot;, sOrderId);
+		psCopyIn.SetProperty(&quot;SourceConfigHeader&quot;,        sSourceConfigHeader);
+		psCopyIn.SetProperty(&quot;SourceConfigRevNbr&quot;,        sSourceConfigRevNbr);
+		psCopyIn.SetProperty(&quot;BusinessObject&quot;,            BusObject().Name());
+		psCopyIn.SetProperty(&quot;BusinessComponent&quot;,         BusComp().Name());
+
+		bsCopy.InvokeMethod(&quot;CopyOracleConfiguration&quot;, psCopyIn, psCopyOut);
+
+		sDestConfigHeader = psCopyOut.GetProperty(&quot;DestConfigHeader&quot;);
+		sDestConfigRevNbr = psCopyOut.GetProperty(&quot;DestConfigRevNbr&quot;);
+						
+		BusComp().SetFieldValue(&quot;External Configurator Reference 1&quot;, sDestConfigHeader);
+		BusComp().SetFieldValue(&quot;External Configurator Reference 2&quot;, sDestConfigRevNbr );
+
+	}
+	catch(e)
+	{
+		throw(e);
+	}
+	finally 
+	{
+		psCopyOut = null;
+		psCopyIn  = null;
+		bsCopy    = null;
+	}
+}"
+			   SEQUENCE="1"
+			   UPDATED="04/13/2015 13:32:33"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="PreInvokePenaltyInquiry"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function PreInvokePenaltyInquiry()
+{
+	try
+	{
+		var bsInquiry    = TheApplication().GetService(&quot;TELCO Order Management Utilities&quot;);
+		var psInquiryIn  = TheApplication().NewPropertySet();
+		var psInquiryOut = TheApplication().NewPropertySet();
+		var sOrderId     = BusComp().GetFieldValue(&quot;Order Header Id&quot;);
+		var sRootItemId  = BusComp().GetFieldValue(&quot;Root Order Item Id&quot;);
+		var sErrorCode   = &quot;0&quot;;
+		var sErrorText   = &quot;&quot;
+
+		psInquiryIn.SetProperty(&quot;OrderId&quot;,    sOrderId);
+		psInquiryIn.SetProperty(&quot;RootItemId&quot;, sRootItemId);
+
+		bsInquiry.InvokeMethod(&quot;PenaltyInquiry&quot;, psInquiryIn, psInquiryOut);	
+
+		sErrorCode = psInquiryOut.GetProperty(&quot;Error Code&quot;);
+		sErrorText = psInquiryOut.GetProperty(&quot;Error Message&quot;);
+
+		if (sErrorCode != &quot;0&quot;)
+		{
+			TheApplication().RaiseErrorText(sErrorText);	
+		}
+	}
+	catch(e)
+	{
+		throw(e);
+	}
+	finally
+	{
+		psInquiryOut = null;
+		psInquiryIn  = null;
+		bsInquiry	 = null;
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="04/13/2015 13:32:33"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="PreInvokeReconfigureCxProd"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function PreInvokeReconfigureCxProd()
+{
+	try
+	{
+		var sAccountId    = BusComp().GetFieldValue(&quot;Account Id&quot;);
+		var sOrderId      = BusComp().GetFieldValue(&quot;Order Header Id&quot;)
+		var sItemId       = BusComp().GetFieldValue(&quot;Id&quot;);
+		var sPartNumber   = BusComp().GetFieldValue(&quot;Part Number&quot;);
+		var sQuantity     = BusComp().GetFieldValue(&quot;Quantity Requested&quot;);
+		var sRootQuantity = BusComp().GetFieldValue(&quot;Root Item Quantity&quot;);
+		var sErrorText    = &quot;&quot;;
+
+		TheApplication().SetProfileAttr(&quot;EligIndex&quot;,        &quot;0&quot;); //VFTRCBU-27205 RPIRES - Changed from &quot;1&quot; to &quot;0&quot;
+		TheApplication().SetProfileAttr(&quot;OrdLineAccountId&quot;, sAccountId);
+			
+		//++ Bundled Promotions
+		if (sPartNumber == &quot;1000&quot;)
+		{
+			TheApplication().SetProfileAttr(&quot;BUNDLE_PROMO_ROW_ID&quot;,   sItemId);
+			TheApplication().SetProfileAttr(&quot;BUNDLE_PROMO_ORDER_ID&quot;, sOrderId);
+		}
+		//-- Bundled Promotions
+
+		if (sQuantity &gt; 1 || sRootQuantity &gt; 1)
+		{
+			sErrorText = TheApplication().LookupMessage(&quot;VF Message Category&quot;, &quot;407&quot;);
+			TheApplication().RaiseErrorText(sErrorText);
+		}
+	}
+	catch(e)
+	{
+		throw(e);
+	}
+	finally
+	{
+	}
+}"
+			   SEQUENCE="3"
+			   UPDATED="04/04/2016 14:52:56"
+			   UPDATED_BY="RPIRES"
+			   CREATED="01/08/2015 17:12:56"
+			   CREATED_BY="MPONTE">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="PreInvokeUngroupProdSvc"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function PreInvokeUngroupProdSvc()
+{
+	try
+	{
+		var bsUtilities    = TheApplication().GetService(&quot;TELCO Order Management Utilities&quot;);
+		var psUtilitiesIn  = TheApplication().NewPropertySet();
+		var psUtilitiesOut = TheApplication().NewPropertySet();
+		var sOrderId       = BusComp().GetFieldValue(&quot;Order Header Id&quot;);
+		var sErrorCode     = &quot;0&quot;;
+		var sErrorText     = &quot;&quot;
+
+		psUtilitiesIn.SetProperty(&quot;OrderId&quot;, sOrderId);
+
+		bsUtilities.InvokeMethod(&quot;ValidateUngroup&quot;, psUtilitiesIn, psUtilitiesOut);	
+
+		sErrorCode = psUtilitiesOut.GetProperty(&quot;Error Code&quot;);
+		sErrorText = psUtilitiesOut.GetProperty(&quot;Error Message&quot;);
+
+		if (sErrorCode != &quot;0&quot;)
+		{
+			BusComp().ClearToQuery();
+			BusComp().SetViewMode(AllView);
+			BusComp().ExecuteQuery(ForwardBackward);
+
+			TheApplication().RaiseErrorText(sErrorText);	
+		}
+	}
+	catch(e)
+	{
+		throw(e);
+	}
+	finally
+	{
+		psUtilitiesOut = null;
+		psUtilitiesIn  = null;
+		bsUtilities	   = null;
+	}
+}"
+			   SEQUENCE="4"
+			   UPDATED="04/13/2015 13:32:33"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_InvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_InvokeMethod (MethodName)
+{
+	if (MethodName == &quot;CopyRecord&quot;) 
+	{
+		//  if this is a copy process, for a line item,
+		//  we need to invoke the Oracle copy business Service
+		//  which will make the call to copy the corresponding
+		//  configuration in Oracle and then update the lines
+		//  in Siebel with the Configuration Header and Rev Number
+		InvokeCopyRecord();
+	}
+}"
+			   SEQUENCE="5"
+			   UPDATED="04/13/2015 13:32:33"
+			   UPDATED_BY="FCABRAL"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreInvokeMethod (MethodName)
+{
+	try
+	{
+		if (MethodName == &quot;ReconfigureCxProd&quot;)
+		{
+			PreInvokeReconfigureCxProd();
+		}
+
+		if (MethodName == &quot;PenaltyInquiry&quot;)
+		{
+			PreInvokePenaltyInquiry();
+			return(CancelOperation);			
+		}
+		
+		if (MethodName == &quot;UngroupProdSvc&quot;)
+		{
+			PreInvokeUngroupProdSvc();
+		}
+
+		if (MethodName == &quot;GenerateForm&quot;)
+			return(CancelOperation);
+		
+		return (ContinueOperation);
+	}
+	catch(e)
+	{
+		throw(e);
+	}
+	finally
+	{
+	}
+}"
+			   SEQUENCE="6"
+			   UPDATED="11/05/2015 09:30:57"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Bundle Component ReadOnly Fields"
+			   VALUE=" &quot;Quantity Requested&quot;, &quot;Quantity&quot;, &quot;Discount Amount - Display&quot;, &quot;Discount Percent - Display&quot;, &quot;Unit Price - Display&quot;"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: CopyRecord"
+			   VALUE="FALSE"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="JIRA-VFTRCBU-14260 / JIRA-VFTRCBU-16979"
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: DeleteRecord"
+			   VALUE="(([VFTRCBU Root Item Count] &gt; 1 AND [TELCO Undelivered Order]) OR ([VFTRCBU Root Item Count] &gt; 1 AND [Order Status]= LookupValue (&quot;FS_ORDER_STATUS&quot;, &quot;Open&quot;) AND LoginName()= ParentFieldValue(&quot;Created By Name&quot;)))"
+			   UPDATED="10/30/2015 09:43:02"
+			   UPDATED_BY="SADMIN"
+			   CREATED="02/26/2015 16:58:48"
+			   CREATED_BY="FSENDIM">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: GenerateForm"
+			   VALUE="[InvokeGForm] = &quot;Y&quot;"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: Interactions"
+			   VALUE="[Account Market Class] = LookupValue(&quot;ACCOUNT_TYPE&quot;, &quot;101&quot;)"
+			   UPDATED="12/17/2015 16:15:32"
+			   UPDATED_BY="HRODRIGUES"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="Bug fix for 9315530"
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: ModifyProdSvc"
+			   VALUE="[Status] = LookupValue (&quot;FS_ORDER_STATUS&quot;, &quot;Open&quot;)"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="JIRA-VFTRCBU-11777- 21050614:New Record button disabled for Consumers. JIRA-VFTRCBU-12431- 21050624:Due to updates on the FD, reenable the New Record button that had been disabled (JIRA-11777)  for Consumers"
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: NewRecord"
+			   VALUE="[InvokeNewRecord] = &quot;Y&quot;"
+			   UPDATED="06/30/2015 11:57:44"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: PenaltyInquiry"
+			   VALUE="[InvokePenaltyInquiry] = &quot;Y&quot;"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: Portal"
+			   VALUE="[ViewROCalc] = &quot;Y&quot;"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="CF_GSEQUEIRA :: Switched [ReConInvoke] = &quot;Y&quot; for Bundled Promotions :: 04.04.2013"
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: ReconfigureCxProd"
+			   VALUE="[VFCanInvokeReconfigureCxProd] = &quot;Y&quot;"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: ShowPopup"
+			   VALUE="[InvokeShowPopUp] = &quot;Y&quot;  AND [Account Market Class] = LookupValue(&quot;ACCOUNT_TYPE&quot;, &quot;101&quot;)"
+			   UPDATED="08/13/2015 18:22:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: Subscriber"
+			   VALUE="TRUE"
+			   UPDATED="06/12/2015 17:58:32"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/12/2015 17:58:32"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: UngroupProdSvc"
+			   VALUE="[InvokeUngroup] = &quot;Y&quot;"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Configuration ReadOnly Fields"
+			   VALUE="&quot;Product&quot;, &quot;Part Number&quot;, &quot;Quantity Requested&quot;, &quot;Quantity&quot;"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="VFTRCBU :: GSEQUEIRA :: 15.07.2014"
+			   INACTIVE="N"
+			   NAME="DefaultFocus"
+			   VALUE="Product Name Translated"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="DefaultFocus_Edit"
+			   VALUE="Product"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="Enable the buscomp to perform the configuration of complex products."
+			   INACTIVE="N"
+			   NAME="Enable Configure Complex Product"
+			   VALUE="Y"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="Enable the buscomp to perform the extended attributes copying."
+			   INACTIVE="N"
+			   NAME="Enable Copy Extended Attributes"
+			   VALUE="Y"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Enable Promotion Engine"
+			   VALUE="Y"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Enable Reprice Complex Product"
+			   VALUE="Y"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Method|ShowCDA|Parameter 1"
+			   VALUE="QuoteId|Field|Order Header Id"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Method|ShowCDA|Parameter 10"
+			   VALUE="End"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Method|ShowCDA|Parameter 2"
+			   VALUE="ISSCDAHeaderBusObjName|Value|Order Entry (Sales)"
+			   UPDATED="12/17/2015 16:13:54"
+			   UPDATED_BY="HRODRIGUES"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Method|ShowCDA|Parameter 3"
+			   VALUE="ISSCDAListItemBusCompName|Value|Order Entry - Line Items"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Method|ShowCDA|Parameter 4"
+			   VALUE="ISSCDAHeaderViewName|Value|VF MNP Order"
+			   UPDATED="12/17/2015 16:14:18"
+			   UPDATED_BY="HRODRIGUES"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Method|ShowCDA|Parameter 5"
+			   VALUE="ISSCDAListItemAttributeBusCompName|Value|VFTRCBU Order Item XA"
+			   UPDATED="12/17/2015 16:14:35"
+			   UPDATED_BY="HRODRIGUES"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Method|ShowCDA|Parameter 6"
+			   VALUE="ISSCDAHeaderBusCompName|Value|Order Entry - Orders"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Method|ShowCDA|Parameter 7"
+			   VALUE="ISSCDAIntegrationObjName|Value|7.7 Order Entry Integration Object"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Method|ShowCDA|Parameter 8"
+			   VALUE="ISSCDASSConfiguratorViewName|Value|Complex Product Runtime Instance View - Order (Sales)"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Method|ShowCDA|Parameter 9"
+			   VALUE="ISSCDAHISSConfiguratorViewName|Value|Complex Product Runtime Instance View (JS) - Order (Sales)"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Named Method 1: MessagePopup"
+			   VALUE="&apos;INVOKESVC&apos;, &apos;UMF UI Service&apos;, &apos;PopupListApplet&apos;"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Named Method 1: Reprice"
+			   VALUE="&apos;INVOKE&apos;, &apos;SaveEditRecord&apos;"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Named Method Check Can Invoke Submethods: MessagePopup"
+			   VALUE="Y"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Named Method: Reprice"
+			   VALUE="&apos;INVOKE&apos;, &apos;CalculatePrice&apos;"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="Y"
+			   NAME="Product Recommendation All Views"
+			   VALUE="Y"
+			   UPDATED="12/17/2015 17:58:30"
+			   UPDATED_BY="HRODRIGUES"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="WA#39 DG 11/09/2014"
+			   INACTIVE="N"
+			   NAME="Read Only Field 1"
+			   VALUE="&apos;ICCID&apos;, &apos;VF ICCID RO group&apos;"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="WA#39 12/09/2014 DG"
+			   INACTIVE="N"
+			   NAME="Read Only Field 10"
+			   VALUE="&apos;VFTRCBU Action Sub Reason&apos;, &apos;VFTRCBU Action Sub Reason RO&apos;"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="WA#39 12/09/2014 DG"
+			   INACTIVE="N"
+			   NAME="Read Only Field 12"
+			   VALUE="&apos;Billing Account&apos;, &apos;VF Billing Account RO&apos;"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="WA#39 DG 12/09/2014"
+			   INACTIVE="N"
+			   NAME="Read Only Field 2"
+			   VALUE="&apos;SIM Card Type&apos;, &apos;VF NOT Order Sub Type Standart Activation&apos;"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="WA#39 DG 09/09/2014"
+			   INACTIVE="N"
+			   NAME="Read Only Field 3"
+			   VALUE="&apos;VF ICCID Dual SIM&apos;, &apos;VF Bundle Promotion/Port In RO&apos;"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="VFTRCBU :: GSEQUEIRA :: 15.07.2014"
+			   INACTIVE="N"
+			   NAME="Read Only Field 4"
+			   VALUE="&apos;VF Account Pay Type&apos;, ‘VF Account Pay Type Read Only Calc&apos;"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="VFTRCBU :: GSEQUEIRA :: 15.07.2014"
+			   INACTIVE="N"
+			   NAME="Read Only Field 5"
+			   VALUE="&apos;VF Vip&apos;, &apos;VF VIP Calc RO&apos;"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="VFTRCBU :: GSEQUEIRA :: 15.07.2014"
+			   INACTIVE="N"
+			   NAME="Read Only Field 6"
+			   VALUE="&apos;VF Adapter Number&apos;, &apos;Y&apos;"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="VFTRCBU :: GSEQUEIRA :: 15.07.2014 || Inactivated for VFTRCBU-16784"
+			   INACTIVE="Y"
+			   NAME="Read Only Field 7"
+			   VALUE="&apos;VF Cancellation Reason&apos;, &apos;Y&apos;"
+			   UPDATED="10/30/2015 09:43:02"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="WA#39 DG 10/09/2014"
+			   INACTIVE="N"
+			   NAME="Read Only Field 8"
+			   VALUE="&apos;Discount Amount - Display&apos;, &apos;VF Bundle Promotion/Port In RO&apos;"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   COMMENTS="WA#39 12/09/2014 DG"
+			   INACTIVE="N"
+			   NAME="Read Only Field 9"
+			   VALUE="&apos;MSISDN&apos;, &apos;VFTRCBU Or Calc Read Only Plus PIn Can&apos;"
+			   UPDATED="10/30/2015 09:43:02"
+			   UPDATED_BY="SADMIN"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="Y"
+			   NAME="RowId"
+			   VALUE="Product"
+			   UPDATED="12/17/2015 17:59:23"
+			   UPDATED_BY="HRODRIGUES"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="URL Field"
+			   VALUE="Home Page"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="Waterfall Popup Applet 1"
+			   VALUE="Order Entry Line Item Waterfall Popup List Applet"
+			   UPDATED="01/08/2015 17:12:57"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:12:57"
+			   CREATED_BY="MPONTE">
+			</APPLET_USER_PROP>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Edit List"
+			   TYPE="Edit List"
+			   WEB_TEMPLATE="Applet List (Base/EditList)"
+			   UPDATED="04/21/2016 13:55:01"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="01/08/2015 17:12:58"
+			   CREATED_BY="MPONTE">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Action Code"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="514"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Action Code"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:26:42"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/09/2015 17:00:21"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Adapter No"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="547"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Adapter No"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:52:28"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="04/21/2016 12:15:32"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Back Date"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="533"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Back Date"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:50:29"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="04/21/2016 12:15:32"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Billing Account"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="507"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Billing Account2"
+				   TYPE="List Item"
+				   UPDATED="02/28/2016 11:55:19"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="09/28/2015 15:18:25"
+				   CREATED_BY="SJOAO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Billing Account"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="507"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Billing Account3"
+				   TYPE="List Item"
+				   UPDATED="02/28/2016 11:55:22"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="09/29/2015 10:23:24"
+				   CREATED_BY="SJOAO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Breconfig"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="109"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Breconfig"
+				   TYPE="Control"
+				   UPDATED="01/09/2015 16:46:58"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/09/2015 16:46:58"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Cancel Flag"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="523"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Cancel Flag"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:37:26"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="02/28/2016 23:36:54"
+				   CREATED_BY="FCABRAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Cancel Flag"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="523"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Cancel Flag2"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:37:29"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="02/28/2016 23:37:49"
+				   CREATED_BY="FCABRAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="CancelQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="108"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="CancelQuery"
+				   TYPE="Control"
+				   UPDATED="01/09/2015 16:46:15"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/09/2015 16:46:15"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Cancellation Reason"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="524"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Cancellation Reason"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:37:32"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="02/28/2016 23:36:58"
+				   CREATED_BY="FCABRAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Cancellation Reason"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="524"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Cancellation Reason2"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:37:35"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="02/28/2016 23:37:52"
+				   CREATED_BY="FCABRAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Contact Last Name"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="508"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Contact Last Name"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 12:19:02"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/09/2015 17:01:36"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Contact Last Name"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="508"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Contact Last Name2"
+				   TYPE="List Item"
+				   UPDATED="02/28/2016 23:16:52"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="09/29/2015 10:23:20"
+				   CREATED_BY="SJOAO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Customer Portal"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="111"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Customer Portal"
+				   TYPE="Control"
+				   UPDATED="01/09/2015 16:47:09"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/09/2015 16:47:09"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="DONOR OPERATOR"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="518"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="DONOR OPERATOR"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:37:06"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="04/21/2016 12:15:32"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="DeleteRecord"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="133"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="DeleteRecord"
+				   TYPE="Control"
+				   UPDATED="01/09/2015 16:45:57"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/09/2015 16:45:57"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="EditRecord"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="132"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="EditRecord"
+				   TYPE="Control"
+				   UPDATED="01/09/2015 16:45:59"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/09/2015 16:45:59"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ExecuteQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="107"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="ExecuteQuery"
+				   TYPE="Control"
+				   UPDATED="01/09/2015 16:46:02"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/09/2015 16:46:02"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="GenerateForm"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="140"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="GenerateForm"
+				   TYPE="Control"
+				   UPDATED="01/09/2015 16:47:20"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/09/2015 16:47:20"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="GotoNextSet"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="123"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="GotoNextSet"
+				   TYPE="Control"
+				   UPDATED="01/09/2015 16:45:27"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/09/2015 16:45:27"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="GotoPreviousSet"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="122"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="GotoPreviousSet"
+				   TYPE="Control"
+				   UPDATED="01/09/2015 16:45:29"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/09/2015 16:45:29"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ICCID"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="506"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="ICCID"
+				   TYPE="List Item"
+				   UPDATED="01/14/2016 10:56:18"
+				   UPDATED_BY="TFERNANDES"
+				   CREATED="01/09/2015 17:00:37"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="IMEI"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="531"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="IMEI2"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:50:16"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="04/13/2015 17:17:57"
+				   CREATED_BY="MSOUSA">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="IMEI"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="531"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="IMEI3"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:50:21"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="09/29/2015 10:23:20"
+				   CREATED_BY="SJOAO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Interactions"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="142"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Interactions"
+				   TYPE="Control"
+				   UPDATED="08/13/2015 18:22:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/13/2015 18:22:00"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Line Number"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="501"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Line Number"
+				   TYPE="List Item"
+				   UPDATED="01/09/2015 16:59:40"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/09/2015 16:59:40"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="MSISDN"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="505"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="MSISDN"
+				   TYPE="List Item"
+				   UPDATED="01/14/2016 10:56:16"
+				   UPDATED_BY="TFERNANDES"
+				   CREATED="01/09/2015 17:00:35"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="New"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="131"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="New"
+				   TYPE="Control"
+				   UPDATED="01/09/2015 16:45:02"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/09/2015 16:45:02"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="NewQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="106"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="NewQuery"
+				   TYPE="Control"
+				   UPDATED="01/09/2015 16:45:10"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/09/2015 16:45:10"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Part Number"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="504"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Part Number"
+				   TYPE="List Item"
+				   UPDATED="01/14/2016 10:56:13"
+				   UPDATED_BY="TFERNANDES"
+				   CREATED="01/09/2015 17:00:04"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Port Response"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="525"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Port Response"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:37:47"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="02/28/2016 23:37:03"
+				   CREATED_BY="FCABRAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Port Response"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="525"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Port Response2"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:38:12"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="02/28/2016 23:37:58"
+				   CREATED_BY="FCABRAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Price Type"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="537"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Price Type"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:50:58"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/09/2015 17:01:13"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Product Name Translated"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="503"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Product"
+				   TYPE="List Item"
+				   UPDATED="12/18/2015 16:28:33"
+				   UPDATED_BY="TFERNANDES"
+				   CREATED="01/09/2015 16:59:52"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Quantity Requested"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="502"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Quantity Requested"
+				   TYPE="List Item"
+				   UPDATED="12/18/2015 16:27:59"
+				   UPDATED_BY="TFERNANDES"
+				   CREATED="01/09/2015 17:01:47"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Rejection Reason"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="544"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Rejection Reason"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:52:13"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="02/29/2016 00:01:39"
+				   CREATED_BY="FCABRAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Rejection Reason"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="544"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Rejection Reason2"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:52:08"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="02/29/2016 00:02:06"
+				   CREATED_BY="FCABRAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="SIM Type"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="545"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="SIM Type2"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:52:19"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="09/28/2015 15:18:25"
+				   CREATED_BY="SJOAO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="SIM Type"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="545"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="SIM Type3"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:52:15"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="09/29/2015 10:23:24"
+				   CREATED_BY="SJOAO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="SelectBA"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="141"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="SelectBA"
+				   TYPE="Control"
+				   UPDATED="08/13/2015 18:22:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/13/2015 18:22:00"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="SelectBA"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="143"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="SelectBA2"
+				   TYPE="Control"
+				   UPDATED="08/13/2015 18:22:00"
+				   UPDATED_BY="SADMIN"
+				   CREATED="08/13/2015 18:22:00"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Status"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="512"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Status"
+				   TYPE="List Item"
+				   UPDATED="02/28/2016 23:16:53"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="01/09/2015 17:00:28"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Subscriber Portal"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="139"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Subscriber Portal"
+				   TYPE="Control"
+				   UPDATED="04/21/2016 12:15:32"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="04/21/2016 12:15:32"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="TELCO Action Reason"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="516"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="TELCO Action Reason"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:27:47"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="01/09/2015 17:00:50"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="TELCO Action Type"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="515"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="TELCO Action Type2"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:27:36"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="04/13/2015 17:17:57"
+				   CREATED_BY="MSOUSA">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="TELCO Action Type"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="515"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="TELCO Action Type3"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:27:40"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="09/29/2015 10:23:20"
+				   CREATED_BY="SJOAO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ToggleListRowCount"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="151"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="ToggleListRowCount"
+				   TYPE="Control"
+				   UPDATED="10/30/2015 09:43:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/30/2015 09:43:02"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="UndoRecord"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="135"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="UndoRecord"
+				   TYPE="Control"
+				   UPDATED="01/09/2015 16:46:21"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/09/2015 16:46:21"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Ungroup"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="110"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Ungroup"
+				   TYPE="Control"
+				   UPDATED="01/09/2015 16:47:04"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/09/2015 16:47:04"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Usage Type"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="513"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Usage Type"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 12:15:32"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="04/21/2016 12:15:32"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Account Pay Type"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="611"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Account Pay Type"
+				   TYPE="List Item"
+				   UPDATED="03/16/2016 19:31:16"
+				   UPDATED_BY="FCARRIL"
+				   CREATED="03/16/2016 19:27:10"
+				   CREATED_BY="FCARRIL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Account Pay Type"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="538"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Account Pay Type2"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:51:01"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="04/21/2016 12:15:32"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Inheritance transfer flg"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="546"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Inheritance transfer flg"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:52:22"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="04/21/2016 12:15:32"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF MNP Flag"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="526"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF MNP Flag"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 12:15:32"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="04/21/2016 12:15:32"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Prod Prom Id"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="519"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Prod Prom Id"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:37:11"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="04/13/2015 17:17:57"
+				   CREATED_BY="MSOUSA">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Scratch Card Code"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="509"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Scratch Card Code"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:30:03"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="04/21/2016 12:15:32"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Scratch Card Code"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="509"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Scratch Card Code2"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:30:10"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="04/21/2016 12:15:32"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Skip Penalty"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="542"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Skip Penalty"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:51:54"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="04/21/2016 12:15:32"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Tariff Plan"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="511"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Tariff Plan"
+				   TYPE="List Item"
+				   UPDATED="02/28/2016 23:16:53"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="01/09/2015 17:01:05"
+				   CREATED_BY="MPONTE">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Action Sub Reason"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="517"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Action Sub Reason"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:27:53"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="12/18/2015 16:46:42"
+				   CREATED_BY="TFERNANDES">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Discount Amount"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="528"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Discount Amount"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:34:40"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="09/28/2015 15:18:07"
+				   CREATED_BY="SJOAO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Discount Amount"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="528"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Discount Amount2"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:34:43"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="09/29/2015 10:23:17"
+				   CREATED_BY="SJOAO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Discount Duration"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="536"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Discount Duration"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:50:53"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="09/28/2015 15:18:25"
+				   CREATED_BY="SJOAO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Discount Duration"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="536"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Discount Duration1"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:50:51"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="09/29/2015 10:23:20"
+				   CREATED_BY="SJOAO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Discount End Date"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="527"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Discount End Date"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:37:59"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="09/29/2015 10:18:16"
+				   CREATED_BY="SJOAO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Discount End Date"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="527"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Discount End Date2"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:38:04"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="09/29/2015 10:23:24"
+				   CREATED_BY="SJOAO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU GSM Type"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="543"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU GSM Type2"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:52:05"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="02/28/2016 23:36:54"
+				   CREATED_BY="FCABRAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU GSM Type"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="543"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU GSM Type3"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:52:00"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="02/28/2016 23:37:49"
+				   CREATED_BY="FCABRAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU ICCID Dual SIM"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="541"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU ICCID Dual SIM2"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:51:48"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="02/28/2016 23:36:53"
+				   CREATED_BY="FCABRAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU ICCID Dual SIM"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="541"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU ICCID Dual SIM3"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:51:42"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="02/28/2016 23:37:48"
+				   CREATED_BY="FCABRAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Legal Guardian Last Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="510"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Legal Guardian Last Name"
+				   TYPE="List Item"
+				   UPDATED="02/28/2016 23:16:54"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="12/18/2015 16:40:28"
+				   CREATED_BY="TFERNANDES">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Payer MSISDN"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="530"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Payer MSISDN2"
+				   TYPE="List Item"
+				   UPDATED="02/28/2016 23:37:03"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="02/28/2016 23:36:54"
+				   CREATED_BY="FCABRAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Payer MSISDN"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="530"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Payer MSISDN3"
+				   TYPE="List Item"
+				   UPDATED="02/28/2016 23:37:58"
+				   UPDATED_BY="FCABRAL"
+				   CREATED="02/28/2016 23:37:49"
+				   CREATED_BY="FCABRAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Prod Prom Name"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="521"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Prod Prom Name"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:37:20"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="12/18/2015 16:47:52"
+				   CREATED_BY="TFERNANDES">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Recipient Id"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="522"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Recipient Id"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:37:22"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="04/21/2016 12:15:32"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Reference Value"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="532"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Reference Value"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:50:23"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="12/18/2015 16:55:01"
+				   CREATED_BY="TFERNANDES">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Target Customer"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="539"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Target Customer"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:51:04"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="12/18/2015 17:13:59"
+				   CREATED_BY="TFERNANDES">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Tariff Dependency"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="520"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Tariff Dependency"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:37:17"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="12/18/2015 16:50:08"
+				   CREATED_BY="TFERNANDES">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU Voucher Serial Number"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="534"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU Voucher Serial Number"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:44:20"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="12/18/2015 16:53:09"
+				   CREATED_BY="TFERNANDES">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU iCCB Bill Cycle"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="535"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU iCCB Bill Cycle2"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:50:44"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="02/28/2016 23:36:54"
+				   CREATED_BY="FCABRAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU iCCB Bill Cycle"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="535"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU iCCB Bill Cycle3"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:50:47"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="02/28/2016 23:37:48"
+				   CREATED_BY="FCABRAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU iCCB Group Id"
+				   EXPRESSION="TeXCo Application"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="548"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU iCCB Group Id2"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:52:33"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="02/28/2016 23:36:54"
+				   CREATED_BY="FCABRAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU iCCB Group Id"
+				   EXPRESSION="Siebel eChannel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="548"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU iCCB Group Id3"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:52:46"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="02/28/2016 23:37:48"
+				   CREATED_BY="FCABRAL">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU iCCB Tariff Plan"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="549"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU iCCB Tariff Plan"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:52:55"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="12/18/2015 17:11:14"
+				   CREATED_BY="TFERNANDES">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VFTRCBU iCCB Tax Profile"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="550"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VFTRCBU iCCB Tax Profile"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:53:00"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="12/18/2015 17:11:24"
+				   CREATED_BY="TFERNANDES">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VIP"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="540"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VIP"
+				   TYPE="List Item"
+				   UPDATED="04/21/2016 13:51:37"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="04/21/2016 12:15:32"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   BITMAP="ROW_OFF"
+			   CAPTION_-_STRING_REFERENCE="SBL_ADD_ITEMS-1004224823-0LT"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_BITMAP="ROW_OFF"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISABLED_BITMAP="ROW_ON"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   INACTIVE="N"
+			   METHOD_INVOKED="PositionOnRow"
+			   MULTI_LINE="N"
+			   NAME=" PositionOnRow"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/09/2015 16:43:20"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:00"
+			   CREATED_BY="MPONTE">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/08/2015 17:13:00"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:00"
+				   CREATED_BY="MPONTE">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_LINE_ITEMS-1004224327-06C"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   INACTIVE="N"
+			   LEFT_TEXT="N"
+			   MULTI_LINE="N"
+			   NAME="AppletTitle"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="Label"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/09/2015 16:43:21"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:00"
+			   CREATED_BY="MPONTE">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/09/2015 12:58:58"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:00"
+				   CREATED_BY="MPONTE">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_--_-1004224410-034"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_BITMAP="BTN_INDENT_ON"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISABLED_BITMAP="BTN_INDENT_OFF"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="ImageButton"
+			   INACTIVE="N"
+			   LEFT_TEXT="N"
+			   METHOD_INVOKED="Indent"
+			   MULTI_LINE="N"
+			   NAME="Bindent"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/09/2015 16:43:21"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:01"
+			   CREATED_BY="MPONTE">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/09/2015 12:58:59"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:01"
+				   CREATED_BY="MPONTE">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL__---1004224429-05D"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_BITMAP="BTN_OUTDENT_ON"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISABLED_BITMAP="BTN_OUTDENT_OFF"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="ImageButton"
+			   INACTIVE="N"
+			   LEFT_TEXT="N"
+			   METHOD_INVOKED="Outdent"
+			   MULTI_LINE="N"
+			   NAME="Boutdent"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/09/2015 16:43:21"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:01"
+			   CREATED_BY="MPONTE">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/09/2015 12:58:59"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:01"
+				   CREATED_BY="MPONTE">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CONFIGURE-1004230353-1ZD"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   INACTIVE="N"
+			   LEFT_TEXT="N"
+			   METHOD_INVOKED="ReconfigureCxProd"
+			   MULTI_LINE="N"
+			   NAME="Breconfig"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/09/2015 16:43:49"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:01"
+			   CREATED_BY="MPONTE">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/09/2015 12:58:59"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:01"
+				   CREATED_BY="MPONTE">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CANCEL-1004230137-1J7"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   INACTIVE="N"
+			   METHOD_INVOKED="UndoQuery"
+			   MULTI_LINE="N"
+			   NAME="CancelQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/09/2015 16:43:21"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:02"
+			   CREATED_BY="MPONTE">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/09/2015 12:59:01"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:02"
+				   CREATED_BY="MPONTE">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CUSTOMER_PORTAL-1004224455-0R3"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   INACTIVE="N"
+			   LEFT_TEXT="N"
+			   METHOD_INVOKED="Portal"
+			   MULTI_LINE="N"
+			   NAME="Customer Portal"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/09/2015 16:43:50"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:02"
+			   CREATED_BY="MPONTE">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/09/2015 12:59:01"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:02"
+				   CREATED_BY="MPONTE">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_DELETE-1004224629-055"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   INACTIVE="N"
+			   METHOD_INVOKED="DeleteRecord"
+			   MULTI_LINE="N"
+			   NAME="DeleteRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/09/2015 16:43:22"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:02"
+			   CREATED_BY="MPONTE">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/09/2015 12:59:01"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:02"
+				   CREATED_BY="MPONTE">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_EDIT-1004231338-2SY"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   INACTIVE="N"
+			   METHOD_INVOKED="EditRecord"
+			   MULTI_LINE="N"
+			   NAME="EditRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/09/2015 16:43:52"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:02"
+			   CREATED_BY="MPONTE">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/09/2015 12:59:02"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:02"
+				   CREATED_BY="MPONTE">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_GO-1004224654-095"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   INACTIVE="N"
+			   METHOD_INVOKED="ExecuteQuery"
+			   MULTI_LINE="N"
+			   NAME="ExecuteQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/09/2015 16:43:22"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:02"
+			   CREATED_BY="MPONTE">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/09/2015 12:59:02"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:02"
+				   CREATED_BY="MPONTE">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_GENERATE_FORM"
+			   COMMENTS="R2.1 - WP03"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   INACTIVE="N"
+			   METHOD_INVOKED="GenerateForm"
+			   MULTI_LINE="N"
+			   NAME="GenerateForm"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/09/2015 16:43:22"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:02"
+			   CREATED_BY="MPONTE">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_NEXT"
+			   COMMENTS="Updated for Record Set Controls : defect 12-86W3JF"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_BITMAP="RECNAV_NEXTSET_ON"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISABLED_BITMAP="RECNAV_NEXTSET_OFF"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RecNavNxt"
+			   INACTIVE="N"
+			   METHOD_INVOKED="GotoNextSet"
+			   MULTI_LINE="N"
+			   NAME="GotoNextSet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/22/2015 13:16:37"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:02"
+			   CREATED_BY="MPONTE">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/09/2015 12:59:02"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:02"
+				   CREATED_BY="MPONTE">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_PREVIOUD-1005111325-1I5"
+			   COMMENTS="Updated for Record Set Controls : defect 12-86W3JF"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_BITMAP="RECNAV_PREVSET_ON"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISABLED_BITMAP="RECNAV_PREVSET_OFF"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RecNavPrv"
+			   INACTIVE="N"
+			   METHOD_INVOKED="GotoPreviousSet"
+			   MULTI_LINE="N"
+			   NAME="GotoPreviousSet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/22/2015 13:17:04"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:02"
+			   CREATED_BY="MPONTE">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/09/2015 12:59:02"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:02"
+				   CREATED_BY="MPONTE">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_INTERACTIONS-0928155426-00G"
+			   COMMENTS="COPS 20 BB"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   INACTIVE="N"
+			   METHOD_INVOKED="Interactions"
+			   MULTI_LINE="N"
+			   NAME="Interactions"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/09/2015 16:43:53"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:03"
+			   CREATED_BY="MPONTE">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/09/2015 12:59:03"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:03"
+				   CREATED_BY="MPONTE">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_LIST-1009090938-8PN"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   INACTIVE="N"
+			   LEFT_TEXT="N"
+			   MULTI_LINE="N"
+			   NAME="List"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="ListControl"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/09/2015 16:43:23"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:03"
+			   CREATED_BY="MPONTE">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/09/2015 12:59:04"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:03"
+				   CREATED_BY="MPONTE">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_NEW-1004235437-602"
+			   COMMENTS="NewMainProduct"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   INACTIVE="N"
+			   METHOD_INVOKED="NewRecord"
+			   MULTI_LINE="N"
+			   NAME="New"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/09/2015 16:43:23"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:04"
+			   CREATED_BY="MPONTE">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/09/2015 12:59:04"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:04"
+				   CREATED_BY="MPONTE">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_QUERY-1005111820-1VI"
+			   COMMENTS="MODIFY_QUERY_GLOBAL_CHANGE"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   INACTIVE="N"
+			   METHOD_INVOKED="NewQuery"
+			   MULTI_LINE="N"
+			   NAME="NewQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/09/2015 16:43:55"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:04"
+			   CREATED_BY="MPONTE">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/09/2015 12:59:04"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:04"
+				   CREATED_BY="MPONTE">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_QUERY_ASSISTANT-1004224746-2EA"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   INACTIVE="N"
+			   METHOD_INVOKED="ShowQueryAssistant"
+			   MULTI_LINE="N"
+			   NAME="QueryAssistant"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/09/2015 16:43:24"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:04"
+			   CREATED_BY="MPONTE">
+				<CONTROL_USER_PROP
+				   INACTIVE="N"
+				   NAME="Mode"
+				   VALUE="Edit"
+				   UPDATED="01/08/2015 17:13:04"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:04"
+				   CREATED_BY="MPONTE">
+				</CONTROL_USER_PROP>
+				<CONTROL_USER_PROP
+				   INACTIVE="N"
+				   NAME="Popup"
+				   VALUE="Query Assistant"
+				   UPDATED="01/08/2015 17:13:04"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:04"
+				   CREATED_BY="MPONTE">
+				</CONTROL_USER_PROP>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_SELECT_BAS"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   INACTIVE="N"
+			   METHOD_INVOKED="ShowPopup"
+			   MULTI_LINE="N"
+			   NAME="SelectBA"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/09/2015 16:43:24"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:04"
+			   CREATED_BY="MPONTE">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/08/2015 17:13:04"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:04"
+				   CREATED_BY="MPONTE">
+				</CONTROL_LOCALE>
+				<CONTROL_USER_PROP
+				   INACTIVE="N"
+				   NAME="Mode"
+				   VALUE="Edit List"
+				   UPDATED="01/08/2015 17:13:04"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:04"
+				   CREATED_BY="MPONTE">
+				</CONTROL_USER_PROP>
+				<CONTROL_USER_PROP
+				   INACTIVE="N"
+				   NAME="Popup"
+				   VALUE="VF Select Billing Account Line Item"
+				   UPDATED="01/08/2015 17:13:04"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:04"
+				   CREATED_BY="MPONTE">
+				</CONTROL_USER_PROP>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="N"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_SUBSCRIBER_PORTAL_APPLET"
+			   DEFAULT_BUTTON="N"
+			   FIELD="MSISDN"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   INACTIVE="N"
+			   LEFT_TEXT="N"
+			   METHOD_INVOKED="Drilldown"
+			   MULTI_LINE="N"
+			   NAME="Subscriber Portal"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="02/19/2016 12:13:53"
+			   UPDATED_BY="ESANTOS"
+			   CREATED="06/12/2015 17:58:32"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="06/12/2015 17:58:32"
+				   UPDATED_BY="SADMIN"
+				   CREATED="06/12/2015 17:58:32"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_BITMAP="BTTNS_MORE"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ICON_MAP="ToggleListRowCount"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Link"
+			   INACTIVE="N"
+			   METHOD_INVOKED="ToggleListRowCount"
+			   MULTI_LINE="N"
+			   NAME="ToggleListRowCount"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/09/2015 16:43:24"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:04"
+			   CREATED_BY="MPONTE">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_CANCEL-1004230137-1J7"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEditNew"
+			   INACTIVE="N"
+			   METHOD_INVOKED="UndoRecord"
+			   MULTI_LINE="N"
+			   NAME="UndoRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/09/2015 16:43:24"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:04"
+			   CREATED_BY="MPONTE">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/09/2015 12:59:06"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:04"
+				   CREATED_BY="MPONTE">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_UNGROUP-1005113501-463"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   INACTIVE="N"
+			   METHOD_INVOKED="UngroupProdSvc"
+			   MULTI_LINE="N"
+			   NAME="Ungroup"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TYPE="PushButton"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   UPDATED="01/09/2015 16:44:03"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:05"
+			   CREATED_BY="MPONTE">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/09/2015 12:59:06"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:05"
+				   CREATED_BY="MPONTE">
+				</CONTROL_LOCALE>
+				<CONTROL_USER_PROP
+				   INACTIVE="N"
+				   NAME="Mode"
+				   VALUE="Edit List"
+				   UPDATED="01/08/2015 17:13:05"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:05"
+				   CREATED_BY="MPONTE">
+				</CONTROL_USER_PROP>
+				<CONTROL_USER_PROP
+				   INACTIVE="N"
+				   NAME="Popup"
+				   VALUE="Product Popup Applet"
+				   UPDATED="01/08/2015 17:13:05"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:05"
+				   CREATED_BY="MPONTE">
+				</CONTROL_USER_PROP>
+			</CONTROL>
+			<DRILLDOWN_OBJECT
+			   HYPERLINK_FIELD="Line Number"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_GO_TO_ACTIONS-1004225417-00T"
+			   NAME="Actions"
+			   SEQUENCE="2"
+			   VIEW="Order Entry - Line Item Actions View (Sales)"
+			   UPDATED="01/08/2015 17:13:05"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:05"
+			   CREATED_BY="MPONTE">
+			</DRILLDOWN_OBJECT>
+			<DRILLDOWN_OBJECT
+			   BUSINESS_COMPONENT="Action"
+			   DESTINATION_FIELD="Id"
+			   HYPERLINK_FIELD="Activity Id"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_GO_TO_ACTIVITY-1004225417-00U"
+			   NAME="Activity"
+			   SEQUENCE="6"
+			   SOURCE_FIELD="Activity Id"
+			   VIEW="FS Activity Recommended Parts and Tools"
+			   UPDATED="01/08/2015 17:13:05"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:05"
+			   CREATED_BY="MPONTE">
+			</DRILLDOWN_OBJECT>
+			<DRILLDOWN_OBJECT
+			   BUSINESS_COMPONENT="Account"
+			   DESTINATION_FIELD="Id"
+			   HYPERLINK_FIELD="Billing Account"
+			   INACTIVE="N"
+			   NAME="Billing Account"
+			   SEQUENCE="3"
+			   SOURCE_FIELD="Billing Account Id"
+			   VIEW="SIS OM Customer Account Portal View"
+			   UPDATED="01/08/2015 17:13:05"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:05"
+			   CREATED_BY="MPONTE">
+			</DRILLDOWN_OBJECT>
+			<DRILLDOWN_OBJECT
+			   BUSINESS_COMPONENT="Auction Item Detail"
+			   HYPERLINK_FIELD="Item Display Name"
+			   INACTIVE="N"
+			   NAME="Item Auction Item"
+			   SEQUENCE="10"
+			   SOURCE_FIELD="Auction Item Id"
+			   VIEW="eAuction Admin Auction Detail View"
+			   VISIBILITY_TYPE="All"
+			   UPDATED="01/08/2015 17:13:05"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:05"
+			   CREATED_BY="MPONTE">
+				<DRILLDOWN_OBJECT_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/08/2015 17:13:05"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:05"
+				   CREATED_BY="MPONTE">
+				</DRILLDOWN_OBJECT_LOCALE>
+				<DYNAMIC_DRILLDOWN_DESTINATION
+				   DESTINATION_DRILLDOWN_OBJECT="Item Auction Item"
+				   FIELD="Item Type - Language Independent"
+				   INACTIVE="N"
+				   NAME="Auction Item"
+				   SEQUENCE="2"
+				   VALUE="Auction Item"
+				   UPDATED="01/08/2015 17:13:05"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:05"
+				   CREATED_BY="MPONTE">
+				</DYNAMIC_DRILLDOWN_DESTINATION>
+				<DYNAMIC_DRILLDOWN_DESTINATION
+				   DESTINATION_DRILLDOWN_OBJECT="Item Product"
+				   FIELD="Item Type - Language Independent"
+				   INACTIVE="N"
+				   NAME="Product"
+				   SEQUENCE="1"
+				   VALUE="Product"
+				   UPDATED="01/08/2015 17:13:05"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:05"
+				   CREATED_BY="MPONTE">
+				</DYNAMIC_DRILLDOWN_DESTINATION>
+			</DRILLDOWN_OBJECT>
+			<DRILLDOWN_OBJECT
+			   BUSINESS_COMPONENT="Internal Product"
+			   HYPERLINK_FIELD="Item Display Name"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_GO_TO_PRODUCT-1004225420-01L"
+			   NAME="Item Product"
+			   SEQUENCE="11"
+			   SOURCE_FIELD="Product Id"
+			   VIEW="Product Detail Key Features View"
+			   VISIBILITY_TYPE="All"
+			   UPDATED="01/08/2015 17:13:05"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:05"
+			   CREATED_BY="MPONTE">
+				<DYNAMIC_DRILLDOWN_DESTINATION
+				   DESTINATION_DRILLDOWN_OBJECT="Item Auction Item"
+				   FIELD="Item Type - Language Independent"
+				   INACTIVE="N"
+				   NAME="Auction Item"
+				   SEQUENCE="2"
+				   VALUE="Auction Item"
+				   UPDATED="01/08/2015 17:13:05"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:05"
+				   CREATED_BY="MPONTE">
+				</DYNAMIC_DRILLDOWN_DESTINATION>
+				<DYNAMIC_DRILLDOWN_DESTINATION
+				   DESTINATION_DRILLDOWN_OBJECT="Item Product"
+				   FIELD="Item Type - Language Independent"
+				   INACTIVE="N"
+				   NAME="Product"
+				   SEQUENCE="1"
+				   VALUE="Product"
+				   UPDATED="01/08/2015 17:13:05"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:05"
+				   CREATED_BY="MPONTE">
+				</DYNAMIC_DRILLDOWN_DESTINATION>
+			</DRILLDOWN_OBJECT>
+			<DRILLDOWN_OBJECT
+			   BUSINESS_COMPONENT="Asset Mgmt - Asset"
+			   DESTINATION_FIELD="VF MSISDN"
+			   HYPERLINK_FIELD="MSISDN"
+			   INACTIVE="N"
+			   NAME="MSISDN"
+			   SOURCE_FIELD="MSISDN"
+			   VIEW="VF Subscriber Portal Summary View"
+			   UPDATED="02/19/2016 12:13:52"
+			   UPDATED_BY="ESANTOS"
+			   CREATED="02/19/2016 12:13:52"
+			   CREATED_BY="ESANTOS">
+			</DRILLDOWN_OBJECT>
+			<DRILLDOWN_OBJECT
+			   HYPERLINK_FIELD="Part Number"
+			   INACTIVE="N"
+			   NAME="Part Number"
+			   SEQUENCE="12"
+			   VIEW="TAF Order Entry - Line Item Detail View"
+			   UPDATED="01/08/2015 17:13:05"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:05"
+			   CREATED_BY="MPONTE">
+			</DRILLDOWN_OBJECT>
+			<DRILLDOWN_OBJECT
+			   BUSINESS_COMPONENT="Internal Product"
+			   DESTINATION_FIELD="Id"
+			   HYPERLINK_FIELD="Product"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_GO_TO_PRODUCT_DETAIL-1004225420-01M"
+			   NAME="Product"
+			   SEQUENCE="4"
+			   SOURCE_FIELD="Product Id"
+			   VIEW="Product Detail Key Features View"
+			   VISIBILITY_TYPE="All"
+			   UPDATED="01/08/2015 17:13:05"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:05"
+			   CREATED_BY="MPONTE">
+				<DYNAMIC_DRILLDOWN_DESTINATION
+				   DESTINATION_DRILLDOWN_OBJECT="Product"
+				   FIELD="Drilldown Product Type Calc"
+				   INACTIVE="N"
+				   NAME="Product"
+				   SEQUENCE="1"
+				   VALUE="Product"
+				   UPDATED="01/08/2015 17:13:05"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:05"
+				   CREATED_BY="MPONTE">
+				</DYNAMIC_DRILLDOWN_DESTINATION>
+				<DYNAMIC_DRILLDOWN_DESTINATION
+				   DESTINATION_DRILLDOWN_OBJECT="Promotion"
+				   FIELD="Drilldown Product Type Calc"
+				   INACTIVE="N"
+				   NAME="Promotion"
+				   SEQUENCE="2"
+				   VALUE="Promotion"
+				   UPDATED="01/08/2015 17:13:05"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:05"
+				   CREATED_BY="MPONTE">
+				</DYNAMIC_DRILLDOWN_DESTINATION>
+			</DRILLDOWN_OBJECT>
+			<DRILLDOWN_OBJECT
+			   BUSINESS_COMPONENT="ISS Promotion"
+			   DESTINATION_FIELD="Id"
+			   HYPERLINK_FIELD="Product"
+			   INACTIVE="N"
+			   NAME="Promotion"
+			   SEQUENCE="8"
+			   SOURCE_FIELD="Product Id"
+			   VIEW="ISS Promotion Product Summary View"
+			   VISIBILITY_TYPE="All"
+			   UPDATED="01/08/2015 17:13:05"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:05"
+			   CREATED_BY="MPONTE">
+				<DYNAMIC_DRILLDOWN_DESTINATION
+				   DESTINATION_DRILLDOWN_OBJECT="Product"
+				   FIELD="Drilldown Product Type Calc"
+				   INACTIVE="N"
+				   NAME="Product"
+				   SEQUENCE="1"
+				   VALUE="Product"
+				   UPDATED="01/08/2015 17:13:05"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:05"
+				   CREATED_BY="MPONTE">
+				</DYNAMIC_DRILLDOWN_DESTINATION>
+				<DYNAMIC_DRILLDOWN_DESTINATION
+				   DESTINATION_DRILLDOWN_OBJECT="Promotion"
+				   FIELD="Drilldown Product Type Calc"
+				   INACTIVE="N"
+				   NAME="Promotion"
+				   SEQUENCE="2"
+				   VALUE="Promotion"
+				   UPDATED="01/08/2015 17:13:05"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:05"
+				   CREATED_BY="MPONTE">
+				</DYNAMIC_DRILLDOWN_DESTINATION>
+			</DRILLDOWN_OBJECT>
+			<DRILLDOWN_OBJECT
+			   BUSINESS_COMPONENT="Account"
+			   DESTINATION_FIELD="Id"
+			   HYPERLINK_FIELD="Service Account"
+			   INACTIVE="N"
+			   NAME="Service Account"
+			   SEQUENCE="5"
+			   SOURCE_FIELD="Service Account Id"
+			   VIEW="SIS OM Customer Account Portal View"
+			   UPDATED="01/08/2015 17:13:05"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:05"
+			   CREATED_BY="MPONTE">
+			</DRILLDOWN_OBJECT>
+			<DRILLDOWN_OBJECT
+			   BUSINESS_COMPONENT="Account"
+			   DESTINATION_FIELD="Id"
+			   HYPERLINK_FIELD="Special Rating List Name"
+			   INACTIVE="N"
+			   MENU_TEXT_-_STRING_REFERENCE="SBL_GOTO_SPECIAL_RATE"
+			   NAME="Special Rating List"
+			   SEQUENCE="14"
+			   SOURCE_FIELD="Service Account Id"
+			   VIEW="SWI Special Rating Profile View"
+			   UPDATED="01/08/2015 17:13:05"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:05"
+			   CREATED_BY="MPONTE">
+				<DRILLDOWN_OBJECT_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/08/2015 17:13:05"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:05"
+				   CREATED_BY="MPONTE">
+				</DRILLDOWN_OBJECT_LOCALE>
+			</DRILLDOWN_OBJECT>
+			<DRILLDOWN_OBJECT
+			   BUSINESS_COMPONENT="Volume Discount"
+			   HYPERLINK_FIELD="Volume Discount Item"
+			   INACTIVE="N"
+			   NAME="Volume Discount"
+			   SEQUENCE="7"
+			   SOURCE_FIELD="Volume Discount Id"
+			   VIEW="Volume Discount Item"
+			   UPDATED="01/08/2015 17:13:05"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:05"
+			   CREATED_BY="MPONTE">
+				<DRILLDOWN_OBJECT_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/08/2015 17:13:05"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:05"
+				   CREATED_BY="MPONTE">
+				</DRILLDOWN_OBJECT_LOCALE>
+			</DRILLDOWN_OBJECT>
+			<DRILLDOWN_OBJECT
+			   BUSINESS_COMPONENT="Volume Discount"
+			   HYPERLINK_FIELD="Volume Upsell Item"
+			   INACTIVE="N"
+			   NAME="Volume Upsell"
+			   SEQUENCE="9"
+			   SOURCE_FIELD="Volume Discount Id"
+			   VIEW="Volume Discount Item"
+			   UPDATED="01/08/2015 17:13:05"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:05"
+			   CREATED_BY="MPONTE">
+				<DRILLDOWN_OBJECT_LOCALE
+				   APPLICATION_CODE="STD"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="01/08/2015 17:13:05"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:05"
+				   CREATED_BY="MPONTE">
+				</DRILLDOWN_OBJECT_LOCALE>
+			</DRILLDOWN_OBJECT>
+			<DRILLDOWN_OBJECT
+			   HYPERLINK_FIELD="Item Price - Display"
+			   INACTIVE="N"
+			   NAME="Waterfall Popup 1"
+			   SEQUENCE="1"
+			   UPDATED="01/08/2015 17:13:05"
+			   UPDATED_BY="MPONTE"
+			   CREATED="01/08/2015 17:13:05"
+			   CREATED_BY="MPONTE">
+			</DRILLDOWN_OBJECT>
+			<LIST
+			   HTML_HIERARCHY_BITMAP="SWETree Bitmaps"
+			   HTML_MULTI_ROW_EDIT="N"
+			   HTML_MULTI_ROW_SELECT="Y"
+			   INACTIVE="N"
+			   NAME="List"
+			   TOTAL_DISPLAYED="Y"
+			   TOTAL_REQUIRED="Y"
+			   UPDATED="10/26/2016 10:52:23"
+			   UPDATED_BY="JSANTOS"
+			   CREATED="01/08/2015 17:13:05"
+			   CREATED_BY="MPONTE">
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="VFTRCBU :: GSEQUEIRA :: 15.07.2014 :: Display name changed"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_ACTION_CODE-1004225112-00W"
+				   FIELD="Action Code"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Action Code"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="Y"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/09/2015 16:59:16"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:06"
+				   CREATED_BY="MPONTE">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="01/09/2015 16:59:16"
+					   UPDATED_BY="MPONTE"
+					   CREATED="01/08/2015 17:13:06"
+					   CREATED_BY="MPONTE">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_ADAPTER_NO"
+				   FIELD="VF Adapter Number"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Adapter No"
+				   PICK_APPLET="VF Adapter No Pick Applet"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/22/2015 16:49:23"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:06"
+				   CREATED_BY="MPONTE">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="01/08/2015 17:13:06"
+					   UPDATED_BY="MPONTE"
+					   CREATED="01/08/2015 17:13:06"
+					   CREATED_BY="MPONTE">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="GEN_REQ_090 : IDC-ISCSSARTHIK :29/1/2013: Created new."
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_BACK_DATE"
+				   FIELD="Due Date"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Back Date"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/09/2015 16:59:01"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:06"
+				   CREATED_BY="MPONTE">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="01/08/2015 17:13:06"
+					   UPDATED_BY="MPONTE"
+					   CREATED="01/08/2015 17:13:06"
+					   CREATED_BY="MPONTE">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="SIA061902 Disable HTML List Edit of drilldown-enabled columns for SI support"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_BILLING_ACCOUNT-1004225051-19I"
+				   FIELD="Billing Account"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Billing Account"
+				   PICK_APPLET="VF Line Item BA"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/09/2015 16:59:02"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:06"
+				   CREATED_BY="MPONTE">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="01/08/2015 17:13:06"
+					   UPDATED_BY="MPONTE"
+					   CREATED="01/08/2015 17:13:06"
+					   CREATED_BY="MPONTE">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="VFTRCBU :: WA#39 :: 18.07.2014 :: Removed Inactive flag"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_CANCEL_FLAG"
+				   FIELD="VF Cancel Flag"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_ICON_MAP="CHECK"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="CheckBox"
+				   INACTIVE="N"
+				   NAME="Cancel Flag"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Center"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/22/2015 16:43:25"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:18:40"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_CANCELLATION_REASON"
+				   FIELD="VF Cancellation Reason"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="Cancellation Reason"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/09/2015 16:58:44"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:18:45"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_CONTACT_FIRST_NAME-1004230405-20W"
+				   FIELD="VFTRCBU Contact First Name Calc"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Contact First Name"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/09/2015 16:59:02"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:06"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_CONTACT_LAST_NAME"
+				   FIELD="VFTRCBU Contact Last Name Calc"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Contact Last Name"
+				   PICK_APPLET="Contact Pick Applet"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/09/2015 16:59:03"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:06"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_Donor_Operator"
+				   FIELD="DONOR OPERATOR"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="DONOR OPERATOR"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/22/2015 16:46:31"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:06"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_PROMOTION_TYPE-1009095032-BIX"
+				   FIELD="Discount Amount - Display"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Discount Amount"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_CURRENCY_CODE_EXPRESSION="Parent: &apos;Order Entry - Orders.Currency Code&apos;"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="12"
+				   UPDATED="10/16/2015 18:26:48"
+				   UPDATED_BY="CJANEIRO"
+				   CREATED="01/08/2015 17:13:06"
+				   CREATED_BY="MPONTE">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="01/08/2015 17:13:06"
+					   UPDATED_BY="MPONTE"
+					   CREATED="01/08/2015 17:13:06"
+					   CREATED_BY="MPONTE">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_ACCOUNT_PAY_TYPE"
+				   FIELD="VF Account Pay Type"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="Y"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="HTML Text"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SEQUENCE="53"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="03/16/2016 19:29:13"
+				   UPDATED_BY="FCARRIL"
+				   CREATED="03/16/2016 19:27:10"
+				   CREATED_BY="FCARRIL">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_ICCID"
+				   FIELD="ICCID"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="ICCID"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="04/13/2015 17:17:57"
+				   UPDATED_BY="MSOUSA"
+				   CREATED="01/08/2015 17:19:32"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_IMEI"
+				   FIELD="VF IMEI"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="IMEI"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/09/2015 16:59:03"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:07"
+				   CREATED_BY="MPONTE">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="01/08/2015 17:13:07"
+					   UPDATED_BY="MPONTE"
+					   CREATED="01/08/2015 17:13:07"
+					   CREATED_BY="MPONTE">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="Disable HTML List Edit of drilldown-enabled columns for SI support"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_LINE_#-1004231244-3LB"
+				   FIELD="Line Number"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Line Number"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="5"
+				   UPDATED="01/09/2015 16:59:04"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:07"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_MSISDN-0928155826-0R1"
+				   FIELD="MSISDN"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="MSISDN"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="04/13/2015 17:16:58"
+				   UPDATED_BY="MSOUSA"
+				   CREATED="01/08/2015 17:19:49"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="GW: 8/31/05 activated"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_PART_NUMBER-1009090938-05N"
+				   FIELD="Part Number"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Part Number"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/09/2015 16:59:04"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:07"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="VFTRCBU :: GSEQUEIRA :: 15.07.2014 :: Inactive flag removed"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_PORT_RESPONSE"
+				   FIELD="VF Port Response"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Port Response"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/22/2015 16:47:29"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:07"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="Added as a part of Multi Root Main Line Items Project"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_PRICE_TYPE-0114142216-02G"
+				   FIELD="Price Type"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   HTML_WIDTH="150"
+				   INACTIVE="N"
+				   NAME="Price Type"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/09/2015 16:59:04"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:07"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="JMSOUSA - 27.08.2015 - Drop8/9 Tests Drive"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_PROMOTION-1004224942-09S"
+				   FIELD="VF Prod Prom Name Translated"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Prod Prom Name"
+				   PICK_APPLET="ISS Promotion Related Prom Pick Applet"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="10/26/2016 10:52:23"
+				   UPDATED_BY="JSANTOS"
+				   CREATED="08/27/2015 11:52:42"
+				   CREATED_BY="JMSOUSA">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="MR 06/06/2005 delete PickApplet Product Pick Applet (Eligibility) ; Disable HTML List Edit of drilldown-enabled columns for SI support"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_PRODUCT-1004224553-15T"
+				   FIELD="Product Translated"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="Y"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Product Name Translated"
+				   PICK_APPLET="Product Pick Applet (Eligibility)"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="04/13/2015 17:16:04"
+				   UPDATED_BY="MSOUSA"
+				   CREATED="01/08/2015 17:13:08"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_QUANTITY"
+				   FIELD="Quantity Requested"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Quantity Requested"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Right"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="12"
+				   UPDATED="01/09/2015 16:59:05"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:08"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="VFTRCBU-16784"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_REJECTION_REASON"
+				   FIELD="VF Cancellation Reason"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Rejection Reason"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="10/30/2015 09:43:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="01/09/2015 16:55:18"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="CR209: this field store the value of the SIM Type: (NO:=Normal|TW:=Twin)"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_SIM_TYPE"
+				   FIELD="SIM Card Type"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="SIM Type"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/22/2015 16:48:16"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:08"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="SJOAO - 17-09-2015 - VFTRCBU-14704"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_SERVICE_START_DATE-1009095551-DI0"
+				   FIELD="Service Start Date"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Service Start Date"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="09/28/2015 10:49:29"
+				   UPDATED_BY="SJOAO"
+				   CREATED="09/28/2015 10:45:36"
+				   CREATED_BY="SJOAO">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="GW: 8/8/05 Set Show In List to True per SIR post upg to 782"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_STATUS-1004224352-0BB"
+				   FIELD="Status"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Status"
+				   POPUP_EDIT="N"
+				   PROMPT_TEXT_-_STRING_REFERENCE="SBL_THE_FUNCTIONAL_CONDITION_OF_THE_PART_BEING_MOVED-1004234034-7OP"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="10"
+				   UPDATED="01/09/2015 16:59:05"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:08"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="VFTRCBU :: GSEQUEIRA :: 15.07.2014"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_TELCO_ACTION_REASON"
+				   FIELD="TELCO Action Reason"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="TELCO Action Reason"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/09/2015 16:59:06"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:08"
+				   CREATED_BY="MPONTE">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="01/08/2015 17:13:08"
+					   UPDATED_BY="MPONTE"
+					   CREATED="01/08/2015 17:13:08"
+					   CREATED_BY="MPONTE">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="VFTRCBU :: GSEQUEIRA :: 15.07.2014"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_ACTION_TYPE-1004225950-072"
+				   FIELD="TELCO Action Type"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="TELCO Action Type"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/09/2015 16:59:06"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:08"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="Added as a part of Multi Root Main Line Items Project"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_USAGE_TYPE-0928155844-1ER"
+				   FIELD="Usage Type"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="Usage Type"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/09/2015 16:59:06"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:08"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_ACCOUNT_PAY_TYPE"
+				   FIELD="VF Account Pay Type"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="VF Account Pay Type"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/22/2015 16:48:39"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:08"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_INHERITANCE_FLG"
+				   FIELD="VF Inheritance transfer flg"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_ICON_MAP="CHECK"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="CheckBox"
+				   INACTIVE="N"
+				   NAME="VF Inheritance transfer flg"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Center"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/09/2015 16:59:06"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:09"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   CHECK_BITMAP_IDENTIFIER="CHECK"
+				   COMMENTS="VF build for R1.4"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_MNP_FLAG"
+				   FIELD="VF MNP Flag"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_ICON_MAP="CHECK"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="CheckBox"
+				   INACTIVE="N"
+				   NAME="VF MNP Flag"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Center"
+				   TEXT_ALIGNMENT-LABEL="Center"
+				   TOTAL_REQUIRED="N"
+				   TYPE="CheckBox"
+				   WIDTH="20"
+				   UPDATED="01/09/2015 16:59:06"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:09"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="JMSOUSA - 27.08.2015 - Drop8/9 Tests Drive"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_PROMOTION_ID-1009095030-BI2"
+				   FIELD="Prod Prom Id"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="VF Prod Prom Id"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="08/27/2015 11:54:50"
+				   UPDATED_BY="JMSOUSA"
+				   CREATED="08/27/2015 11:54:05"
+				   CREATED_BY="JMSOUSA">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="JMSOUSA - 27.08.2015 - Drop8/9 Tests Drive"
+				   DISPLAY_NAME_-_STRING_REFERENCE="SBL_PROMOTION-1004224942-09S"
+				   FIELD="VF Prod Prom Name Translated"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="VF Prod Prom Name Translated"
+				   PICK_APPLET="ISS Promotion Related Prom Pick Applet"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="08/27/2015 11:55:28"
+				   UPDATED_BY="JMSOUSA"
+				   CREATED="08/27/2015 11:54:53"
+				   CREATED_BY="JMSOUSA">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="20160223 - NF - Cambaz 2 (Event Structure Check)"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTR_SC_CODES_CODE"
+				   FIELD="VF Scratch Card Code"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="VF Scratch Card Code"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="04/21/2016 12:15:32"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="04/21/2016 12:15:32"
+				   CREATED_BY="ACAMBAS">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_SKIP_PENALITY"
+				   FIELD="VF Skip Penality"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VF Skip Penalty"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/09/2015 16:59:06"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:09"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_ TARIFF_PLAN"
+				   FIELD="VF Tariff Plan"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VF Tariff Plan"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="01/09/2015 16:59:07"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:09"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="TFERNANDES VFTRCBU-22246"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_SUB_REASON"
+				   FIELD="VFTRCBU Action Sub Reason"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Action Sub Reason"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="12/18/2015 16:44:26"
+				   UPDATED_BY="TFERNANDES"
+				   CREATED="12/18/2015 16:44:26"
+				   CREATED_BY="TFERNANDES">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="SJOAO; VFTRCBU-18044; 05102015"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_PROMOTION_VALUE"
+				   FIELD="VFTRCBU Discount Amount"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Discount Amount"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="10/30/2015 09:43:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/28/2015 10:42:42"
+				   CREATED_BY="SJOAO">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="10/30/2015 09:43:02"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/30/2015 09:43:02"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="SJOAO; VFTRCBU-18044; 05102015"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_PROMOTION_UNITS"
+				   FIELD="VFTRCBU Discount Duration"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Discount Duration"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="10/30/2015 09:43:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/28/2015 10:43:01"
+				   CREATED_BY="SJOAO">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="10/30/2015 09:43:02"
+					   UPDATED_BY="SADMIN"
+					   CREATED="10/30/2015 09:43:02"
+					   CREATED_BY="SADMIN">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="SJOAO; VFTRCBU-18044; 05102015"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_PROMOTION_END_DATE"
+				   FIELD="VFTRCBU Discount End Date"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Discount End Date"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="10/30/2015 09:43:02"
+				   UPDATED_BY="SADMIN"
+				   CREATED="09/29/2015 10:04:17"
+				   CREATED_BY="SJOAO">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="10/16/2015 18:26:25"
+					   UPDATED_BY="CJANEIRO"
+					   CREATED="09/29/2015 10:04:44"
+					   CREATED_BY="SJOAO">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="TFERNANDES VFTRCBU-22246"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_GSM_TYPE"
+				   FIELD="VFTRCBU GSM Type"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU GSM Type"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="12/18/2015 17:03:15"
+				   UPDATED_BY="TFERNANDES"
+				   CREATED="12/18/2015 17:03:15"
+				   CREATED_BY="TFERNANDES">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="TFERNANDES VFTRCBU-22246"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_SECONDARY_ICCID"
+				   FIELD="VF ICCID Dual SIM"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU ICCID Dual SIM"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="12/18/2015 17:14:41"
+				   UPDATED_BY="TFERNANDES"
+				   CREATED="12/18/2015 17:14:41"
+				   CREATED_BY="TFERNANDES">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="TFERNANDES VFTRCBU-22246"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_LEGAL_GUARDIAN"
+				   FIELD="Legal Guardian Last Name"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Legal Guardian Last Name"
+				   PICK_APPLET="VFTRCBU Legal Guardian Pick Applet"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="12/18/2015 16:40:21"
+				   UPDATED_BY="TFERNANDES"
+				   CREATED="12/18/2015 16:37:24"
+				   CREATED_BY="TFERNANDES">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="TFERNANDES VFTRCBU-22246"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_PAYER_MSISDN"
+				   FIELD="VFTRCBU Payer MSISDN"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Payer MSISDN"
+				   PICK_APPLET="VFTRCBU Leader MSISDN Pick Applet"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="12/18/2015 17:02:02"
+				   UPDATED_BY="TFERNANDES"
+				   CREATED="12/18/2015 17:01:03"
+				   CREATED_BY="TFERNANDES">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="VFTRCBU WA#18 MPONTE 2015.02.03"
+				   FIELD="VFTRCBU Recipient Id"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Recipient Id"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="02/03/2015 16:09:17"
+				   UPDATED_BY="MPONTE"
+				   CREATED="02/03/2015 16:09:17"
+				   CREATED_BY="MPONTE">
+					<LIST_COLUMN_LOCALE
+					   APPLICATION_CODE="STD"
+					   DISPLAY_NAME="Recipient Id"
+					   INACTIVE="N"
+					   LANGUAGE_CODE="ENU"
+					   NAME="ENU-STD"
+					   TRANSLATE="Y"
+					   UPDATED="02/03/2015 16:09:44"
+					   UPDATED_BY="MPONTE"
+					   CREATED="02/03/2015 16:09:44"
+					   CREATED_BY="MPONTE">
+					</LIST_COLUMN_LOCALE>
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="TFERNANDES VFTRCBU-22246"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_REFERENCE_VALUE"
+				   FIELD="VFTRCBU Reference Value"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Reference Value"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="12/18/2015 16:54:16"
+				   UPDATED_BY="TFERNANDES"
+				   CREATED="12/18/2015 16:54:16"
+				   CREATED_BY="TFERNANDES">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="TFERNANDES VFTRCBU-22246"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_TRANSFER_CCB_CUSTID"
+				   FIELD="VFTRCBU Target Customer"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Target Customer"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="12/18/2015 17:13:19"
+				   UPDATED_BY="TFERNANDES"
+				   CREATED="12/18/2015 17:13:19"
+				   CREATED_BY="TFERNANDES">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="TFERNANDES VFTRCBU-22246"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_TARIFF_DEPENDENCY"
+				   FIELD="VFTRCBU Tariff Dependency"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Tariff Dependency"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="12/18/2015 16:50:03"
+				   UPDATED_BY="TFERNANDES"
+				   CREATED="12/18/2015 16:49:15"
+				   CREATED_BY="TFERNANDES">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="TFERNANDES VFTRCBU-22246"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_VOUCHER_SERIAL_NUMBER"
+				   FIELD="VF Voucher Serial Number"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Text"
+				   INACTIVE="N"
+				   NAME="VFTRCBU Voucher Serial Number"
+				   POPUP_EDIT="N"
+				   READ_ONLY="N"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="12/18/2015 16:52:19"
+				   UPDATED_BY="TFERNANDES"
+				   CREATED="12/18/2015 16:52:19"
+				   CREATED_BY="TFERNANDES">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="TFERNANDES VFTRCBU-22246"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_TRANSFER_CCB_BILLCYCLE"
+				   FIELD="VFTRCBU iCCB Bill Cycle"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="VFTRCBU iCCB Bill Cycle"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="12/18/2015 17:10:24"
+				   UPDATED_BY="TFERNANDES"
+				   CREATED="12/18/2015 17:07:55"
+				   CREATED_BY="TFERNANDES">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="TFERNANDES VFTRCBU-22246"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_TRANSFER_CCB_GROUPID"
+				   FIELD="VFTRCBU iCCB Group Id"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="VFTRCBU iCCB Group Id"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="12/18/2015 17:10:24"
+				   UPDATED_BY="TFERNANDES"
+				   CREATED="12/18/2015 17:08:55"
+				   CREATED_BY="TFERNANDES">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="TFERNANDES VFTRCBU-22246"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_TRANSFER_CCB_TARIFF"
+				   FIELD="VFTRCBU iCCB Tariff Plan"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="VFTRCBU iCCB Tariff Plan"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="12/18/2015 17:10:23"
+				   UPDATED_BY="TFERNANDES"
+				   CREATED="12/18/2015 17:09:24"
+				   CREATED_BY="TFERNANDES">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="TFERNANDES VFTRCBU-22246"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VFTRCBU_TRANSFER_CCB_TAX_PROF"
+				   FIELD="VFTRCBU iCCB Tax Profile"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="Field"
+				   INACTIVE="N"
+				   NAME="VFTRCBU iCCB Tax Profile"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="N"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Left"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="TextBox"
+				   WIDTH="20"
+				   UPDATED="12/18/2015 17:09:53"
+				   UPDATED_BY="TFERNANDES"
+				   CREATED="12/18/2015 17:09:53"
+				   CREATED_BY="TFERNANDES">
+				</LIST_COLUMN>
+				<LIST_COLUMN
+				   AVAILABLE="Y"
+				   BITMAP_COLUMN_HEADING="N"
+				   COMMENTS="VF Prateek 20120124 R2.1: Created for Prod00028801VFTK Pallavi R1.4.2 20110512 - Added for WP05"
+				   DISPLAY_NAME_-_STRING_REFERENCE="X_VF_VIP"
+				   FIELD="VF Vip"
+				   HTML_DISPLAY_MODE="EncodeData"
+				   HTML_ICON_MAP="CHECK"
+				   HTML_LIST_EDIT="Y"
+				   HTML_ONLY="N"
+				   HTML_ROW_SENSITIVE="Y"
+				   HTML_TYPE="CheckBox"
+				   INACTIVE="N"
+				   NAME="VIP"
+				   POPUP_EDIT="N"
+				   READ_ONLY="Y"
+				   RUNTIME="Y"
+				   SHOW_IN_LIST="Y"
+				   SHOW_POPUP="N"
+				   TEXT_ALIGNMENT="Center"
+				   TEXT_ALIGNMENT-LABEL="Right"
+				   TOTAL_REQUIRED="N"
+				   TYPE="CheckBox"
+				   WIDTH="20"
+				   UPDATED="01/22/2015 16:48:54"
+				   UPDATED_BY="MPONTE"
+				   CREATED="01/08/2015 17:13:09"
+				   CREATED_BY="MPONTE">
+				</LIST_COLUMN>
+			</LIST>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+
+>>>>>>> Stashed changes

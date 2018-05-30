@@ -1,0 +1,1028 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   NAME="Siebel Repository"
+   UPDATED="08/11/2017 16:02:15"
+   UPDATED_BY="SADMIN"
+   CREATED="08/11/2017 11:53:44"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="LOCKED BY VTAO UI UPGRADE"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   LOCKED_DATE="08/11/2017 16:03:48"
+	   NAME="Account (SSE)"
+	   UI_FREEZE="N"
+	   UPDATED="01/16/2018 10:27:49"
+	   UPDATED_BY="IBM_OSMANS"
+	   CREATED="01/01/1980 00:00:00"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   BUSINESS_COMPONENT="VF Invoice Limit VBC"
+		   CLASS="CSSFrame"
+		   COMMENTS="CR701A"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HEIGHT="4"
+		   INACTIVE="N"
+		   NAME="VF Invoice Limit Form Applet"
+		   NO_DELETE="N"
+		   NO_INSERT="N"
+		   NO_MERGE="N"
+		   NO_UPDATE="N"
+		   OBJECT_LOCKED="N"
+		   SCRIPTED="Y"
+		   TITLE_-_STRING_REFERENCE="X_VF_Invoice_Limit_Title"
+		   TYPE="Standard"
+		   UPGRADE_BEHAVIOR="Preserve"
+		   WIDTH="2"
+		   UPDATED="01/18/2018 11:27:41"
+		   UPDATED_BY="IBM_OSMANS"
+		   CREATED="04/23/2013 22:23:59"
+		   CREATED_BY="SADMIN">
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CanInvokeInvoice"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CanInvokeInvoice(userRole, methodName)
+{
+try{
+	var psInputs : PropertySet;
+	var psOutputs : PropertySet;
+	var bsGeneralOperations : Service;
+	psInputs = TheApplication().NewPropertySet();
+	psOutputs = TheApplication().NewPropertySet();
+	bsGeneralOperations = TheApplication().GetService(&quot;ACS General Operations&quot;);
+	//psInputs.SetProperty (&quot;Function&quot;, &quot;0065Assign&quot;);
+	//psInputs.SetProperty (&quot;Name&quot;, &quot;Assign&quot;);
+	psInputs.SetProperty(&quot;Function&quot;,methodName);
+	psInputs.SetProperty(&quot;Name&quot;,methodName);
+	psInputs.SetProperty(&quot;Value&quot;,userRole);
+	bsGeneralOperations.InvokeMethod(&quot;GetParameter_3Inputs&quot;,psInputs,psOutputs);
+	var hasRole = psOutputs.GetProperty(&quot;Cons1&quot;);
+	return hasRole;
+}
+finally
+{
+	psInputs = null;
+	psOutputs = null;
+	bsGeneralOperations = null;
+}
+}"
+			   SEQUENCE="1"
+			   UPDATED="05/28/2013 19:01:20"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/28/2013 19:01:20"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="ShowError"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function ShowError(errCode)
+{
+	var errStr = errCode + &quot;: &quot;;
+	var strMessageCategory 	= &quot;VF Message Category&quot;;
+			switch(errCode)
+			{
+				case &apos;VFTK-Tibco-0001&apos;:
+				errStr = errStr + TheApplication().LookupMessage(strMessageCategory, &quot;AD5010&quot;);
+				break;
+				case &apos;VFTK-Tibco-0004&apos;:
+				errStr = errStr + TheApplication().LookupMessage(strMessageCategory, &quot;AD5011&quot;);
+				break; 
+				case &apos;VFTK-Kenan-1000&apos;:
+				errStr = errStr + TheApplication().LookupMessage(strMessageCategory, &quot;AD5012&quot;);	
+				break;
+				case &apos;VFTK-Kenan-1001&apos;:
+				errStr = errStr + TheApplication().LookupMessage(strMessageCategory, &quot;AD5013&quot;);
+				break;
+				case &apos;VFTK-Kenan-1002&apos;:
+				errStr = errStr + TheApplication().LookupMessage(strMessageCategory, &quot;AD5014&quot;);
+				break;
+				case &apos;VFTK-Kenan-1003&apos;:
+				errStr = errStr + TheApplication().LookupMessage(strMessageCategory, &quot;AD5015&quot;);
+				break;
+				case &apos;VFTK-Kenan-1004&apos;:
+				errStr = errStr + TheApplication().LookupMessage(strMessageCategory, &quot;AD5016&quot;);
+				break;
+				case &apos;VFTK-Kenan-1005&apos;:
+				errStr = errStr + TheApplication().LookupMessage(strMessageCategory, &quot;AD5017&quot;);
+				break;
+				case &apos;VFTK-Kenan-1006&apos;:
+				errStr = errStr + TheApplication().LookupMessage(strMessageCategory, &quot;AD5018&quot;);
+				break;
+				case &apos;VFTK-Kenan-1007&apos;:
+				errStr = errStr + TheApplication().LookupMessage(strMessageCategory, &quot;AD5019&quot;);
+				break;
+				case &apos;VFTK-Kenan-1008&apos;:
+				errStr = errStr + TheApplication().LookupMessage(strMessageCategory, &quot;AD5020&quot;);
+				break;	
+				case &apos;VFTK-Kenan-1009&apos;:
+				errStr = errStr + TheApplication().LookupMessage(strMessageCategory, &quot;AD5021&quot;);
+				break;
+				case &apos;VFTK-Kenan-1010&apos;:
+				errStr = errStr + TheApplication().LookupMessage(strMessageCategory, &quot;AD5022&quot;);
+				break;
+				case &apos;VFTK-Kenan-1011&apos;:
+				errStr = errStr + TheApplication().LookupMessage(strMessageCategory, &quot;AD5023&quot;);
+				break;
+			}			
+			TheApplication().RaiseErrorText(errStr);		
+
+
+}"
+			   SEQUENCE="2"
+			   UPDATED="05/28/2013 19:01:21"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/28/2013 19:01:21"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_Load"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_Load ()
+{
+	var boActive = this.BusObject();
+	var strBACode = &quot;&quot;;
+	var strShopId = &quot;&quot;;
+	var strLoginId = TheApplication().LoginName();
+	TheApplication().SetProfileAttr(&quot;LoginId_InvLim&quot;,strLoginId);
+	// VF Employee&apos;de search yapılacak.
+	var bcEmployee = this.BusObject().GetBusComp(&quot;VF Employee&quot;);
+	bcEmployee.SetViewMode(AllView);
+	bcEmployee.ClearToQuery();
+	bcEmployee.ActivateField(&quot;Shop Id&quot;);
+	bcEmployee.SetSearchSpec(&quot;Id&quot;, TheApplication().LoginId());
+	bcEmployee.ExecuteQuery(ForwardOnly);
+	if(bcEmployee.FirstRecord())
+	{
+		strShopId = bcEmployee.GetFieldValue(&quot;Shop Id&quot;);
+	}
+	TheApplication().SetProfileAttr(&quot;ShopId_InvLim&quot;,strShopId);
+	
+	if (boActive.Name() == &quot;VF TRK PRM Account&quot;)
+	{
+		strBACode = this.BusObject().GetBusComp(&quot;VF PRM Billing Account&quot;).GetFieldValue(&quot;Account Code&quot;);
+		TheApplication().SetProfileAttr(&quot;BACode_InvLim&quot;,strBACode);				
+	}
+	else
+	{
+		strBACode = this.BusObject().GetBusComp(&quot;Billing Account&quot;).GetFieldValue(&quot;Account Code&quot;);
+		TheApplication().SetProfileAttr(&quot;BACode_InvLim&quot;,strBACode);			
+	}
+		
+}"
+			   SEQUENCE="3"
+			   UPDATED="07/21/2013 20:31:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="06/05/2013 21:04:26"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreCanInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreCanInvokeMethod (MethodName, &amp;CanInvoke)
+{
+	try
+	{
+		var strRole = TheApplication().GetProfileAttr(&quot;TELCO.PositionProfile:Role.AvailableRoles&quot;);
+		var isEnable;
+		var strCustomerType = TheApplication().GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;);
+		if (strCustomerType == &quot;Consumer&quot; || strCustomerType == &quot;Bireysel&quot;)
+		{
+		 CanInvoke = &quot;FALSE&quot;; 
+		}
+		else
+		{
+		if (MethodName == &quot;VFRequestLimit&quot; )
+		{
+			var boActive = this.BusObject();
+			var strBAStatus = &quot;&quot;;
+			var strBAPostpaid = &quot;&quot;;
+			
+			if (boActive.Name() == &quot;VF TRK PRM Account&quot;)
+			{
+		 		strBAStatus = this.BusObject().GetBusComp(&quot;VF PRM Billing Account&quot;).GetFieldValue(&quot;Account Status Code&quot;);
+	        	strBAPostpaid = this.BusObject().GetBusComp(&quot;VF PRM Billing Account&quot;).GetFieldValue(&quot;TeXCo Account Type&quot;);
+	        }
+	        else
+	        {
+	        	strBAStatus = this.BusObject().GetBusComp(&quot;Billing Account&quot;).GetFieldValue(&quot;Account Status Code&quot;);
+	        	strBAPostpaid = this.BusObject().GetBusComp(&quot;Billing Account&quot;).GetFieldValue(&quot;TeXCo Account Type&quot;);
+	        }	
+	        var strBilling = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;BILLING_ACCOUNT_STATUS&quot;,&quot;100&quot;);
+	        var strPostpaid  = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;X_PAYMENT_MODALITY&quot;,&quot;Postpaid&quot;);
+	        if (strBAStatus==strBilling &amp;&amp; strBAPostpaid==strPostpaid)
+	        {	        	
+	        	isEnable =CanInvokeInvoice(strRole,&quot;VFRequestLimit&quot;);
+	         
+		        if(isEnable==&quot;True&quot;)
+		        {
+		        	CanInvoke = &quot;TRUE&quot;;     
+		        }
+		        else
+		        {
+		        	CanInvoke = &quot;FALSE&quot;;   
+		        }     
+	        }
+	        else
+	        {
+	        	CanInvoke = &quot;FALSE&quot;;   
+	        }        
+	        return (CancelOperation);
+		}
+		
+		if (MethodName == &quot;VFCancelLimit&quot; )
+		{
+			var ActiveStatus = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_INVOICE_LIMIT_STATUS&quot;,&quot;A&quot;);                                                    	                                               
+	   		var PendingStatus = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_INVOICE_LIMIT_STATUS&quot;,&quot;P&quot;); 
+			var strInvoiceLimitStatus = this.BusObject().GetBusComp(&quot;VF Invoice Limit VBC&quot;).GetFieldValue(&quot;STATUS&quot;);
+		
+	        if ((strInvoiceLimitStatus == ActiveStatus) || (strInvoiceLimitStatus == PendingStatus))
+	        {
+	        	//CanInvoke = &quot;TRUE&quot;;     
+	        	isEnable =CanInvokeInvoice(strRole,&quot;VFCancelLimit&quot;);
+	        
+		        if(isEnable==&quot;True&quot;)
+		        {
+		        	CanInvoke = &quot;TRUE&quot;;     
+		        }
+		        else
+		        {
+		        	CanInvoke = &quot;FALSE&quot;;   
+		        }
+	        }
+	        else
+	        {
+	        	CanInvoke = &quot;FALSE&quot;;   
+	        }       
+	        
+	        return (CancelOperation);
+		}
+		}
+
+	}
+	catch(e)
+	{
+		TheApplication().RaiseErrorText(&quot;Error Occurred &quot;+e.toString());
+		throw e;
+	}
+}"
+			   SEQUENCE="4"
+			   UPDATED="01/11/2018 22:44:35"
+			   UPDATED_BY="IBM_OSMANS"
+			   CREATED="05/17/2013 13:21:07"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreInvokeMethod (MethodName)
+{
+try
+	{
+		var boActive = this.BusObject();
+		var strBACode =&quot;&quot;;
+		var strLimitStatus = &quot;&quot;;
+		var strLoginId = &quot;&quot;;
+		var strShopId = &quot;&quot; ;
+		var strP2 : PropertySet = TheApplication().NewPropertySet();
+		var strP3 : PropertySet = TheApplication().NewPropertySet();	
+		var psInputs  : PropertySet;
+		var psOutputs : PropertySet;
+		var svcWF	  : Service;
+		var strP1 = &quot;&quot;;
+		var sMsg = &quot;&quot;;
+		var sReqLim=&quot;&quot;;
+		var sMSISDN=&quot;&quot;;
+		var sReqLimApp=TheApplication().GetProfileAttr(&quot;sReqLimApp&quot;);
+		var sMSISDNApp=TheApplication().GetProfileAttr(&quot;sMSISDNApp&quot;);
+		
+		psInputs  = TheApplication().NewPropertySet();
+		psOutputs = TheApplication().NewPropertySet();
+		svcWF	  = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		
+		strBACode = TheApplication().GetProfileAttr(&quot;BACode_InvLim&quot;);
+		strLoginId = TheApplication().GetProfileAttr(&quot;LoginId_InvLim&quot;);
+		strShopId = TheApplication().GetProfileAttr(&quot;ShopId_InvLim&quot;);
+		
+		strLimitStatus = this.BusComp().GetFieldValue(&quot;STATUS&quot;);
+		if (MethodName == &quot;VFRequestLimit&quot;)
+		{
+			var DeactivatedStatus = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;VF_INVOICE_LIMIT_STATUS&quot;,&quot;D&quot;);		
+			sReqLim=this.BusComp().GetFieldValue(&quot;REQ_LIMIT&quot;);
+			sMSISDN	=this.BusComp().GetFieldValue(&quot;CONTACT_MSISDN&quot;);
+			if(sReqLim!=sReqLimApp || sMSISDN!=sMSISDNApp)
+			{
+			if(sReqLim!=&quot;&quot; &amp;&amp; sMSISDN!=&quot;&quot;)
+			{
+				TheApplication().SetProfileAttr(&quot;RequestInvoiceLimit&quot;,&quot;Y&quot;);		
+				if (strLimitStatus==&quot;&quot; || strLimitStatus==null || strLimitStatus==DeactivatedStatus)
+					{
+						TheApplication().SetProfileAttr(&quot;InvoiceLimit_TransactionType&quot;,&quot;101&quot;);
+					}
+					else
+					{
+						TheApplication().SetProfileAttr(&quot;InvoiceLimit_TransactionType&quot;,&quot;102&quot;);
+					}			
+				psInputs.SetProperty(&quot;ProcessName&quot;, &quot;VF Set Invoice Limit WF&quot;);
+				psInputs.SetProperty(&quot;BA_CODE&quot;, strBACode);
+				psInputs.SetProperty(&quot;REQUESTED_LIMIT&quot;,this.BusComp().GetFieldValue(&quot;REQ_LIMIT&quot;));
+				psInputs.SetProperty(&quot;REQUESTING_USER&quot;,strLoginId);
+				psInputs.SetProperty(&quot;REQUESTING_SHOP&quot;,strShopId);
+				psInputs.SetProperty(&quot;CONTACT_MSISDN&quot;,this.BusComp().GetFieldValue(&quot;CONTACT_MSISDN&quot;));
+				
+				psInputs.SetProperty(&quot;TRANSACTION_TYPE&quot;, TheApplication().GetProfileAttr(&quot;InvoiceLimit_TransactionType&quot;));
+				
+				svcWF.InvokeMethod(&quot;RunProcess&quot;, psInputs, psOutputs);
+				if(psOutputs.GetProperty(&quot;Status Code&quot;) == 0)
+				{	if(sReqLimApp==&quot;0&quot;)
+					{		
+						sMsg = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;401&quot;);
+					}
+					else
+					{
+						sMsg = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;406&quot;);
+					}
+					this.BusComp().ClearToQuery();//Refresh BC
+					this.BusComp().ExecuteQuery(ForwardBackward);
+					TheApplication().RaiseErrorText(sMsg); //Success Message
+					
+				}
+				else if(psOutputs.GetProperty(&quot;Status Code&quot;) == 1)
+				{
+					ShowError(psOutputs.GetProperty(&quot;Error Code&quot;));
+				}
+						
+				return (CancelOperation);
+			}
+			else
+			{
+				sMsg = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;400&quot;);
+				TheApplication().RaiseErrorText(sMsg); //Empty Fields Error
+			}
+			}
+			else
+			{
+				sMsg = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;405&quot;);
+				TheApplication().RaiseErrorText(sMsg); //Fields not Updated Error
+			}
+		}
+	else if (MethodName == &quot;VFCancelLimit&quot;)
+		{		
+			TheApplication().SetProfileAttr(&quot;CancelInvoiceLimit&quot;,&quot;Y&quot;);				
+			TheApplication().SetProfileAttr(&quot;InvoiceLimit_TransactionType&quot;,&quot;103&quot;);
+			psInputs.SetProperty(&quot;ProcessName&quot;, &quot;VF Set Invoice Limit WF&quot;);
+			psInputs.SetProperty(&quot;BA_CODE&quot;, strBACode);
+			psInputs.SetProperty(&quot;REQUESTED_LIMIT&quot;,this.BusComp().GetFieldValue(&quot;REQ_LIMIT&quot;));
+			psInputs.SetProperty(&quot;REQUESTING_USER&quot;,strLoginId);
+			psInputs.SetProperty(&quot;REQUESTING_SHOP&quot;,strShopId);
+			psInputs.SetProperty(&quot;CONTACT_MSISDN&quot;,this.BusComp().GetFieldValue(&quot;CONTACT_MSISDN&quot;));
+			psInputs.SetProperty(&quot;TRANSACTION_TYPE&quot;, TheApplication().GetProfileAttr(&quot;InvoiceLimit_TransactionType&quot;));
+			
+			svcWF.InvokeMethod(&quot;RunProcess&quot;, psInputs, psOutputs);
+			if(psOutputs.GetProperty(&quot;Status Code&quot;) == 0)
+			{			
+				sMsg = TheApplication().LookupMessage(&quot;VF Message Category&quot;,&quot;402&quot;);
+				this.BusComp().ClearToQuery();//Refresh BC
+				this.BusComp().ExecuteQuery(ForwardBackward);
+				TheApplication().RaiseErrorText(sMsg); //Success Message
+			}
+			else if(psOutputs.GetProperty(&quot;Status Code&quot;) == 1)
+			{
+				ShowError(psOutputs.GetProperty(&quot;Error Code&quot;));
+			
+			}	
+		
+			return (CancelOperation);
+		}
+	}
+	catch(e)
+	{
+		throw e;
+	}
+	finally
+	{
+		strBACode =null;
+	}
+}"
+			   SEQUENCE="5"
+			   UPDATED="07/21/2013 20:31:47"
+			   UPDATED_BY="SADMIN"
+			   CREATED="05/28/2013 19:01:21"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: ExecuteQuery"
+			   VALUE="IIf(GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;) = &quot;Consumer&quot; OR GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;) = &quot;Bireysel&quot;, FALSE , TRUE)"
+			   UPDATED="01/11/2018 22:18:10"
+			   UPDATED_BY="IBM_OSMANS"
+			   CREATED="12/29/2017 14:09:20"
+			   CREATED_BY="IBM_OSMANS">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: NewQuery"
+			   VALUE="IIf(GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;) = &quot;Consumer&quot; OR GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;) = &quot;Bireysel&quot;, FALSE , TRUE)"
+			   UPDATED="01/11/2018 22:18:14"
+			   UPDATED_BY="IBM_OSMANS"
+			   CREATED="12/29/2017 14:09:20"
+			   CREATED_BY="IBM_OSMANS">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: NewRecord"
+			   VALUE="IIf(GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;) = &quot;Consumer&quot; OR GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;) = &quot;Bireysel&quot;, FALSE , TRUE)"
+			   UPDATED="01/11/2018 22:18:20"
+			   UPDATED_BY="IBM_OSMANS"
+			   CREATED="12/29/2017 14:09:20"
+			   CREATED_BY="IBM_OSMANS">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: RefineQuery"
+			   VALUE="IIf(GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;) = &quot;Consumer&quot; OR GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;) = &quot;Bireysel&quot;, FALSE , TRUE)"
+			   UPDATED="01/11/2018 22:18:42"
+			   UPDATED_BY="IBM_OSMANS"
+			   CREATED="12/29/2017 14:09:20"
+			   CREATED_BY="IBM_OSMANS">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="Y"
+			   NAME="CanInvokeMethod: VFCancelLimit"
+			   VALUE="[CanEnableCancelLimit] = &quot;Y&quot;"
+			   UPDATED="05/17/2013 13:55:19"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:23:59"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="Y"
+			   NAME="CanInvokeMethod: VFRequestLimit"
+			   VALUE="[CanEnableRequestLimit] = &quot;Y&quot;"
+			   UPDATED="05/28/2013 19:01:20"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:23:59"
+			   CREATED_BY="SADMIN">
+			</APPLET_USER_PROP>
+			<APPLET_USER_PROP
+			   INACTIVE="N"
+			   NAME="CanInvokeMethod: WriteRecord"
+			   VALUE="IIf(GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;) = &quot;Consumer&quot; OR GetProfileAttr(&quot;Invaoice_For_Customer_Type_ABC&quot;) = &quot;Bireysel&quot;, FALSE , TRUE)"
+			   UPDATED="01/11/2018 22:19:18"
+			   UPDATED_BY="IBM_OSMANS"
+			   CREATED="12/29/2017 14:09:20"
+			   CREATED_BY="IBM_OSMANS">
+			</APPLET_USER_PROP>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Edit"
+			   SEQUENCE="0"
+			   TYPE="Edit"
+			   WEB_TEMPLATE="Applet Form Grid Layout"
+			   UPDATED="04/23/2013 22:23:59"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:23:59"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Cancel Invoice Limit"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="110"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Cancel Invoice Limit"
+				   TYPE="Control"
+				   UPDATED="04/23/2013 22:23:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:23:59"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Current Limit Amount"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="10021"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Current Limit Amount"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/23/2013 22:23:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:23:59"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Current Limit Amount"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="10005"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Current Limit AmountLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/23/2013 22:23:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:23:59"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Invoice Limit Status"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="10061"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Invoice Limit Status"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/23/2013 22:23:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:23:59"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Invoice Limit Status"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="10045"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Invoice Limit StatusLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/23/2013 22:23:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:23:59"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Last Limit Update Date"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="14021"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Last Limit Update Date"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/23/2013 22:23:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:23:59"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Last Limit Update Date"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="14005"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Last Limit Update DateLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/23/2013 22:23:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:23:59"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Notification MSISDN"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="6061"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Notification MSISDN"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/23/2013 22:23:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:23:59"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Notification MSISDN"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="6045"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Notification MSISDNLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/23/2013 22:23:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:23:59"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Request Limit"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="109"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Request Limit"
+				   TYPE="Control"
+				   UPDATED="04/23/2013 22:23:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:23:59"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Requested Limit Amount"
+				   GRID_PROPERTY="FormattedHtml"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="6021"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Requested Limit Amount"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/23/2013 22:23:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:23:59"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   COLUMN_SPAN="15"
+				   CONTROL="VF Requested Limit Amount"
+				   GRID_PROPERTY="FormattedLabel"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="6005"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Requested Limit AmountLabel"
+				   ROW_SPAN="3"
+				   TYPE="Control"
+				   UPDATED="04/23/2013 22:23:59"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/23/2013 22:23:59"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="CanEnableCancelLimit"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="CanEnableCancelLimit"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="05/06/2013 08:39:36"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:24:00"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   FIELD="CanEnableRequestLimit"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="CanEnableRequestLimit"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/23/2013 22:24:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:24:00"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_CANCEL_LIMIT"
+			   COMMENTS="CR701A"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   METHOD_INVOKED="VFCancelLimit"
+			   MULTI_LINE="N"
+			   NAME="VF Cancel Invoice Limit"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/23/2013 22:24:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:24:00"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_CURRENT_LIMIT"
+			   COMMENTS="CR701A"
+			   DEFAULT_BUTTON="N"
+			   FIELD="CALC_LIMIT"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VF Current Limit Amount"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/23/2013 22:24:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:24:00"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_LIMIT_STATUS"
+			   COMMENTS="CR701A"
+			   DEFAULT_BUTTON="N"
+			   FIELD="STATUS"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VF Invoice Limit Status"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/23/2013 22:24:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:24:00"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_LAST_LIMIT_UPDATE"
+			   COMMENTS="CR701A"
+			   DEFAULT_BUTTON="N"
+			   FIELD="LAST_CHANGE_DATE"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VF Last Limit Update Date"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="Y"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/23/2013 22:24:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:24:00"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_NOTIFICATION_MSISDN"
+			   COMMENTS="CR701A"
+			   DEFAULT_BUTTON="N"
+			   FIELD="CONTACT_MSISDN"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VF Notification MSISDN"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/23/2013 22:24:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:24:00"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_REQUEST_LIMIT"
+			   COMMENTS="CR701A"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   METHOD_INVOKED="VFRequestLimit"
+			   MULTI_LINE="N"
+			   NAME="VF Request Limit"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/23/2013 22:24:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:24:00"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VF_REQUESTED_LIMIT"
+			   COMMENTS="CR701A"
+			   DEFAULT_BUTTON="N"
+			   FIELD="REQ_LIMIT"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VF Requested Limit Amount"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/23/2013 22:24:00"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/23/2013 22:24:00"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+

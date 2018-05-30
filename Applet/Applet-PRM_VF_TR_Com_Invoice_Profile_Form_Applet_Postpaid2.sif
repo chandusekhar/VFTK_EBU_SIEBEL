@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <REPOSITORY
    COMMENTS="Siebel 8.1.1.11 repository"
@@ -1586,3 +1587,1593 @@
 
 
 
+=======
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<REPOSITORY
+   COMMENTS="Siebel 8.1.1.11 repository"
+   NAME="Siebel Repository"
+   UPDATED="06/17/2014 13:50:12"
+   UPDATED_BY="SADMIN"
+   CREATED="06/06/2014 19:53:48"
+   CREATED_BY="SADMIN"
+   FIO_PLACEHOLDER_FIO="TRUE">
+	<PROJECT
+	   ALLOW_OBJECT_LOCKING="Y"
+	   COMMENTS="R2.1 - WP03-Order Management and Product Catalogue"
+	   INACTIVE="N"
+	   LOCKED="N"
+	   NAME="VF WP03 Order Management"
+	   UI_FREEZE="N"
+	   UPDATED="11/22/2016 22:49:21"
+	   UPDATED_BY="JMARQUES"
+	   CREATED="09/05/2011 12:47:00"
+	   CREATED_BY="SADMIN"
+	   FIO_PLACEHOLDER_FIO="TRUE">
+		<APPLET
+		   BUSINESS_COMPONENT="VF PRM Com Invoice Profile"
+		   CLASS="CSSFrame"
+		   DISABLE_DATALOSS_WARNING="N"
+		   HEIGHT="4"
+		   INACTIVE="N"
+		   NAME="PRM VF TR Com Invoice Profile Form Applet Postpaid2"
+		   NO_DELETE="Y"
+		   NO_INSERT="N"
+		   NO_MERGE="Y"
+		   NO_UPDATE="N"
+		   OBJECT_LANGUAGE_LOCKED="ENU"
+		   OBJECT_LOCKED="Y"
+		   OBJECT_LOCKED_DATE="11/22/2016 22:45:29"
+		   SCRIPTED="Y"
+		   TITLE_-_STRING_REFERENCE="X_INVOICE_PROFILE-0928155526-071"
+		   TYPE="Standard"
+		   UPGRADE_BEHAVIOR="Preserve"
+		   WIDTH="2"
+		   OBJECT_LOCKED_BY_NAME="JMARQUES"
+		   UPDATED="11/22/2016 22:46:09"
+		   UPDATED_BY="JMARQUES"
+		   CREATED="04/25/2012 11:16:58"
+		   CREATED_BY="SADMIN">
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="(declarations)"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="var customer_status = &quot;&quot;;"
+			   SEQUENCE="1"
+			   UPDATED="08/06/2015 23:35:38"
+			   UPDATED_BY="JCARVALHO"
+			   CREATED="03/31/2015 21:37:27"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="CheckMOF"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function CheckMOF(sTaxId)
+{
+	//TC-5996 E-ARCHIVE
+	try 
+	{
+		var bsManager    : Service     = TheApplication().GetService(&quot;Workflow Process Manager&quot;);
+		var psManagerIn  : PropertySet = TheApplication().NewPropertySet();
+		var psManagerOut : PropertySet = TheApplication().NewPropertySet();
+
+		psManagerIn.SetProperty(&quot;ProcessName&quot;,    &quot;VF MOFInquiry WF&quot;);
+		psManagerIn.SetProperty(&quot;TAX_ID&quot;,         sTaxId);
+		psManagerIn.SetProperty(&quot;CHANNEL&quot;,        &quot;SIEBEL&quot;);
+		psManagerIn.SetProperty(&quot;TRANSACTION_ID&quot;, &quot;&quot;);
+
+		bsManager.InvokeMethod(&quot;RunProcess&quot;, psManagerIn, psManagerOut);
+				
+		customer_status = psManagerOut.GetProperty(&quot;MOF_STATUS&quot;);
+				
+		return customer_status;
+	}
+	catch(e)
+	{
+		customer_status = &quot;ERROR&quot;;
+		return customer_status;
+	}
+	finally
+	{
+		psManagerOut = null;
+		psManagerIn  = null;
+		bsManager    = null;
+	}
+}"
+			   SEQUENCE="2"
+			   UPDATED="08/06/2015 23:35:38"
+			   UPDATED_BY="JCARVALHO"
+			   CREATED="03/31/2015 21:37:27"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_Load"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_Load ()
+{
+	try
+	{
+		var boBillingAccount : BusObject = this.BusObject();
+		var bcBillingAccount : BusComp   = boBillingAccount.GetBusComp(&quot;VF PRM Billing Account&quot;);
+		
+		//BEGIN - JFONSECA ++
+		
+		var BAId = TheApplication().GetProfileAttr(&quot;NBABillingAccountid&quot;);
+		
+		with (bcBillingAccount)
+			{
+			   SetViewMode(AllView);
+			   SetSearchSpec (&quot;Id&quot;, BAId);
+			   ClearToQuery();
+			   ExecuteQuery(ForwardBackward);
+			   if (FirstRecord())
+			   {
+			   		var sTaxId = GetFieldValue(&quot;Tax Id&quot;);
+			   		var sMediaType = GetFieldValue(&quot;VF Media Type CD&quot;);
+			   }
+			  }
+		
+		//END - JFONSECA
+
+		//var sTaxId     = bcBillingAccount.GetFieldValue(&quot;Tax Id&quot;); //COMMENTED JFONSECA
+		//var sMediaType = bcBillingAccount.GetFieldValue(&quot;VF Media Type CD&quot;); //COMMENTED JFONSECA
+
+		var sMediaTypeMail      = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;BILL_MEDIA_TYPE&quot;,&quot;104&quot;);
+		var sMediaTypeMOF       = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;BILL_MEDIA_TYPE&quot;,&quot;105&quot;);
+		var sMediaTypeMOFReport = TheApplication().InvokeMethod(&quot;LookupValue&quot;,&quot;BILL_MEDIA_TYPE&quot;,&quot;107&quot;);
+
+		if (sTaxId == &quot;NA&quot;)
+		{
+			customer_status = &quot;NORMAL&quot;;
+			TheApplication().SetProfileAttr(&quot;MediaTypePreDefault&quot;, sMediaTypeMail);
+			TheApplication().SetProfileAttr(&quot;MOFResult&quot;,           &quot;NORMAL&quot;);
+			//this.BusComp().SetFieldValue(&quot;Media Type&quot;, sMediaTypeMail); //104= Mail /Posta
+			//this.BusComp().WriteRecord();
+			return;
+		}
+
+		customer_status = CheckMOF(sTaxId);
+	                    	
+		if (sMediaType == sMediaTypeMOF || sMediaType == sMediaTypeMOFReport) 
+		{
+			TheApplication().SetProfileAttr(&quot;MOFResult&quot;, &quot;MOF&quot;);
+			if (customer_status == &quot;ERROR&quot;)
+				customer_status = &quot;MOF&quot;;
+		}
+		else 
+		{
+			TheApplication().SetProfileAttr(&quot;MOFResult&quot;, &quot;NORMAL&quot;);
+			if (customer_status == &quot;ERROR&quot;)
+				customer_status = &quot;NORMAL&quot;; 
+		}
+
+		// Set predefault value for component
+		if (customer_status==&quot;NORMAL&quot;)
+			TheApplication().SetProfileAttr(&quot;MediaTypePreDefault&quot;, sMediaTypeMail);
+		if (customer_status==&quot;MOF&quot;)
+			TheApplication().SetProfileAttr(&quot;MediaTypePreDefault&quot;, sMediaTypeMOF);
+
+		if (customer_status == &quot;MOF&quot; &amp;&amp; (sMediaType != sMediaTypeMOF &amp;&amp; sMediaType != sMediaTypeMOFReport))
+		{
+			TheApplication().SetProfileAttr(&quot;MOFResult&quot;, &quot;MOF&quot;);
+			this.BusComp().SetFieldValue(&quot;Media Type&quot;, sMediaTypeMOF); //105=Maliye Bakanlığı/ Ministry of Finance
+			this.BusComp().WriteRecord();
+		}
+		else if (customer_status == &quot;NORMAL&quot; &amp;&amp; (sMediaType == sMediaTypeMOF || sMediaType == sMediaTypeMOFReport))
+		{
+			TheApplication().SetProfileAttr(&quot;MOFResult&quot;, &quot;NORMAL&quot;);
+			this.BusComp().SetFieldValue(&quot;Media Type&quot;, sMediaTypeMail); 
+			this.BusComp().WriteRecord(); 
+		}
+    }
+	catch(e) 
+	{
+	}
+	finally
+	{
+		bcBillingAccount = null;
+		boBillingAccount = null;
+	}	
+}"
+			   SEQUENCE="3"
+			   UPDATED="11/22/2016 22:46:09"
+			   UPDATED_BY="JMARQUES"
+			   CREATED="03/31/2015 21:37:27"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_SERVER_SCRIPT
+			   INACTIVE="N"
+			   NAME="WebApplet_PreCanInvokeMethod"
+			   PROGRAM_LANGUAGE="JS"
+			   SCRIPT="function WebApplet_PreCanInvokeMethod (MethodName, &amp;CanInvoke)
+{
+	try
+	{
+		var bsOperations    : Service     = null;
+		var psOperationsIn  : PropertySet = null;
+		var psOperationsOut : PropertySet = null;
+
+		var sButtonEnabled = &quot;&quot;;
+
+		if (MethodName == &quot;EditRecord&quot;)
+		{
+			bsOperations    = TheApplication().GetService(&quot;ACS General Operations&quot;);
+			psOperationsIn  = TheApplication().NewPropertySet();
+			psOperationsOut = TheApplication().NewPropertySet();
+
+			psOperationsIn.SetProperty(&quot;Function&quot;, &quot;PRMEditRecord&quot;);
+			psOperationsIn.SetProperty(&quot;Name&quot;,     &quot;Modify&quot;);
+
+			bsOperations.InvokeMethod(&quot;GetParameter_3Inputs&quot;, psOperationsIn, psOperationsOut);
+
+			sButtonEnabled = psOperationsOut.GetProperty(&quot;Cons1&quot;);
+
+			if (sButtonEnabled == &quot;True&quot;)
+				CanInvoke = &quot;TRUE&quot;;
+			else
+				CanInvoke = &quot;FALSE&quot;;
+
+			return (CancelOperation);
+		}
+
+		return (ContinueOperation);
+	}
+	finally
+	{
+		psOperationsOut = null;
+		psOperationsIn  = null;
+		bsOperations    = null;
+	}
+
+	return (ContinueOperation);
+}"
+			   SEQUENCE="4"
+			   UPDATED="08/06/2015 23:35:38"
+			   UPDATED_BY="JCARVALHO"
+			   CREATED="04/09/2013 19:34:17"
+			   CREATED_BY="SADMIN">
+			</APPLET_SERVER_SCRIPT>
+			<APPLET_USER_PROP
+			   INACTIVE="Y"
+			   NAME="Applet Read Only Field"
+			   VALUE="ParentFieldValue(&quot;VFTRCBU Customer Migrating Flag&quot;)=&quot;Y&quot;"
+			   UPDATED="02/02/2015 11:47:14"
+			   UPDATED_BY="JSARMENTO"
+			   CREATED="01/29/2015 15:51:15"
+			   CREATED_BY="JSARMENTO">
+			</APPLET_USER_PROP>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Base"
+			   SEQUENCE="0"
+			   TYPE="Base"
+			   WEB_TEMPLATE="Applet Form 4 Column (Base)"
+			   UPDATED="10/22/2015 15:50:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="BAType"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2302"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="BAType"
+				   TYPE="Control"
+				   UPDATED="03/18/2013 20:29:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Bill Cycle"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1802"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Bill Cycle"
+				   TYPE="Control"
+				   UPDATED="10/22/2015 15:50:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Bill Media"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1301"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Bill Media"
+				   TYPE="Control"
+				   UPDATED="03/18/2013 20:29:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Bill Type"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1801"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Bill Type"
+				   TYPE="Control"
+				   UPDATED="10/22/2015 15:50:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="EditRecord"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="132"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="EditRecord"
+				   TYPE="Control"
+				   UPDATED="04/25/2012 11:16:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="EmailBillTo"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1803"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="EmailBillTo"
+				   TYPE="Control"
+				   UPDATED="08/06/2015 23:35:37"
+				   UPDATED_BY="JCARVALHO"
+				   CREATED="08/06/2015 23:35:37"
+				   CREATED_BY="JCARVALHO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="InvoiceMessage"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1303"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="InvoiceMessage"
+				   TYPE="Control"
+				   UPDATED="07/22/2015 18:44:04"
+				   UPDATED_BY="ACAMBAS"
+				   CREATED="07/22/2015 18:44:04"
+				   CREATED_BY="ACAMBAS">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="PaymentMethod"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2301"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="PaymentMethod"
+				   TYPE="Control"
+				   UPDATED="04/25/2012 11:16:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="QueryAssistant"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="126"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="QueryAssistant"
+				   TYPE="Control"
+				   UPDATED="04/25/2012 11:16:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Invoice Remainder Skip"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1303"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Invoice Remainder Skip"
+				   TYPE="Control"
+				   UPDATED="10/22/2015 15:50:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:50:33"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Single Envelope"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1302"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Single Envelope"
+				   TYPE="Control"
+				   UPDATED="03/18/2013 20:29:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/05/2013 22:12:09"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<APPLET_WEB_TEMPLATE
+			   INACTIVE="N"
+			   NAME="Edit"
+			   SEQUENCE="0"
+			   TYPE="Edit"
+			   WEB_TEMPLATE="Applet Form 4 Column (Edit/New)"
+			   UPDATED="10/22/2015 15:50:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="BAType"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2302"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="BAType"
+				   TYPE="Control"
+				   UPDATED="03/18/2013 20:29:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Bill Cycle"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1802"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Bill Cycle"
+				   TYPE="Control"
+				   UPDATED="10/22/2015 15:50:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Bill Media"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1301"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Bill Media"
+				   TYPE="Control"
+				   UPDATED="03/18/2013 20:29:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Bill Type"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1801"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Bill Type"
+				   TYPE="Control"
+				   UPDATED="10/22/2015 15:50:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="EmailBillTo"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1803"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="EmailBillTo"
+				   TYPE="Control"
+				   UPDATED="08/06/2015 23:35:37"
+				   UPDATED_BY="JCARVALHO"
+				   CREATED="08/06/2015 23:35:37"
+				   CREATED_BY="JCARVALHO">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="ExecuteQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="107"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="ExecuteQuery"
+				   TYPE="Control"
+				   UPDATED="04/25/2012 11:16:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="PaymentMethod"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="2301"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="PaymentMethod"
+				   TYPE="Control"
+				   UPDATED="04/25/2012 11:16:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="QueryAssistant"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="126"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="QueryAssistant"
+				   TYPE="Control"
+				   UPDATED="04/25/2012 11:16:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="Save"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="136"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="Save"
+				   TYPE="Control"
+				   UPDATED="04/25/2012 11:16:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="UndoQuery"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="108"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="UndoQuery"
+				   TYPE="Control"
+				   UPDATED="04/25/2012 11:16:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Invoice Remainder Skip"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1303"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Invoice Remainder Skip"
+				   TYPE="Control"
+				   UPDATED="10/22/2015 15:50:33"
+				   UPDATED_BY="SADMIN"
+				   CREATED="10/22/2015 15:50:33"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+				<APPLET_WEB_TEMPLATE_ITEM
+				   CONTROL="VF Single Envelope"
+				   INACTIVE="N"
+				   ITEM_IDENTIFIER="1302"
+				   MARKUP_LANGUAGE="HTML"
+				   NAME="VF Single Envelope"
+				   TYPE="Control"
+				   UPDATED="03/18/2013 20:29:46"
+				   UPDATED_BY="SADMIN"
+				   CREATED="03/05/2013 22:12:09"
+				   CREATED_BY="SADMIN">
+				</APPLET_WEB_TEMPLATE_ITEM>
+			</APPLET_WEB_TEMPLATE>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_BILLING_ACCOUNT_CODE-0928172741-0C6"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Billing Account Code"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="18"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="BACode"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/25/2012 11:16:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_BILLING_ACCOUNT_TYPE-0928155813-069"
+			   DEFAULT_BUTTON="N"
+			   FIELD="TeXCo Account Type"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="18"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="BAType"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/25/2012 11:16:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_MEDIA_TYPE-1004234312-5NO"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Media Type"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="18"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Bill Cycle"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/25/2012 11:16:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_BILL_FREQUENCY-0928155812-05K"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Bill Frequency"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="18"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Bill Freq"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/25/2012 11:16:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_BILL_CYCLE-0928172741-0BK"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Bill Cycle"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="18"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Bill Media"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/25/2012 11:16:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_BILL_TYPE-1004225041-191"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Bill Type"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="18"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="Bill Type"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/25/2012 11:16:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_DELETE-1004224629-055"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="DeleteRecord"
+			   MULTI_LINE="N"
+			   NAME="DeleteRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="4"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/25/2012 11:16:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_MODIFY-1004234357-5SQ"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEdit"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   METHOD_INVOKED="EditRecord"
+			   MULTI_LINE="N"
+			   NAME="EditRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/25/2012 11:16:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VFTRCBU_CBU_EMAIL"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Email Bill To"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="EmailBillTo"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="08/06/2015 23:35:38"
+			   UPDATED_BY="JCARVALHO"
+			   CREATED="08/06/2015 23:35:38"
+			   CREATED_BY="JCARVALHO">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_GO-1004224654-095"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ExecuteQuery"
+			   MULTI_LINE="N"
+			   NAME="ExecuteQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="5"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/25/2012 11:16:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RecNavNxt"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="GotoNextSet"
+			   MULTI_LINE="N"
+			   NAME="GotoNextSet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="6"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/25/2012 11:16:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Next"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/25/2012 11:16:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="RecNavPrv"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="GotoPreviousSet"
+			   MULTI_LINE="N"
+			   NAME="GotoPreviousSet"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="7"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/25/2012 11:16:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Previous"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/25/2012 11:16:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_GRACE_PERIOD-1009102001-AAO"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Days To Cash"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="18"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="GracePeriod"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/25/2012 11:16:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_WARNINGS-1004225329-14T"
+			   COMMENTS="ACAMBAS: VFTRCBU-14002"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VFTRCBU Invoice Message 2"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="FormatData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="TextArea"
+			   HTML_WIDTH="300"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="InvoiceMessage"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="07/27/2015 13:51:34"
+			   UPDATED_BY="ACAMBAS"
+			   CREATED="07/22/2015 17:29:47"
+			   CREATED_BY="ACAMBAS">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="NewQuery"
+			   MULTI_LINE="N"
+			   NAME="NewQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="8"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/25/2012 11:16:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Query"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/25/2012 11:16:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonEdit"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="NewRecord"
+			   MULTI_LINE="N"
+			   NAME="NewRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="9"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/25/2012 11:16:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="New"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/25/2012 11:16:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_PAYMENT_METHOD-1004231745-4XE"
+			   DEFAULT_BUTTON="N"
+			   FIELD="Payment Method"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_SEQUENCE="18"
+			   HTML_TYPE="Text"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="PaymentMethod"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/25/2012 11:16:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="PositionOnRow"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="PositionOnRow"
+			   MULTI_LINE="N"
+			   NAME="PositionOnRow"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="10"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/25/2012 11:16:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="ShowQueryAssistant"
+			   MULTI_LINE="N"
+			   NAME="QueryAssistant"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="11"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/25/2012 11:16:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Query Assistant"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/25/2012 11:16:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="SBL_SAVE-1004225832-051"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_HEIGHT="24"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButton"
+			   HTML_WIDTH="120"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   METHOD_INVOKED="ExplicitWriteRecord"
+			   MULTI_LINE="N"
+			   NAME="Save"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="04/25/2012 11:16:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonQuery"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="UndoQuery"
+			   MULTI_LINE="N"
+			   NAME="UndoQuery"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="12"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/25/2012 11:16:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Cancel"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/25/2012 11:16:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   DEFAULT_BUTTON="N"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="Y"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="MiniButtonNew"
+			   HEIGHT="10"
+			   INACTIVE="N"
+			   LEFT="0"
+			   METHOD_INVOKED="UndoRecord"
+			   MULTI_LINE="N"
+			   NAME="UndoRecord"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="N"
+			   SEQUENCE="13"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="40"
+			   UPDATED="04/25/2012 11:16:58"
+			   UPDATED_BY="SADMIN"
+			   CREATED="04/25/2012 11:16:58"
+			   CREATED_BY="SADMIN">
+				<CONTROL_LOCALE
+				   APPLICATION_CODE="STD"
+				   CAPTION="Cancel"
+				   INACTIVE="N"
+				   LANGUAGE_CODE="ENU"
+				   NAME="ENU-STD"
+				   TRANSLATE="Y"
+				   UPDATED="04/25/2012 11:16:58"
+				   UPDATED_BY="SADMIN"
+				   CREATED="04/25/2012 11:16:58"
+				   CREATED_BY="SADMIN">
+				</CONTROL_LOCALE>
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_VFTK_Invoice_Generation_Remainder_skip"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF Invoice Remainder Skip"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="CheckBox"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VF Invoice Remainder Skip"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="10/22/2015 15:50:33"
+			   UPDATED_BY="SADMIN"
+			   CREATED="10/22/2015 15:50:33"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+			<CONTROL
+			   AUTOMATIC_HORIZONTAL_SCROLL="Y"
+			   AUTOMATIC_VERTICAL_SCROLL="N"
+			   CAPTION_-_STRING_REFERENCE="X_SINGLE_ENVELOPE"
+			   COMMENTS="IDC 28022013 : created new for GEN_REQ_586"
+			   DEFAULT_BUTTON="N"
+			   FIELD="VF Single Envelope"
+			   FIELD_TYPE="BC Field"
+			   GROUP="N"
+			   HTML_DEFAULT_CONTROL="N"
+			   HTML_DISPLAY_MODE="EncodeData"
+			   HTML_ONLY="N"
+			   HTML_ROW_SENSITIVE="Y"
+			   HTML_TYPE="CheckBox"
+			   HEIGHT="24"
+			   INACTIVE="N"
+			   MULTI_LINE="N"
+			   NAME="VF Single Envelope"
+			   OWNER_DRAW="N"
+			   POPUP_EDIT="N"
+			   PROMPT="N"
+			   READ_ONLY="N"
+			   RUNTIME="Y"
+			   SHOW_POPUP="N"
+			   SORT="Y"
+			   TAB_STOP="Y"
+			   TEXT_ALIGNMENT="Left"
+			   TEXT_ALIGNMENT-LABEL="Right"
+			   TOP="0"
+			   TYPE="TextBox"
+			   VERTICAL_SCROLL="N"
+			   VISIBLE="Y"
+			   WANT_RETURN="N"
+			   WIDTH="120"
+			   UPDATED="03/18/2013 20:29:46"
+			   UPDATED_BY="SADMIN"
+			   CREATED="03/05/2013 22:12:09"
+			   CREATED_BY="SADMIN">
+			</CONTROL>
+		</APPLET>
+	</PROJECT>
+</REPOSITORY>
+
+
+
+>>>>>>> Stashed changes
